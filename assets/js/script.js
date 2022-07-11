@@ -5,7 +5,7 @@ const addButtonListeners = () => {
     if (button) {
         button.addEventListener('click', () => {
             console.log('Quick game clicked');
-            var data = fetch(`localhost:3000/word`, {
+            var data = fetch(`/word`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
