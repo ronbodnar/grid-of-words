@@ -1,9 +1,33 @@
 <html>
-    <head>
-        <title>Wordle+</title>
-    </head>
+  <head>
+    <title>Wordle+</title>
 
-    <body>
-        []
-    </body>
+    <style type="text/css">
+      body {
+        margin: 1em;
+        width: calc(100dvw - 2em);
+        height: calc(100dvh - 2em);
+      }
+
+      .container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+      }
+
+      .container > div {
+        width: 55%;
+        text-align: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container"><%- include('home'); %></div>
+
+    <script type="text/javascript" src="../public/js/script.js"></script>
+  </body>
 </html>
