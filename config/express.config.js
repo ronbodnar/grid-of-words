@@ -8,7 +8,7 @@ const app = express();
 const __dirname = import.meta.dirname;
 
 // Load the static assets from the assets folder
-app.set(express.static(path.join(__dirname, "..", "assets")));
+app.use('/assets', express.static(path.join(__dirname, "..", "assets")));
 
 // Set the view engine to use EJS
 app.set('view engine', 'ejs');
