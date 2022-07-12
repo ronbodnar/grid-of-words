@@ -2,12 +2,12 @@
   "name": "wordle-plus",
   "version": "1.0.0",
   "description": "A modified version of the game Wordle with configuration for game modes.",
-  "main": "index.js",
+  "main": "src/index.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --env-file=development.env index.js",
-    "prod": "node --env-file=production.env index.js"
+    "dev": "nodemon --env-file=development.env src/index.js",
+    "prod": "node --env-file=production.env src/index.js"
   },
   "repository": {
     "type": "git",
@@ -21,8 +21,11 @@
   "homepage": "https://github.com/ronbodnar/wordle-plus#readme",
   "dependencies": {
     "async": "^3.2.5",
+    "body-parser": "^1.20.2",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
-    "mysql2": "^3.10.2"
+    "express-validation": "^4.1.1",
+    "mysql2": "^3.10.2",
+    "uuid": "^10.0.0"
   }
 }
