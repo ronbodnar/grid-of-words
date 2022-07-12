@@ -1,15 +1,12 @@
-import * as wordUtils from "../lib/word-utils.js";
-import database from "../services/database.service.js";
+import * as database from "../services/database.service.js";
+import * as wordRepository from "../repository/word.repository.js";
 
-function getWord(req, res) {
-  var sql = 'SELECT * FROM words';
-  database(sql, function (err, db) {
-    if (err) throw err;
-    console.log("DB: ", db);
-    return res.end(db);
-  });
-
-  return res.end('hey');
+/*
+ * Selects a random word from the word table in the database.
+ * TODO: add support for word lengths and other filters
+ */
+async function getRandomWord(req, res) {
+  return wordRepository.getRandomWord(req, res);
 }
 
-export { getWord };
+export { getRandomWord };

@@ -1,4 +1,4 @@
-import mysql from "mysql2";
+import mysql from "mysql2/promise";
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
@@ -8,25 +8,18 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME,
 });
 
-const query = (sql, callback) => {
-  pool.getConnection(function (err, connection) {
-    if (err) {
-      console.log(err);
-      callback(true);
-      return;
-    }
-    connection.query(sql, function (err, result) {
-      if (err) {
-        console.log(err);
-        callback(true);
-        return;
-      }
-      callback(false, result);
-
-      // Release the connection back to the pool
+const query = async (sql) => {
+  return pool
+    .getConnection()
+    .then((connection) => {
+      const response = connection.query(sql);
       connection.release();
-    });
-  });
+      return response;
+    })
+    .then((result) => {
+      return result[0][0];
+    })
+    .catch((err) => console.log("MySQL Query Error: ", err));
 };
 
 export default query;
