@@ -1,4 +1,5 @@
 import { getRandomWord } from "./word.repository.js";
+import * as database from "../services/database.service.js";
 import { v4 as uuidv4 } from "uuid";
 
 /*
@@ -7,14 +8,12 @@ import { v4 as uuidv4 } from "uuid";
  * @return {Game} - The new game object
  */
 async function generate(wordLength) {
-  const uuid = uuidv4();
   var word = await getRandomWord(wordLength);
   console.log("word: ", word.uuid);
-  const sql = `INSERT INTO games(word) VALUES(${word})`;
-  return {
-    gameId: uuid,
-    word: word,
-  };
+  const sql = `INSERT INTO games () VALUES()`;
+  const response = await database.execute(sql)
+  console.log("response: ", response);
+  return word;
 }
 
 function attempt(req, res) {}

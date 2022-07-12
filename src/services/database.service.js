@@ -23,6 +23,7 @@ const query = async (sql) => {
   try {
     const [rows, cols] = await pool.query(sql);
     pool.releaseConnection();
+    console.log([rows, cols]);
     return [rows, cols];
   } catch (error) {
     console.error(error);

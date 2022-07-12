@@ -3,7 +3,7 @@ import * as gameRepository from "../repository/game.repository.js";
 async function generate(req, res) {
   const length = req.query.wordLength;
   if (length == null || !(3 < length < 7)) {
-    return {};
+    return res.end();
   }
   const gameData = await gameRepository.generate(length);
   return res.json(gameData);
