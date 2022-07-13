@@ -7,7 +7,8 @@ import * as wordRepository from "../repository/word.repository.js";
  */
 async function getRandomWord(req, res) {
   const length = req.query.wordLength || 5;
-  if (!(3 < length < 7)) { // ensure length is between 3 and 7 if present
+  if (!(3 < length < 7)) {
+    // ensure length is between 3 and 7 if present
     return res.end();
   }
   const randomWord = await wordRepository.getRandomWord(length);

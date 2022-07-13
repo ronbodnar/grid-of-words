@@ -13,7 +13,7 @@ const pool = mysql.createPool({
  * Asynchronously query the database for results, uses prepared statements if values is defined.
  *
  * @param {string} sql - The SQL query to execute.
- * @param {List} values - A list of values to inject into the query string. 
+ * @param {List} values - A list of values to inject into the query string.
  * @return {Promise}
  */
 const query = async (sql, values = []) => {
@@ -23,13 +23,14 @@ const query = async (sql, values = []) => {
       if (typeof values !== "object") {
         throw new Error("Expected values must be an object.");
       }
-      const response = values.length > 0 ? conn.execute(sql, values) : conn.query(sql);
+      const response =
+        values.length > 0 ? conn.execute(sql, values) : conn.query(sql);
       conn.release();
       return response;
     })
     .catch((error) => {
       // implement a logging library
-      console.error('MySQL Error: ', error);
+      console.error("MySQL Error: ", error);
       return null;
     });
 };
