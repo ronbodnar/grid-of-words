@@ -1,25 +1,36 @@
-import { v4 as uuidv4 } from 'uuid';
+import { DEFAULT_MAX_ATTEMPTS } from '../constants.js';
 
 /*
  * A representation of a Game.
  */
-class Game {
+export class Game {
 
-    #uuid = undefined;
-    #word = undefined;
-    #owner = undefined;
-    #state = undefined;
-    #startTime = undefined;
-    #endTime = undefined;
-    #attempts = undefined;
+    uuid = undefined;
+    word = undefined;
+    state = undefined;
+    startTime = undefined;
+    endTime = undefined;
+    attempts = undefined;
+    maxAttempts = undefined;
 
-    constructor(word, owner) {
-        this.#word = word;
-        this.#owner = owner;
-        this.#uuid = uuidv4();
-        this.#state = 'IN_PROGRESS';
-        this.#startTime = new Date();
-        this.#attempts = new Set();
-        console.log('Starting a new game...');
+    constructor(maxAttempts = DEFAULT_MAX_ATTEMPTS) {
+        this.state = 'STARTED';
+        this.startTime = new Date();
+        this.attempts = [];
+        this.maxAttempts = maxAttempts;
+        return this;
     }
+
+    fromJson(json) {
+        this.uuid = json.id;
+        this.word = json.word;
+        this.state = json.state;
+        this.startTime = new Date(json.start_timestamp);
+        if (json.end_timestamp != null)
+            this.endTime = new Date();
+        if (json.attempts != null)
+            this.attempts = json.attempts;
+        return this;
+    }
+
 }

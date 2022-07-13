@@ -7,6 +7,7 @@ const router = express.Router();
 router.route("/new").get(gameController.generate);
 
 router.route("/:id").get(gameController.get);
-router.route("/:id/attempt").post(gameController.attempt);
+router.route("/:id/attempts").get(gameController.getAttempts);
+router.route("/:id/attempts").post(gameController.attempt);
 
 export default router;
