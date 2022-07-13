@@ -9,9 +9,9 @@ import * as attemptRepository from "./attempt.repository.js";
  * @param {string} word - The word to be guessed.
  * @return {Game | null} - The new game object or null if the game could not be created.
  */
-async function create(id, word) {
-  const sql = `INSERT INTO games (id, word) VALUES(UUID_TO_BIN(?), ?)`;
-  const response = await database.query(sql, [id, word]);
+async function create(id, word, maxAttempts, timed) {
+  const sql = `INSERT INTO games (id, word, max_attempts, timed) VALUES(UUID_TO_BIN(?), ?, ?, ?)`;
+  const response = await database.query(sql, [id, word, maxAttempts, timed]);
   return response !== null ? get(id) : null;
 }
 
@@ -27,8 +27,8 @@ async function save(game, updateEndTime = false) {
   sql += `WHERE id = UUID_TO_BIN(?)`;
 
   var values = updateEndTime
-    ? [game.state, game.endTime, game.uuid]
-    : [game.state, game.uuid];
+    ? [game.state, game.endTime, game.id]
+    : [game.state, game.id];
   await database.query(sql, values);
 }
 
@@ -44,7 +44,7 @@ async function get(id, includeAttempts = true) {
   try {
     var game = new Game().fromJson(response[0][0]);
     if (includeAttempts) {
-      var attempts = await attemptRepository.getAttempts(game.uuid);
+      var attempts = await attemptRepository.getAttempts(game.id);
       if (attempts != null)
         game.attempts = attempts.map((attempt) => attempt.attempted_word);
     }
