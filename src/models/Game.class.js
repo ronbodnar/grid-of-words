@@ -23,6 +23,7 @@ export class Game {
   }
 
   fromJson(json) {
+    if (json === undefined) return null;
     this.id = json.id;
     this.word = json.word;
     this.state = json.state;

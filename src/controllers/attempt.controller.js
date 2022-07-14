@@ -1,6 +1,5 @@
-import * as gameRepository from "../repository/game.repository.js";
-import * as wordRepository from "../repository/word.repository.js";
-import * as attemptRepository from "../repository/attempt.repository.js";
+import { getAttemptsForGameId, insertAttempt } from "../repository/attempt.repository.js";
+import { wordExists } from "../repository/word.repository.js";
 
 /*
  * Endpoint: GET /game/{id}/attempts
@@ -14,7 +13,7 @@ async function getAttempts(req, res) {
       error: "No id parameter provided.",
     });
   }
-  const attempts = await attemptRepository.getAttempts(req.params.id);
+  const attempts = await getAttemptsForGameId(req.params.id);
   return res.json(attempts);
 }
 
@@ -25,7 +24,7 @@ async function getAttempts(req, res) {
  */
 
 // This shouldn't all be in here
-async function attempt(req, res) {
+async function addAttempt(req, res) {
   const word = req.body.word;
   const gameId = req.params.id;
   const hideWord = req.query.hideWord != null && req.query.hideWord === "true";
@@ -37,7 +36,7 @@ async function attempt(req, res) {
   }
 
   // Grab the game record from the database.
-  const game = await gameRepository.get(gameId);
+  const game = await getGameById(gameId);
   if (game == null) {
     return res.json({
       type: "error",
@@ -62,7 +61,7 @@ async function attempt(req, res) {
   }
 
   // Validate the word exists and length matches (doesn't count as an attempt)
-  var validWord = await wordRepository.exists(word);
+  var validWord = await wordExists(word);
   if (!validWord) {
     return res.json({
       type: "error",
@@ -78,7 +77,7 @@ async function attempt(req, res) {
   }
 
   game.attempts.push(word); // this is for the return when the game ends
-  if (!(await attemptRepository.addAttempt(gameId, word))) {
+  if (!(await insertAttempt(gameId, word))) {
     return res.json({
       type: "error",
       message: "ADD_ATTEMPT_REPOSITORY_ERROR",
@@ -95,7 +94,7 @@ async function attempt(req, res) {
   }
 
   // Save the game to the database.
-  gameRepository.save(game);
+  saveGame(game);
 
   // This is for playing via API calls, it's safe since we just saved to the database.
   if (hideWord) game.word = undefined;
@@ -110,4 +109,4 @@ async function attempt(req, res) {
   });
 }
 
-export { attempt, getAttempts };
+export { addAttempt, getAttempts };

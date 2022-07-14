@@ -1,5 +1,5 @@
 import { Word } from "../models/Word.class.js";
-import * as database from "../services/database.service.js";
+import query from "../services/database.service.js";
 
 /*
  * Selects a random word with the specified length from the database.
@@ -7,9 +7,9 @@ import * as database from "../services/database.service.js";
  * @param {number} length - The length of the word to be found.
  * @return {Word} word - An instance of the Word.
  */
-async function getRandomWord(length) {
+async function getWordOfLength(length) {
   var sql = `SELECT * FROM words WHERE CHAR_LENGTH(word) = ? ORDER BY RAND() LIMIT 1`;
-  const data = await database.query(sql, [length]);
+  const data = await query(sql, [length]);
   if (data == null) return null;
   const word = new Word(data[0][0].id, data[0][0].word);
   return word;
@@ -21,9 +21,9 @@ async function getRandomWord(length) {
  * @param {string} word - The word to search for.
  * @return {boolean}
  */
-async function exists(word) {
+async function wordExists(word) {
   var sql = `SELECT COUNT(*) AS count FROM words WHERE word = ?`;
-  const response = await database.query(sql, [word]);
+  const response = await query(sql, [word]);
   try {
     return response[0][0].count > 0;
   } catch (error) {
@@ -33,4 +33,4 @@ async function exists(word) {
   }
 }
 
-export { exists, getRandomWord };
+export { wordExists, getWordOfLength };
