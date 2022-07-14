@@ -1,10 +1,20 @@
 <%- include('../partials/header.ejs') %>
 
-<div class="header">Wordle+</div>
-<div class="button-container">
-  <button class="" type="button" disabled>How to Play</button>
-  <button class="" type="button" id="quickGame">Quick Game</button>
-  <button class="" type="button" disabled>Custom Game</button>
+<div class="container" id="home-container">
+  <div class="header" style="width: 100%;">Wordle+</div>
+  <div class="button-container">
+    <button class="" type="button" disabled>How to Play</button>
+    <button class="" type="button" id="quickGame">Quick Game</button>
+    <button class="" type="button" disabled>Custom Game</button>
+  </div>
 </div>
+
+<div class="container hidden" id="game-container">
+  hey
+</div>
+
+<% if (game) { %>
+  <%- include('game/index.ejs') %>
+<% } %>
 
 <%- include('../partials/footer.ejs') %>

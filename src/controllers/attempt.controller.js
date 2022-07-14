@@ -14,7 +14,7 @@ async function getAttempts(req, res) {
     });
   }
   const attempts = await getAttemptsForGameId(req.params.id);
-  return res.json(attempts);
+  res.json(attempts);
 }
 
 /*
@@ -102,7 +102,7 @@ async function addAttempt(req, res) {
   var message = finalAttempt ? "LOSER" : "WRONG_WORD";
   if (correctWord) message = "WINNER";
 
-  return res.json({
+  res.json({
     type: "info",
     message: message,
     gameData: game,

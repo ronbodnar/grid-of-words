@@ -1,0 +1,52 @@
+body {
+  margin: 1em;
+  width: calc(100dvw - 2em);
+  height: calc(100dvh - 2em);
+}
+
+.hidden {
+    display: none !important;
+}
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+}
+
+.board {
+  display: flex;
+  flex-wrap: wrap;
+  border: 5px solid red;
+  background-color: green;
+  padding: 1em;
+}
+
+.square {
+  position: relative;
+  width: 75px;
+  height: 75px;
+  background-color: blue;
+  border: 1px solid white;
+}
+
+.square-value {
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  text-align: center;
+  font-size: 3em;
+  font-weight: bold;
+  color: white;
+  line-height: 1.5em;
+}
+
+.word-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}

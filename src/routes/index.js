@@ -13,16 +13,17 @@ router.use("/word", wordRoutes);
 // Add the game and attempt/guess routes to the router.
 router.use("/game", gameRoutes, attemptRoutes);
 
-
 // Default route entry point
 router.get("/", async function (req, res) {
+  var game = undefined;
   if (req.session.gameId) {
-    const game = await getGameById(req.session.gameId);
+    game = await getGameById(req.session.gameId);
     console.log(game);
-    res.render("pages/game");
-    return;
   }
-  res.render("pages/index");
+  res.render("pages/index", {
+    title: "Wordle+",
+    game: game,
+  });
 });
 
 export default router;
