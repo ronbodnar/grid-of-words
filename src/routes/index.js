@@ -4,6 +4,7 @@ import wordRoutes from "./word.route.js";
 import gameRoutes from "./game.route.js";
 import attemptRoutes from "./attempt.route.js";
 import { getGameById } from "../repository/game.repository.js";
+import ejs from "ejs";
 
 const router = express.Router();
 
@@ -18,8 +19,8 @@ router.get("/", async function (req, res) {
   var game = undefined;
   if (req.session.gameId) {
     game = await getGameById(req.session.gameId);
-    console.log(game);
   }
+  console.log(game);
   res.render("pages/index", {
     title: "Wordle+",
     game: game,

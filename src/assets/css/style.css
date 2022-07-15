@@ -1,11 +1,27 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
   margin: 1em;
   width: calc(100dvw - 2em);
   height: calc(100dvh - 2em);
+  background-color: #0d1117;
+  color: #f4f3f2;
 }
 
 .hidden {
-    display: none !important;
+  display: none !important;
+}
+
+.message {
+  font-size: 2em;
+  color: #f4f3f2;
+  min-height: 50px;
+  width: 50%;
+  margin: 0 auto;
 }
 
 .container {
@@ -18,20 +34,46 @@ body {
   height: 100%;
 }
 
-.board {
-  display: flex;
-  flex-wrap: wrap;
-  border: 5px solid red;
-  background-color: green;
+#game-container {
+  justify-content: start;
+  flex-direction: column;
+  padding-top: 5em;
+  transition: all 0.3s ease-in-out;
+}
+
+.button {
+  border: 1px solid rgba(0, 163, 108, 0.6);
+  border-radius: 8px;
+  background-color: rgba(0, 163, 108, 0.4);
+  color: #f4f3f2;
   padding: 1em;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.button:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.button:not(:disabled):hover {
+  opacity: 0.7;
+}
+
+.header {
+  font-size: 2em;
+}
+
+.board {
+  border: 1px solid rgba(244, 243, 242, 0.2);
 }
 
 .square {
   position: relative;
   width: 75px;
   height: 75px;
-  background-color: blue;
-  border: 1px solid white;
+  background-color: transparent;
+  border: 1px solid rgba(244, 243, 242, 0.2);
 }
 
 .square-value {
@@ -41,7 +83,8 @@ body {
   text-align: center;
   font-size: 3em;
   font-weight: bold;
-  color: white;
+  color: rgba(0, 163, 108, 0.6);
+  color: rgba(244, 243, 242, 0.6);
   line-height: 1.5em;
 }
 
