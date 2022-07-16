@@ -52,10 +52,12 @@ function updateCurrentAttemptSquares(word) {
 function updateSquareBackground(square, valid) {
   if (valid === true) {
     // Character is in the correct position
-    square.style.backgroundColor = 'rgba(0, 163, 108, 0.2)';
+    square.style.backgroundColor = 'rgba(0, 163, 108, 0.6)';
+    square.children[0].style.color = '#0d1117';
   } else if (valid === false) {
     // Character is not in the correct position
-    square.style.backgroundColor = 'rgba(255, 165, 0, 0.4)';
+    square.style.backgroundColor = 'rgba(255, 165, 0, 0.6)';
+    square.children[0].style.color = '#0d1117';
   } else {
     // Character is not in the word
     square.style.opacity = 0.3;

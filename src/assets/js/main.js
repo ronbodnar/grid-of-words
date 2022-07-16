@@ -1,7 +1,6 @@
 import { retrieve } from "./services/storage.service.js";
 import { renderGameContainer } from "./components/game-container.js";
 import { initialize as initializeEventListeners} from "./event-listeners.js";
-import { showContainerView } from "./utils/helpers.js";
 
 // Initialize the listeners for key and button events.
 initializeEventListeners();
