@@ -1,11 +1,11 @@
-import { getGameBoard } from "./board/board.js";
-import { getOnScreenKeyboard } from "./on-screen-keyboard.js";
+import { getGameBoard } from "./board/gameboard.js";
+import { getOnScreenKeyboard } from "./keyboard/on-screen-keyboard.js";
 
 /*
  * Renders the game container based on the provided game.
  * @param {Game} game - The game to render.
  */
-function renderGameContainer(game) {
+function buildGameContainer(game) {
   console.log('Rendering Game Container for game: ', game);
   if (game == null) return;
 
@@ -27,4 +27,4 @@ function renderGameContainer(game) {
   container.appendChild(keyboard);
 }
 
-export { renderGameContainer };
+export { buildGameContainer };

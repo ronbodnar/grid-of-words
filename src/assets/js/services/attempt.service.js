@@ -1,8 +1,9 @@
-import { shiftActiveRow } from "../components/board/board.js";
+import { shiftActiveRow } from "../components/board/gameboard.js";
 import { setBlockKeyEvents } from "../event-listeners.js";
 import { remove, store } from "./storage.service.js";
 import { updateCurrentAttemptSquares } from "../components/board/square.js";
 import { showContainerView } from "../utils/helpers.js";
+import { updateKeyboardKeys } from "../components/keyboard/key.js";
 
 var attemptLetters = [];
 
@@ -10,6 +11,7 @@ var attemptLetters = [];
  * Attempts to solve the puzzle by querying the API and updating the game container accordingly.
  */
 const attempt = async (game) => {
+  console.log("attempt");
   var data = await getAttemptResponse(game);
 
   // Update the localStorage game
@@ -39,6 +41,7 @@ const attempt = async (game) => {
 
         // Display the letter position validations
         updateCurrentAttemptSquares(game.word);
+        updateKeyboardKeys(game.word, attemptLetters);
 
         // Move active squares down
         shiftActiveRow();
@@ -58,10 +61,10 @@ const attempt = async (game) => {
         setBlockKeyEvents(true);
         updateCurrentAttemptSquares(game.word);
         setBlockKeyEvents(false);
+        attemptLetters = [];
 
         setTimeout(() => {
           showContainerView('home');
-          console.log("Showing home");
         }, 5000);
 
         // Display stats and change container view
@@ -72,14 +75,7 @@ const attempt = async (game) => {
   console.log("Attempt response: ", data);
   console.log("Message:", message);
 
-  // Update the message div with the response message
-  var messageDiv = document.querySelector(".message");
-  if (messageDiv && message) messageDiv.innerHTML = message;
-
-  // Add the timeout to hide the message after 5 seconds.
-  setTimeout(() => {
-    messageDiv.innerHTML = "";
-  }, 5000);
+  updateMessageDiv(message);
 };
 
 /*
@@ -103,10 +99,23 @@ const getAttemptResponse = async (game) => {
 };
 
 /*
- * Returns the stack of characters in the current attempt word.
+ * Returns the stack of letters in the current attempt word.
  */
 const getAttemptLetters = () => {
   return attemptLetters;
 };
+
+var messageTimeout = undefined;
+
+const updateMessageDiv = (message) => {
+  // Update the message div with the response message
+  var messageDiv = document.querySelector(".message");
+  if (messageDiv && message) messageDiv.textContent = message;
+
+  // Add the timeout to hide the message after 5 seconds.
+  messageTimeout = setTimeout(() => {
+    messageDiv.textContent = "";
+  }, 5000);
+}
 
 export { attempt, getAttemptLetters };

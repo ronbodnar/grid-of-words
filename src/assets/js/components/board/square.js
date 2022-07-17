@@ -1,9 +1,10 @@
-import { getValidatedCharacters } from "../../utils/helpers.js";
-import { getAttemptLetters } from "../../services/attempt.service.js";
+import { retrieve } from "../../services/storage.service.js";
+import { getValidatedLetters } from "../../utils/helpers.js";
+import { attempt, getAttemptLetters } from "../../services/attempt.service.js";
 
 /*
- * The individual square that houses a single character in the word grid.
- * @param {boolean} active - Whether the character is "typeable" or part of the current attempt's row.
+ * The individual square that houses a single letter in the word grid.
+ * @param {boolean} active - Whether the letter is "typeable" or part of the current attempt's row.
  */
 function generatedSquare(active) {
   var square = document.createElement("div");
@@ -26,7 +27,7 @@ function generatedSquare(active) {
  * @param {string} word - The current word being guessed.
  */
 function updateCurrentAttemptSquares(word) {
-  const validatedPositions = getValidatedCharacters(
+  const validatedPositions = getValidatedLetters(
     getAttemptLetters().join(""),
     word
   );
@@ -47,21 +48,57 @@ function updateCurrentAttemptSquares(word) {
 /*
  * Updates the background color of a square based on its validation status.
  * @param {HTMLElement} square - The square element to update.
- * @param {boolean} valid - Whether the character is in the correct position.
+ * @param {boolean} valid - Whether the letter is in the correct position.
  */
 function updateSquareBackground(square, valid) {
   if (valid === true) {
-    // Character is in the correct position
-    square.style.backgroundColor = 'rgba(0, 163, 108, 0.6)';
-    square.children[0].style.color = '#0d1117';
+    // Letter is in the correct position
+    square.style.backgroundColor = "rgba(0, 163, 108, 0.6)";
+    //square.children[0].style.color = "#0d1117";
   } else if (valid === false) {
-    // Character is not in the correct position
-    square.style.backgroundColor = 'rgba(255, 165, 0, 0.6)';
-    square.children[0].style.color = '#0d1117';
+    // Letter is not in the correct position
+    square.style.backgroundColor = "rgba(255, 165, 0, 0.6)";
+    //square.children[0].style.color = "#0d1117";
   } else {
-    // Character is not in the word
+    // Letter is not in the word
     square.style.opacity = 0.3;
   }
 }
 
-export { generatedSquare, updateSquareBackground, updateCurrentAttemptSquares };
+function fillNextSquare(key) {
+  // Block any key that isnt an alpha character
+  if (/[^a-zA-Z]/.test(key)) {
+    console.log("Invalid key:", key);
+    return;
+  }
+
+  // Find all available squares (active is set by the server)
+  var squares = document.querySelectorAll(".square:is(.active):not(.full)");
+
+  // Ensure there's a square available, update the square properties, and add it to our stack of letters.
+  if (squares[0]) {
+    squares[0].classList.add("full");
+    squares[0].children[0].textContent = key.toUpperCase();
+    getAttemptLetters().push(key);
+  }
+}
+
+function removeLastSquareValue() {
+  // Find all full squares (active is set by the server)
+  var squares = document.querySelectorAll(".square:is(.active):is(.full)");
+
+  // If there are letters, adjust the square properties and pop the letter off the stack of letters.
+  if (getAttemptLetters().length > 0) {
+    squares[getAttemptLetters().length - 1].classList.remove("full");
+    squares[getAttemptLetters().length - 1].children[0].textContent = "";
+    getAttemptLetters().pop();
+  }
+}
+
+export {
+  fillNextSquare,
+  generatedSquare,
+  removeLastSquareValue,
+  updateSquareBackground,
+  updateCurrentAttemptSquares,
+};

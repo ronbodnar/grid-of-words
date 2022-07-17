@@ -1,4 +1,4 @@
-import { getKeyboardKey, initializeKeyboardKeys } from "./key.js";
+import { getIncorrectLetters, getKeyboardKey, initializeKeyboardKeys } from "./key.js";
 
 /*
  * Gets the rendered keyboard element.
@@ -8,13 +8,10 @@ const getOnScreenKeyboard = (game) => {
   var rows = [
     ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
     ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
-    ["z", "x", "c", "v", "b", "n", "m"],
+    ["enter", "z", "x", "c", "v", "b", "n", "m", "delete"],
   ];
 
-  initializeKeyboardKeys();
-
-  // Find incorrect keys
-  var invalidCharacters = findIncorrectCharacters(game);
+  initializeKeyboardKeys(game);
 
   var keyboard = document.createElement("div");
   keyboard.classList.add("keyboard");
@@ -24,11 +21,7 @@ const getOnScreenKeyboard = (game) => {
     row.classList.add("keyboard-row");
 
     for (var j = 0; j < rows[i].length; j++) {
-      console.log(invalidCharacters.includes(row[i][j]));
-      var key = getKeyboardKey(
-        rows[i][j],
-        invalidCharacters.includes(row[i][j])
-      );
+      var key = getKeyboardKey(rows[i][j]);
 
       row.appendChild(key);
     }

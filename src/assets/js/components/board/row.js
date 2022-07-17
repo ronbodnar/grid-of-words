@@ -1,5 +1,5 @@
 import { generatedSquare, updateSquareBackground } from "./square.js";
-import { getValidatedCharacters } from "../../utils/helpers.js";
+import { getValidatedLetters } from "../../utils/helpers.js";
 
 /*
  * Generates a row of squares of the word length for the game.
@@ -16,9 +16,9 @@ function generatedRow(game, index) {
     const active = index === game.attempts.length;
     const square = generatedSquare(active);
     if (index < game.attempts.length) {
-      square.children[0].innerHTML = game.attempts[index].at(j).toUpperCase();
+      square.children[0].textContent = game.attempts[index].at(j).toUpperCase();
 
-      const validatedPositions = getValidatedCharacters(
+      const validatedPositions = getValidatedLetters(
         game.attempts[index],
         game.word
       );
