@@ -14,31 +14,76 @@ body {
 
 .hidden {
   display: none !important;
+  transition: visibility 0s 2s, opacity 2s linear;
+  opacity: 0;
 }
 
 .message {
   font-size: 2em;
   color: #f4f3f2;
-  min-height: 50px;
+  height: 40px;
   width: 50%;
   margin: 0 auto;
 }
 
 .container {
+  width: 60%;
+  height: 100%;
+  margin: 0 auto;
+}
+
+.content {
+  width: 100%;
+
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
+  justify-content: space-evenly;
+
   text-align: center;
-  width: 100%;
-  height: 100%;
 }
 
 #game-container {
   justify-content: start;
   flex-direction: column;
-  padding-top: 5em;
   transition: all 0.3s ease-in-out;
+}
+
+.stats-container {
+  display: flex;
+  flex-wrap: wrap;
+  width: 80%;
+  margin: 0 auto;
+  padding: 1em;
+  margin: 1em;
+  border: 1px solid rgba(244, 243, 242, 0.4);
+}
+
+.stats-row {
+  width: 100%;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stats-row-1 {
+  width: 33%;
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-label {
+  font-size: 1.1rem;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+}
+
+.button-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
 }
 
 .button {
@@ -65,31 +110,108 @@ body {
 }
 
 .board {
-  border: 1px solid rgba(244, 243, 242, 0.2);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .square {
-  position: relative;
-  width: 75px;
-  height: 75px;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: transparent;
   border: 1px solid rgba(244, 243, 242, 0.2);
 }
 
 .square-value {
-  width: 100%;
-  height: 100%;
-  margin: 0 auto;
-  text-align: center;
-  font-size: 3em;
+  font-size: 2em;
   font-weight: bold;
   color: rgba(0, 163, 108, 0.6);
   color: rgba(244, 243, 242, 0.6);
-  line-height: 1.5em;
 }
 
 .word-row {
-  display: flex;
-  justify-content: space-between;
   width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 0.25em;
+  margin: 0 auto;
+  margin-bottom: 0.5em;
+}
+
+.keyboard-row {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+
+.keyboard-row:not(:last-child) {
+  margin-bottom: 5px;
+}
+
+.keyboard-key {
+  font-size: 1.5rem;
+  line-height: 1.5em;
+  width: 25px;
+  background-color: #F4F3F2;
+  border-radius: 5px;
+  color: #0D1117;
+}
+
+.keyboard-key.incorrect {
+  opacity: 0.4;
+}
+
+.keyboard-key.pressed {
+  background-color: #3a3a3a;
+}
+
+.loader {
+  position: relative;
+  width: 100px;
+  height: 16px;
+}
+.loader:before,
+.loader:after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 32px 0 #fff;
+  left: 0;
+  top: 0;
+  animation: ballMoveX 0.7s linear infinite;
+}
+.loader:after {
+  box-shadow: none;
+  transform-origin: 40px 0;
+  transform: rotate(-153deg);
+  background: rgba(0, 163, 108, 0.6);
+  animation: rotateLoader 0.7s linear infinite;
+  animation-delay: 0.05s;
+}
+
+@keyframes rotateLoader {
+  0%,
+  10% {
+    transform: rotate(-153deg);
+  }
+  90%,
+  100% {
+    transform: rotate(0deg);
+  }
+}
+@keyframes ballMoveX {
+  0%,
+  10% {
+    transform: translateX(0);
+  }
+  90%,
+  100% {
+    transform: translateX(32px);
+  }
 }

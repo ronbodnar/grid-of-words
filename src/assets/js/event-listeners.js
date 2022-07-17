@@ -33,6 +33,7 @@ const addKeyListeners = () => {
     var squares = document.querySelectorAll(".square:is(.active):not(.full)");
 
     // Enter should be blocked, but if there are no squares available (word is complete), let the server know.
+    // TODO: debouncing
     if (key === "Enter") {
       if (!squares[0]) {
         const game = retrieve("game").data;

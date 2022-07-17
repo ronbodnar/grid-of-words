@@ -13,7 +13,7 @@ function generatedSquare(active) {
   if (active) square.classList.add("active");
 
   // Add the value within the square
-  var value = document.createElement("p");
+  var value = document.createElement("span");
   value.classList.add("square-value");
 
   square.appendChild(value);

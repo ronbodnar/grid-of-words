@@ -2,6 +2,7 @@ import { shiftActiveRow } from "../components/board/board.js";
 import { setBlockKeyEvents } from "../event-listeners.js";
 import { remove, store } from "./storage.service.js";
 import { updateCurrentAttemptSquares } from "../components/board/square.js";
+import { showContainerView } from "../utils/helpers.js";
 
 var attemptLetters = [];
 
@@ -57,6 +58,11 @@ const attempt = async (game) => {
         setBlockKeyEvents(true);
         updateCurrentAttemptSquares(game.word);
         setBlockKeyEvents(false);
+
+        setTimeout(() => {
+          showContainerView('home');
+          console.log("Showing home");
+        }, 5000);
 
         // Display stats and change container view
         break;

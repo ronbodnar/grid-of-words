@@ -29,13 +29,13 @@ function getValidatedCharacters(guessWord, gameWord) {
 
 function showContainerView(name, game = undefined) {
   const currentView = document.querySelector(
-    '[id$="-container"]:has(:not(.hidden))'
+    '[id$="-container"]:not(.hidden)'
   );
   currentView.classList.add("hidden");
 
   const newView = document.querySelector(`#${name}-container`);
   newView.classList.remove("hidden");
-
+  
   if (name === "game") {
     if (game) {
       renderGameContainer(game);
