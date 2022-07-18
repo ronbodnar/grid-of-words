@@ -7,15 +7,17 @@ import { getValidatedLetters } from "../../utils/helpers.js";
  * @param {index} index - The row's index on the board.
  * @returns {HTMLDivElement} - The generated row with all squares.
  */
-function generatedRow(game, index) {
+function generatedRow(index, cols, game) {
   const row = document.createElement("div");
   row.classList.add("word-row");
 
   // Add squares equal to the length of the word in the row
-  for (var j = 0; j < game.word.length; j++) {
-    const active = index === game.attempts.length;
+  for (var j = 0; j < cols; j++) {
+    const active = index === (game?.attempts?.length || 0);
     const square = generatedSquare(active);
-    if (index < game.attempts.length) {
+
+    // Update the square background if the letter is not in the word
+    if (game && index < game.attempts.length) {
       square.children[0].textContent = game.attempts[index].at(j).toUpperCase();
 
       const validatedPositions = getValidatedLetters(

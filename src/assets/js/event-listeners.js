@@ -6,6 +6,7 @@ import { startGame } from "./services/game.service.js";
 import { retrieve } from "./services/storage.service.js";
 import { attempt, getAttemptLetters } from "./services/attempt.service.js";
 import { getCurrentViewName } from "./utils/helpers.js";
+import { DEFAULT_MAX_ATTEMPTS, DEFAULT_WORD_LENGTH } from "./constants.js";
 
 var isKeyPressed = false;
 var blockKeyEvents = false;
@@ -16,7 +17,14 @@ var blockKeyEvents = false;
 const addButtonListeners = () => {
   const startGameButton = document.querySelector("#quickGame");
   if (startGameButton) {
-    startGameButton.addEventListener("click", startGame);
+    startGameButton.addEventListener("click", () => {
+      return startGame({
+        wordLength: DEFAULT_WORD_LENGTH,
+        maxAttempts: DEFAULT_MAX_ATTEMPTS,
+        timed: false,
+        language: "enUS",
+      });
+    });
   }
 };
 
@@ -37,7 +45,12 @@ const addKeyListeners = () => {
     // TODO: debouncing
     if (key === "Enter") {
       if (getCurrentViewName() === "home") {
-        startGame();
+        startGame({
+          wordLength: DEFAULT_WORD_LENGTH,
+          maxAttempts: DEFAULT_MAX_ATTEMPTS,
+          timed: false,
+          language: "enUS",
+        });
         return;
       }
       const game = retrieve("game")?.data;

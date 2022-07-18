@@ -1,18 +1,24 @@
 import { store } from "./storage.service.js";
 import { showContainerView } from "../utils/helpers.js";
+import { DEFAULT_WORD_LENGTH } from "../constants.js";
 
 /*
  * Begins a new game by querying the API for a new game object, then swaps the container view to show the game container.
  */
-const startGame = async () => {
+const startGame = async (options) => {
   console.log("Starting game...");
 
   // Show the loading view
-  showContainerView("loading");
+  showContainerView("game", {
+    wordLength: options.wordLength || DEFAULT_WORD_LENGTH,
+    maxAttempts: options.maxAttempts || DEFAULT_MAX_ATTEMPTS,
+    timed: options.timed || false,
+  });
+
   var params = new URLSearchParams({
-    timed: false,
-    wordLength: 5,
-    maxAttempts: 6,
+    timed: options.timed || false,
+    wordLength: options.wordLength || DEFAULT_WORD_LENGTH,
+    maxAttempts: options.maxAttempts || DEFAULT_MAX_ATTEMPTS,
     render: true,
   });
   try {
@@ -30,7 +36,9 @@ const startGame = async () => {
     // Add the game to localStorage
     store("game", gameData);
 
-    showContainerView("game", gameData);
+    console.log("gamedata response", gameData);
+
+    //showContainerView("game", gameData);
   } catch (error) {
     console.error(error);
   }

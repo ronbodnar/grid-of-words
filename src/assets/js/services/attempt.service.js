@@ -55,7 +55,11 @@ const attempt = async (game) => {
       case "LOSER":
         remove("game");
 
-        message = data.message;
+        if (data.message === "LOSER") {
+          message = data.gameData.word.toUpperCase();
+        } else {
+          message = data.message;
+        }
 
         // Block events while updating the current attempt results
         setBlockKeyEvents(true);
@@ -112,6 +116,9 @@ const updateMessageDiv = (message) => {
   var messageDiv = document.querySelector(".message");
   if (messageDiv && message) messageDiv.textContent = message;
 
+  if (messageTimeout)
+    clearTimeout(messageTimeout);
+  
   // Add the timeout to hide the message after 5 seconds.
   messageTimeout = setTimeout(() => {
     messageDiv.textContent = "";

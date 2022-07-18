@@ -5,16 +5,14 @@ import { generatedRow } from "./row.js";
  * @param {Game} game - The game for building the grid board.
  * @returns {HTMLDivElement} - The board div element with all children.
  */
-function getGameBoard(game) {
-  if (!game) return null;
-
+function getGameBoard(rows, cols, game) {
   // Create the board element
   const board = document.createElement("div");
   board.classList.add("board");
 
   // Iteratively add rows equal to the number of max attempts
-  for (var i = 0; i < game.maxAttempts; i++) {
-    const row = generatedRow(game, i);
+  for (var i = 0; i < rows; i++) {
+    const row = generatedRow(i, cols, game);
 
     board.appendChild(row);
   }

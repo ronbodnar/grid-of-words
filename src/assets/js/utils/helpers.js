@@ -27,30 +27,37 @@ function getValidatedLetters(guessWord, gameWord) {
   return results;
 }
 
-function showContainerView(name, game = undefined) {
-  const currentView = document.querySelector(
-    '[id$="-container"]:not(.hidden)'
-  );
+function showContainerView(name, options) {
+  const currentView = document.querySelector('[id$="-container"]:not(.hidden)');
   currentView.classList.add("hidden");
 
   const newView = document.querySelector(`#${name}-container`);
   newView.classList.remove("hidden");
-  
+
+  console.log("Name", name);
   if (name === "game") {
-    if (game) {
-      buildGameContainer(game);
-    } else {
-      console.error("no game found");
-      // TODO: error handling
+    console.log(options);
+    if (options.game) {
+      buildGameContainer({
+        game: game,
+      });
+    } else if (
+      options.wordLength != null &&
+      options.maxAttempts != null &&
+      options.timed != null
+    ) {
+      buildGameContainer({
+        wordLength: options.wordLength,
+        maxAttempts: options.maxAttempts,
+        timed: options.timed,
+      });
     }
   }
 }
 
 function getCurrentViewName() {
-  const currentView = document.querySelector(
-    '[id$="-container"]:not(.hidden)'
-  );
-  return currentView.id.split('-')[0];
+  const currentView = document.querySelector('[id$="-container"]:not(.hidden)');
+  return currentView.id.split("-")[0];
 }
 
 export { getValidatedLetters, showContainerView, getCurrentViewName };
