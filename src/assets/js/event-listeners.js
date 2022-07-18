@@ -2,7 +2,7 @@ import {
   fillNextSquare,
   removeLastSquareValue,
 } from "./components/board/square.js";
-import { startGame } from "./services/game.service.js";
+import { forfeitGame, startGame } from "./services/game.service.js";
 import { retrieve } from "./services/storage.service.js";
 import { attempt, getAttemptLetters } from "./services/attempt.service.js";
 import { getCurrentViewName } from "./utils/helpers.js";
@@ -15,7 +15,7 @@ var blockKeyEvents = false;
  * Bootstraps the button event listeners
  */
 const addButtonListeners = () => {
-  const startGameButton = document.querySelector("#quickGame");
+  const startGameButton = document.querySelector("#quick-game");
   if (startGameButton) {
     startGameButton.addEventListener("click", () => {
       return startGame({

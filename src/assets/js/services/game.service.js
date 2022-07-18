@@ -1,4 +1,4 @@
-import { store } from "./storage.service.js";
+import { remove, retrieve, store } from "./storage.service.js";
 import { showContainerView } from "../utils/helpers.js";
 import { DEFAULT_WORD_LENGTH } from "../constants.js";
 
@@ -22,13 +22,7 @@ const startGame = async (options) => {
     render: true,
   });
   try {
-    var response = await fetch(`/game/new?${params.toString()}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const gameData = await response.json();
+    const gameData = await fetchNewGame(params);
 
     //TODO: error handler
     if (!gameData) throw new Error("Make an error handler");
@@ -44,4 +38,31 @@ const startGame = async (options) => {
   }
 };
 
-export { startGame };
+const forfeitGame = () => {
+  const game = retrieve('game');
+  console.log("Forfeiting game...", game);
+  remove('game');
+  showContainerView("home");
+}
+
+const fetchNewGame = async (params) => {
+  var response = await fetch(`/game/new?${params.toString()}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return await response.json();
+};
+
+const fetchGameData = async (id) => {
+  var response = await fetch(`/game/${id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return await response.json();
+};
+
+export { startGame, forfeitGame, fetchGameData };

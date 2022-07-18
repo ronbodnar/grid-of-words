@@ -13,7 +13,7 @@ app.use(
   cookieSession({
     name: "session",
     secret: "cookie secret",
-    maxAge: 5000//24 * 60 * 60 * 1000, // 24 hours
+    maxAge: 50000//24 * 60 * 60 * 1000, // 24 hours
   })
 );
 

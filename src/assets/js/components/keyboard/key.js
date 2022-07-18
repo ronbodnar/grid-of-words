@@ -17,8 +17,7 @@ const initializeKeyboardKeys = (game) => {
 
   var deleteKey = buildKeyElement("delete", false);
   deleteKey.classList.add("delete-key");
-  deleteKey.style.paddingTop = '13px';
-  deleteKey.innerHTML = '<i class="bi bi-backspace"></i>';
+  deleteKey.innerHTML = '<span class="material-symbols-outlined">backspace</span>';
   keyboardKeys["delete"] = deleteKey;
 
   // Add a-z keys

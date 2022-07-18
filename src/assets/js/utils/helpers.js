@@ -28,18 +28,13 @@ function getValidatedLetters(guessWord, gameWord) {
 }
 
 function showContainerView(name, options) {
-  const currentView = document.querySelector('[id$="-container"]:not(.hidden)');
-  currentView.classList.add("hidden");
-
-  const newView = document.querySelector(`#${name}-container`);
-  newView.classList.remove("hidden");
-
   console.log("Name", name);
+  
+  // Build the game container if necessary before switching the container view
   if (name === "game") {
-    console.log(options);
     if (options.game) {
       buildGameContainer({
-        game: game,
+        game: options.game,
       });
     } else if (
       options.wordLength != null &&
@@ -53,6 +48,12 @@ function showContainerView(name, options) {
       });
     }
   }
+
+  const currentView = document.querySelector('[id$="-container"]:not(.hidden)');
+  if (currentView) currentView.classList.add("hidden");
+
+  const newView = document.querySelector(`#${name}-container`);
+  newView.classList.remove("hidden");
 }
 
 function getCurrentViewName() {

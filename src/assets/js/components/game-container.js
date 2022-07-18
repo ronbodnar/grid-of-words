@@ -1,5 +1,6 @@
 import { getGameBoard } from "./board/gameboard.js";
 import { getOnScreenKeyboard } from "./keyboard/on-screen-keyboard.js";
+import { forfeitGame } from "../services/game.service.js";
 
 /*
  * Renders the game container based on the provided game.
@@ -36,7 +37,15 @@ function buildGameContainer(options) {
 
   const keyboard = getOnScreenKeyboard(options.game);
 
+  var test = document.createElement("div");
+  test.innerHTML = "<button class=\"button forfeit\" type=\"button\" id=\"forfeit-game\">Forfeit</button>";
+  test.addEventListener("click", () => {
+    console.log("Game clicked");
+    forfeitGame();
+  });
+
   // Add the components to the game container
+  container.appendChild(test);
   container.appendChild(message);
   container.appendChild(board);
   container.appendChild(keyboard);
