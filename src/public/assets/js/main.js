@@ -1,5 +1,5 @@
 import { retrieve, store } from "./services/storage.service.js";
-import { buildGameContainer } from "./components/game-container.js";
+import { buildGameContainer } from "./views/game.js";
 import { initialize as initializeEventListeners } from "./event-listeners.js";
 import { showContainerView } from "./utils/helpers.js";
 import { fetchGameData } from "./services/game.service.js";

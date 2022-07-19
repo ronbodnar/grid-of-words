@@ -1,7 +1,7 @@
 {
   "name": "wordle-plus",
   "version": "1.0.0",
-  "description": "A modified version of the game Wordle with configuration for game modes.",
+  "description": "My implementation of Wordle / Lingo in NodeJS and JavaScript with configuration for game modes.",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
