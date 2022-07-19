@@ -17,7 +17,7 @@ router.use("/word", wordRoutes);
 router.use("/game", gameRoutes, attemptRoutes);
 
 // Default route entry point
-router.get("/", async function (req, res) {
+router.use("/", async function (req, res) {
   let game = undefined;
   if (req.session.gameId) {
     game = await getGameById(req.session.gameId);
@@ -31,9 +31,12 @@ router.get("/", async function (req, res) {
   if (game !== undefined)
     data.game = game;
 
-  let htmlContent = fs.readFileSync(path.join(__dirname, '..', 'public', 'indexX.html'));
+  let htmlContent = fs.readFileSync(path.join(__dirname, '..', 'public', 'index.html'));
   htmlContent = htmlContent.toString().replace('INITIAL_SCRIPT', `<script id="initial-data">${JSON.stringify(data)}</script>`);
-  res.send(htmlContent);
+
+  res.send({
+    test: 'hey'
+  });
 });
 
 export default router;

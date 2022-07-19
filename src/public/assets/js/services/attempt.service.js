@@ -2,7 +2,7 @@ import { shiftActiveRow } from "../components/board/gameboard.js";
 import { setBlockKeyEvents } from "../event-listeners.js";
 import { remove, store } from "./storage.service.js";
 import { updateCurrentAttemptSquares } from "../components/board/square.js";
-import { showContainerView } from "../utils/helpers.js";
+import { showView } from "../utils/helpers.js";
 import { updateKeyboardKeys } from "../components/keyboard/key.js";
 
 var attemptLetters = [];
@@ -68,7 +68,7 @@ const attempt = async (game) => {
         attemptLetters = [];
 
         setTimeout(() => {
-          showContainerView('home');
+          showView('home');
         }, 5000);
 
         // Display stats and change container view
