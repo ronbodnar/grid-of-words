@@ -19,6 +19,10 @@ body {
   color: #f4f3f2;
 }
 
+strong {
+  font-size: 20px;
+}
+
 .hidden {
   display: none !important;
   transition: visibility 0s 2s, opacity 2s linear;
@@ -145,6 +149,7 @@ sup {
   cursor: pointer;
   transition: all 0.3s ease-in-out;
   font-size: 42px;
+  vertical-align: middle;
 }
 
 .button.forfeit {

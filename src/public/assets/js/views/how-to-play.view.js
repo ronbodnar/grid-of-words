@@ -4,15 +4,14 @@ import { DEFAULT_WORD_LENGTH, DEFAULT_MAX_ATTEMPTS } from "../constants.js";
 
 const buildHowToPlayView = () => {
   const steps = [
-    "Select or type the letters of a 5<sup>*</sup> letter word, like <em>great</em> or <em>place</em>.",
+    "Select or type the letters of a 5<sup>*</sup> letter word, like <strong>great</strong> or <strong>place</strong>.",
     "Once you have entered a word, press enter to validate your attempt.<br /><small style='font-size: 18px; padding-left: 25px;'>You'll have 6<sup>*</sup> attempts to guess the correct word.</small>",
-    "If the square is dimmed, the letter does not exist in the word.",
-    "If the square is orange, the letter is not in the correct position in the word.",
-    "If the square is green, the letter is in the correct position in the word.",
+    "If the square is <span style='opacity: 0.4; font-weight: 600;'>dimmed</span>, the letter does not exist in the word.",
+    "If the square is <span style='color: rgba(255, 165, 0, 0.6); font-weight: 600;'>orange</span>, the letter is not in the correct position in the word.",
+    "If the square is <span style='color: rgba(0, 163, 108, 0.6); font-weight: 600;'>green</span>, the letter is in the correct position in the word.",
     "Try to guess the correct word before running out of attempts!"
   ];
 
-  console.log("howdy");
   // Build the HTML for the How To Play view.
   const contentContainer = document.querySelector(".content");
   contentContainer.id = "how-to-play";
@@ -35,6 +34,7 @@ const buildHowToPlayView = () => {
     let step = document.createElement("li");
     step.style.margin = "20px 0"
     step.style.fontSize = "20px";
+    console.log(steps[i]);
     step.innerHTML = `${i+1}. ${steps[i]}`;
     stepList.appendChild(step);
   }
@@ -47,7 +47,7 @@ const buildHowToPlayView = () => {
   const howToPlayButton = document.createElement("button");
   howToPlayButton.classList.add("button", "fixed");
   howToPlayButton.type = "button";
-  howToPlayButton.textContent = "Back Home";
+  howToPlayButton.innerHTML = "<span class='material-symbols-outlined' style='font-size: 24px; vertical-align: -6px'>arrow_back</span> Back";
   howToPlayButton.addEventListener("click", () => {
     showView('home');
   });
