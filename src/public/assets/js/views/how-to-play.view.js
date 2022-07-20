@@ -5,11 +5,12 @@ import { DEFAULT_WORD_LENGTH, DEFAULT_MAX_ATTEMPTS } from "../constants.js";
 const buildHowToPlayView = () => {
   const steps = [
     "Select or type the letters of a 5<sup>*</sup> letter word, like <strong>great</strong> or <strong>place</strong>.",
-    "Once you have entered a word, press enter to validate your attempt.<br /><small style='font-size: 18px; padding-left: 25px;'>You'll have 6<sup>*</sup> attempts to guess the correct word.</small>",
-    "If the square is <span style='opacity: 0.4; font-weight: 600;'>dimmed</span>, the letter does not exist in the word.",
-    "If the square is <span style='color: rgba(255, 165, 0, 0.6); font-weight: 600;'>orange</span>, the letter is not in the correct position in the word.",
-    "If the square is <span style='color: rgba(0, 163, 108, 0.6); font-weight: 600;'>green</span>, the letter is in the correct position in the word.",
-    "Try to guess the correct word before running out of attempts!"
+    "Once you have entered a word, press enter to validate your attempt.",
+    "If the square is <span style='font-size: 20px; opacity: 0.3; font-weight: 800;'>dimmed</span>, the letter does not exist in the word.",
+    "If the square is <span style='font-size: 20px; color: rgba(255, 165, 0, 1); font-weight: 800;'>orange</span>, the letter is not in the correct position in the word.",
+    "If the square is <span style='font-size: 20px; color: rgba(0, 163, 108, 1); font-weight: 800;'>green</span>, the letter is in the correct position in the word.",
+    "Try to guess the correct word before your 6<sup>th</sup><sup>*</sup> attempt!",
+    "<small style='font-size: 14px; font-weight: 500; font-style: italic; margin-left: 20px;'>* Default values. Both word length and maximum attempts can be modified in the game options.</small>",
   ];
 
   // Build the HTML for the How To Play view.
@@ -35,7 +36,10 @@ const buildHowToPlayView = () => {
     step.style.margin = "20px 0"
     step.style.fontSize = "20px";
     console.log(steps[i]);
-    step.innerHTML = `${i+1}. ${steps[i]}`;
+    if (i === steps.length - 1)
+      step.innerHTML = `${steps[i]}`;
+    else
+      step.innerHTML = `${i+1}. ${steps[i]}`;
     stepList.appendChild(step);
   }
   stepElement.appendChild(stepList);

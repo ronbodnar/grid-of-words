@@ -1,5 +1,5 @@
 import { getGameBoard } from "../components/board/gameboard.js";
-import { getOnScreenKeyboard } from "../components/keyboard/on-screen-keyboard.js";
+import { buildOnScreenKeyboard } from "../components/keyboard/on-screen-keyboard.js";
 import { forfeitGame } from "../services/game.service.js";
 
 /*
@@ -29,20 +29,30 @@ function buildGameContainer(options) {
     board = getGameBoard(options.maxAttempts, options.wordLength);
   }
 
-  const keyboard = getOnScreenKeyboard(options.game);
+  const keyboard = buildOnScreenKeyboard(options.game);
+
+  const buttonContainer = document.createElement("div");
+  buttonContainer.style.display = "flex";
+  buttonContainer.style.justifyContent = "start";
 
   var forfeitButton = document.createElement("button");
-  forfeitButton.classList.add("button", "fixed", "forfeit");
+  forfeitButton.classList.add("button", "forfeit");
   forfeitButton.id = "forfeit-game";
+  forfeitButton.style.justifySelf = "start";
+  forfeitButton.style.justifyContent = "start";
+  forfeitButton.style.textAlign = "start";
+  forfeitButton.style.width = "auto";
   forfeitButton.type = "button";
-  forfeitButton.textContent = "Forfeit";
+  forfeitButton.innerHTML = "<span class='material-symbols-outlined'>flag</span>";
   forfeitButton.addEventListener("click", () => {
-    forfeitGame();
+    if (window.confirm("Are you sure you want to forfeit the game?"))
+      forfeitGame();
   });
+  buttonContainer.appendChild(forfeitButton);
 
   contentContainer.innerHTML = '';
   // Add the components to the game container
-  contentContainer.appendChild(forfeitButton);
+  contentContainer.appendChild(buttonContainer);
   contentContainer.appendChild(message);
   contentContainer.appendChild(board);
   contentContainer.appendChild(keyboard);
