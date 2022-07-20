@@ -4,6 +4,7 @@ import wordRoutes from "./word.route.js";
 import gameRoutes from "./game.route.js";
 import attemptRoutes from "./attempt.route.js";
 import { __dirname } from "../constants.js";
+import { getGameById } from "../repository/game.repository.js";
 
 const router = express.Router();
 

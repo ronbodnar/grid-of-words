@@ -42,7 +42,7 @@ function updateCurrentAttemptSquares(word) {
   }
 
   for (var i = 0; i < validatedPositions.length; i++) {
-    updateSquareBackground(fullSquares[i], validatedPositions.get(i));
+    updateSquareBackground(fullSquares[i], validatedPositions[i]);
   }
 }
 
@@ -52,17 +52,17 @@ function updateCurrentAttemptSquares(word) {
  * @param {boolean} valid - Whether the letter is in the correct position.
  */
 function updateSquareBackground(square, valid) {
-  if (valid === true) {
+  if (valid === 1) {
     // Letter is in the correct position
     square.style.backgroundColor = "rgba(0, 163, 108, 0.9)";
     //square.children[0].style.color = "#0d1117";
-  } else if (valid === false) {
+  } else if (valid === 2) {
     // Letter is not in the correct position
     square.style.backgroundColor = "rgba(255, 165, 0, 0.9)";
     //square.children[0].style.color = "#0d1117";
-  } else {
+  } else if (valid === 3) {
     // Letter is not in the word
-    square.style.opacity = 0.3;
+    square.style.opacity = 0.5;
   }
 }
 

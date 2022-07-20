@@ -76,11 +76,6 @@ const getKeyboardKey = (char) => {
 const getIncorrectLetters = (gameWord, attemptedWords) => {
   let incorrectLetters = [];
 
-  for (let i = 0; i < attemptedWords.length; i++) {
-    let guessWord = attemptedWords[i];
-    const results = getValidatedLetters(guessWord, gameWord);
-  }
-
   console.log(attemptedWords);
   for (let i = 0; i < attemptedWords.length; i++) {
     let attempt = attemptedWords[i];
