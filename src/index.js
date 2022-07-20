@@ -5,20 +5,20 @@ import fs from "node:fs";
 
 const hostname = process.env.HOSTNAME;
 const port = process.env.PORT;
-var server;
+let server;
 
-/*if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV === "production") {
   const options = {
-    key: fs.readFileSync("./config/private.key"),
-    cert: fs.readFileSync("./config/certificate.crt"),
+    key: fs.readFileSync("/etc/letsencrypt/live/ronbodnar.com/privkey.pem"),
+    cert: fs.readFileSync("/etc/letsencrypt/live/ronbodnar.com/fullchain.pem"),
   };
 
   server = https.createServer(options, app);
-} else if (process.env.NODE_ENV === "development") {*/
+} else if (process.env.NODE_ENV === "development") {
   server = http.createServer(app);
-//}
+}
 
-console.log("server", process.env.NODE_ENV);
+console.log("Server Environment: ", process.env.NODE_ENV);
 
 // Start the express server
 server.listen(port, () => {
