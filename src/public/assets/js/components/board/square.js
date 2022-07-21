@@ -1,17 +1,13 @@
-import { retrieve } from "../../services/storage.service.js";
 import { getValidatedLetters } from "../../utils/helpers.js";
-import { attempt, getAttemptLetters } from "../../services/attempt.service.js";
+import { getAttemptLetters } from "../../services/attempt.service.js";
 
 /*
  * The individual square that houses a single letter in the word grid.
  * @param {boolean} active - Whether the letter is "typeable" or part of the current attempt's row.
  */
-function generatedSquare(active) {
+function generatedSquare() {
   var square = document.createElement("div");
   square.classList.add("square");
-
-  // Add the active class to first available row
-  if (active) square.classList.add("active");
 
   // Add the value within the square
   var value = document.createElement("span");
@@ -32,7 +28,7 @@ function updateCurrentAttemptSquares(word) {
     word
   );
   console.log("Validated Positions: ", validatedPositions);
-  var fullSquares = document.querySelectorAll(".square:is(.active):is(.full)");
+  var fullSquares = document.querySelectorAll(".word-row.active > .square:is(.full)");
 
   if (validatedPositions.length !== fullSquares.length) {
     console.error(
@@ -73,8 +69,8 @@ function fillNextSquare(key) {
     return;
   }
 
-  // Find all available squares (active is set by the server)
-  var squares = document.querySelectorAll(".square:is(.active):not(.full)");
+  // Find all available squares
+  var squares = document.querySelectorAll(".word-row.active > .square:not(.full)");
 
   // Ensure there's a square available, update the square properties, and add it to our stack of letters.
   if (squares[0]) {
@@ -86,7 +82,7 @@ function fillNextSquare(key) {
 
 function removeLastSquareValue() {
   // Find all full squares (active is set by the server)
-  var squares = document.querySelectorAll(".square:is(.active):is(.full)");
+  var squares = document.querySelectorAll(".word-row.active > .square:is(.full)");
 
   // If there are letters, adjust the square properties and pop the letter off the stack of letters.
   if (getAttemptLetters().length > 0) {

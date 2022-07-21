@@ -4,6 +4,7 @@ import { remove, store } from "./storage.service.js";
 import { updateCurrentAttemptSquares } from "../components/board/square.js";
 import { showView } from "../utils/helpers.js";
 import { updateKeyboardKeys } from "../components/keyboard/on-screen-keyboard.js";
+import { getLoader } from "../components/loader.js";
 
 var attemptLetters = [];
 
@@ -11,7 +12,16 @@ var attemptLetters = [];
  * Attempts to solve the puzzle by querying the API and updating the game container accordingly.
  */
 const attempt = async (game) => {
-  console.log("attempt");
+  const activeRow = document.querySelector('.word-row.active');
+  const children = Array.from(activeRow?.children);
+  children.forEach(child => {
+    if (child.classList.contains("hidden")) {
+      child.classList.remove("hidden");
+    } else {
+      child.classList.add("hidden");
+    }
+  });
+
   var data = await getAttemptResponse(game);
 
   // Update the localStorage game
@@ -77,6 +87,15 @@ const attempt = async (game) => {
         break;
     }
   }
+
+
+  children.forEach(child => {
+    if (child.classList.contains("hidden")) {
+      child.classList.remove("hidden");
+    } else {
+      child.classList.add("hidden");
+    }
+  });
 
   console.log("Attempt response: ", data);
   console.log("Message:", message);

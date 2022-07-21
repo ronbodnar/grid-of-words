@@ -24,36 +24,12 @@ function getGameBoard(rows, cols, game) {
  * Moves the active class from the current row to the previous row for new word attempts.
  */
 function shiftActiveRow() {
-  const square = document.querySelector(".square.active:first-child");
-  const row = square.parentElement;
-  const board = row.parentElement;
-  const allRows = Array.from(board.children);
+  const currentRow = document.querySelector(".word-row.active");
+  const nextRow = currentRow?.nextElementSibling;
 
-  // Remove the active class from the current row
-  if (row) {
-    var squares = Array.from(row.children);
-    squares.forEach((square) => {
-      square.classList.remove("active");
-    });
-  }
-
-  // Find the next row
-  for (var i = 0; i < allRows.length; i++) {
-    if (allRows[i] === row) {
-      var nextRow = allRows[i + 1];
-      break;
-    }
-  }
-
-  // Apply the active class to the next row
-  if (nextRow) {
-    var squares = Array.from(nextRow.children);
-    squares.forEach((square) => {
-      square.classList.add("active");
-    });
-  }
-
-  console.log(nextRow);
+  // Swap the active class from the current to the next row.
+  currentRow?.classList?.remove("active");
+  nextRow?.classList?.add("active");
 }
 
 export { getGameBoard, shiftActiveRow };

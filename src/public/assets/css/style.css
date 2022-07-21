@@ -206,6 +206,14 @@ h1 {
   }
 }
 
+.attempt-loading {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9999;
+}
+
 .board {
   flex: 0 0 auto;
   margin-bottom: 25px;
