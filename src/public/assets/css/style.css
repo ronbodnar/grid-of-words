@@ -224,16 +224,21 @@ h1 {
 .square {
   width: 150px;
   height: 150px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: transparent;
   border: 1px solid rgba(244, 243, 242, 0.2);
-  transition: 1s;
 }
 
 .square:hover .square-value {
   opacity: 0;
+}
+
+.square-value-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  transition: 1s;
 }
 
 @media screen and (min-device-width: 768px) {

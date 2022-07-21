@@ -14,7 +14,7 @@ const hideSquares = (hide) => {
   return new Promise((resolve) => {
     for (let i = 0; i < children.length; i++) {
       setTimeout(() => {
-        children[i].style.opacity = hide ? "0" : "1";
+        children[i].children[0].style.opacity = hide ? "0" : "1";
         if (i === children.length - 1) {
           setTimeout(() => resolve(true), 1000);
         }
@@ -65,7 +65,7 @@ const attempt = async (game) => {
         updateCurrentAttemptSquares(game.word);
 
         await hideSquares(false);
-        
+
         updateKeyboardKeys(game.word, attemptLetters);
 
         // Move active squares down
