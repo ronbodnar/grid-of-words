@@ -13,6 +13,7 @@ initializeEventListeners();
 
 const cachedGame = retrieve("game");
 if (cachedGame) {
+  // Maybe verify the game with the server?
   showView("game", {
     game: cachedGame.data,
   });

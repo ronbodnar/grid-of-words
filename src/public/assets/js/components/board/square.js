@@ -58,7 +58,7 @@ function updateSquareBackground(square, valid) {
     //square.children[0].style.color = "#0d1117";
   } else if (valid === 3) {
     // Letter is not in the word
-    square.style.opacity = 0.5;
+    //square.style.opacity = 0.5;
   }
 }
 
@@ -76,6 +76,11 @@ function fillNextSquare(key) {
   if (squares[0]) {
     squares[0].classList.add("full");
     squares[0].children[0].textContent = key.toUpperCase();
+    squares[0].children[0].style.transition = "0.3s";
+    squares[0].children[0].style.transform = "scale(1.2)";
+    setTimeout(() => {
+      squares[0].children[0].style.transform = "scale(1)";
+    }, 200);
     getAttemptLetters().push(key);
   }
 }
