@@ -15,6 +15,15 @@ async function getWordOfLength(length) {
   return word;
 }
 
+async function getWordsByLengthRange(minLength, maxLength) {
+  var sql = `SELECT word, LENGTH(word) AS length FROM words HAVING length >= ? AND length <= ?`;
+  const data = await query(sql, [minLength, maxLength]);
+  if (data == null) return;
+  console.log(data);
+
+  return data;
+}
+
 /*
  * Searches the database for the provided word.
  *
@@ -33,4 +42,4 @@ async function wordExists(word) {
   }
 }
 
-export { wordExists, getWordOfLength };
+export { wordExists, getWordOfLength, getWordsByLengthRange };
