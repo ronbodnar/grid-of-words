@@ -49,10 +49,10 @@ export const transformSquares = (hide) => {
           if (squareValue) squareValue.style.opacity = hide ? "0" : "1";
           if (i === squares.length - 1) {
             // Resolve the Promise 300ms after the last square has processed.
-            setTimeout(() => resolve(true), 300);
+            setTimeout(() => resolve(true), 350);
           }
         },
-        i === 0 ? i : i * 300
+        (i * (hide ? 0 : 500))
       );
     }
   });
