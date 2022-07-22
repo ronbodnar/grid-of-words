@@ -3,9 +3,9 @@ import { startGame } from "../services/game.service.js";
 import { DEFAULT_WORD_LENGTH, DEFAULT_MAX_ATTEMPTS } from "../constants.js";
 
 /*
- *
+ * Renders the home container view.
  */
-const buildHomeContainer = () => {
+export const buildHomeView = () => {
   const contentContainer = document.querySelector(".content");
   contentContainer.id = "home";
 
@@ -48,5 +48,3 @@ const buildHomeContainer = () => {
   //contentContainer.appendChild(informationContainer);
   contentContainer.appendChild(buttonContainer);
 };
-
-export { buildHomeContainer as buildHomeView };

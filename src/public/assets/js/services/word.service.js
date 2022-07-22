@@ -6,8 +6,10 @@ const fetchWordList = async () => {
 }
 
 const wordExists = (word) => {
-    const wordList = retrieve('wordList')?.data?.filter((wordInList) => wordInList.word === word);
-    return wordList.length > 0;
+    const wordList = retrieve('wordList');
+    if (!wordList) return true;
+    const filtered = wordList.data.filter((wordInList) => wordInList.word === word);
+    return filtered.length > 0;
 }
 
 export { wordExists, fetchWordList }

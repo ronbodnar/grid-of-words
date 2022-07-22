@@ -6,7 +6,7 @@
   box-sizing: border-box;
   font-size: 24px;
   font-family: "Nunito", sans-serif;
-  
+
   user-select: none;
 }
 
@@ -39,20 +39,16 @@ strong {
   justify-content: center;
   font-size: 24px;
   color: #f4f3f2;
-  height: 150px;
+  height: 50px;
   width: 50%;
   margin: 0 auto;
-}
-
-@media screen and (min-device-width: 768px) {
-  .message {
-    height: 50px;
-  }
 }
 
 .content {
   width: 100%;
   height: 100%;
+
+  padding: 1em;
 
   display: flex;
   align-items: center;
@@ -60,7 +56,10 @@ strong {
   justify-content: center;
 
   text-align: center;
-  transition: all 0.3s ease-in-out;
+}
+
+.content#how-to-play {
+  justify-content: start;
 }
 
 .content > * {
@@ -70,12 +69,14 @@ strong {
 
 @media screen and (min-device-width: 1366px) {
   .content {
+    padding: 0;
     width: 50%;
     margin: 0 auto;
   }
 
   .content#how-to-play {
     width: 75%;
+    justify-content: center;
   }
 }
 
@@ -144,10 +145,6 @@ sup {
   width: 100%;
 }
 
-.button-container > :first-child {
-  margin-right: 50px;
-}
-
 .button {
   border: 1px solid rgba(0, 163, 108, 0.6);
   border-radius: 8px;
@@ -156,29 +153,28 @@ sup {
   padding: 0.5em 0.75em;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
-  font-size: 42px;
+  font-size: 20px;
   vertical-align: middle;
+  margin-bottom: 30px;
+  box-shadow: 7.4px 14.9px 14.9px hsl(0deg 0% 0% / 0.27);
 }
 
 .button.forfeit {
-  border: 1px solid rgba(244, 243, 242, 0.6);
+  font-size: 16px;
+  color: rgba(227, 34, 39, 0.6);
+  border: 1px solid rgba(227, 34, 39, 0.6);
+  box-shadow: 7.4px 14.9px 14.9px hsl(0deg 0% 0% / 0.27);
   background: none;
-  margin-top: 4em;
+  margin-bottom: 0;
 }
 
 .button.fixed {
-  width: 350px;
-}
-
-@media screen and (max-device-width: 375px) {
-  .button.forfeit {
-    margin-top: 2em;
-  }
+  width: 80%
 }
 
 @media screen and (min-device-width: 768px) {
   .button {
-    font-size: 20px;
+    margin-bottom: 0;
   }
   .button.forfeit {
     margin-top: 0;
@@ -186,6 +182,10 @@ sup {
 
   .button.fixed {
     width: 150px;
+  }
+
+  .button-container > :first-child {
+    margin-right: 50px;
   }
 }
 
@@ -199,7 +199,7 @@ sup {
 }
 
 h1 {
-  font-size: 56px;
+  font-size: 36px;
 }
 
 @media screen and (min-device-width: 768px) {
@@ -208,23 +208,16 @@ h1 {
   }
 }
 
-.attempt-loading {
-  position: relative;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 9999;
-}
-
 .board {
   flex: 0 0 auto;
   margin-bottom: 25px;
 }
 
 .square {
-  width: 150px;
-  height: 150px;
-  border: 1px solid rgba(244, 243, 242, 0.2);
+  width: 50px;
+  height: 50px;
+  border: 1px solid rgba(244, 243, 242, 0.4);
+  border-radius: 5px;
 }
 
 .square:hover .square-value {
@@ -241,17 +234,17 @@ h1 {
   transition: 1s;
 }
 
-@media screen and (min-device-width: 768px) {
+@media screen and (min-device-width: 400px) {
   .square {
     width: 65px;
     height: 65px;
   }
 }
 
-@media screen and (min-device-width: 768px) and (max-device-height: 768px) {
+@media screen and (min-device-width: 768px) {
   .square {
-    width: 40px;
-    height: 40px;
+    width: 65px;
+    height: 65px;
   }
 }
 
@@ -271,15 +264,16 @@ h1 {
 }
 
 .word-row {
+  position: relative;
   width: 100%;
   display: flex;
   justify-content: center;
-  gap: 0.5em;
+  gap: 5px;
   margin: 0 auto;
 }
 
 .word-row:not(:last-child) {
-  margin-bottom: 0.5em;
+  margin-bottom: 5px;
 }
 
 @media screen and (min-device-width: 768px) {
@@ -287,24 +281,39 @@ h1 {
     width: 100%;
     display: flex;
     justify-content: center;
-    gap: 0.25em;
+    gap: 3px;
     margin: 0 auto;
   }
 
   .word-row:not(:last-child) {
-    margin-bottom: 0.25em;
+    margin-bottom: 3px;
   }
 }
 
 .keyboard {
   margin-top: auto;
-  margin-bottom: 1.5em;
   justify-self: end;
+  position: relative;
+  padding: 0.25em;
+}
+
+.keyboard-overlay {
+  z-index: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
 }
 
 @media screen and (min-device-width: 768px) {
   .keyboard {
-    margin: 0;
+    margin-top: 2em;
   }
 }
 
@@ -312,22 +321,25 @@ h1 {
   display: flex;
   justify-content: center;
   gap: 10px;
+  gap: 3px;
 }
 
 .keyboard-row:not(:last-child) {
   margin-bottom: 10px;
+  margin-bottom: 3px;
 }
 
 .keyboard-key {
-  font-size: 56px;
+  font-size: 18px;
   padding: 0.25em;
-  width: 80px;
+  width: 35px;
   background-color: rgb(41, 53, 72);
   border-radius: 5px;
   color: #f4f3f2;
   border: 1px solid rgba(244, 243, 242, 0.1);
   cursor: pointer;
   touch-action: manipulation;
+  transition: 0.75s;
 }
 
 .keyboard-key:hover {
@@ -340,29 +352,54 @@ h1 {
   box-shadow: inset 0px 1px 3px 0px #0d1117;
 }
 
-.keyboard-key.pressed {
-  background-color: #3a3a3a;
+.keyboard-key.exact {
+  opacity: 1;
+  border: none;
+  background-color: rgba(0, 163, 108, 0.9);
+}
+
+.keyboard-key.partial {
+  opacity: 1;
+  border: none;
+  background-color: rgba(255, 165, 0, 0.9);
 }
 
 .enter-key {
-  width: 150px;
+  width: 90px;
   font-size: 48px;
+  font-size: 18px;
   line-height: 1.5em;
 }
 
 .delete-key {
-  width: 100px;
+  width: 60px;
+  background-image: url('/assets/material-icons/backspace.svg');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 50%;
 }
 
 .delete-key > span {
   font-size: 50px;
+  font-size: 18px;
   line-height: 1.5em;
+}
+
+@media screen and (min-device-width: 400px) {
+  .keyboard-key {
+    font-size: 24px;
+  }
+
+  .delete-key > span {
+    font-size: 24px;
+  }
 }
 
 @media screen and (min-device-width: 768px) {
   .keyboard-key {
     font-size: 24px;
     width: 40px;
+    line-height: 1.25em;
   }
 
   .enter-key {
@@ -372,11 +409,12 @@ h1 {
   }
 
   .delete-key {
+    padding: 0;
     width: 60px;
   }
 
   .delete-key > span {
-    font-size: 30px;
+    font-size: 28px;
   }
 
   .keyboard-row {
