@@ -13,7 +13,7 @@ async function getWord(req, res) {
     return;
   }
   const randomWord = await getWordOfLength(length);
-  res.json(randomWord);
+  return res.json(randomWord);
 }
 
 async function getWordList(req, res) {
@@ -24,7 +24,7 @@ async function getWordList(req, res) {
     return;
   }
   const wordList = await getWordsByLengthRange(minLength, maxLength);
-  res.json(wordList);
+  return res.json(wordList);
 }
 
 export { getWord, getWordList };
