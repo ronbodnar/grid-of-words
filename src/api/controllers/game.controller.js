@@ -1,11 +1,9 @@
 import { v4 as uuidv4 } from "uuid";
-import app from "../config/express.config.js";
 
 import { getWordOfLength } from "../repository/word.repository.js";
-import { getGameById, insertGame } from "../repository/game.repository.js";
+import { getGameById, insertGame, saveGame } from "../repository/game.repository.js";
 import {
   DEFAULT_MAX_ATTEMPTS,
-  DEFAULT_WORD_LENGTH,
   MAXIMUM_WORD_LENGTH,
   MINIMUM_WORD_LENGTH,
 } from "../constants.js";
@@ -33,7 +31,6 @@ async function generateGame(req, res) {
   const uuid = uuidv4();
   const word = await getWordOfLength(wordLength);
 
-  console.log(uuid, word.text, maxAttempts, timed);
   // Create a new Game entry in the database with a generated UUID.
   const createdGame = await insertGame(uuid, word.text, maxAttempts, timed);
   console.log("Created Game: ", createdGame);
@@ -62,4 +59,23 @@ async function getGame(req, res) {
   res.json(game);
 }
 
-export { getGame, generateGame };
+/*
+ * Endpoint: POST /game/{id}/forfeit
+ *
+ * Forfeits the specified game.
+ */
+async function forfeitGame(req, res) {
+  if (req.params.id == null) {
+    return res.json({
+      status: "error",
+      error: "No id parameter provided.",
+    });
+  }
+  console.log(req.params);
+  const game = await getGameById(req.params.id);
+  game.state = "FORFEIT";
+  saveGame(game);
+  res.json(game);
+}
+
+export { getGame, generateGame, forfeitGame };

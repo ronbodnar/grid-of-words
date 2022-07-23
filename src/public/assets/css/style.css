@@ -216,7 +216,7 @@ h1 {
 .square {
   width: 50px;
   height: 50px;
-  border: 1px solid rgba(244, 243, 242, 0.4);
+  border: 1px solid rgba(244, 243, 242, 0.3);
   border-radius: 5px;
 }
 
@@ -231,7 +231,7 @@ h1 {
   justify-content: center;
   align-items: center;
   background-color: transparent;
-  transition: 0.75s;
+  transition: 1s;
 }
 
 @media screen and (min-device-width: 400px) {
