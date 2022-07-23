@@ -8,7 +8,7 @@ import { getGameById } from "../repository/game.repository.js";
 
 const router = express.Router();
 
-// Add the word routes to the router
+// Add the word routes to the router.
 router.use("/word", wordRoutes);
 
 // Add the game and attempt/guess routes to the router.
@@ -19,13 +19,18 @@ router.get("/session", async function (req, res) {
   let game = undefined;
   if (req.session.gameId) {
     game = await getGameById(req.session.gameId);
+    // Dont return session games that were ended/forfeited (they should be cleared, but check anyways).
+    if (game?.state !== "STARTED") {
+      return;
+    }
   }
 
+  // Timeout is for testing purposes with the loading screen
   setTimeout(() => {
-  res.json({
-    game: game
-  });
-}, 2000);
+    res.json({
+      game: game,
+    });
+  }, 1500);
 });
 
 export default router;

@@ -39,11 +39,8 @@ const startGame = async (options) => {
 };
 
 const forfeitGame = async () => {
-  //TODO: server communication
   const game = retrieve("game").data;
   console.log("Forfeiting game...", game);
-/*   remove("game");
-  showView("home"); */
   return fetch(`/game/${game.id}/forfeit`, {
     method: "POST",
     headers: {
@@ -51,7 +48,10 @@ const forfeitGame = async () => {
     },
   })
   .then((response) => response.json())
-  .then((response) => console.log(response));
+  .then((response) => {
+    remove("game");
+    showView("home");
+  });
 };
 
 const fetchNewGame = async (params) => {

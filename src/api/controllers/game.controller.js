@@ -16,7 +16,6 @@ import {
 async function generateGame(req, res) {
   const wordLength = req.query.wordLength || -1;
   const timed = req.query.timed != null && req.query.timed === "true";
-  const hideWord = req.query.hideWord && req.query.hideWord === "true";
   const maxAttempts = req.query.maxAttempts != null || DEFAULT_MAX_ATTEMPTS;
 
   // Ensure wordLength is valid.
@@ -34,7 +33,6 @@ async function generateGame(req, res) {
   // Create a new Game entry in the database with a generated UUID.
   const createdGame = await insertGame(uuid, word.text, maxAttempts, timed);
   console.log("Created Game: ", createdGame);
-  if (hideWord) createdGame.word = undefined;
 
   req.session.gameId = createdGame.id;
 
@@ -47,7 +45,6 @@ async function generateGame(req, res) {
  * Retrieves a game object from the database.
  */
 async function getGame(req, res) {
-  const hideWord = req.query.hideWord != null && req.query.hideWord === "true";
   if (req.params.id == null) {
     return res.json({
       status: "error",
@@ -55,7 +52,6 @@ async function getGame(req, res) {
     });
   }
   const game = await getGameById(req.params.id);
-  if (hideWord) game.word = undefined;
   res.json(game);
 }
 
@@ -71,7 +67,11 @@ async function forfeitGame(req, res) {
       error: "No id parameter provided.",
     });
   }
-  console.log(req.params);
+  showView("loading");
+  
+  req.session.gameId = undefined;
+
+  // Update the game's state to FORFEIT and update the record in the repository.
   const game = await getGameById(req.params.id);
   game.state = "FORFEIT";
   saveGame(game);

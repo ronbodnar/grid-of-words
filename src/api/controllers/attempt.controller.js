@@ -28,7 +28,6 @@ async function getAttempts(req, res) {
 async function addAttempt(req, res) {
   const word = req.body.word;
   const gameId = req.params.id;
-  const hideWord = req.query.hideWord != null && req.query.hideWord === "true";
   if (word === undefined || gameId === undefined) {
     return res.json({
       type: "error",
@@ -97,9 +96,6 @@ async function addAttempt(req, res) {
 
   // Save the game to the database.
   saveGame(game);
-
-  // This is for playing via API calls, it's safe since we just saved to the database.
-  if (hideWord) game.word = undefined;
 
   var message = finalAttempt ? "LOSER" : "WRONG_WORD";
   if (correctWord) message = "WINNER";
