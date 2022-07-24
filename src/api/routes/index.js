@@ -1,12 +1,12 @@
 import express from "express";
 
-import wordRoutes from "./word.route.js";
-import gameRoutes from "./game.route.js";
-import attemptRoutes from "./attempt.route.js";
+import { router as wordRoutes } from "./word.route.js";
+import { router as gameRoutes } from "./game.route.js";
+import { router as attemptRoutes } from "./attempt.route.js";
 import { __dirname } from "../constants.js";
 import { getGameById } from "../repository/game.repository.js";
 
-const router = express.Router();
+export const router = express.Router();
 
 // Add the word routes to the router.
 router.use("/word", wordRoutes);
@@ -25,12 +25,10 @@ router.get("/session", async function (req, res) {
     }
   }
 
-  // Timeout is for testing purposes with the loading screen
+  // Timeout is for testing purposes with the loading screen.
   setTimeout(() => {
     res.json({
       game: game,
     });
   }, 1500);
 });
-
-export default router;

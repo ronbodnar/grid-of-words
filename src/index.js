@@ -1,16 +1,17 @@
-import app from "./api/config/express.config.js";
 import http from "node:http";
 import https from "node:https";
 import fs from "node:fs";
+import { app } from "./api/config/express.config.js";
 
 const hostname = process.env.HOSTNAME;
 const port = process.env.PORT;
 let server;
 
+// Set up the HTTP/HTTPS server based on the NODE_ENV variable
 if (process.env.NODE_ENV === "production") {
   const options = {
-    key: fs.readFileSync("/etc/letsencrypt/live/ronbodnar.com/privkey.pem"),
-    cert: fs.readFileSync("/etc/letsencrypt/live/ronbodnar.com/fullchain.pem"),
+    key: fs.readFileSync(process.env.SSL_KEY_FILE),
+    cert: fs.readFileSync(process.env.SSL_CERT_FILE),
   };
 
   server = https.createServer(options, app);
@@ -18,9 +19,7 @@ if (process.env.NODE_ENV === "production") {
   server = http.createServer(app);
 }
 
-console.log("Server Environment: ", process.env.NODE_ENV);
-
 // Start the express server
 server.listen(port, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
+  console.log(`Server "${process.env.NODE_ENV}" running at http://${hostname}:${port}/`);
 });
