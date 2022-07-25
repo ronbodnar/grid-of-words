@@ -62,6 +62,11 @@ strong {
   justify-content: start;
 }
 
+.content#options {
+  width: 50%;
+  margin: 0 auto;
+}
+
 .content > * {
   flex-shrink: 0;
   width: 100%;
@@ -85,20 +90,45 @@ strong {
   justify-content: space-evenly;
 }
 
-.information-container {
+.options-container {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   padding: 1em;
   margin: 1em;
   border: 1px solid rgba(244, 243, 242, 0.4);
+  border-radius: 8px;
 }
 
 @media screen and (min-device-width: 768px) {
-  .information-container {
-    width: 100%;
+  .options-container {
+    width: 75%;
     margin: 1em auto;
   }
+}
+
+.option-row {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  text-align: start;
+}
+
+.option-row-checkbox {
+  display: flex;
+  justify-content: center;
+}
+
+.option-row > * {
+  flex: 1;
+}
+
+.option-row:not(:last-of-type) {
+  margin-bottom: 20px;
+}
+
+.slider-value {
+  font-size: 18px;
 }
 
 .stats-row {
@@ -184,8 +214,8 @@ sup {
     width: 150px;
   }
 
-  .button-container > :first-child {
-    margin-right: 50px;
+  .button-container > :nth-child(2) {
+    margin: 0 50px;
   }
 }
 

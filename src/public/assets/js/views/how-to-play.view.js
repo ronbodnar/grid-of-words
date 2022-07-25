@@ -50,11 +50,11 @@ export const buildHowToPlayView = () => {
   buttonContainer.style.marginTop = "40px";
   buttonContainer.classList.add("button-container");
 
-  const howToPlayButton = document.createElement("button");
-  howToPlayButton.classList.add("button", "fixed");
-  howToPlayButton.type = "button";
-  howToPlayButton.innerHTML = "<img src='/assets/material-icons/keyboard-backspace.svg' style='vertical-align: -6px'/> Back";
-  howToPlayButton.addEventListener("click", () => {
+  const backButton = document.createElement("button");
+  backButton.classList.add("button", "fixed");
+  backButton.type = "button";
+  backButton.innerHTML = "<img src='/assets/material-icons/keyboard-backspace.svg' style='vertical-align: -6px'/> Back";
+  backButton.addEventListener("click", () => {
     showView('home');
   });
 
@@ -71,7 +71,7 @@ export const buildHowToPlayView = () => {
     });
   });
 
-  buttonContainer.appendChild(howToPlayButton);
+  buttonContainer.appendChild(backButton);
   buttonContainer.appendChild(startGameButton);
 
   contentContainer.innerHTML = "";

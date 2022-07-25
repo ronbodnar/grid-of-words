@@ -12,10 +12,15 @@ export const buildHomeView = () => {
   const header = document.createElement("h1");
   header.textContent = "Word Game";
 
-  const informationContainer = document.createElement("div");
-  informationContainer.classList.add("information-container");
+  // Options container, create a component
+  const buttonContainer = buildButtonContainer();
 
-  // make this buttonContainer a module
+  contentContainer.innerHTML = '';
+  contentContainer.appendChild(header);
+  contentContainer.appendChild(buttonContainer);
+};
+
+const buildButtonContainer = () => {
   const buttonContainer = document.createElement("div");
   buttonContainer.classList.add("button-container");
 
@@ -25,6 +30,13 @@ export const buildHomeView = () => {
   howToPlayButton.textContent = "How to Play";
   howToPlayButton.addEventListener("click", () => {
     showView('how-to-play');
+  });
+
+  const optionsButton = document.createElement("span");
+  optionsButton.classList.add("material-icon");
+  optionsButton.innerHTML = "<img src='/assets/material-icons/tune.svg'>";
+  optionsButton.addEventListener("click", () => {
+    showView("options");
   });
 
   const startGameButton = document.createElement("button");
@@ -41,10 +53,8 @@ export const buildHomeView = () => {
   });
 
   buttonContainer.appendChild(howToPlayButton);
+  buttonContainer.appendChild(optionsButton);
   buttonContainer.appendChild(startGameButton);
 
-  contentContainer.innerHTML = '';
-  contentContainer.appendChild(header);
-  //contentContainer.appendChild(informationContainer);
-  contentContainer.appendChild(buttonContainer);
-};
+  return buttonContainer;
+}
