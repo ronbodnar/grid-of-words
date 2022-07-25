@@ -20,7 +20,6 @@ const addButtonListeners = () => {
       return startGame({
         wordLength: DEFAULT_WORD_LENGTH,
         maxAttempts: DEFAULT_MAX_ATTEMPTS,
-        timed: false,
         language: "enUS",
       });
     });
@@ -47,7 +46,6 @@ const addKeyListeners = () => {
         startGame({
           wordLength: DEFAULT_WORD_LENGTH,
           maxAttempts: DEFAULT_MAX_ATTEMPTS,
-          timed: false,
           language: "enUS",
         });
         return;

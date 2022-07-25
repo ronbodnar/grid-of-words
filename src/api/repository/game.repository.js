@@ -9,9 +9,9 @@ import { getAttemptsForGameId as getAttemptsByGameId } from "./attempt.repositor
  * @param {string} word - The word to be guessed.
  * @return {Game | null} - The new game object or null if the game could not be created.
  */
-export const insertGame = async (id, word, maxAttempts, timed) => {
-  const sql = `INSERT INTO games (id, word, max_attempts, timed) VALUES(UUID_TO_BIN(?), ?, ?, ?)`;
-  const response = await query(sql, [id, word, maxAttempts, timed]);
+export const insertGame = async (id, word, maxAttempts) => {
+  const sql = `INSERT INTO games (id, word, max_attempts) VALUES(UUID_TO_BIN(?), ?, ?)`;
+  const response = await query(sql, [id, word, maxAttempts]);
   return response !== null ? await getGameById(id) : null;
 };
 

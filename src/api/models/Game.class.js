@@ -10,25 +10,24 @@ export class Game {
   state = undefined;
   startTime = undefined;
   endTime = undefined;
-  timed = undefined;
   attempts = undefined;
   maxAttempts = undefined;
 
-  constructor(maxAttempts = DEFAULT_MAX_ATTEMPTS, timed = false) {
+  constructor(maxAttempts = DEFAULT_MAX_ATTEMPTS) {
     this.state = "STARTED";
     this.startTime = new Date();
     this.attempts = [];
     this.maxAttempts = maxAttempts;
-    this.timed = timed;
     return this;
   }
 
   fromJson(json) {
+    console.log(json);
     if (json === undefined) return this;
     this.id = json.id;
     this.word = json.word;
     this.state = json.state;
-    this.timed = json.timed;
+    this.maxAttempts = json.max_attempts;
     this.startTime = new Date(json.start_timestamp);
     if (json.end_timestamp != null) this.endTime = new Date();
     if (json.attempts != null) this.attempts = json.attempts;

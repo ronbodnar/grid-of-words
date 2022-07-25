@@ -66,7 +66,7 @@ export const updateSquareBackground = (square, match) => {
       break;
 
     case NO_MATCH:
-      square.style.backgroundColor = "rgba(244, 243, 242, 0.2)";
+      square.style.color = "rgba(244, 243, 242, 0.6)";
       break;
   }
 };

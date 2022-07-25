@@ -10,6 +10,7 @@ export const buildHomeView = () => {
   contentContainer.id = "home";
 
   const header = document.createElement("h1");
+  header.classList.add("view-header");
   header.textContent = "Word Game";
 
   // Options container, create a component
@@ -27,14 +28,14 @@ const buildButtonContainer = () => {
   const howToPlayButton = document.createElement("button");
   howToPlayButton.classList.add("button", "fixed");
   howToPlayButton.type = "button";
-  howToPlayButton.textContent = "How to Play";
+  howToPlayButton.innerHTML = "<img src='/assets/material-icons/help.svg' style='vertical-align: -6px'> How to Play";
   howToPlayButton.addEventListener("click", () => {
     showView('how-to-play');
   });
 
-  const optionsButton = document.createElement("span");
-  optionsButton.classList.add("material-icon");
-  optionsButton.innerHTML = "<img src='/assets/material-icons/tune.svg'>";
+  const optionsButton = document.createElement("button");
+  optionsButton.classList.add("button", "fixed");
+  optionsButton.innerHTML = "<img src='/assets/material-icons/tune.svg' style='vertical-align: -6px'> Options";
   optionsButton.addEventListener("click", () => {
     showView("options");
   });
@@ -42,19 +43,18 @@ const buildButtonContainer = () => {
   const startGameButton = document.createElement("button");
   startGameButton.classList.add("button", "fixed");
   startGameButton.type = "button";
-  startGameButton.textContent = "Start Game";
+  startGameButton.innerHTML = "<img src='/assets/material-icons/play-arrow.svg' style='vertical-align: -6px'> Start Game";
   startGameButton.addEventListener("click", () => {
     startGame({
       wordLength: DEFAULT_WORD_LENGTH,
       maxAttempts: DEFAULT_MAX_ATTEMPTS,
-      timed: false,
       language: "enUS",
     });
   });
 
   buttonContainer.appendChild(howToPlayButton);
-  buttonContainer.appendChild(optionsButton);
   buttonContainer.appendChild(startGameButton);
+  buttonContainer.appendChild(optionsButton);
 
   return buttonContainer;
 }

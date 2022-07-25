@@ -44,27 +44,71 @@ strong {
   margin: 0 auto;
 }
 
+.view-header {
+  font-size: 36px;
+  margin-bottom: 25px;
+}
+
+#how-to-play > .view-header {
+  font-size: 26px;
+}
+
+@media screen and (min-device-width: 768px) {
+  .view-header {
+    font-size: 26px;
+    margin-bottom: 25px;
+  }
+}
+
 .content {
-  width: 100%;
-  height: 100%;
+  min-width: 100%;
+  min-height: 100%;
 
   padding: 1em;
 
   display: flex;
   align-items: center;
-  flex-direction: column;
+  flex-wrap: wrap; 
   justify-content: center;
 
   text-align: center;
+}
+
+.content#home {
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.content#game {
+  flex-direction: column;
+  justify-content: space-around;
 }
 
 .content#how-to-play {
   justify-content: start;
 }
 
-.content#options {
-  width: 50%;
-  margin: 0 auto;
+.content#loading {
+  flex-direction: column;
+}
+
+@media screen and (max-device-width: 768px) {
+  .content#home {
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .content#how-to-play {
+    padding: 25px;
+  }
+
+  .content#home > :nth-child(1) {
+    padding-top: 25px;
+  }
+
+  .content#home > :nth-child(2) {
+    padding-bottom: 25px;
+  }
 }
 
 .content > * {
@@ -72,8 +116,18 @@ strong {
   width: 100%;
 }
 
+@media screen and (min-device-width: 768px) {
+  .content#how-to-play {
+    flex-direction: column;
+  }
+
+  .content#options {
+    flex-direction: column;
+  }
+}
+
 @media screen and (min-device-width: 1366px) {
-  .content {
+  .content:not(#home) {
     padding: 0;
     width: 50%;
     margin: 0 auto;
@@ -85,25 +139,11 @@ strong {
   }
 }
 
-.content#home {
-  flex-direction: column;
-  justify-content: space-evenly;
-}
-
-.options-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  padding: 1em;
-  margin: 1em;
-  border: 1px solid rgba(244, 243, 242, 0.4);
-  border-radius: 8px;
-}
-
 @media screen and (min-device-width: 768px) {
   .options-container {
-    width: 75%;
+    width: 50%;
     margin: 1em auto;
+    padding: 50px;
   }
 }
 
@@ -116,7 +156,9 @@ strong {
 
 .option-row-checkbox {
   display: flex;
+  align-items: center;
   justify-content: center;
+  gap: 50px;
 }
 
 .option-row > * {
@@ -129,6 +171,7 @@ strong {
 
 .slider-value {
   font-size: 18px;
+  margin-left: 15px;
 }
 
 .stats-row {
@@ -173,19 +216,35 @@ sup {
 
 .button-container {
   width: 100%;
+  margin-top: 25px;
+}
+
+@media screen and (max-device-width: 768px) {
+  .button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .button-container > * {
+    width: 100%;
+  }
+
+  .button-container > *:not(:last-of-type) {
+    margin-bottom: 25px;
+  }
 }
 
 .button {
-  border: 1px solid rgba(0, 163, 108, 0.6);
-  border-radius: 8px;
+  border: 1px solid rgba(0, 163, 108, 0.4);
+  border-radius: 25px;
   background-color: rgba(0, 163, 108, 0.4);
   color: #f4f3f2;
   padding: 0.5em 0.75em;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
   font-size: 20px;
-  vertical-align: middle;
-  margin-bottom: 30px;
   box-shadow: 7.4px 14.9px 14.9px hsl(0deg 0% 0% / 0.27);
 }
 
@@ -211,11 +270,19 @@ sup {
   }
 
   .button.fixed {
-    width: 150px;
+    width: 200px;
   }
 
-  .button-container > :nth-child(2) {
-    margin: 0 50px;
+  #home > .button-container > :nth-child(2) {
+    margin: 0 25px;
+  }
+
+  :not(#home) > .button-container > :nth-child(2) {
+    margin-left: 25px;
+  }
+
+  :not(#home) > .button-container > :nth-child(3) {
+    margin-left: 25px;
   }
 }
 
@@ -228,19 +295,8 @@ sup {
   opacity: 0.7;
 }
 
-h1 {
-  font-size: 36px;
-}
-
-@media screen and (min-device-width: 768px) {
-  h1 {
-    font-size: 26px;
-  }
-}
-
 .board {
   flex: 0 0 auto;
-  margin-bottom: 25px;
 }
 
 .square {
@@ -328,7 +384,6 @@ h1 {
 }
 
 .keyboard {
-  margin-top: auto;
   justify-self: end;
   position: relative;
   padding: 0.25em;
@@ -350,7 +405,6 @@ h1 {
 
 @media screen and (min-device-width: 768px) {
   .keyboard {
-    margin-top: 2em;
   }
 }
 

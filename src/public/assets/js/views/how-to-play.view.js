@@ -21,7 +21,7 @@ export const buildHowToPlayView = () => {
   contentContainer.id = "how-to-play";
 
   const header = document.createElement("h1");
-  header.style.marginBottom = "20px";
+  header.classList.add("view-header");
   header.textContent = "How to Play Word Game";
 
   const stepElement = document.createElement("div");
@@ -36,37 +36,35 @@ export const buildHowToPlayView = () => {
 
   for (let i = 0; i < steps.length; i++) {
     let step = document.createElement("li");
-    step.style.margin = "20px 0"
+    step.style.margin = "20px 0";
     step.style.fontSize = "20px";
-    if (i === steps.length - 1)
-      step.innerHTML = `${steps[i]}`;
-    else
-      step.innerHTML = `${i+1}. ${steps[i]}`;
+    if (i === steps.length - 1) step.innerHTML = `${steps[i]}`;
+    else step.innerHTML = `${i + 1}. ${steps[i]}`;
     stepList.appendChild(step);
   }
   stepElement.appendChild(stepList);
 
   const buttonContainer = document.createElement("div");
-  buttonContainer.style.marginTop = "40px";
   buttonContainer.classList.add("button-container");
 
   const backButton = document.createElement("button");
   backButton.classList.add("button", "fixed");
   backButton.type = "button";
-  backButton.innerHTML = "<img src='/assets/material-icons/keyboard-backspace.svg' style='vertical-align: -6px'/> Back";
+  backButton.innerHTML =
+    "<img src='/assets/material-icons/keyboard-backspace.svg' style='vertical-align: -6px'/> Back";
   backButton.addEventListener("click", () => {
-    showView('home');
+    showView("home");
   });
 
   const startGameButton = document.createElement("button");
   startGameButton.classList.add("button", "fixed");
   startGameButton.type = "button";
-  startGameButton.textContent = "Start Game";
+  startGameButton.innerHTML =
+    "<img src='/assets/material-icons/play-arrow.svg' style='vertical-align: -6px'> Start Game";
   startGameButton.addEventListener("click", () => {
     startGame({
       wordLength: DEFAULT_WORD_LENGTH,
       maxAttempts: DEFAULT_MAX_ATTEMPTS,
-      timed: false,
       language: "enUS",
     });
   });

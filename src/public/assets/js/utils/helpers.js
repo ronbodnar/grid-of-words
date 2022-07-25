@@ -91,7 +91,6 @@ export const showView = (name, options) => {
         game: options.game,
         wordLength: options.wordLength,
         maxAttempts: options.maxAttempts,
-        timed: options.timed,
       });
       break;
 
@@ -121,3 +120,13 @@ export const getCurrentViewName = () => {
   const currentView = document.querySelector(".content");
   return currentView?.id;
 };
+
+/*
+ * Gets a random integer between the specified min and max range.
+ * @param {number} min - The minimum value for the random integer.
+ * @param {number} max - The maximum value for the random integer.
+ * @return {number} - The random numer.
+ */
+export const getRandomInt = (min, max) => {
+  return Math.floor(Math.random() * (max - min) + min);
+}

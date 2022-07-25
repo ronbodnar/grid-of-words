@@ -15,9 +15,6 @@ export const buildGameView = (options) => {
   const contentContainer = document.querySelector(".content");
   contentContainer.id = "game";
 
-  const message = document.createElement("div");
-  message.classList.add("message");
-
   let board;
   if (options.game) {
     console.info("Rendering Game Container for game: ", options.game);
@@ -59,7 +56,6 @@ export const buildGameView = (options) => {
 
   // Add the components to the game container
   contentContainer.appendChild(buttonContainer);
-  contentContainer.appendChild(message);
   contentContainer.appendChild(board);
   contentContainer.appendChild(keyboard);
 };

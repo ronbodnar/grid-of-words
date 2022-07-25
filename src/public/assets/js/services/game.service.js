@@ -12,11 +12,9 @@ const startGame = async (options) => {
   showView("game", {
     wordLength: options.wordLength || DEFAULT_WORD_LENGTH,
     maxAttempts: options.maxAttempts || DEFAULT_MAX_ATTEMPTS,
-    timed: options.timed || false,
   });
 
   var params = new URLSearchParams({
-    timed: options.timed || false,
     wordLength: options.wordLength || DEFAULT_WORD_LENGTH,
     maxAttempts: options.maxAttempts || DEFAULT_MAX_ATTEMPTS,
     render: true,

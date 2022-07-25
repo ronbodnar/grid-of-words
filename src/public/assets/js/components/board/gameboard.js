@@ -11,6 +11,12 @@ export const getGameBoard = (rows, cols, game) => {
   const board = document.createElement("div");
   board.classList.add("board");
 
+  const message = document.createElement("div");
+  message.classList.add("message");
+
+  // Display a message after a word attempt or upon error.
+  board.appendChild(message);
+
   // Iteratively add rows equal to the number of max attempts
   for (var i = 0; i < rows; i++) {
     const row = generatedRow(i, cols, game);
