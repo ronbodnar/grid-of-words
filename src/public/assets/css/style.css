@@ -74,6 +74,11 @@ strong {
   text-align: center;
 }
 
+.content > * {
+  flex-shrink: 0;
+  width: 100%;
+}
+
 .content#home {
   flex-direction: column;
   justify-content: space-evenly;
@@ -111,11 +116,6 @@ strong {
   }
 }
 
-.content > * {
-  flex-shrink: 0;
-  width: 100%;
-}
-
 @media screen and (min-device-width: 768px) {
   .content#how-to-play {
     flex-direction: column;
@@ -130,6 +130,7 @@ strong {
   .content:not(#home) {
     padding: 0;
     width: 50%;
+    min-width: 50%;
     margin: 0 auto;
   }
 
