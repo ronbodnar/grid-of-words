@@ -128,9 +128,15 @@ export const getKeyboardKey = (char) => {
   return keyboardKeys[char];
 };
 
-export const toggleKeyboardOverlay = () => {
+export const toggleKeyboardOverlay = (visible) => {
   const overlay = document.querySelector(".keyboard-overlay");
-  overlay.classList.toggle("hidden");
+  if (visible != null && visible) {
+    overlay.classList.remove("hidden");
+  } else if (visible != null && !visible) {
+    overlay.classList.add("hidden");
+  } else {
+    overlay.classList.toggle("hidden");
+  }
   console.log(
     `Keyboard overlay is now ${overlay.classList.contains("hidden")}!`
   );

@@ -21,8 +21,8 @@ export const getAttempts = async (req, res) => {
   }
   if (!isUUID(gameId)) {
     return res.json({
-      message: "INVALID GAME ID FORMAT"
-    })
+      message: "INVALID GAME ID FORMAT",
+    });
   }
   const attempts = await getAttemptsForGameId(gameId);
   res.json(attempts);
@@ -43,34 +43,37 @@ export const addAttempt = async (req, res) => {
   }
   if (!isUUID(gameId)) {
     return res.json({
-      message: "INVALID_GAME_ID_FORMAT"
-    })
+      message: "INVALID_GAME_ID_FORMAT",
+    });
   }
 
   const game = await getGameById(gameId);
   if (!game) {
     return res.json({
       message: "GAME_NOT_FOUND",
-    })
+    });
   }
   const correctWord = game.word === word;
-  const finalAttempt = (game.attempts.length + 1) === game.maxAttempts;
+  const finalAttempt = game.attempts.length + 1 === game.maxAttempts;
 
   // Ensure the attempt is valid before proceeding.
-  if (!(await validateAttempt(res, word, game))) {
-    return;
+  const validationError = await validateAttempt(word, game);
+  if (validationError.length > 0) {
+    logger.info("Attempt invalid:", {
+      error: validationError,
+      gameData: game
+  });
+    return res.json({
+      message: validationError,
+      gameData: game
+    });
   }
 
   // Add the attempt to the game's attempt list.
   game.attempts.push(word);
 
   // Push the attempt to the repository
-  if (!(await insertAttempt(gameId, word))) {
-    return res.json({
-      type: "error",
-      message: "ADD_ATTEMPT_REPOSITORY_ERROR",
-    });
-  }
+  const insertResponse = await insertAttempt(gameId, word);
 
   // Update some game info
   if (finalAttempt || correctWord) {
@@ -82,7 +85,7 @@ export const addAttempt = async (req, res) => {
   // Save the game to the database.
   if (!game.save()) {
     logger.error("Error saving game to database", {
-      game: game
+      game: game,
     });
   }
 
@@ -103,45 +106,22 @@ export const addAttempt = async (req, res) => {
  * @param {object} Game The game to validate the word against.
  * @return {boolean} true if the attempt is valid, false otherwise.
  */
-const validateAttempt = async (res, word, game) => {
-  if (game == null) {
-    res.json({
-      message: "GAME_NOT_FOUND",
-    });
-    return false;
+const validateAttempt = async (word, game) => {
+  switch (true) {
+    case game == null:
+      return "GAME_NOT_FOUND";
+    case game.attempts.length + 1 >= game.maxAttempts:
+      return "ATTEMPTS_EXCEEDED";
+    case game.attempts.includes(word):
+      return "DUPLICATE_ATTEMPT";
+    case word.length != game.word.length:
+      return "WORD_LENGTH_MISMATCH";
   }
 
-  // Make sure there's nothing fishy going on with the attempts.
-  if (game.attempts.length+1 >= game.maxAttempts) {
-    res.json({
-      message: "ATTEMPTS_EXCEEDED",
-    });
-    return false;
-  }
-
-  // Make sure the word has not already been attempted.
-  if (game.attempts.includes(word)) {
-    res.json({
-      message: "DUPLICATE_ATTEMPT",
-    });
-    return false;
-  }
-
-  // Validate the word exists and length matches.
+  // Validate that the word exists in the word list
   var validWord = await wordExists(word);
   if (!validWord) {
-    res.json({
-      message: "NOT_IN_WORD_LIST",
-    });
-    return false;
+    return "NOT_IN_WORD_LIST";
   }
-
-  // Ensure the word is the same length as the target word.
-  if (word.length != game.word.length) {
-    res.json({
-      message: "WORD_LENGTH_MISMATCH",
-    });
-    return false;
-  }
-  return true;
+  return "";
 };

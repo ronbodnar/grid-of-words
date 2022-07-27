@@ -4,6 +4,7 @@ import { DEFAULT_WORD_LENGTH } from "../constants.js";
 import { updateHomeMessage } from "../views/home.view.js";
 import { toggleKeyboardOverlay } from "../components/keyboard/on-screen-keyboard.js";
 import { showMessage } from "./message.service.js";
+import { Game } from "../models/Game.class.js";
 
 /*
  * Begins a new game by querying the API for a new game object, then swaps the container view to show the game container.
@@ -12,7 +13,7 @@ const startGame = async (options) => {
   console.log("Starting game...");
 
   // Show the loading view
-  let timeout = setTimeout(() => showView("loading"), 500);
+  const timeout = setTimeout(() => showView("loading"), 500);
 
   var params = new URLSearchParams({
     wordLength: options.wordLength || DEFAULT_WORD_LENGTH,
@@ -47,12 +48,14 @@ const startGame = async (options) => {
 };
 
 const forfeitGame = async () => {
-  const game = retrieve("game").data;
+  const game = retrieve("game");
 
   console.log("Forfeiting game...", game);
 
-  showMessage("Forfeiting game - please wait.")
-  toggleKeyboardOverlay();
+  const timeout = setTimeout(() => {
+    showMessage("Giving up so easily?");
+    toggleKeyboardOverlay();
+  }, 500);
 
   return fetch(`/game/${game.id}/forfeit`, {
     method: "POST",
@@ -62,9 +65,9 @@ const forfeitGame = async () => {
   })
     .then((response) => response.json())
     .then(() => {
+      clearTimeout(timeout);
       remove("game");
       showView("home");
-      return null;
     });
 };
 
@@ -76,9 +79,15 @@ const fetchNewGame = async (params) => {
     },
   })
     .then((response) => response.json())
+    .then((json) => {
+      if (json?.id) {
+        return new Game(json);
+      } else {
+        return null;
+      }
+    })
     .catch((error) => {
       console.log("Error fetching new game: ", error);
-      //showView("home");
       return null;
     });
 };

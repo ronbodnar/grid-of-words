@@ -17,7 +17,7 @@ if (!wordList) {
 const cachedGame = retrieve("game");
 if (cachedGame) {
   showView("game", {
-    game: cachedGame.data,
+    game: cachedGame,
   });
 } else {
   showView("loading");
@@ -26,6 +26,7 @@ if (cachedGame) {
   const sessionData = await serverData.json();
 
   if (sessionData && Object.keys(sessionData).length > 0) {
+    store("game", sessionData);
     console.log("Received session data: ", sessionData);
     // This should only occur if the user clears local storage on exit or if forfeit is used.
     showView("game", {

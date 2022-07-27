@@ -53,7 +53,7 @@ const addKeyListeners = () => {
         });
         return;
       }
-      const game = retrieve("game")?.data;
+      const game = retrieve("game");
       if (game) {
         attempt(game);
       } else {

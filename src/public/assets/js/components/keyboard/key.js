@@ -38,7 +38,7 @@ export const buildKeyElement = (letter, className) => {
     }
 
     if (letter === "enter") {
-      const game = retrieve("game").data;
+      const game = retrieve("game");
       if (game) {
         attempt(game);
       } else {

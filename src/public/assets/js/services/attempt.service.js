@@ -3,9 +3,10 @@ import { setBlockKeyEvents } from "../event-listeners.js";
 import { remove, retrieve, store } from "./storage.service.js";
 import { updateCurrentAttemptSquares } from "../components/board/square.js";
 import { showView } from "../utils/helpers.js";
-import { updateKeyboardKeys } from "../components/keyboard/on-screen-keyboard.js";
+import { toggleKeyboardOverlay, updateKeyboardKeys } from "../components/keyboard/on-screen-keyboard.js";
 import { showMessage } from "./message.service.js";
 import { wordExists } from "./word.service.js";
+import { Game } from "../models/Game.class.js";
 
 var attemptLetters = [];
 
@@ -23,28 +24,41 @@ const attempt = async (game) => {
     return;
   }
 
-  // The hiding squares promise, we are going to immediate fetch the data so we don't want to perform this synchronously (it's awaited later)
-  const hidingSquares = transformSquares(true).then(() => {
-    console.log("done here");
-  });
+  // Placeholder for the attemptResponsePromise results
+  let data;
 
   // Fetch the attempt response from the server
-  var data = await getAttemptResponse(game);
-  console.log("Attempt response: ", data);
+  const attemptResponsePromise = getAttemptResponse(game).then((response) => {
+    console.log("data response=", response);
+    toggleKeyboardOverlay(false);
+    data = response;
+  });
 
   // Wait for squares to hide before continuing
-  await hidingSquares;
+  await transformSquares(true).then(() => {
+    console.log("Finished transforming squares.");
+  });
 
-  // Update gamedata local storage
-  if (data.gameData) {
-    store("game", data.gameData);
-    if (data.gameData.word !== game.word) {
-      console.error("Modified word detected");
-    }
+  // If we still haven't received the response, show the keyboard loading overlay and wait for the promise to resolve.
+  if (!data) {
+    toggleKeyboardOverlay(true);
+    data = await attemptResponsePromise;
   }
 
-  // Update the game data in the local storage.
-  if (data && data.gameData) store("game", data.gameData);
+  console.log("Attempt response: ", data);
+
+  // Check to see if the game data we have is aligned with the server, if not, refresh the page.
+  if (data?.gameData) { // Just in case data isn't available.. it happened one time somehow
+    const remoteGame = new Game(data.gameData);
+    remoteGame.attempts.pop(); // Remove the current attempt that we just made.
+    if (!game.equals(remoteGame)) {
+      store("game", data.gameData);
+      window.location.href = '/';
+      return;
+    }
+
+    store("game", data.gameData);
+  }
 
   // Process the response from the server.
   await processServerResponse(game, data);
@@ -52,6 +66,11 @@ const attempt = async (game) => {
 
 const processServerResponse = async (game, data) => {
   var message = "Error";
+
+  if (!data) {
+    showMessage("No response from server");
+    return;
+  }
 
   if (data.message) {
     switch (data.message) {
@@ -126,7 +145,7 @@ const validateAttempt = (game) => {
     return false;
   }
 
-  const wordList = retrieve("wordList")?.data;
+  const wordList = retrieve("wordList");
   if (!wordList) {
     // re-fetch word list synchronously? pass to server for validation while asynchronously fetching the word list?
   } else {
