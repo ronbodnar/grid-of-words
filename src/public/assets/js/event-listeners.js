@@ -7,6 +7,7 @@ import { retrieve } from "./services/storage.service.js";
 import { attempt } from "./services/attempt.service.js";
 import { getCurrentViewName } from "./utils/helpers.js";
 import { DEFAULT_MAX_ATTEMPTS, DEFAULT_WORD_LENGTH } from "./constants.js";
+import { toggleKeyboardOverlay } from "./components/keyboard/on-screen-keyboard.js";
 
 var blockKeyEvents = false;
 
@@ -30,6 +31,8 @@ const addButtonListeners = () => {
  * Bootstrap the key event listeners
  */
 const addKeyListeners = () => {
+  let timeout;
+
   // Keypress only listens for keys that emit a value
   document.addEventListener("keypress", function (event) {
     if (blockKeyEvents) return;
@@ -88,6 +91,6 @@ export const setBlockKeyEvents = (block) => {
   blockKeyEvents = block;
 };
 
-export const shouldBlockKeyEvents = () => {
+export const isBlockKeyEvents = () => {
   return blockKeyEvents;
 };

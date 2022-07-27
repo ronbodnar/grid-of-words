@@ -57,8 +57,7 @@ export const buildOnScreenKeyboard = (game) => {
  */
 const initializeKeyboardKeys = (game) => {
   let letterStates;
-  if (game)
-    letterStates = getLetterStates(game.word, game.attempts);
+  if (game) letterStates = getLetterStates(game.word, game.attempts);
 
   // Add enter and delete keys
   let enterKey = buildKeyElement("enter", false);
@@ -127,4 +126,12 @@ export const updateKeyboardKeys = (gameWord, attemptedWord) => {
  */
 export const getKeyboardKey = (char) => {
   return keyboardKeys[char];
+};
+
+export const toggleKeyboardOverlay = () => {
+  const overlay = document.querySelector(".keyboard-overlay");
+  overlay.classList.toggle("hidden");
+  console.log(
+    `Keyboard overlay is now ${overlay.classList.contains("hidden")}!`
+  );
 };
