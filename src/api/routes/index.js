@@ -19,6 +19,9 @@ router.get("/session", async function (req, res) {
   let game = undefined;
   if (req.session.gameId) {
     game = await getGameById(req.session.gameId);
+    if (!game) {
+      return;
+    }
     // Dont return session games that were ended/forfeited (they should be cleared, but check anyways).
     if (game?.state !== "STARTED") {
       return;

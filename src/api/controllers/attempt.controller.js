@@ -4,6 +4,8 @@ import {
 } from "../repository/attempt.repository.js";
 import { wordExists } from "../repository/word.repository.js";
 import { getGameById } from "../repository/game.repository.js";
+import { logger } from "../../index.js";
+import { isUUID } from "../helpers.js";
 
 /*
  * Endpoint: GET /game/{id}/attempts
@@ -11,13 +13,18 @@ import { getGameById } from "../repository/game.repository.js";
  * Retrieves a list of attempts made for a Game.
  */
 export const getAttempts = async (req, res) => {
-  if (req.params.id == null) {
+  const gameId = req.params.id;
+  if (gameId == null) {
     return res.json({
-      status: "error",
-      error: "No id parameter provided.",
+      message: "MISSING PARAMETERS",
     });
   }
-  const attempts = await getAttemptsForGameId(req.params.id);
+  if (!isUUID(gameId)) {
+    return res.json({
+      message: "INVALID GAME ID FORMAT"
+    })
+  }
+  const attempts = await getAttemptsForGameId(gameId);
   res.json(attempts);
 };
 
@@ -31,11 +38,21 @@ export const addAttempt = async (req, res) => {
   const gameId = req.params.id;
   if (word === undefined || gameId === undefined) {
     return res.json({
-      message: "NO_WORD_OR_NO_ID",
+      message: "MISSING_WORD_OR_GAME_ID",
     });
+  }
+  if (!isUUID(gameId)) {
+    return res.json({
+      message: "INVALID_GAME_ID_FORMAT"
+    })
   }
 
   const game = await getGameById(gameId);
+  if (!game) {
+    return res.json({
+      message: "GAME_NOT_FOUND",
+    })
+  }
   const correctWord = game.word === word;
   const finalAttempt = (game.attempts.length + 1) === game.maxAttempts;
 
@@ -63,7 +80,11 @@ export const addAttempt = async (req, res) => {
   }
 
   // Save the game to the database.
-  game.save();
+  if (!game.save()) {
+    logger.error("Error saving game to database", {
+      game: game
+    });
+  }
 
   var message = finalAttempt ? "LOSER" : "WRONG_WORD";
   if (correctWord) message = "WINNER";
@@ -91,7 +112,7 @@ const validateAttempt = async (res, word, game) => {
   }
 
   // Make sure there's nothing fishy going on with the attempts.
-  if (game.attempts.length >= game.maxAttempts) {
+  if (game.attempts.length+1 >= game.maxAttempts) {
     res.json({
       message: "ATTEMPTS_EXCEEDED",
     });

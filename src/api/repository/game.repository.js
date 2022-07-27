@@ -1,3 +1,4 @@
+import { logger } from "../../index.js";
 import { Game } from "../models/Game.class.js";
 import query from "../services/database.service.js";
 import { getAttemptsForGameId as getAttemptsByGameId } from "./attempt.repository.js";
@@ -10,14 +11,17 @@ import { getAttemptsForGameId as getAttemptsByGameId } from "./attempt.repositor
  * @return {Game | null} - The new game object or null if the game could not be created.
  */
 export const insertGame = async (id, word, maxAttempts) => {
-  try {
-    const sql = `INSERT INTO games (id, word, max_attempts) VALUES(UUID_TO_BIN(?), ?, ?)`;
-    const response = await query(sql, [id, word, maxAttempts]);
-    return response !== null ? await getGameById(id) : null;
-  } catch (err) {
-    console.error("Error executing query:");
-    console.error(err);
+  const sql = `INSERT INTO games (id, word, max_attempts) VALUES(UUID_TO_BIN(?), ?, ?)`;
+  const response = await query(sql, [id, word, maxAttempts]);
+  if (!response) {
+    logger.error("Failed to create a new Game entry in database", {
+      id: id,
+      word: word,
+      maxAttempts: maxAttempts
+    });
+    return null;
   }
+  return await getGameById(id);
 };
 
 /*
@@ -27,19 +31,22 @@ export const insertGame = async (id, word, maxAttempts) => {
  * @param {boolean} updateEndTime - Whether or not to set the endTime in the query.
  */
 export const saveGame = async (game, updateEndTime = false) => {
-  try {
-    var sql = `UPDATE games SET state = ?`;
-    if (updateEndTime) sql += `, endTime = ?`;
-    sql += ` WHERE id = UUID_TO_BIN(?)`;
+  var sql = `UPDATE games SET state = ?`;
+  if (updateEndTime) sql += `, endTime = ?`;
+  sql += ` WHERE id = UUID_TO_BIN(?)`;
 
-    var values = updateEndTime
-      ? [game.state, game.endTime, game.id]
-      : [game.state, game.id];
-    await query(sql, values);
-  } catch (err) {
-    console.error("Error executing query:");
-    console.error(err);
+  var values = updateEndTime
+    ? [game.state, game.endTime, game.id]
+    : [game.state, game.id];
+  const response = await query(sql, values);
+  if (!response) {
+    logger.error("Failed to update Game record in database", {
+      game: game,
+      updateEndTime: updateEndTime,
+      sql: sql
+    })
   }
+  return response;
 };
 
 /*
@@ -49,20 +56,29 @@ export const saveGame = async (game, updateEndTime = false) => {
  * @return {Game | null} - The game object or null if the game could not be found.
  */
 export const getGameById = async (id, includeAttempts = true) => {
-  try {
-    const sql = `SELECT *, BIN_TO_UUID(id) AS id FROM games WHERE id = UUID_TO_BIN(?)`;
-    const response = await query(sql, [id]);
-    var game = new Game().fromJson(response[0][0]);
-    if (game === null) return null;
-    if (includeAttempts) {
-      var attempts = await getAttemptsByGameId(game.id);
-      if (attempts != null)
-        game.attempts = attempts.map((attempt) => attempt.attempted_word);
-    }
-    return game;
-  } catch (error) {
-    // can be ignored, because it'll only fail if no result and no attempts are found (maybe)
-    console.error(error);
+  const sql = `SELECT *, BIN_TO_UUID(id) AS id FROM games WHERE id = UUID_TO_BIN(?)`;
+
+  // Get the query response
+  const response = await query(sql, [id]);
+  if (!response) return null;
+
+  // Construct a new Game from the JSON response
+  var game = new Game().fromJson(response[0][0]);
+  if (!game) {
+    logger.error("Could not create a Game from the JSON response", {
+      game: game,
+      response: response,
+      gameData: response[0][0]
+    })
     return null;
   }
+
+  // Obtain the game's attempts if set to include.
+  if (includeAttempts) {
+    var attempts = await getAttemptsByGameId(game.id);
+    if (attempts)
+      game.attempts = attempts.map((attempt) => attempt.attempted_word);
+  }
+
+  return game;
 };

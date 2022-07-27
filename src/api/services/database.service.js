@@ -1,4 +1,5 @@
 import mysql from "mysql2/promise";
+import { logger } from "../../index.js";
 
 // Create a connection pool to the MySQL database
 const pool = mysql.createPool({
@@ -29,8 +30,11 @@ const query = async (sql, values = []) => {
       return response;
     })
     .catch((error) => {
-      // implement a logging library
-      console.error("MySQL Error: ", error);
+      logger.error("Error executing query", {
+        query: sql,
+        values: values,
+        error: error
+      })
       return null;
     });
 };

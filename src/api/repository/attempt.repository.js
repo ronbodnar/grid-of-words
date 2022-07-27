@@ -1,3 +1,4 @@
+import { logger } from "../../index.js";
 import query from "../services/database.service.js";
 
 /*
@@ -9,7 +10,15 @@ import query from "../services/database.service.js";
 export const insertAttempt = async (id, word) => {
   const sql = `INSERT INTO game_attempts (game_id, attempted_word) VALUES (UUID_TO_BIN(?), ?)`;
   const response = await query(sql, [id, word]);
-  if (response == null || response.affectedRows === 0) return false;
+  if (!response || response.affectedRows === 0) {
+    logger.error('Could not insert attempt into game_attempts table', {
+      id: id,
+      word: word,
+      response: response,
+      sql: sql
+    })
+    return false;
+  }
   return true;
 };
 
@@ -24,7 +33,9 @@ export const getAttemptsForGameId = async (id) => {
     const response = await query(sql, [id]);
     return response[0];
   } catch (err) {
-    console.error("Error executing query:");
-    console.error(err);
+    logger.error("Could not otain attempts for game", {
+      id: id,
+      error: err
+  });
   }
 };
