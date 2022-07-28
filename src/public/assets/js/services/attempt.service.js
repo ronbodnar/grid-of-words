@@ -5,7 +5,7 @@ import {
 import { setBlockKeyEvents } from "../event-listeners.js";
 import { remove, retrieve, store } from "./storage.service.js";
 import { updateCurrentAttemptSquares } from "../components/board/square.js";
-import { equals, showView } from "../utils/helpers.js";
+import { showView } from "../utils/helpers.js";
 import {
   toggleKeyboardOverlay,
   updateKeyboardKeys,
