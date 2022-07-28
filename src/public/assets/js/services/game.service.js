@@ -47,17 +47,18 @@ const startGame = async (options) => {
 };
 
 const forfeitGame = async () => {
-  const game = retrieve("game").data;
+  const game = retrieve("game");
 
   console.log("Forfeiting game...", game);
 
-  showMessage("Forfeiting game - please wait.")
+  showMessage("Forfeiting game - please wait.");
   toggleKeyboardOverlay();
 
   return fetch(`/game/${game.id}/forfeit`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: "Bearer v5Pd3vUK9iYjRxCa1H5VsBe9L18xs8UW", // :)
     },
   })
     .then((response) => response.json())
@@ -73,6 +74,7 @@ const fetchNewGame = async (params) => {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
+      Authorization: "Bearer v5Pd3vUK9iYjRxCa1H5VsBe9L18xs8UW", // :)
     },
   })
     .then((response) => response.json())
@@ -89,6 +91,7 @@ const fetchGameData = async (id) => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        Authorization: "Bearer v5Pd3vUK9iYjRxCa1H5VsBe9L18xs8UW", // :)
       },
     });
     return await response.json();

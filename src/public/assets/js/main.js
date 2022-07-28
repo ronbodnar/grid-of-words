@@ -22,7 +22,11 @@ if (cachedGame) {
 } else {
   showView("loading");
 
-  const serverData = await fetch("/session");
+  const serverData = await fetch("/session", {
+    headers: {
+      Authorization: "Bearer v5Pd3vUK9iYjRxCa1H5VsBe9L18xs8UW", // :)
+    },
+  });
   const sessionData = await serverData.json();
 
   if (sessionData && Object.keys(sessionData).length > 0) {
@@ -30,8 +34,8 @@ if (cachedGame) {
     console.log("Received session data: ", sessionData);
     // This should only occur if the user clears local storage on exit or if forfeit is used.
     showView("game", {
-      game: sessionData.game
-    })
+      game: sessionData.game,
+    });
   } else {
     showView("home");
   }

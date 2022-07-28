@@ -24,13 +24,8 @@ export const getWord = async (req, res) => {
 export const getWordList = async (req, res) => {
   const minLength = req.query.minLength || MINIMUM_WORD_LENGTH;
   const maxLength = req.query.maxLength || MAXIMUM_WORD_LENGTH;
-  /* const apiKey = req.get('Authorization');
-  if (!apiKey || apiKey !== process.env.BEARER_TOKEN) {
-    res.end({ message: "INVALID TOKEN" });
-    return;
-  } */
   if (MINIMUM_WORD_LENGTH > minLength || MAXIMUM_WORD_LENGTH < maxLength || minLength > maxLength) {
-    res.end({ message: "MIN OR MAX VALUE OUT OF BOUNDS" });
+    res.json({ message: "MIN OR MAX VALUE OUT OF BOUNDS" });
     return;
   }
   const wordList = await getWordsByLengthRange(minLength, maxLength);
