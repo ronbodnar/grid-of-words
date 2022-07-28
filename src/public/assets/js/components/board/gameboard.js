@@ -25,7 +25,7 @@ export const getGameBoard = (rows, cols, game) => {
   }
 
   return board;
-}
+};
 
 /*
  * Moves the active class from the current row to the next row for new word attempts.
@@ -37,7 +37,7 @@ export const shiftActiveRow = () => {
   // Swap the active class from the current to the next row.
   currentRow?.classList?.remove("active");
   nextRow?.classList?.add("active");
-}
+};
 
 /*
  * Animates the showing and hiding of the letters in the row by changing the opacity on an increasing timeout interval.
@@ -46,21 +46,26 @@ export const shiftActiveRow = () => {
  */
 export const transformSquares = (hide) => {
   const activeRow = document.querySelector(".word-row.active");
-  const squares = Array.from(activeRow?.children);
+  if (!activeRow) return Promise.reject(new Error("No active row found"));
+
+  const squares = Array.from(activeRow.children);
   return new Promise((resolve) => {
-    for (let i = 0; i < squares.length; i++) {
+    let delay = 0;
+    squares.forEach((square, i) => {
       setTimeout(
         () => {
-          const squareValue = squares[i].children[0];
-          if (squareValue) squareValue.style.opacity = hide ? "0" : "1";
+          const squareValue = square.children[0];
+          if (squareValue) {
+            squareValue.style.opacity = hide ? "0" : "1";
+          }
           if (i === squares.length - 1) {
-            // Resolve the Promise 200ms after the last square has processed.
-            setTimeout(() => resolve(true), hide ? 500 : 300);
+            // Resolve the Promise 500ms after the last square has processed.
+            setTimeout(() => resolve(true), 500);
           }
         },
-        (i * (hide ? 0 : 400))
+        hide ? 0 : (delay += 500)
       );
-    }
+    });
   });
 };
 
@@ -75,7 +80,9 @@ export const fillNextSquare = (key) => {
   }
 
   // Find all available squares
-  const squares = document.querySelectorAll(".word-row.active > .square:not(.full)");
+  const squares = document.querySelectorAll(
+    ".word-row.active > .square:not(.full)"
+  );
 
   // Ensure there's a square available, update the square properties, and add it to our stack of letters.
   if (squares[0]) {
@@ -88,14 +95,16 @@ export const fillNextSquare = (key) => {
     }, 200);
     getAttemptLetters().push(key.toLowerCase());
   }
-}
+};
 
 /*
  * Pops the stack of letters in the attempt word and updates the square text content.
  */
 export const removeLastSquareValue = () => {
   // Find all full squares (active is set by the server)
-  const squares = document.querySelectorAll(".word-row.active > .square:is(.full)");
+  const squares = document.querySelectorAll(
+    ".word-row.active > .square:is(.full)"
+  );
 
   // If there are letters, adjust the square properties and pop the letter off the stack of letters.
   if (getAttemptLetters().length > 0) {
@@ -103,4 +112,4 @@ export const removeLastSquareValue = () => {
     squares[getAttemptLetters().length - 1].children[0].textContent = "";
     getAttemptLetters().pop();
   }
-}
+};

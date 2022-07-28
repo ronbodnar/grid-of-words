@@ -137,7 +137,4 @@ export const toggleKeyboardOverlay = (visible) => {
   } else {
     overlay.classList.toggle("hidden");
   }
-  console.log(
-    `Keyboard overlay is now ${overlay.classList.contains("hidden")}!`
-  );
 };

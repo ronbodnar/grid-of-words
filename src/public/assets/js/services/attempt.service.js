@@ -1,9 +1,15 @@
-import { shiftActiveRow, transformSquares } from "../components/board/gameboard.js";
+import {
+  shiftActiveRow,
+  transformSquares,
+} from "../components/board/gameboard.js";
 import { setBlockKeyEvents } from "../event-listeners.js";
 import { remove, retrieve, store } from "./storage.service.js";
 import { updateCurrentAttemptSquares } from "../components/board/square.js";
 import { showView } from "../utils/helpers.js";
-import { toggleKeyboardOverlay, updateKeyboardKeys } from "../components/keyboard/on-screen-keyboard.js";
+import {
+  toggleKeyboardOverlay,
+  updateKeyboardKeys,
+} from "../components/keyboard/on-screen-keyboard.js";
 import { showMessage } from "./message.service.js";
 import { wordExists } from "./word.service.js";
 import { Game } from "../models/Game.class.js";
@@ -24,44 +30,69 @@ const attempt = async (game) => {
     return;
   }
 
-  // Placeholder for the attemptResponsePromise results
-  let data;
-
   // Fetch the attempt response from the server
-  const attemptResponsePromise = getAttemptResponse(game).then((response) => {
-    console.log("data response=", response);
-    toggleKeyboardOverlay(false);
-    data = response;
-  });
+  const attemptResponsePromise = getAttemptResponse(game)
 
   // Wait for squares to hide before continuing
-  await transformSquares(true).then(() => {
-    console.log("Finished transforming squares.");
+  const transformSquaresPromise = transformSquares(true).then(() => {
+    // Show the loading overlay in case the response hasn't been received from the server.
+    toggleKeyboardOverlay(true);
   });
 
-  // If we still haven't received the response, show the keyboard loading overlay and wait for the promise to resolve.
-  if (!data) {
-    toggleKeyboardOverlay(true);
-    data = await attemptResponsePromise;
-  }
+  // Wait for both promises to complete
+  const [response] = await Promise.all([
+    attemptResponsePromise,
+    transformSquaresPromise,
+  ]);
 
-  console.log("Attempt response: ", data);
+  // Handling of other responses without gameData
+  console.log("Attempt response: ", response);
+
+  // Hide the keyboard overlay
+  toggleKeyboardOverlay(false);
 
   // Check to see if the game data we have is aligned with the server, if not, refresh the page.
-  if (data?.gameData) { // Just in case data isn't available.. it happened one time somehow
-    const remoteGame = new Game(data.gameData);
-    remoteGame.attempts.pop(); // Remove the current attempt that we just made.
+  if (response.gameData) {
+    const remoteGame = new Game(response.gameData);
+    if (remoteGame.attempts.length > 1) // If there is zero or one attempt (duplicate word), don't pop it.
+      remoteGame.attempts.pop(); // Remove the current attempt that we just made for comparison.
+
+    // If there are property mismatches, we need to refresh to force-update with the good data.
+    console.log(game);
+    console.log(remoteGame);
+    
     if (!game.equals(remoteGame)) {
-      store("game", data.gameData);
-      window.location.href = '/';
+      //store("game", response.gameData);
+      //window.location.href = "/";
+      console.log("Game Mismatch", game, remoteGame);
       return;
     }
 
-    store("game", data.gameData);
+    // Update the local version of the game.
+    //store("game", response.gameData);
   }
 
   // Process the response from the server.
-  await processServerResponse(game, data);
+  await processServerResponse(game, response);
+};
+
+/*
+ * Posts the attempt to the API and waits for the response.
+ * @param {Game} game - The current game object.
+ * @return {json} - The JSON response from the API.
+ */
+const getAttemptResponse = async (game) => {
+  return fetch(`/game/${game.id}/attempts`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      word: attemptLetters.join(""),
+    }),
+  })
+    .then((response) => response.json())
+    .catch((error) => console.error(error));
 };
 
 const processServerResponse = async (game, data) => {
@@ -157,26 +188,6 @@ const validateAttempt = (game) => {
     }
   }
   return true;
-};
-
-/*
- * Posts the attempt to the API and waits for the response.
- * @param {Game} game - The current game object.
- * @return {json} - The JSON response from the API.
- */
-const getAttemptResponse = async (game) => {
-  const response = await fetch(`/game/${game.id}/attempts`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      gameId: game.id,
-      word: attemptLetters.join(""),
-    }),
-  });
-
-  return await response.json();
 };
 
 /*
