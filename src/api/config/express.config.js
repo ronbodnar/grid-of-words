@@ -19,13 +19,13 @@ app.use(
 );
  
 // Limit requests to 1 per second.
-app.use(
+/*app.use(
   rateLimit({
     windowMs: 1000,
     limit: 1,
     skip: (req, res) => req.url.includes('assets') || req.url.includes('favicon')
   })
-);
+);*/
 
 // Parse application/json content
 app.use(bodyParser.json());
