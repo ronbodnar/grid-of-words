@@ -1,10 +1,11 @@
-import { getGameBoard } from "../components/board/gameboard.js";
+import { buildGameBoard } from "../components/board/gameboard.js";
 import { buildOnScreenKeyboard } from "../components/keyboard/on-screen-keyboard.js";
-import { forfeitGame } from "../services/game.service.js";
+import { clickForfeitGameButton } from "../services/event.service.js";
 
-/*
- * Renders the game container based on the provided game.
- * @param {Game} game - The game to render.
+/**
+ * Builds the game container based on the provided options (assumed to be a Game object or wordLength/maxAttempts)
+ *
+ * @param {object} options - The options to build the game container.
  */
 export const buildGameView = (options) => {
   if (!options) {
@@ -18,7 +19,7 @@ export const buildGameView = (options) => {
   let board;
   if (options.game) {
     console.info("Rendering Game Container for game: ", options.game);
-    board = getGameBoard(
+    board = buildGameBoard(
       options.game.maxAttempts,
       options.game.word.length,
       options.game
@@ -27,7 +28,7 @@ export const buildGameView = (options) => {
     console.info(
       `Rendering Game Container with grid ${options.maxAttempts} x ${options.wordLength}`
     );
-    board = getGameBoard(options.maxAttempts, options.wordLength);
+    board = buildGameBoard(options.maxAttempts, options.wordLength);
   }
 
   const keyboard = buildOnScreenKeyboard(options.game);
@@ -45,10 +46,7 @@ export const buildGameView = (options) => {
   forfeitButton.style.width = "auto";
   forfeitButton.type = "button";
   forfeitButton.innerHTML = "Forfeit";
-  forfeitButton.addEventListener("click", async () => {
-    if (window.confirm("Are you sure you want to forfeit the game?"))
-      await forfeitGame();
-  });
+  forfeitButton.addEventListener("click", clickForfeitGameButton);
   buttonContainer.appendChild(forfeitButton);
 
   // Clear the existing content from the content container

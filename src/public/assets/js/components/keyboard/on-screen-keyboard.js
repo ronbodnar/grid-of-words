@@ -1,13 +1,13 @@
-import { getValidatedLetters } from "../../utils/helpers.js";
-import { getLoader } from "../loader.js";
+import { buildLoadingElement } from "../loading.js";
 import { buildKeyElement } from "./key.js";
 import { getLetterStates } from "../../utils/helpers.js";
 import { EXACT_MATCH, NO_MATCH, PARTIAL_MATCH } from "../../constants.js";
 
 let keyboardKeys = {};
 
-/*
- * Gets the rendered keyboard element.
+/**
+ * Builds the on screen keyboard container and all children.
+ *
  * @param {Game} game - The game to render the keyboard for.
  */
 export const buildOnScreenKeyboard = (game) => {
@@ -41,7 +41,7 @@ export const buildOnScreenKeyboard = (game) => {
   const overlay = document.createElement("div");
   overlay.classList.add("keyboard-overlay", "hidden");
 
-  const loading = getLoader();
+  const loading = buildLoadingElement();
   loading.classList.add("keyboard-loading");
 
   overlay.appendChild(loading);
@@ -52,49 +52,55 @@ export const buildOnScreenKeyboard = (game) => {
   return keyboard;
 };
 
-/*
+/**
+ * Initializes the keyboardKeys object by building key elements for A-Z, enter, and delete keys.
  *
+ * @param {Game} game - The game to fetch letter match states for.
  */
 const initializeKeyboardKeys = (game) => {
-  let letterStates;
-  if (game) letterStates = getLetterStates(game.word, game.attempts);
+  // If no game is specified, don't fetch the letter match states.
+  const letterStates = game
+    ? getLetterStates(game.word, game.attempts)
+    : undefined;
 
-  // Add enter and delete keys
+  // Create the enter key and add it to the keyboardKeys object.
   let enterKey = buildKeyElement("enter", false);
   enterKey.classList.add("enter-key");
   keyboardKeys["enter"] = enterKey;
 
+  // Create the delete key and add it to the keyboardKeys object.
   let deleteKey = buildKeyElement("delete", false);
   deleteKey.classList.add("delete-key");
   keyboardKeys["delete"] = deleteKey;
 
-  // Add a-z keys
+  // Create the keys for A-Z and add them to the keyboardKeys object.
   for (let i = 97; i <= 122; i++) {
     const letter = String.fromCharCode(i);
-    let key = buildKeyElement(
-      letter,
-      letterStates ? letterStates[letter] : undefined
-    );
-    keyboardKeys[letter] = key;
+    keyboardKeys[letter] = buildKeyElement(letter, letterStates);
   }
 };
 
-/*
+/**
  * Updates the keyboard keys background colors to their match states.
  * @param {string} gameWord - The current game word.
  * @param {string} attemptWord - The current attempt word.
  */
 export const updateKeyboardKeys = (gameWord, attemptedWord) => {
-  const letterStates = getLetterStates(gameWord, [attemptedWord]);
-  console.log(letterStates);
+  const letterMatchStates = getLetterStates(gameWord, [attemptedWord]);
+
+  // Iterate the letters in the attempted word.
   for (let i = 0; i < attemptedWord.length; i++) {
     const letter = attemptedWord.at(i);
-    const key = getKeyboardKey(letter, letterStates[letter]);
+    const key = getKeyboardKey(letter, letterMatchStates[letter]);
+
+    // The key element could not be found.
     if (!key) {
       console.error(`No key found for letter ${letter}`);
       continue;
     }
-    switch (letterStates[letter]) {
+
+    // Update the key's background color based on its match state.
+    switch (letterMatchStates[letter]) {
       case EXACT_MATCH:
         if (key.classList.contains("partial")) {
           key.classList.remove("partial");
@@ -120,16 +126,14 @@ export const updateKeyboardKeys = (gameWord, attemptedWord) => {
   }
 };
 
-/*
- * Gets the key element for the given letter.
- * @param {string} char - The letter of the key element to find.
+/**
+ * Toggles the keyboard overlay, or sets it to visible/hidden if specified.
+ *
+ * @param {boolean} visible - Whether the overlay should be visible.
  */
-export const getKeyboardKey = (char) => {
-  return keyboardKeys[char];
-};
-
 export const toggleKeyboardOverlay = (visible) => {
   const overlay = document.querySelector(".keyboard-overlay");
+  if (!overlay) return;
   if (visible != null && visible) {
     overlay.classList.remove("hidden");
   } else if (visible != null && !visible) {
@@ -137,4 +141,13 @@ export const toggleKeyboardOverlay = (visible) => {
   } else {
     overlay.classList.toggle("hidden");
   }
+};
+
+/**
+ * Gets the key element for the given letter.
+ *
+ * @param {string} char - The letter of the key element to find.
+ */
+export const getKeyboardKey = (char) => {
+  return keyboardKeys[char];
 };

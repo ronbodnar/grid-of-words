@@ -1,18 +1,8 @@
 import http from "node:http";
 import https from "node:https";
 import fs from "node:fs";
-import { app } from "./api/config/express.config.js";
-import winston from "winston";
-
-export const logger = winston.createLogger({
-  format: winston.format.combine(
-    winston.format.splat(),
-    winston.format.simple()
-  ),
-  transports: [
-    new winston.transports.Console()
-  ]
-});
+import app from "./api/config/express.config.js";
+import logger from "./api/config/winston.config.js";
 
 const hostname = process.env.HOSTNAME;
 const port = process.env.PORT;
@@ -32,5 +22,7 @@ if (process.env.NODE_ENV === "production") {
 
 // Start the express server
 server.listen(port, () => {
-  logger.info(`Server "${process.env.NODE_ENV}" running at http://${hostname}:${port}/`);
+  logger.info(
+    `Server "${process.env.NODE_ENV}" running at http://${hostname}:${port}/`
+  );
 });

@@ -12,3 +12,5 @@ export const MAXIMUM_WORD_LENGTH = 8;
 export const EXACT_MATCH = 1;
 export const PARTIAL_MATCH = 2;
 export const NO_MATCH = 3;
+
+export const HIDE_MESSAGE_DELAY = 3000; // Delay in milliseconds

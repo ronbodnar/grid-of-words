@@ -5,7 +5,7 @@ import { buildHowToPlayView } from "../views/how-to-play.view.js";
 import { buildLoadingView } from "../views/loading.view.js";
 import { buildOptionsView } from "../views/options.view.js";
 
-/*
+/**
  * Compares two words of assumed equal length to see which guessWord letter positions match, are invalid, or don't exist in the gameWord.
  * @param {string} guessWord - The word to compare against the known correct word.
  * @param {string} targetWord - The known word to compare against.
@@ -47,14 +47,14 @@ export const getValidatedLetters = (guessWord, targetWord) => {
   return results;
 };
 
-/*
+/**
  * Determines the states of letters (exact, partial, or no match) between to words for updating the on-screen keyboard.
  * @param {string} targetWord - The target word to compare against.
  * @param {object} attemptedWords - An array of attempted words to compare.
  * @return {object} - The states of each letter found.
  */
 export const getLetterStates = (gameWord, attemptedWords) => {
-  let letterStates = [];
+  let letterMatchStates = [];
 
   // Iterate each attempted word in the list of attemptedWords.
   for (let i = 0; i < attemptedWords.length; i++) {
@@ -62,24 +62,24 @@ export const getLetterStates = (gameWord, attemptedWords) => {
 
     // Iterate each character in the attempted word.
     for (let j = 0; j < word.length; j++) {
-      if (gameWord.at(j) === word.at(j)) {
-        letterStates[word.at(j)] = EXACT_MATCH;
-      } else if (gameWord.includes(word.at(j))) {
-        if (letterStates[word.at(j)] === EXACT_MATCH) {
+      if (gameWord.at(j) === word.at(j)) { // The letters match.
+        letterMatchStates[word.at(j)] = EXACT_MATCH;
+      } else if (gameWord.includes(word.at(j))) { // The letter is in the gameWord.
+        if (letterMatchStates[word.at(j)] === EXACT_MATCH) { // The letter was already found previously as an exact match, so skip it.
           continue; // Skip this character as it's already been matched.
         }
-        letterStates[word.at(j)] = PARTIAL_MATCH;
-      } else {
-        letterStates[word.at(j)] = NO_MATCH;
+        letterMatchStates[word.at(j)] = PARTIAL_MATCH;
+      } else { // The letter was not found.
+        letterMatchStates[word.at(j)] = NO_MATCH;
       }
     }
   }
 
-  // If there are no matched letters, don't return the empty object
-  return Object.keys(letterStates).length > 0 ? letterStates : undefined;
+  // If there are no matched letters, return undefined instead of the letterMatchStates.
+  return Object.keys(letterMatchStates).length > 0 ? letterMatchStates : undefined;
 };
 
-/*
+/**
  * Clears the current content container's innerHTML and builds view containers.
  * @param {string} name - The name of the view container to build and display.
  * @param {object} options - A list of options that can be passed to views.
@@ -112,7 +112,7 @@ export const showView = (name, options) => {
   }
 };
 
-/*
+/**
  * Retrieves the current view from the id tag of the main content container.
  * @return {string} - The name of the current view.
  */
@@ -121,7 +121,7 @@ export const getCurrentViewName = () => {
   return currentView?.id;
 };
 
-/*
+/**
  * Gets a random integer between the specified min and max range.
  * @param {number} min - The minimum value for the random integer.
  * @param {number} max - The maximum value for the random integer.

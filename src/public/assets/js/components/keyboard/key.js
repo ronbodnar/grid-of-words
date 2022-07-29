@@ -1,21 +1,22 @@
-import { retrieve } from "../../services/storage.service.js";
-import { isBlockKeyEvents } from "../../event-listeners.js";
-import { attempt } from "../../services/attempt.service.js";
-import { fillNextSquare, removeLastSquareValue } from "../board/gameboard.js";
 import { EXACT_MATCH, PARTIAL_MATCH, NO_MATCH } from "../../constants.js";
+import { clickKeyboardKey } from "../../services/event.service.js";
 
-/*
- * Dynamically builds a key element based on the letter and className (for styling) and processes events for that key.
+/**
+ * Builds a key element based on the letter and className (for styling) and processes events for that key.
  * @param {string} letter - The letter to be displayed on the key.
  * @param {string} className - The class to be applied to the key, "incorrect", "partial", or "exact".
  * @return {Element} The built key element.
  */
 export const buildKeyElement = (letter, className) => {
   var key = document.createElement("div");
+
+  // Delete has a background that is set in the stylesheet
   if (letter !== "delete")
-    // Delete has a background that is set in the stylesheet
     key.textContent = letter.at(0).toUpperCase() + letter.substring(1);
+
   key.classList.add("keyboard-key");
+
+  // Add the background class depending on the key state in the game.
   switch (className) {
     case EXACT_MATCH:
       key.classList.add("exact");
@@ -29,25 +30,10 @@ export const buildKeyElement = (letter, className) => {
       key.classList.add("incorrect");
       break;
   }
+
+  // Add the click/touch listener to the key.
   key.addEventListener("click", () => {
-    if (isBlockKeyEvents()) return;
-
-    if (letter === "delete") {
-      removeLastSquareValue();
-      return;
-    }
-
-    if (letter === "enter") {
-      const game = retrieve("game");
-      if (game) {
-        attempt(game);
-      } else {
-        console.error("No game found");
-      }
-      return;
-    }
-
-    fillNextSquare(letter);
+    clickKeyboardKey(letter);
   });
   return key;
 };

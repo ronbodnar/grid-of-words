@@ -4,8 +4,8 @@ import {
 } from "../repository/attempt.repository.js";
 import { wordExists } from "../repository/word.repository.js";
 import { getGameById } from "../repository/game.repository.js";
-import { logger } from "../../index.js";
 import { isUUID } from "../helpers.js";
+import logger from "../config/winston.config.js";
 
 /*
  * Endpoint: GET /game/{id}/attempts
@@ -14,11 +14,15 @@ import { isUUID } from "../helpers.js";
  */
 export const getAttempts = async (req, res) => {
   const gameId = req.params.id;
+
+  // Ensure there is a valid gameId.
   if (gameId == null) {
     return res.json({
       message: "MISSING PARAMETERS",
     });
   }
+
+  // Ensure the gameId is a valid UUID string.
   if (!isUUID(gameId)) {
     return res.json({
       message: "INVALID GAME ID FORMAT",
@@ -36,29 +40,37 @@ export const getAttempts = async (req, res) => {
 export const addAttempt = async (req, res) => {
   const word = req.body.word;
   const gameId = req.params.id;
+  
+  // Ensure that both word and gameId are present.
   if (word === undefined || gameId === undefined) {
     return res.json({
       message: "MISSING_WORD_OR_GAME_ID",
     });
   }
+
+  // Ensure the gameId is a valid UUID string.
   if (!isUUID(gameId)) {
     return res.json({
       message: "INVALID_GAME_ID_FORMAT",
     });
   }
 
+  // Synchronously retrieve the game object and ensure it was found.
   const game = await getGameById(gameId);
   if (!game) {
     return res.json({
       message: "GAME_NOT_FOUND",
     });
   }
+
+  // Set up variables to determine conditions on the game object.
   const correctWord = game.word === word;
   const finalAttempt = game.attempts.length + 1 === game.maxAttempts;
 
   // Ensure the attempt is valid before proceeding.
   const validationError = await validateAttempt(word, game);
   if (validationError.length > 0) {
+    // Just for testing
     logger.info("Attempt invalid:", {
       error: validationError,
       gameData: game,
@@ -73,7 +85,7 @@ export const addAttempt = async (req, res) => {
   game.attempts.push(word);
 
   // Push the attempt to the repository
-  const insertResponse = await insertAttempt(gameId, word);
+  await insertAttempt(gameId, word);
 
   // Update some game info
   if (finalAttempt || correctWord) {
@@ -89,6 +101,7 @@ export const addAttempt = async (req, res) => {
     });
   }
 
+  // Update the message response.
   var message = finalAttempt ? "LOSER" : "WRONG_WORD";
   if (correctWord) message = "WINNER";
 
