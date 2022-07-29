@@ -8,12 +8,12 @@ const consoleTransport = new winston.transports.Console({
 });
 
 const errorTransport = new winston.transports.File({
-  filename: "error.log",
+  filename: `${process.cwd()}/logs/error.log`,
   level: "error",
 });
 
 const outputTransport = new winston.transports.File({
-  filename: "output.log",
+  filename: `${process.cwd()}/logs/output.log`,
   level: "info",
 })
 
