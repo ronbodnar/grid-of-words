@@ -7,7 +7,10 @@ import {
   MINIMUM_MAX_ATTEMPTS,
   MAXIMUM_MAX_ATTEMPTS,
 } from "../constants.js";
-import { clickBackButton, clickStartGameButton } from "../services/event.service.js";
+import {
+  clickBackButton,
+  clickStartGameButton,
+} from "../services/event.service.js";
 
 /**
  * Builds and displays the options view.
@@ -20,40 +23,18 @@ export const buildOptionsView = () => {
   header.classList.add("view-header");
   header.textContent = "Options";
 
-  const buttonContainer = document.createElement("div");
-  buttonContainer.classList.add("button-container");
+  contentContainer.innerHTML = "";
+  contentContainer.appendChild(header);
+  contentContainer.appendChild(buildOptionsContainer());
+  contentContainer.appendChild(buildButtonContainer());
+};
 
-  const backButton = document.createElement("button");
-  backButton.classList.add("button", "fixed");
-  backButton.type = "button";
-  backButton.innerHTML =
-    "<img src='/assets/material-icons/keyboard-backspace.svg' style='vertical-align: -6px'/> Back";
-  backButton.addEventListener("click", clickBackButton);
-
-  const startGameButton = document.createElement("button");
-  startGameButton.classList.add("button", "fixed");
-  startGameButton.type = "button";
-  startGameButton.innerHTML = "<img src='/assets/material-icons/play-arrow.svg' style='vertical-align: -6px'> Start Game";
-  startGameButton.addEventListener("click", () => {
-    const wordLength = document.querySelector("#wordLengthSlider")?.value;
-    const maxAttempts = document.querySelector("#maxAttemptsSlider")?.value;
-    clickStartGameButton(null, wordLength, maxAttempts);
-  });
-
-  const randomGameButton = document.createElement("button");
-  randomGameButton.classList.add("button", "fixed");
-  randomGameButton.type = "button";
-  randomGameButton.innerHTML = "<img src='/assets/material-icons/play-circle.svg' style='vertical-align: -6px'> Random Game";
-  randomGameButton.addEventListener("click", () => {
-    const wordLength = getRandomInt(MINIMUM_WORD_LENGTH, MAXIMUM_WORD_LENGTH);
-    const maxAttempts = getRandomInt(MINIMUM_MAX_ATTEMPTS, MAXIMUM_MAX_ATTEMPTS);
-    clickStartGameButton(null, wordLength, maxAttempts);
-  });
-
-  buttonContainer.appendChild(backButton);
-  buttonContainer.appendChild(startGameButton);
-  buttonContainer.appendChild(randomGameButton);
-
+/**
+ * Builds the options container that houses the word length and max attempt sliders.
+ * 
+ * @returns {Element} The built options container.
+ */
+const buildOptionsContainer = () => {
   const optionsContainer = document.createElement("div");
   optionsContainer.classList.add("options-container");
 
@@ -79,15 +60,59 @@ export const buildOptionsView = () => {
     )
   );
 
-  contentContainer.innerHTML = "";
-  contentContainer.appendChild(header);
-  contentContainer.appendChild(optionsContainer);
-
-  // Add the remember options? button
-/*   contentContainer.appendChild(
+    /*   contentContainer.appendChild(
     buildCheckboxSection("rememberOptions", "Remember Options?", false)
   ); */
-  contentContainer.appendChild(buttonContainer);
+
+  return optionsContainer;
+};
+
+/**
+ * Builds the button container with the back, start game, and random game buttons.
+ * 
+ * @returns {Element} The built button container.
+ */
+const buildButtonContainer = () => {
+  const buttonContainer = document.createElement("div");
+  buttonContainer.classList.add("button-container");
+
+  const backButton = document.createElement("button");
+  backButton.classList.add("button", "fixed");
+  backButton.type = "button";
+  backButton.innerHTML =
+    "<img src='/assets/material-icons/keyboard-backspace.svg' style='vertical-align: -6px'/> Back";
+  backButton.addEventListener("click", clickBackButton);
+
+  const startGameButton = document.createElement("button");
+  startGameButton.classList.add("button", "fixed");
+  startGameButton.type = "button";
+  startGameButton.innerHTML =
+    "<img src='/assets/material-icons/play-arrow.svg' style='vertical-align: -6px'> Start Game";
+  startGameButton.addEventListener("click", () => {
+    const wordLength = document.querySelector("#wordLengthSlider")?.value;
+    const maxAttempts = document.querySelector("#maxAttemptsSlider")?.value;
+    clickStartGameButton(null, wordLength, maxAttempts);
+  });
+
+  const randomGameButton = document.createElement("button");
+  randomGameButton.classList.add("button", "fixed");
+  randomGameButton.type = "button";
+  randomGameButton.innerHTML =
+    "<img src='/assets/material-icons/play-circle.svg' style='vertical-align: -6px'> Random Game";
+  randomGameButton.addEventListener("click", () => {
+    const wordLength = getRandomInt(MINIMUM_WORD_LENGTH, MAXIMUM_WORD_LENGTH);
+    const maxAttempts = getRandomInt(
+      MINIMUM_MAX_ATTEMPTS,
+      MAXIMUM_MAX_ATTEMPTS
+    );
+    clickStartGameButton(null, wordLength, maxAttempts);
+  });
+
+  buttonContainer.appendChild(backButton);
+  buttonContainer.appendChild(startGameButton);
+  buttonContainer.appendChild(randomGameButton);
+
+  return buttonContainer;
 };
 
 /**

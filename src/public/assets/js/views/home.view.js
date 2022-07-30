@@ -26,6 +26,8 @@ export const buildHomeView = () => {
 
 /**
  * Builds the button container and creates the buttons for display.
+ * 
+ * @returns {Element} The button container element.
  */
 const buildButtonContainer = () => {
   const buttonContainer = document.createElement("div");

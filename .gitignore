@@ -4,6 +4,9 @@ node_modules/*
 # Ignore the logs folder
 logs/*
 
+# Ignore the script directory as they are separate git repositories.
+scripts/*
+
 # Ignore the sensitive environment variables
 production.env
 development.env

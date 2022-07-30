@@ -324,7 +324,7 @@ sup {
   justify-content: center;
   align-items: center;
   background-color: transparent;
-  transition: 1s;
+  transition: 0.75s;
 }
 
 @media screen and (min-width: 400px) {
@@ -539,6 +539,13 @@ sup {
   .delete-key > span {
     font-size: 20px;
   }
+}
+
+.how-to-play-steps {
+  display: flex;
+  text-align: start;
+  flex-direction: column;
+  align-items: center;
 }
 
 /*

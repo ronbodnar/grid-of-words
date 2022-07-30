@@ -1,7 +1,7 @@
 import { remove, retrieve, store } from "./storage.service.js";
 import { showView } from "../utils/helpers.js";
 import { DEFAULT_WORD_LENGTH } from "../constants.js";
-import { toggleKeyboardOverlay } from "../components/keyboard/on-screen-keyboard.js";
+import { toggleKeyboardOverlay } from "./keyboard.service.js";
 import { showMessage } from "./message.service.js";
 
 // The current Game object if the user has a game in progress.
