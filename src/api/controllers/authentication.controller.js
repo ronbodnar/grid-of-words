@@ -2,8 +2,8 @@ import logger from "../config/winston.config.js";
 import { authenticate } from "../services/authentication.service.js";
 
 export const loginUser = (req, res) => {
-    const username = req.params.user;
-    const password = req.params.password;
+    const username = req.body.username;
+    const password = req.body.password;
 
     if (!username || !password) {
         return res.json({

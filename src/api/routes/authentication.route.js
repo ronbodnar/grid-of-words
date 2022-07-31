@@ -4,6 +4,6 @@ import { loginUser, logoutUser, registerUser } from "../controllers/authenticati
 export const router = express.Router();
 
 // Set up /auth routes.
-router.route("/login").get(loginUser);
-router.route("/logout").get(logoutUser);
-router.route("/register").get(registerUser);
+router.route("/login").post(loginUser);
+router.route("/logout").post(logoutUser);
+router.route("/register").post(registerUser);
