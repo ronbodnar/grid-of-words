@@ -21,6 +21,10 @@ if (cachedGame) {
   showView("game", {
     game: cachedGame,
   });
+
+  setTimeout(() => {
+    
+  }, 1000);
 } else {
   // Show the loading view while we fetch session data from the server.
   showView("loading");
