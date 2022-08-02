@@ -17,7 +17,7 @@ if (!wordList) {
 // Check to see if we have a local game in progress, otherwise check with the server.
 // (Need to check with the server anyways for good measure, but non-blocking)
 const cachedGame = retrieve("game");
-if (cachedGame) {
+if (cachedGame && cachedGame.id !== undefined) {
   showView("game", {
     game: cachedGame,
   });

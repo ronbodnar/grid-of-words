@@ -10,16 +10,18 @@ import query from "../services/database.service.js";
 export const getWordOfLength = async (length) => {
   try {
     // Set up the SQL query string.
-    var sql = `SELECT * FROM words WHERE CHAR_LENGTH(word) = ? ORDER BY RAND() LIMIT 1`;
+    var sql = `SELECT * FROM words WHERE CHAR_LENGTH(text) = ? ORDER BY RAND() LIMIT 1`;
 
     // Execute the query and retrieve the response.
     const data = await query(sql, [length]);
+
+    console.log(data);
 
     // If the data is missing, return null.
     if (data == null || data[0][0] == null) return null;
 
     // Return only the word.
-    return data[0][0].word;
+    return data[0][0].text;
   } catch (error) {
     logger.error("Unexpected error getting random word", {
       error: error,
@@ -39,7 +41,7 @@ export const getWordOfLength = async (length) => {
 export const getWordsByLengthRange = async (minLength, maxLength) => {
   try {
     // Set up the SQL query string.
-    var sql = `SELECT word, LENGTH(word) AS length FROM words HAVING length >= ? AND length <= ?`;
+    var sql = `SELECT text, LENGTH(text) AS length FROM words HAVING length >= ? AND length <= ?`;
     
     // Execute the query and retrieve the response.
     const data = await query(sql, [minLength, maxLength]);
@@ -67,7 +69,7 @@ export const getWordsByLengthRange = async (minLength, maxLength) => {
 export const wordExists = async (word) => {
   try {
     // Set up the SQL query string.
-    var sql = `SELECT COUNT(*) AS count FROM words WHERE word = ?`;
+    var sql = `SELECT COUNT(*) AS count FROM words WHERE text = ?`;
 
     // Execute the query and retrieve the response.
     const response = await query(sql, [word]);
