@@ -1,4 +1,4 @@
-import { clickHowToPlayButton, clickOptionsButton, clickStartGameButton } from "../services/event.service.js";
+import { clickHowToPlayButton, clickLoginMessage, clickOptionsButton, clickStartGameButton } from "../services/event.service.js";
 
 /**
  * Builds the home container view within the content container.
@@ -50,9 +50,23 @@ const buildButtonContainer = () => {
   startGameButton.innerHTML = "<img src='/assets/material-icons/play-arrow.svg' style='vertical-align: -6px'> Start Game";
   startGameButton.addEventListener("click", clickStartGameButton);
 
+  const loginMessage = document.createElement("p");
+  loginMessage.classList.add("submessage");
+  loginMessage.innerHTML = 'Want to save your progress? <a id="registerButton">Register</a> or <a id="loginButton">Log In</a>';
+  loginMessage.addEventListener("click", clickLoginMessage);
+
   buttonContainer.appendChild(howToPlayButton);
   buttonContainer.appendChild(startGameButton);
   buttonContainer.appendChild(optionsButton);
+  buttonContainer.appendChild(loginMessage);
 
   return buttonContainer;
 };
+
+const register = () => {
+  console.log("Registering...");
+}
+
+const login = () => {
+  console.log("Logging in...");
+}

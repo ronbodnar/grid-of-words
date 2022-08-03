@@ -127,7 +127,7 @@ const buildButtonContainer = () => {
  */
 const buildSliderSection = (id, title, minValue, maxValue, defaultValue) => {
   const container = document.createElement("div");
-  container.classList.add("option-row");
+  container.classList.add("flex-center", "option-row");
 
   const header = document.createElement("h5");
   header.textContent = title;
@@ -178,7 +178,7 @@ const buildSliderSection = (id, title, minValue, maxValue, defaultValue) => {
  */
 const buildCheckboxSection = (id, title, selected) => {
   const container = document.createElement("div");
-  container.classList.add("option-row-checkbox");
+  container.classList.add("flex-center", "option-row-checkbox");
 
   const text = document.createElement("h5");
   text.textContent = title;

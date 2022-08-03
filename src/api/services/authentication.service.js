@@ -1,42 +1,42 @@
+import logger from "../config/winston.config.js";
 import { getByUsername } from "./user.service.js";
 
-export const authenticate = (user, pass) => {
-    const dbUser = getByUsername(user);
-    if (dbUser === undefined) {
-        return false;
-    }
+export const authenticate = async (user, pass) => {
+  /*   const dbUser = await getByUsername(user);
+  if (dbUser === undefined) {
+    return false;
+  } */
 
-    
+  if (user === "test" && pass === "test123") {
+    return {
+      username: user
+    };
+  } else {
+    return undefined;
+  }
+};
 
-  if (validAuth) {
-    req.session.regenerate(function (err) {
-      if (err) {
-        logger.error("Error regenerating session", {
-          error: err,
-          request: req,
-        });
-        return res.json({
-          error: "Authentication failed: session regeneration",
-        });
-      }
-
-      req.session.user = username;
-      req.session.isLoggedIn = true;
-      logger.info("Successful user login attempt", {
-        user: username,
+export const generateSession = (req, res, authenticatedUser) => {
+  req.session.regenerate(function (err) {
+    if (err) {
+      logger.error("Error regenerating session", {
+        error: err,
         request: req,
       });
-      res.json({
-        message: "User logged in successfully.",
-        user: username,
-      })
+      return res.json({
+        message: "Authentication failed: session regeneration",
+      });
+    }
+
+    req.session.user = authenticatedUser;
+    req.session.isLoggedIn = true;
+    logger.info("Successful user login attempt", {
+      user: authenticatedUser,
+      request: req,
     });
-  } else {
-    res.status(401).json({
-      message: "Invalid username or password.",
+    return res.json({
+      message: "User logged in successfully.",
+      user: authenticatedUser,
     });
-  }
-  
-    console.log("dbUser", dbUser);
-    return user === "test" && pass === "test123";
-}
+  });
+};

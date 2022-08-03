@@ -1,7 +1,6 @@
-import logger from "../config/winston.config.js";
-import { authenticate } from "../services/authentication.service.js";
+import { authenticate, generateSession } from "../services/authentication.service.js";
 
-export const loginUser = (req, res) => {
+export const loginUser = async (req, res) => {
   // What about when a user is already logged in?
 
   const username = req.body.username;
@@ -14,7 +13,15 @@ export const loginUser = (req, res) => {
     });
   }
 
-  return authenticate(username, password);
+  const authenticatedUser = await authenticate(username, password);
+
+  if (!authenticatedUser) {
+    return res.status(401).json({
+      error: "Invalid username or password.",
+    });
+  }
+
+  return generateSession(req, res, authenticatedUser);
 };
 
 export const whoisUser = (req, res) => {
@@ -23,9 +30,7 @@ export const whoisUser = (req, res) => {
       user: req.session.user,
     });
   } else {
-    res.status(401).json({
-      error: "User not logged in.",
-    });
+    res.status(401).end();
   }
 };
 

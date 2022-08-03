@@ -3,6 +3,7 @@ import { buildGameView } from "../views/game.view.js";
 import { buildHomeView } from "../views/home.view.js";
 import { buildHowToPlayView } from "../views/how-to-play.view.js";
 import { buildLoadingView } from "../views/loading.view.js";
+import { buildLoginView } from "../views/login.view.js";
 import { buildOptionsView } from "../views/options.view.js";
 
 /**
@@ -62,21 +63,27 @@ export const getLetterStates = (gameWord, attemptedWords) => {
 
     // Iterate each character in the attempted word.
     for (let j = 0; j < word.length; j++) {
-      if (gameWord.at(j) === word.at(j)) { // The letters match.
+      if (gameWord.at(j) === word.at(j)) {
+        // The letters match.
         letterMatchStates[word.at(j)] = EXACT_MATCH;
-      } else if (gameWord.includes(word.at(j))) { // The letter is in the gameWord.
-        if (letterMatchStates[word.at(j)] === EXACT_MATCH) { // The letter was already found previously as an exact match, so skip it.
+      } else if (gameWord.includes(word.at(j))) {
+        // The letter is in the gameWord.
+        if (letterMatchStates[word.at(j)] === EXACT_MATCH) {
+          // The letter was already found previously as an exact match, so skip it.
           continue; // Skip this character as it's already been matched.
         }
         letterMatchStates[word.at(j)] = PARTIAL_MATCH;
-      } else { // The letter was not found.
+      } else {
+        // The letter was not found.
         letterMatchStates[word.at(j)] = NO_MATCH;
       }
     }
   }
 
   // If there are no matched letters, return undefined instead of the letterMatchStates.
-  return Object.keys(letterMatchStates).length > 0 ? letterMatchStates : undefined;
+  return Object.keys(letterMatchStates).length > 0
+    ? letterMatchStates
+    : undefined;
 };
 
 /**
@@ -104,6 +111,10 @@ export const showView = (name, options) => {
 
     case "options":
       buildOptionsView();
+      break;
+
+    case "login":
+      buildLoginView();
       break;
 
     default:

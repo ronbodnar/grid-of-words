@@ -9,7 +9,7 @@ export const buildSquareElement = () => {
 
   // Add the value container to house the letter element (this is what's animated during attempts)
   const valueContainer = document.createElement("div");
-  valueContainer.classList.add("square-value-container");
+  valueContainer.classList.add("flex-center", "square-value-container");
 
   const value = document.createElement("span");
   value.classList.add("square-value");

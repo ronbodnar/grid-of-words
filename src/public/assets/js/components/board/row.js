@@ -11,7 +11,7 @@ import { getValidatedLetters } from "../../utils/helpers.js";
 export const buildWordRowElement = (index, cols, game) => {
   const active = index === (game?.attempts?.length || 0);
   const row = document.createElement("div");
-  row.classList.add("word-row");
+  row.classList.add("flex-center", "word-row");
 
   // Add the active class to the row if the index matches the number of attempts in the game.
   if (active) {

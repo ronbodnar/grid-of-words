@@ -1,19 +1,17 @@
 import { findById, findByUsername } from "../repository/user.repository.js";
 
-export const getById = (id) => {
+export const getById = async (id) => {
     if (!id) return null;
 
-    const user = findById(id);
+    const user = await findById(id);
 
-    console.log("hey");
-    console.log(user);
+    return user;
 }
 
-export const getByUsername = (username) => {
+export const getByUsername = async (username) => {
     if (!username) return null;
 
-    const user = findByUsername(username);
+    const user = await findByUsername(username);
 
-    console.log("hey");
-    console.log(user);
+    return user;
 }
