@@ -3,21 +3,11 @@ import express from "express";
 import bodyParser from "body-parser";
 import rateLimit from "express-rate-limit";
 import session from "express-session";
-import cookieSession from "cookie-session";
 import { router as routes } from "../routes/index.js";
 import { __dirname } from "../constants.js";
 import logger from "./winston.config.js";
 
 export const app = express();
-
-// Set up the cookie session middleware.
-app.use(
-  cookieSession({
-    name: process.env.COOKIE_NAME,
-    secret: process.env.COOKIE_SECRET,
-    maxAge: 24 * 60 * 60 * 1000, // 24 hours
-  })
-);
 
 // Set up the session middleware.
 app.use(session({
@@ -25,6 +15,9 @@ app.use(session({
   saveUninitialized: false, // don't create empty sessions
   name: process.env.SESSION_NAME,
   secret: process.env.SESSION_SECRET,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production'
+  }
 }));
  
 // Limit requests to 1 per second.
@@ -36,7 +29,7 @@ app.use(
   })
 );
 
-// Parse application/json content
+// Parse application/json content in the request body.
 app.use(bodyParser.json());
 
 // Load the static assets from the assets folder
