@@ -7,6 +7,7 @@ import { processAttempt } from "./attempt.service.js";
 import { getCurrentViewName, showView } from "../utils/helpers.js";
 import { DEFAULT_MAX_ATTEMPTS, DEFAULT_WORD_LENGTH } from "../constants.js";
 import { authenticate } from "./authentication.service.js";
+import { showMessage } from "./message.service.js";
 
 // When we are performing certain tasks, we don't want to accept user input and block it conditionally.
 let blockKeyEvents = false;
@@ -92,6 +93,7 @@ export const clickStartGameButton = (
  * Shows the home view when the user clicks the back button element generated in views.
  */
 export const clickBackButton = () => {
+  //TODO: implement a stack of views visited to actually go to the previous page.
   showView("home");
 };
 
@@ -113,16 +115,23 @@ export const clickHowToPlayButton = () => {
  * Tries to authenticate with the server using the input username and password.
  */
 export const clickLoginButton = () => {
-  const username = document.querySelector("#username");
-  const password = document.querySelector("#password");
-  authenticate(username?.value, password?.value);
+  const username = document.querySelector("#username")?.value;
+  const password = document.querySelector("#password")?.value;
+  const usernameRegex = new RegExp(/[^A-Za-z0-9_-]/);
+
+  // Make sure the username doesn't have an invalid character
+  if (usernameRegex.test(username)) {
+    showMessage("Invalid character(s) in username\r\n(. @ - _ allowed)", false);
+    return;
+  }
+  authenticate(username, password);
 };
 
 /**
  * TODO: handle logic for registration
  */
 export const clickRegisterButton = () => {
-  console.log("Register clicked");
+  showView("register");
 };
 
 export const clickLoginMessage = (event) => {
@@ -131,8 +140,11 @@ export const clickLoginMessage = (event) => {
 
   if (targetId === "loginButton") {
     showView("login");
+  } else if (targetId === "registerButton") {
+    showView("register");
+  } else {
+    console.log("Unknown event target:", targetId);
   }
-  console.log(event);
 }
 
 /**

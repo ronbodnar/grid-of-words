@@ -39,7 +39,9 @@ app.use(express.static(path.join(__dirname, "..", "public")));
 app.use("/", routes);
 
 app.use("*", function (req, res) {
-  logger.info(`Request received at: ${req.url}`);
+  logger.info(`Request received at: ${req.url}`, {
+    session: req.session
+  });
 });
 
 export default app;
