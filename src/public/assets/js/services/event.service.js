@@ -6,7 +6,7 @@ import { forfeitGame, startGame } from "./game.service.js";
 import { processAttempt } from "./attempt.service.js";
 import { getCurrentViewName, showView, viewHistory } from "../utils/helpers.js";
 import { DEFAULT_MAX_ATTEMPTS, DEFAULT_WORD_LENGTH } from "../constants.js";
-import { authenticate } from "./authentication.service.js";
+import { authenticate, register } from "./authentication.service.js";
 import { showMessage } from "./message.service.js";
 
 // When we are performing certain tasks, we don't want to accept user input and block it conditionally.
@@ -118,23 +118,63 @@ export const clickHowToPlayButton = () => {
  * Tries to authenticate with the server using the input username and password.
  */
 export const clickLoginButton = () => {
-  const username = document.querySelector("#username")?.value;
+  const email = document.querySelector("#email")?.value;
   const password = document.querySelector("#password")?.value;
-  const usernameRegex = new RegExp(/[^A-Za-z0-9_-]/);
+  const emailRegex = /^[a-zA-Z0-9._+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-  // Make sure the username doesn't have an invalid character
-  if (usernameRegex.test(username)) {
-    showMessage("Invalid character(s) in username\r\n(. @ - _ allowed)", false);
+  // Make sure the email doesn't have any invalid characters
+  if (!emailRegex.test(email)) {
+    showMessage("Invalid e-mail address format.", false);
     return;
   }
-  authenticate(username, password);
+  
+  authenticate(email, password);
 };
 
 /**
  * TODO: handle logic for registration
  */
 export const clickRegisterButton = () => {
-  showView("register");
+  const emailInput = document.querySelector("#email");
+  const passwordInput = document.querySelector("#password");
+  const confirmPasswordInput = document.querySelector("#confirmPassword");
+  const usernameInput = document.querySelector("#username");
+
+  if (!emailInput || !passwordInput || !confirmPasswordInput || !usernameInput) {
+    showMessage("Please check all form values and try again.", false);
+    return;
+  }
+
+  const usernameRegex = /^[a-zA-Z0-9 _-]{3,16}$/;
+  const emailRegex = /^[a-zA-Z0-9._+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+  if (!emailRegex.test(emailInput.value)) {
+    showMessage("Email is not a valid email address.", false)
+    emailInput.classList.add("error");
+    return;
+  } else {
+    emailInput.classList.remove("error");
+  }
+
+  if (!usernameRegex.test(usernameInput.value)) {
+    showMessage("Username must be 3-16 characters long.\r\nA-z, numbers, hyphen, underscore, spaces only.", false);
+    usernameInput.classList.add("error");
+    return;
+  } else {
+    usernameInput.classList.remove("error");
+  }
+
+  if (passwordInput.value !== confirmPasswordInput.value) {
+    showMessage("Passwords do not match.", false);
+    passwordInput.classList.add("error");
+    confirmPasswordInput.classList.add("error");
+    return;
+  } else {
+    passwordInput.classList.remove("error");
+    confirmPasswordInput.classList.remove("error");
+  }
+
+  register(emailInput.value, usernameInput.value, passwordInput.value);
 };
 
 export const clickLoginMessage = (event) => {
@@ -146,7 +186,7 @@ export const clickLoginMessage = (event) => {
   } else if (targetId === "registerButton") {
     showView("register");
   } else if (targetId === "forgotPasswordButton") {
-    showView("forgot-password");
+    showView("change-password");
   } else {
     console.log("Unknown event target:", targetId);
   }

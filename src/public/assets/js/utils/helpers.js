@@ -1,12 +1,14 @@
 import { EXACT_MATCH, PARTIAL_MATCH, NO_MATCH } from "../constants.js";
-import { buildForgotPasswordView } from "../views/forgot-password.view.js";
+import { buildForgotPasswordView } from "../views/auth/forgot-password.view.js";
 import { buildGameView } from "../views/game.view.js";
 import { buildHomeView } from "../views/home.view.js";
 import { buildHowToPlayView } from "../views/how-to-play.view.js";
 import { buildLoadingView } from "../views/loading.view.js";
-import { buildLoginView } from "../views/login.view.js";
+import { buildLoginView } from "../views/auth/login.view.js";
 import { buildOptionsView } from "../views/options.view.js";
-import { buildRegisterView } from "../views/register.view.js";
+import { buildRegisterView } from "../views/auth/register.view.js";
+import { buildResetPasswordView } from "../views/auth/reset-password.view.js";
+import { buildChangePasswordView } from "../views/auth/change-password.view.js";
 
 /**
  * Compares two words of assumed equal length to see which guessWord letter positions match, are invalid, or don't exist in the gameWord.
@@ -102,8 +104,8 @@ export const showView = (name, options) => {
     return;
   }
 
-  // Do not add
-  if (name !== "loading") {
+  // Do not add to history when current view is "loading" or when options.ignoreAddToHistory is true.
+  if (getCurrentViewName() !== "loading") {
     if (
       !options?.ignoreAddToHistory ||
       options?.ignoreAddToHistoryoptions?.ignoreAddToHistory === false
@@ -120,6 +122,9 @@ export const showView = (name, options) => {
         wordLength: options.wordLength,
         maxAttempts: options.maxAttempts,
       });
+
+      // Reset the view history.
+      viewHistory = [];
       break;
 
     case "how-to-play":
@@ -144,6 +149,14 @@ export const showView = (name, options) => {
 
     case "forgot-password":
       buildForgotPasswordView();
+      break;
+
+    case "reset-password":
+      buildResetPasswordView();
+      break;
+
+    case "change-password":
+      buildChangePasswordView();
       break;
 
     default:
