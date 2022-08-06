@@ -18,6 +18,11 @@ export const buildHowToPlayView = () => {
   const contentContainer = document.querySelector(".content");
   contentContainer.id = "how-to-play";
 
+  const backButton = document.createElement("div");
+  backButton.classList.add("back-button");
+  backButton.innerHTML = "<img src='/assets/material-icons/keyboard-backspace.svg' style='vertical-align: -6px;'> Back";
+  backButton.addEventListener("click", clickBackButton);
+
   const header = document.createElement("h1");
   header.classList.add("view-header");
   header.textContent = "How to Play";
@@ -26,6 +31,7 @@ export const buildHowToPlayView = () => {
   const buttonContainer = buildButtonContainer();
 
   contentContainer.innerHTML = "";
+  contentContainer.appendChild(backButton);
   contentContainer.appendChild(header);
   contentContainer.appendChild(stepContainer);
   contentContainer.appendChild(buttonContainer);
@@ -65,13 +71,6 @@ const buildButtonContainer = () => {
   const buttonContainer = document.createElement("div");
   buttonContainer.classList.add("button-container");
 
-  const backButton = document.createElement("button");
-  backButton.classList.add("button", "fixed");
-  backButton.type = "button";
-  backButton.innerHTML =
-    "<img src='/assets/material-icons/keyboard-backspace.svg' style='vertical-align: -6px'/> Back";
-  backButton.addEventListener("click", clickBackButton);
-
   const startGameButton = document.createElement("button");
   startGameButton.classList.add("button", "fixed");
   startGameButton.type = "button";
@@ -79,7 +78,6 @@ const buildButtonContainer = () => {
     "<img src='/assets/material-icons/play-arrow.svg' style='vertical-align: -6px'> Start Game";
   startGameButton.addEventListener("click", clickStartGameButton);
 
-  buttonContainer.appendChild(backButton);
   buttonContainer.appendChild(startGameButton);
 
   return buttonContainer;

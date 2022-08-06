@@ -54,7 +54,7 @@ const buildButtonContainer = () => {
 
   const loginMessage = document.createElement("p");
   loginMessage.classList.add("submessage");
-  loginMessage.innerHTML = 'Want to save your progress?<br /><a id="registerButton">Register</a> or <a id="loginButton">Log In</a>';
+  loginMessage.innerHTML = 'Want to save your progress?<br /><a id="loginButton">Log In</a> or <a id="registerButton">Register</a>';
   loginMessage.addEventListener("click", clickLoginMessage);
 
   if (isAuthenticated()) {

@@ -1,4 +1,5 @@
 import { EXACT_MATCH, PARTIAL_MATCH, NO_MATCH } from "../constants.js";
+import { buildForgotPasswordView } from "../views/forgot-password.view.js";
 import { buildGameView } from "../views/game.view.js";
 import { buildHomeView } from "../views/home.view.js";
 import { buildHowToPlayView } from "../views/how-to-play.view.js";
@@ -87,12 +88,31 @@ export const getLetterStates = (gameWord, attemptedWords) => {
     : undefined;
 };
 
+// The stack of views so that the back button can return the user to where they were (does not keep previous states).
+export let viewHistory = [];
+
 /**
  * Clears the current content container's innerHTML and builds view containers.
  * @param {string} name - The name of the view container to build and display.
  * @param {object} options - A list of options that can be passed to views.
  */
 export const showView = (name, options) => {
+  if (!name || name === "") {
+    console.error("No view name provided");
+    return;
+  }
+
+  // Do not add
+  if (name !== "loading") {
+    if (
+      !options?.ignoreAddToHistory ||
+      options?.ignoreAddToHistoryoptions?.ignoreAddToHistory === false
+    ) {
+      viewHistory.push(getCurrentViewName());
+    }
+  }
+
+  console.log("View history after showView: ", viewHistory);
   switch (name) {
     case "game":
       buildGameView({
@@ -120,6 +140,10 @@ export const showView = (name, options) => {
 
     case "register":
       buildRegisterView();
+      break;
+
+    case "forgot-password":
+      buildForgotPasswordView();
       break;
 
     default:

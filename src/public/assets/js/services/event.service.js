@@ -4,7 +4,7 @@ import {
 } from "./gameboard.service.js";
 import { forfeitGame, startGame } from "./game.service.js";
 import { processAttempt } from "./attempt.service.js";
-import { getCurrentViewName, showView } from "../utils/helpers.js";
+import { getCurrentViewName, showView, viewHistory } from "../utils/helpers.js";
 import { DEFAULT_MAX_ATTEMPTS, DEFAULT_WORD_LENGTH } from "../constants.js";
 import { authenticate } from "./authentication.service.js";
 import { showMessage } from "./message.service.js";
@@ -93,8 +93,11 @@ export const clickStartGameButton = (
  * Shows the home view when the user clicks the back button element generated in views.
  */
 export const clickBackButton = () => {
-  //TODO: implement a stack of views visited to actually go to the previous page.
-  showView("home");
+  // Pop the previous view name from the view history stack.
+  const previousView = viewHistory.pop();
+  showView(previousView, {
+    ignoreAddToHistory: true,
+  });
 };
 
 /**
@@ -142,6 +145,8 @@ export const clickLoginMessage = (event) => {
     showView("login");
   } else if (targetId === "registerButton") {
     showView("register");
+  } else if (targetId === "forgotPasswordButton") {
+    showView("forgot-password");
   } else {
     console.log("Unknown event target:", targetId);
   }

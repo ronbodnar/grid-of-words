@@ -19,11 +19,17 @@ export const buildOptionsView = () => {
   const contentContainer = document.querySelector(".content");
   contentContainer.id = "options";
 
+  const backButton = document.createElement("div");
+  backButton.classList.add("back-button");
+  backButton.innerHTML = "<img src='/assets/material-icons/keyboard-backspace.svg' style='vertical-align: -6px;'> Back";
+  backButton.addEventListener("click", clickBackButton);
+
   const header = document.createElement("h1");
   header.classList.add("view-header");
   header.textContent = "Options";
 
   contentContainer.innerHTML = "";
+  contentContainer.appendChild(backButton);
   contentContainer.appendChild(header);
   contentContainer.appendChild(buildOptionsContainer());
   contentContainer.appendChild(buildButtonContainer());
@@ -76,13 +82,6 @@ const buildButtonContainer = () => {
   const buttonContainer = document.createElement("div");
   buttonContainer.classList.add("button-container");
 
-  const backButton = document.createElement("button");
-  backButton.classList.add("button", "fixed");
-  backButton.type = "button";
-  backButton.innerHTML =
-    "<img src='/assets/material-icons/keyboard-backspace.svg' style='vertical-align: -6px'/> Back";
-  backButton.addEventListener("click", clickBackButton);
-
   const startGameButton = document.createElement("button");
   startGameButton.classList.add("button", "fixed");
   startGameButton.type = "button";
@@ -98,7 +97,7 @@ const buildButtonContainer = () => {
   randomGameButton.classList.add("button", "fixed");
   randomGameButton.type = "button";
   randomGameButton.innerHTML =
-    "<img src='/assets/material-icons/play-circle.svg' style='vertical-align: -6px'> Random Game";
+    "<img src='/assets/material-icons/shuffle.svg' style='vertical-align: -6px'> Random Game";
   randomGameButton.addEventListener("click", () => {
     const wordLength = getRandomInt(MINIMUM_WORD_LENGTH, MAXIMUM_WORD_LENGTH);
     const maxAttempts = getRandomInt(
@@ -108,7 +107,6 @@ const buildButtonContainer = () => {
     clickStartGameButton(null, wordLength, maxAttempts);
   });
 
-  buttonContainer.appendChild(backButton);
   buttonContainer.appendChild(startGameButton);
   buttonContainer.appendChild(randomGameButton);
 

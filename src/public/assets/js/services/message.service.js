@@ -15,7 +15,10 @@ export const showMessage = (message, hide = true) => {
 
   // Update the message div with the response message
   var messageDiv = document.querySelector(".message");
-  if (messageDiv && message) messageDiv.textContent = message;
+  if (messageDiv && message) {
+    messageDiv.classList.remove("hidden");
+    messageDiv.textContent = message;
+  }
 
   // Clear the previous message timeout to restart the hide delay
   if (messageTimeout) clearTimeout(messageTimeout);

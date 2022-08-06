@@ -1,8 +1,13 @@
-import { clickBackButton, clickLoginButton, clickLoginMessage, clickRegisterButton } from "../services/event.service.js";
+import { clickBackButton, clickLoginButton, clickLoginMessage } from "../services/event.service.js";
 
 export const buildRegisterView = () => {
     const contentContainer = document.querySelector(".content");
-    contentContainer.id = "login";
+    contentContainer.id = "register";
+
+    const backButton = document.createElement("div");
+    backButton.classList.add("back-button");
+    backButton.innerHTML = "<img src='/assets/material-icons/keyboard-backspace.svg' style='vertical-align: -6px;'> Back";
+    backButton.addEventListener("click", clickBackButton);
 
     const header = document.createElement("h1");
     header.classList.add("view-header");
@@ -11,6 +16,7 @@ export const buildRegisterView = () => {
     const registrationForm = buildRegistrationForm();
 
     contentContainer.innerHTML = "";
+    contentContainer.appendChild(backButton);
     contentContainer.appendChild(header);
     contentContainer.appendChild(registrationForm);
 }
@@ -19,11 +25,6 @@ const buildRegistrationForm = () => {
     const form = document.createElement('form');
     form.classList.add("form");
     form.onsubmit = () => { clickLoginButton(); return false }; // prevent submission
-
-    const backButton = document.createElement("div");
-    backButton.classList.add("back-button");
-    backButton.innerHTML = "<img src='/assets/material-icons/keyboard-backspace.svg' style='vertical-align: -6px;'> Back";
-    backButton.addEventListener("click", clickBackButton);
 
     const messageDiv = document.createElement("div");
     messageDiv.classList.add("message", "form-message");
@@ -75,17 +76,16 @@ const buildRegistrationForm = () => {
     const submitButton = document.createElement('button');
     submitButton.classList.add("button");
     submitButton.type = "submit";
-    submitButton.innerHTML = "Register <span class='button-loader hidden' id='loginButtonLoader'</span>";
-    submitButton.style.width = "48%";
+    submitButton.innerHTML = "Register <span class='button-loader hidden' id='registerButtonLoader'</span>";
+    submitButton.style.width = "60%";
     submitButton.style.cursor = "pointer";
-    submitButton.style.marginRight = "4%"
+    submitButton.style.marginTop = "10px";
 
     const loginMessage = document.createElement('p');
     loginMessage.classList.add("submessage");
-    loginMessage.innerHTML = "Already have an account? <a id='loginButton'>Log in</a>";
+    loginMessage.innerHTML = "<a id='loginButton'>Already have an account?</a>";
     loginMessage.addEventListener("click", clickLoginMessage);
 
-    form.appendChild(backButton);
     form.appendChild(messageDiv);
     form.appendChild(emailLabel);
     form.appendChild(emailInput);
