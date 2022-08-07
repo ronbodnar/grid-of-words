@@ -5,7 +5,7 @@ import { router as gameRoutes } from "./game.route.js";
 import { router as attemptRoutes } from "./attempt.route.js";
 import { router as authenticationRoutes } from "./authentication.route.js";
 import { __dirname } from "../constants.js";
-import { getGameById } from "../repository/game.repository.js";
+import { verifyToken } from "../services/authentication.service.js";
 
 export const router = express.Router();
 
@@ -16,26 +16,25 @@ router.use("/word", wordRoutes);
 router.use("/game", gameRoutes, attemptRoutes);
 
 // Add the authentication routes to the router.
-router.use("/auth", authenticationRoutes)
+router.use("/auth", authenticationRoutes);
 
 // Serve any session data for the user in the initial GET request.
 router.get("/session", async function (req, res) {
-  let game = undefined;
-  if (req.cookies.gameId) {
-    game = await getGameById(req.cookies.gameId);
-    if (!game) {
-      res.end();
-      return;
-    }
-    // Dont return session games that were ended/forfeited (they should be cleared, but check anyways).
-    if (game?.state !== "STARTED") {
-      res.end();
-      return;
-    }
+  // Just in case the cookies can't be found, end the response.
+  if (!req?.cookies) {
+    res.end();
+    return;
   }
+
+  const payload = verifyToken(req.cookies.token);
+
+  const user = {
+    id: payload?.id,
+    username: payload?.username,
+  };
 
   // The session data to be returned.
   res.json({
-    game: game,
+    user: !payload ? undefined : user,
   });
 });

@@ -19,7 +19,7 @@ export const buildLoginView = (success) => {
   header.classList.add("view-header");
   header.textContent = "Account Login";
 
-  const loginForm = buildForm(success);
+  const loginForm = buildForm();
 
   contentContainer.innerHTML = "";
   contentContainer.appendChild(backButton);
@@ -41,7 +41,7 @@ export const buildLoginView = (success) => {
   }
 };
 
-const buildForm = (success) => {
+const buildForm = () => {
   const form = document.createElement("form");
   form.classList.add("form");
   form.onsubmit = () => {

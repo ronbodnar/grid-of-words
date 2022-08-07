@@ -46,10 +46,11 @@ export const hashPassword = (password, salt) => {
 };
 
 export const generateToken = (user) => {
+  delete user.hash;
+  delete user.salt;
   const token = jwt.sign(
     {
-      id: user.id,
-      username: user.username,
+      user: user,
     },
     process.env.JWT_SECRET,
     { expiresIn: "15d" }

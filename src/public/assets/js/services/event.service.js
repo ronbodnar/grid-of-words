@@ -1,12 +1,13 @@
-import {
-  fillNextSquare,
-  removeLastSquareValue,
-} from "./gameboard.service.js";
+import { fillNextSquare, removeLastSquareValue } from "./gameboard.service.js";
 import { forfeitGame, startGame } from "./game.service.js";
 import { processAttempt } from "./attempt.service.js";
 import { getCurrentViewName, showView, viewHistory } from "../utils/helpers.js";
 import { DEFAULT_MAX_ATTEMPTS, DEFAULT_WORD_LENGTH } from "../constants.js";
-import { authenticate, register } from "./authentication.service.js";
+import {
+  authenticate,
+  logoutUser,
+  register,
+} from "./authentication.service.js";
 import { showMessage } from "./message.service.js";
 
 // When we are performing certain tasks, we don't want to accept user input and block it conditionally.
@@ -96,7 +97,7 @@ export const clickBackButton = () => {
   // Pop the previous view name from the view history stack.
   const previousView = viewHistory.pop();
   showView(previousView, {
-    ignoreAddToHistory: true,
+    hideFromHistory: true,
   });
 };
 
@@ -127,7 +128,7 @@ export const clickLoginButton = () => {
     showMessage("Invalid e-mail address format.", false);
     return;
   }
-  
+
   authenticate(email, password);
 };
 
@@ -140,7 +141,12 @@ export const clickRegisterButton = () => {
   const confirmPasswordInput = document.querySelector("#confirmPassword");
   const usernameInput = document.querySelector("#username");
 
-  if (!emailInput || !passwordInput || !confirmPasswordInput || !usernameInput) {
+  if (
+    !emailInput ||
+    !passwordInput ||
+    !confirmPasswordInput ||
+    !usernameInput
+  ) {
     showMessage("Please check all form values and try again.", false);
     return;
   }
@@ -149,7 +155,7 @@ export const clickRegisterButton = () => {
   const emailRegex = /^[a-zA-Z0-9._+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   if (!emailRegex.test(emailInput.value)) {
-    showMessage("Email is not a valid email address.", false)
+    showMessage("Email is not a valid email address.", false);
     emailInput.classList.add("error");
     return;
   } else {
@@ -157,7 +163,10 @@ export const clickRegisterButton = () => {
   }
 
   if (!usernameRegex.test(usernameInput.value)) {
-    showMessage("Username must be 3-16 characters long.\r\nA-z, numbers, hyphen, underscore, spaces only.", false);
+    showMessage(
+      "Username must be 3-16 characters long.\r\nA-z, numbers, hyphen, underscore, spaces only.",
+      false
+    );
     usernameInput.classList.add("error");
     return;
   } else {
@@ -177,12 +186,15 @@ export const clickRegisterButton = () => {
   register(emailInput.value, usernameInput.value, passwordInput.value);
 };
 
-export const clickLoginMessage = (event) => {
+export const clickLoginMessage = async (event) => {
   const targetId = event.target.id;
   if (!targetId) return;
 
   if (targetId === "loginButton") {
     showView("login");
+  } else if (targetId === "logoutButton") {
+    //TODO: loading animation & blocking events
+    await logoutUser();
   } else if (targetId === "registerButton") {
     showView("register");
   } else if (targetId === "forgotPasswordButton") {
@@ -190,7 +202,7 @@ export const clickLoginMessage = (event) => {
   } else {
     console.log("Unknown event target:", targetId);
   }
-}
+};
 
 /**
  * Enable or disable the blocking of key events during animations.

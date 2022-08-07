@@ -1,5 +1,5 @@
 import { setBlockKeyEvents } from "./event.service.js";
-import { remove, retrieve, store } from "./storage.service.js";
+import { removeSession, retrieveLocal, retrieveSession, storeLocal, storeSession } from "./storage.service.js";
 import { showView } from "../utils/helpers.js";
 import { showMessage } from "./message.service.js";
 import { fetchWordList, wordExists } from "./word.service.js";
@@ -24,7 +24,7 @@ let attemptLetters = [];
  */
 export const processAttempt = async (game) => {
   if (!game) {
-    const game = retrieve("game");
+    const game = retrieveSession("game");
     if (game) {
       processAttempt(game);
     } else {
@@ -88,14 +88,14 @@ export const processAttempt = async (game) => {
           "There is a game data mismatch, reloading the game in 3 seconds..."
         );
         setTimeout(() => {
-          store("game", response.gameData);
+          storeSession("game", response.gameData);
           window.location.href = "/";
         }, 3000);
         return;
     }
 
     // Update the local version of the game.
-    store("game", response.gameData);
+    storeSession("game", response.gameData);
   }
 
   // Process the response from the server.
@@ -178,7 +178,7 @@ const processServerResponse = async (game, data) => {
       case "WINNER":
       case "LOSER":
         // Clear the game from local storage.
-        remove("game");
+        removeSession("game");
 
         // Set up the resposne message.
         if (data.message === "LOSER") {
@@ -239,13 +239,13 @@ export const validateAttempt = (game) => {
   }
 
   // Validate word exists in word list.
-  const wordList = retrieve("wordList");
+  const wordList = retrieveLocal("wordList");
   if (!wordList) {
     // re-fetch word list synchronously? pass to server for validation while asynchronously fetching the word list?
     console.info("No word list found locally, fetching...");
     fetchWordList()
       .then((response) => {
-        store("wordList", response);
+        storeLocal("wordList", response);
         console.info(`Stored ${response.length} words in the wordList.`);
       })
       .catch((error) => console.error("Error fetching word list", error));

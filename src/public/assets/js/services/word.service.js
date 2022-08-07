@@ -1,5 +1,5 @@
 import { MAXIMUM_WORD_LENGTH, MINIMUM_WORD_LENGTH } from "../constants.js";
-import { retrieve } from "./storage.service.js";
+import { retrieveLocal } from "./storage.service.js";
 
 /**
  * Fetches a list of words from the server with a specified length range.
@@ -28,7 +28,7 @@ export const fetchWordList = async (
  * @returns {boolean} True if the word exists in the word list, false otherwise.
  */
 export const wordExists = (word) => {
-  const wordList = retrieve("wordList");
+  const wordList = retrieveLocal("wordList");
   if (!wordList) return true;
   const filtered = wordList.filter((wordInList) => wordInList.word === word);
   return filtered.length > 0;
