@@ -19,8 +19,8 @@
 body {
   background-color: #0d1117;
   color: #f4f3f2;
-  width: 100dvw;
-  height: 100dvh;
+  width: 100%;
+  height: 100%;
 }
 
 strong {
@@ -75,8 +75,12 @@ strong {
 .form-message {
   font-size: 16px;
   font-weight: 700;
-  color: rgba(227, 34, 39, 1);
+  color: rgba(227, 34, 39, 0.9);
   margin: 15px 0;
+}
+
+.form-message.success {
+  color: rgba(0, 163, 108, 0.9);
 }
 
 .form-link {
@@ -105,8 +109,7 @@ strong {
 
 .content {
   width: 100%;
-  min-width: 100%;
-  min-height: 100%;
+  height: 100dvh;
 
   padding: 1em;
 
@@ -123,9 +126,10 @@ strong {
   margin: 50px 0;
 }
 
-.content:not(#home) {
-  width: 100%;
-  min-width: 100%;
+@media screen and (max-width: 1366px) {
+  .content#home > *:not(:last-child) {
+    margin: 25px 0;
+  }
 }
 
 .content#game {
@@ -138,13 +142,13 @@ strong {
   justify-content: start;
 }
 
-.content#home,
+/* .content#home,
 .content#login,
 .content#loading,
 .content#register,
 .content[id$="-password"] {
   flex-direction: column;
-}
+} */
 
 @media screen and (max-width: 768px) {
   .content#game {
@@ -181,7 +185,6 @@ strong {
   .content:not(#home) {
     padding: 0;
     width: 50%;
-    min-width: 50%;
     margin: 0 auto;
   }
 
@@ -533,11 +536,13 @@ strong {
   top: 20px;
   left: 20px;
   position: absolute;
-  
+
   margin-bottom: 0;
 
   text-align: start;
   font-size: 20px;
+
+  width: 100px;
 
   cursor: pointer;
 
@@ -558,7 +563,6 @@ strong {
   opacity: 0.6;
 }
 
-
 @media screen and (min-width: 768px) {
   .back-button {
     top: 50px;
@@ -577,7 +581,7 @@ input {
 
 input.error {
   border: 2px solid rgba(227, 34, 39, 1);
-  box-shadow:inset 0px 1px 0px rgba(255, 255, 255);
+  box-shadow: inset 0px 1px 0px rgba(255, 255, 255);
 }
 
 label {
@@ -601,14 +605,14 @@ label {
 /*
  * From https://cssloaders.github.io/
  */
- .button-loader {
+.button-loader {
   width: 20px;
   height: 20px;
   border-radius: 50%;
   vertical-align: -4px;
   margin-left: 10px;
   display: inline-block;
-  border-top: 3px solid #FFF;
+  border-top: 3px solid #fff;
   border-right: 3px solid transparent;
   box-sizing: border-box;
   animation: rotation 1s linear infinite;
@@ -620,7 +624,7 @@ label {
   100% {
     transform: rotate(360deg);
   }
-} 
+}
 
 .loader {
   position: relative;

@@ -25,6 +25,7 @@ export const generateGame = async (req, res) => {
   // Ensure wordLength is valid.
   if (!(MINIMUM_WORD_LENGTH <= wordLength && wordLength <= MAXIMUM_WORD_LENGTH)) {
     return res.json({
+      status: "error",
       message: "INVALID WORD LENGTH",
     });
   }
@@ -32,6 +33,7 @@ export const generateGame = async (req, res) => {
   // Ensure maxAttempts is valid.
   if (!(MINIMUM_MAX_ATTEMPTS <= maxAttempts && maxAttempts <= MAXIMUM_MAX_ATTEMPTS)) {
     return res.json({
+      status: "error",
       message: "INVALID MAX ATTEMPTS"
     })
   }
@@ -42,7 +44,10 @@ export const generateGame = async (req, res) => {
   if (!word) {
     // We failed to generate a random word. Now what?
     logger.error("Failed to fetch a word for new Game entry");
-    return res.json({ message: "Game creation failed: could not obtain a random word" });
+    return res.json({ 
+      status: "error",
+      message: "Game creation failed: could not obtain a random word"
+    });
   }
 
   // Log the game creation event.
@@ -56,11 +61,14 @@ export const generateGame = async (req, res) => {
   // Create a new Game entry in the database with a generated UUID.
   const createdGame = await insertGame(uuid, word, maxAttempts);
   if (createdGame == null) {
-    return res.json({ message: "Game creation failed: could not insert game into database" });
+    return res.json({
+      status: "error",
+      message: "Game creation failed: could not insert game into database"
+    });
   }
 
   // Set the gameId session.
-  req.session.gameId = createdGame.id;
+  req.cookies.gameId = createdGame.id;
 
   res.json(createdGame);
 };
@@ -77,13 +85,14 @@ export const getGame = async (req, res) => {
   if (gameId == null) {
     return res.json({
       status: "error",
-      error: "No id parameter provided.",
+      message: "No id parameter provided.",
     });
   }
 
   // Ensure the gameId is a valid UUID string.
   if (!isUUID(gameId)) {
     return res.json({
+      status: "error",
       message: "INVALID GAME ID FORMAT"
     })
   }
@@ -105,19 +114,20 @@ export const forfeitGame = async (req, res) => {
   if (gameId == null) {
     return res.json({
       status: "error",
-      error: "No id parameter provided.",
+      message: "No id parameter provided.",
     });
   }
 
   // Ensure the gameId is a valid UUID string.
   if (!isUUID(gameId)) {
     return res.json({
+      status: "error",
       message: "INVALID GAME ID FORMAT"
     })
   }
 
   // Clear the game session.
-  req.session.gameId = undefined;
+  req.cookies.gameId = undefined;
 
   // Update the game's state to FORFEIT and update the record in the repository.
   const game = await getGameById(gameId);

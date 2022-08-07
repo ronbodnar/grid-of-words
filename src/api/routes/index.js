@@ -6,12 +6,11 @@ import { router as attemptRoutes } from "./attempt.route.js";
 import { router as authenticationRoutes } from "./authentication.route.js";
 import { __dirname } from "../constants.js";
 import { getGameById } from "../repository/game.repository.js";
-import { checkAuthentication } from "../middleware/authentication.js";
 
 export const router = express.Router();
 
 // Add the word routes to the router.
-router.use("/word", checkAuthentication, wordRoutes);
+router.use("/word", wordRoutes);
 
 // Add the game and attempt/guess routes to the router.
 router.use("/game", gameRoutes, attemptRoutes);
@@ -22,8 +21,8 @@ router.use("/auth", authenticationRoutes)
 // Serve any session data for the user in the initial GET request.
 router.get("/session", async function (req, res) {
   let game = undefined;
-  if (req.session.gameId) {
-    game = await getGameById(req.session.gameId);
+  if (req.cookies.gameId) {
+    game = await getGameById(req.cookies.gameId);
     if (!game) {
       res.end();
       return;

@@ -18,6 +18,7 @@ export const getAttempts = async (req, res) => {
   // Ensure there is a valid gameId.
   if (gameId == null) {
     return res.json({
+      status: "error",
       message: "MISSING PARAMETERS",
     });
   }
@@ -25,6 +26,7 @@ export const getAttempts = async (req, res) => {
   // Ensure the gameId is a valid UUID string.
   if (!isUUID(gameId)) {
     return res.json({
+      status: "error",
       message: "INVALID GAME ID FORMAT",
     });
   }
@@ -44,6 +46,7 @@ export const addAttempt = async (req, res) => {
   // Ensure that both word and gameId are present.
   if (word === undefined || gameId === undefined) {
     return res.json({
+      status: "error",
       message: "MISSING_WORD_OR_GAME_ID",
     });
   }
@@ -51,6 +54,7 @@ export const addAttempt = async (req, res) => {
   // Ensure the gameId is a valid UUID string.
   if (!isUUID(gameId)) {
     return res.json({
+      status: "error",
       message: "INVALID_GAME_ID_FORMAT",
     });
   }
@@ -59,6 +63,7 @@ export const addAttempt = async (req, res) => {
   const game = await getGameById(gameId);
   if (!game) {
     return res.json({
+      status: "error",
       message: "GAME_NOT_FOUND",
     });
   }
@@ -76,6 +81,7 @@ export const addAttempt = async (req, res) => {
       gameData: game,
     });
     return res.json({
+      status: "error",
       message: validationError,
       gameData: game,
     });
@@ -89,7 +95,7 @@ export const addAttempt = async (req, res) => {
 
   // Update some game info
   if (finalAttempt || correctWord) {
-    req.session.gameId = undefined; // also clear the session variable
+    req.cookies.gameId = undefined; // also clear the session variable
     game.state = correctWord ? "WIN" : "LOSS";
     game.endTime = new Date();
   }
@@ -106,6 +112,7 @@ export const addAttempt = async (req, res) => {
   if (correctWord) message = "WINNER";
 
   res.json({
+    status: "success",
     message: message,
     gameData: game,
   });

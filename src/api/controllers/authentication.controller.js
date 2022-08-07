@@ -2,10 +2,8 @@ import logger from "../config/winston.config.js";
 import { User } from "../models/User.class.js";
 import { findByEmail, save } from "../repository/user.repository.js";
 import {
+  addJWTCookie,
   authenticate,
-  generateSession,
-  generateToken,
-  verifyToken,
 } from "../services/authentication.service.js";
 
 export const loginUser = async (req, res) => {
@@ -14,12 +12,10 @@ export const loginUser = async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
-  console.log("Cookies", req.cookies);
-
   if (!email || !password) {
     return res.status(400).json({
       status: "error",
-      error: "Email and password are required",
+      message: "Email and password are required.",
     });
   }
 
@@ -27,24 +23,30 @@ export const loginUser = async (req, res) => {
 
   if (!authenticatedUser) {
     return res.status(401).json({
-      error: "Invalid email or password",
+      status: "error",
+      message: "Invalid email or password.",
     });
   }
 
-  // Generate a JWT and set the HttpOnly cookie.
-  const jwt = generateToken(authenticatedUser);
-  res.cookie("token", jwt, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    maxAge: 60 * 60 * 24 * 30, // 30 days
-    sameSite: "strict",
-  });
+  // Try to set the JWT in the user's cookies and error if it fails.
+  if (!addJWTCookie(res, authenticatedUser)) {
+    return res.json({
+      status: "error",
+      message: "Error adding JWT to cookies.",
+    });
+  }
+
+
+  // Hide the hash and salt from output (temporarily)
+  //TODO: this is not a great solution
+  delete authenticatedUser.hash;
+  delete authenticatedUser.salt;
 
   return res.json({
-    message: "Login successful",
-  })
-
-  //return generateSession(req, res, authenticatedUser);
+    status: "success",
+    message: "Login successful.",
+    user: authenticatedUser,
+  });
 };
 
 export const registerUser = async (req, res) => {
@@ -65,7 +67,7 @@ export const registerUser = async (req, res) => {
   if (!usernameRegex.test(username)) {
     return res.status(400).json({
       status: "error",
-      error:
+      message:
         "Username must be 3-16 characters long.\r\nA-z, numbers, hyphen, underscore, spaces only.",
     });
   }
@@ -74,15 +76,17 @@ export const registerUser = async (req, res) => {
   if (!emailRegex.test(email)) {
     return res.status(400).json({
       status: "error",
-      error: "Email is not a valid email address.",
+      message: "Email is not a valid email address.",
     });
   }
 
   // Try to find an existing user with the same email.
   const dbUser = await findByEmail(email);
   if (dbUser) {
+    // This is a potential security risk in the future (exposing who uses the app)
     return res.status(409).json({
-      error: "Email already in use",
+      status: "error",
+      message: "Email already in use",
     });
   }
 
@@ -90,28 +94,23 @@ export const registerUser = async (req, res) => {
 
   // Try to save the user in the database.
   if (await save(user)) {
-    // Generate a JWT and set the HttpOnly cookie.
-    const jwt = generateToken(user);
-    res.cookie("token", jwt, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 60 * 24 * 30, // 30 days
-      sameSite: "strict",
-    });
+    addJWTCookie(res, user);
     return res.json({
+      status: "success",
       message: "Registration successful"
     })
   } else {
     return res.status(500).json({
-      error: "Failed to save user",
+      status: "error",
+      message: "Failed to save user",
     });
   }
 };
 
 export const whoisUser = (req, res) => {
-  if (req.session.user) {
+  if (req.cookies.token) {
     res.json({
-      user: req.session.user,
+      user: '',
     });
   } else {
     res.status(401).end();

@@ -9,44 +9,30 @@ export const authenticate = async (email, pass) => {
     return false;
   }
 
-  console.log(pass, dbUser);
-
   // Hash the password with the user's salt
   const hashedPass = hashPassword(pass, dbUser.salt);
 
-  console.log(hashedPass, dbUser.hash.substring(16));
-
-  // Compare the hashed password with the stored password (remove the salt from the hash)
-  if (hashedPass === dbUser.hash.substring(16)) {
+  // Compare the hashed password with the stored password (remove the salt from the start of the hash)
+  if (hashedPass === dbUser.hash.substring(dbUser.salt.length)) {
     return dbUser;
   } else {
     return undefined;
   }
 };
 
-export const generateSession = (req, res, authenticatedUser) => {
-  return req.session.regenerate(function (err) {
-    if (err) {
-      logger.error("Error regenerating session", {
-        error: err,
-        request: req,
-      });
-      return res.json({
-        message: "Authentication failed: session regeneration",
-      });
-    }
+export const addJWTCookie = (res, payload) => {
+  // Generate a JWT and set the HttpOnly cookie.
+  const jwt = generateToken(payload);
+  if (!jwt) return undefined;
 
-    req.session.user = authenticatedUser;
-    req.session.isLoggedIn = true;
-    logger.info("Successful user login attempt", {
-      user: authenticatedUser,
-      request: req,
-    });
-    return res.json({
-      message: "User logged in successfully",
-      user: authenticatedUser,
-    });
+  // Set the HttpOnly cookie "token" to the JWT token and set the age to 15 days.
+  res.cookie("token", jwt, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 60 * 60 * 24 * 15, // 15 days
+    sameSite: "strict",
   });
+  return jwt;
 };
 
 export const generateSalt = () => {
@@ -66,7 +52,7 @@ export const generateToken = (user) => {
       username: user.username,
     },
     process.env.JWT_SECRET,
-    { expiresIn: "1h" }
+    { expiresIn: "15d" }
   );
   return token;
 };
@@ -74,6 +60,9 @@ export const generateToken = (user) => {
 export const verifyToken = (token) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    logger.info("Decoded token:", {
+      token: decoded
+    });
     return decoded;
   } catch (error) {
     return null;
