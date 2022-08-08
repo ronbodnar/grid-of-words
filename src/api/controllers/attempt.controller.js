@@ -7,10 +7,10 @@ import { getGameById } from "../repository/game.repository.js";
 import { isUUID } from "../helpers.js";
 import logger from "../config/winston.config.js";
 
-/*
- * Endpoint: GET /game/{id}/attempts
- *
+/**
  * Retrieves a list of attempts made for a Game.
+ * 
+ * Endpoint: GET /game/{id}/attempts
  */
 export const getAttempts = async (req, res) => {
   const gameId = req.params.id;
@@ -34,10 +34,10 @@ export const getAttempts = async (req, res) => {
   res.json(attempts);
 };
 
-/*
- * Endpoint: POST /game/{id}/attempts
- *
+/**
  * Attempts to solve the word puzzle.
+ * 
+ * Endpoint: POST /game/{id}/attempts
  */
 export const addAttempt = async (req, res) => {
   const word = req.body.word;
@@ -118,13 +118,13 @@ export const addAttempt = async (req, res) => {
   });
 };
 
-/*
+/**
  * Validates the attempt and handles the response accordingly.
  *
  * @param {object} res Express response object.
  * @param {string} word The word to validate.
  * @param {object} Game The game to validate the word against.
- * @return {boolean} true if the attempt is valid, false otherwise.
+ * @return {Promise<boolean>} true if the attempt is valid, false otherwise.
  */
 const validateAttempt = async (word, game) => {
   switch (true) {

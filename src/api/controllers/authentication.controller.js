@@ -5,14 +5,22 @@ import {
   setTokenCookie,
   authenticate,
   verifyToken,
+  setApiKeyCookie,
 } from "../services/authentication.service.js";
 
+/**
+ * Performs authentication for the email and password combination provided in the request.
+ * 
+ * Endpoint: /auth/login
+ */
 export const loginUser = async (req, res) => {
-  // What about when a user is already logged in?
+  // TODO: What about when a user is already logged in?
+
+  // Extract email and password from the request body.
   const email = req.body.email;
   const password = req.body.password;
-  const showToken = req.body.showToken;
 
+  // Validate that the email and password are provided in the request.
   if (!email || !password) {
     return res.status(400).json({
       status: "error",
@@ -20,8 +28,9 @@ export const loginUser = async (req, res) => {
     });
   }
 
+  // Attempt to authenticate the user with the provided email and password.
+  // Respond with a 401 Unauthorized status if the authentication fails.
   const authenticatedUser = await authenticate(email, password);
-
   if (!authenticatedUser) {
     return res.status(401).json({
       status: "error",
@@ -29,7 +38,8 @@ export const loginUser = async (req, res) => {
     });
   }
 
-  // Try to set the JWT in the user's cookies and error if it fails.
+  // Generate a JWT and set it in the cookie response.
+  // Respond with a 500 Internal Server Error if the token generation fails.
   const generatedToken = setTokenCookie(res, authenticatedUser);
   if (!generatedToken) {
     return res.status(500).json({
@@ -38,14 +48,14 @@ export const loginUser = async (req, res) => {
     });
   }
 
-  // Hide the hash from output by deleting the property from the authenticatedUser object.
+  // Remove sensitive information from the token.
   delete authenticatedUser.hash;
 
+  // Respond with a success message and the authenticated user details.
   return res.json({
     status: "success",
     message: "Login successful.",
     user: authenticatedUser,
-    token: showToken ? generatedToken : undefined,
   });
 };
 
@@ -94,37 +104,44 @@ export const registerUser = async (req, res) => {
 
   // Try to save the user in the database.
   if (await save(user)) {
-    setTokenCookie(res, user);
     return res.json({
       status: "success",
-      message: "Registration successful",
+      message: "Registration successful.",
     });
   } else {
     return res.status(500).json({
       status: "error",
-      message: "Failed to save user",
+      message: "Failed to save user.",
     });
   }
 };
 
 export const logoutUser = (req, res) => {
-  setTokenCookie(res, {});
+  res.clearCookie("token");
   res.json({ status: "success", message: "Goodbye" });
 };
 
-// Serve any session data for the user in the initial GET request.
-export const whoisUser = (req, res) => {
-  // Just in case the cookies can't be found, end the response.
-  if (!req?.cookies) {
-    setTokenCookie(res, {});
-    return res.status(400).end();
+/**
+ * Extract session data from cookies sent in the request.
+ */
+export const getSession = (req, res) => {
+  // If no API Key is present in the request, provide it to the user as an HttpOnly cookie.
+  if (!req.cookies?.apiKey) {
+    setApiKeyCookie(res);
   }
 
-  const payload = verifyToken(req.cookies.token);
+  // The model to house session data like user and game information.
+  let sessionData = {};
 
-  // The session data to be returned.
-  res.json({
-    user: !payload?.user ? undefined : payload.user,
-    game: !payload?.game ? undefined : payload.game,
-  });
+  // If a JWT is present in the request, we need to verify it to provide the authenticated user.
+  if (req.cookies?.token) {
+    const payload = verifyToken(req.cookies.token);
+
+    if (payload?.data) {
+      sessionData.user = payload.data;
+    }
+  }
+
+  // Respond with the session data in JSON format.
+  res.json(sessionData);
 };

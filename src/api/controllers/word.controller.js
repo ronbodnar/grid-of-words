@@ -8,10 +8,12 @@ import {
   getWordsByLengthRange,
 } from "../repository/word.repository.js";
 
-/*
- * Endpoint: /word
- *
+/**
  * Select a random word from the word table in the database.
+ * 
+ * Endpoint: /word
+ * 
+ * @returns {Promise<}
  */
 export const getWord = async (req, res) => {
   const length = req.query.wordLength || DEFAULT_WORD_LENGTH;
@@ -27,13 +29,16 @@ export const getWord = async (req, res) => {
 
   // Synchronously retrieve the word from the database.
   const randomWord = await getWordOfLength(length);
+
   return res.json(randomWord);
 };
-/*
- * Endpoint: /word/list
- *
+
+/**
  * Retrieves the list of words between a min-max value range.
- * @return {Array} A list of words within the min-max range.
+ * 
+ * Endpoint: /word/list
+ * 
+ * @return {Promise<Array>} A list of words within the min-max range.
  */
 export const getWordList = async (req, res) => {
   const length = req.query.length;

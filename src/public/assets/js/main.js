@@ -15,7 +15,7 @@ addKeyListeners();
 showView("loading");
 
 // Fetch the session data from the server.
-const serverResponse = await fetch("/auth/who").catch((error) =>
+const serverResponse = await fetch("/auth/session").catch((error) =>
   console.error("Error fetching session data", error)
 );
 
