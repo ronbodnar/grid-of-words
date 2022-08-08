@@ -12,6 +12,7 @@ import {
 } from "../constants.js";
 import { isUUID } from "../helpers.js";
 import logger from "../config/winston.config.js";
+import { getAuthenticatedUser } from "../services/authentication.service.js";
 
 /*
  * Endpoint: GET /game/new
@@ -23,7 +24,9 @@ export const generateGame = async (req, res) => {
   const maxAttempts = req.query.maxAttempts || DEFAULT_MAX_ATTEMPTS;
 
   // Ensure wordLength is valid.
-  if (!(MINIMUM_WORD_LENGTH <= wordLength && wordLength <= MAXIMUM_WORD_LENGTH)) {
+  if (
+    !(MINIMUM_WORD_LENGTH <= wordLength && wordLength <= MAXIMUM_WORD_LENGTH)
+  ) {
     return res.json({
       status: "error",
       message: "INVALID WORD LENGTH",
@@ -31,11 +34,15 @@ export const generateGame = async (req, res) => {
   }
 
   // Ensure maxAttempts is valid.
-  if (!(MINIMUM_MAX_ATTEMPTS <= maxAttempts && maxAttempts <= MAXIMUM_MAX_ATTEMPTS)) {
+  if (
+    !(
+      MINIMUM_MAX_ATTEMPTS <= maxAttempts && maxAttempts <= MAXIMUM_MAX_ATTEMPTS
+    )
+  ) {
     return res.json({
       status: "error",
-      message: "INVALID MAX ATTEMPTS"
-    })
+      message: "INVALID MAX ATTEMPTS",
+    });
   }
 
   // Generate the UUID and selet a random word of wordLength length.
@@ -44,31 +51,42 @@ export const generateGame = async (req, res) => {
   if (!word) {
     // We failed to generate a random word. Now what?
     logger.error("Failed to fetch a word for new Game entry");
-    return res.json({ 
+    return res.json({
       status: "error",
-      message: "Game creation failed: could not obtain a random word"
+      message: "Game creation failed: could not obtain a random word",
     });
   }
+
+  const authenticatedUser = getAuthenticatedUser(req);
+
+  // Using a null value since insertGame uses prepared statements and doesn't accept undefined.
+  const userId = authenticatedUser?.id ? authenticatedUser.id : null;
+
+  // Create a new Game entry in the database with a generated UUID.
+  const createdGame = await insertGame(uuid, word, maxAttempts, userId);
+  if (createdGame == null) {
+    return res.json({
+      status: "error",
+      message: "Game creation failed: could not insert game into database",
+    });
+  }
+
+  // Save the game into the user's cookies.
+  res.cookie("game", createdGame, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 60 * 60 * 24 * 15, // 15 days
+    sameSite: "strict",
+  });
 
   // Log the game creation event.
   logger.info("Generated a new Game", {
     uuid: uuid,
     word: word,
     wordLength: wordLength,
-    maxAttempts: maxAttempts
+    maxAttempts: maxAttempts,
+    owner: authenticatedUser,
   });
-
-  // Create a new Game entry in the database with a generated UUID.
-  const createdGame = await insertGame(uuid, word, maxAttempts);
-  if (createdGame == null) {
-    return res.json({
-      status: "error",
-      message: "Game creation failed: could not insert game into database"
-    });
-  }
-
-  // Set the gameId session.
-  req.cookies.gameId = createdGame.id;
 
   res.json(createdGame);
 };
@@ -93,12 +111,13 @@ export const getGame = async (req, res) => {
   if (!isUUID(gameId)) {
     return res.json({
       status: "error",
-      message: "INVALID GAME ID FORMAT"
-    })
+      message: "INVALID GAME ID FORMAT",
+    });
   }
 
   // Synchronously retrieve the game object from the database.
   const game = await getGameById(gameId);
+
   res.json(game);
 };
 
@@ -122,8 +141,8 @@ export const forfeitGame = async (req, res) => {
   if (!isUUID(gameId)) {
     return res.json({
       status: "error",
-      message: "INVALID GAME ID FORMAT"
-    })
+      message: "INVALID GAME ID FORMAT",
+    });
   }
 
   // Clear the game session.

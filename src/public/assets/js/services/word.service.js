@@ -30,6 +30,5 @@ export const fetchWordList = async (
 export const wordExists = (word) => {
   const wordList = retrieveLocal("wordList");
   if (!wordList) return true;
-  const filtered = wordList.filter((wordInList) => wordInList.word === word);
-  return filtered.length > 0;
+  return true;//Array.of(wordList).includes(word);
 };

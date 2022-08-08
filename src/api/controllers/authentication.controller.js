@@ -2,15 +2,16 @@ import logger from "../config/winston.config.js";
 import { User } from "../models/User.class.js";
 import { findByEmail, save } from "../repository/user.repository.js";
 import {
-  addJWTCookie,
+  setTokenCookie,
   authenticate,
+  verifyToken,
 } from "../services/authentication.service.js";
 
 export const loginUser = async (req, res) => {
   // What about when a user is already logged in?
-
   const email = req.body.email;
   const password = req.body.password;
+  const showToken = req.body.showToken;
 
   if (!email || !password) {
     return res.status(400).json({
@@ -29,22 +30,22 @@ export const loginUser = async (req, res) => {
   }
 
   // Try to set the JWT in the user's cookies and error if it fails.
-  if (!addJWTCookie(res, authenticatedUser)) {
-    return res.json({
+  const generatedToken = setTokenCookie(res, authenticatedUser);
+  if (!generatedToken) {
+    return res.status(500).json({
       status: "error",
       message: "Error adding JWT to cookies.",
     });
   }
 
-  // Hide the hash and salt from output (temporarily)
-  //TODO: this is not a great solution
+  // Hide the hash from output by deleting the property from the authenticatedUser object.
   delete authenticatedUser.hash;
-  delete authenticatedUser.salt;
 
   return res.json({
     status: "success",
     message: "Login successful.",
     user: authenticatedUser,
+    token: showToken ? generatedToken : undefined,
   });
 };
 
@@ -93,7 +94,7 @@ export const registerUser = async (req, res) => {
 
   // Try to save the user in the database.
   if (await save(user)) {
-    addJWTCookie(res, user);
+    setTokenCookie(res, user);
     return res.json({
       status: "success",
       message: "Registration successful",
@@ -107,11 +108,23 @@ export const registerUser = async (req, res) => {
 };
 
 export const logoutUser = (req, res) => {
-  res.clearCookie("token", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    path: "/",
-  });
+  setTokenCookie(res, {});
   res.json({ status: "success", message: "Goodbye" });
+};
+
+// Serve any session data for the user in the initial GET request.
+export const whoisUser = (req, res) => {
+  // Just in case the cookies can't be found, end the response.
+  if (!req?.cookies) {
+    setTokenCookie(res, {});
+    return res.status(400).end();
+  }
+
+  const payload = verifyToken(req.cookies.token);
+
+  // The session data to be returned.
+  res.json({
+    user: !payload?.user ? undefined : payload.user,
+    game: !payload?.game ? undefined : payload.game,
+  });
 };

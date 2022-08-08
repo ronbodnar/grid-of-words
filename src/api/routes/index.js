@@ -5,36 +5,16 @@ import { router as gameRoutes } from "./game.route.js";
 import { router as attemptRoutes } from "./attempt.route.js";
 import { router as authenticationRoutes } from "./authentication.route.js";
 import { __dirname } from "../constants.js";
-import { verifyToken } from "../services/authentication.service.js";
-
+import { setTokenCookie, verifyToken } from "../services/authentication.service.js";
+import logger from "../config/winston.config.js";
+import { requireToken } from "../middleware/require-token.js";
 export const router = express.Router();
 
 // Add the word routes to the router.
-router.use("/word", wordRoutes);
+router.use("/word", requireToken, wordRoutes);
 
 // Add the game and attempt/guess routes to the router.
-router.use("/game", gameRoutes, attemptRoutes);
+router.use("/game", requireToken, gameRoutes, attemptRoutes);
 
 // Add the authentication routes to the router.
 router.use("/auth", authenticationRoutes);
-
-// Serve any session data for the user in the initial GET request.
-router.get("/session", async function (req, res) {
-  // Just in case the cookies can't be found, end the response.
-  if (!req?.cookies) {
-    res.end();
-    return;
-  }
-
-  const payload = verifyToken(req.cookies.token);
-
-  const user = {
-    id: payload?.id,
-    username: payload?.username,
-  };
-
-  // The session data to be returned.
-  res.json({
-    user: !payload ? undefined : user,
-  });
-});
