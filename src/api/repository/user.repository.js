@@ -20,9 +20,23 @@ export const findByEmail = async (email) => {
   return response[0][0];
 };
 
-export const save = async (user) => {
+export const saveUser = async (user) => {
   if (!user) return null;
-  console.log("Saving user with salt", user.salt);
+
+  console.log(user);
+
+  const response = await query(
+    "UPDATE users SET hash = ?",
+    [user.hash]
+  );
+  if (response[0]?.affectedRows && response[0]?.affectedRows > 0) {
+    return user;
+  }
+  return null;
+};
+
+export const insertUser = async (user) => {
+  if (!user) return null;
   console.log("Saving user with hash", user.hash);
 
   const response = await query(
@@ -32,5 +46,5 @@ export const save = async (user) => {
   if (response[0]?.affectedRows && response[0]?.affectedRows > 0) {
     return user;
   }
-  return undefined;
+  return null;
 };

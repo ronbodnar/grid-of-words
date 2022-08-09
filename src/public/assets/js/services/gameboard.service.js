@@ -18,9 +18,10 @@ export const shiftActiveRow = () => {
  * Animates the showing and hiding of the letters in the row by changing the opacity on an increasing timeout interval.
  *
  * @param {boolean} hide - Whether to hide the squares or not.
+ * @param {boolean} instant - Whether the hiding/showing of squares should be instant.
  * @return {Promise} The promise resolves when all squares are hidden/shown, plus an additional delay of 300 milliseconds.
  */
-export const transformSquares = (hide) => {
+export const transformSquares = (hide, instant) => {
   const activeRow = document.querySelector(".word-row.active");
   if (!activeRow) return Promise.reject(new Error("No active row found"));
 
@@ -36,10 +37,10 @@ export const transformSquares = (hide) => {
           }
           if (i === squares.length - 1) {
             // Resolve the Promise 300ms after the last square has processed.
-            setTimeout(() => resolve(true), 300);
+            setTimeout(() => resolve(true), instant ? 0 : 300);
           }
         },
-        hide ? 0 : (delay += 300)
+        hide ? 0 : (delay += instant ? 0 : 300)
       );
     });
   });

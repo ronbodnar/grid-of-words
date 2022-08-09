@@ -19,7 +19,6 @@ const fetchNewGame = async (options) => {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Bearer v5Pd3vUK9iYjRxCa1H5VsBe9L18xs8UW", // :)
     },
   })
     .then((response) => response.json())
@@ -43,13 +42,13 @@ export const startGame = async (options) => {
     maxAttempts: options.maxAttempts || DEFAULT_MAX_ATTEMPTS,
   });
   try {
-    const gameData = await fetchNewGame(params);
+    const fetchGameResponse = await fetchNewGame(params);
 
     // Stop the loading screen if the game data was already loaded
     clearTimeout(timeout);
 
     //TODO: error handler
-    if (!gameData) {
+    if (!fetchGameResponse || fetchGameResponse.status === 'error') {
       console.log("Failed to fetch new game");
       showMessage("Failed to fetch new game");
       return;
@@ -61,9 +60,9 @@ export const startGame = async (options) => {
     });
 
     // Add the game to localStorage
-    storeSession("game", gameData);
+    storeSession("game", fetchGameResponse);
 
-    console.log("Created Game Response", gameData);
+    console.log("Created Game Response", fetchGameResponse);
   } catch (error) {
     console.error(error);
     showMessage("An unknown error has occurred. Please try again.");
@@ -82,7 +81,6 @@ export const forfeitGame = async () => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Bearer v5Pd3vUK9iYjRxCa1H5VsBe9L18xs8UW", // :)
     },
   })
     .then((response) => response.json())
@@ -99,7 +97,6 @@ export const fetchGameData = async (id) => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer v5Pd3vUK9iYjRxCa1H5VsBe9L18xs8UW", // :)
       },
     });
     return await response.json();

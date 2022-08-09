@@ -1,5 +1,11 @@
 import { setBlockKeyEvents } from "./event.service.js";
-import { removeSession, retrieveLocal, retrieveSession, storeLocal, storeSession } from "./storage.service.js";
+import {
+  removeSession,
+  retrieveLocal,
+  retrieveSession,
+  storeLocal,
+  storeSession,
+} from "./storage.service.js";
 import { showView } from "../utils/helpers.js";
 import { showMessage } from "./message.service.js";
 import { fetchWordList, wordExists } from "./word.service.js";
@@ -74,28 +80,30 @@ export const processAttempt = async (game) => {
     const remoteGame = new Game(response.gameData);
 
     // Check if both games have the same number of attempts made.
-    const attemptsMatch = Array.from(localGame.attempts).every((a) =>
-      remoteGame.attempts.includes(a)
+    const attemptsMatch = Array.from(remoteGame.attempts).every((a) =>
+      localGame.attempts.includes(a)
     );
 
-    // If there are property mismatches, we need to refresh to force-update with the good data.
-    switch (true) {
-      case localGame.attempts.length !== remoteGame.attempts.length: // attempt array size mismatch
-      case !attemptsMatch: // array element content mismatch
-      case localGame.id !== remoteGame.id: // game id mismatch
-      case localGame.word !== remoteGame.word: // game word mismatch
-        console.error(
-          "There is a game data mismatch, reloading the game in 3 seconds..."
-        );
-        setTimeout(() => {
-          storeSession("game", response.gameData);
-          window.location.href = "/";
-        }, 3000);
-        return;
-    }
+    // We received an updated game object with the correct attempt and need to validate the values.
+    if (response.status === "success") {
+      switch (true) {
+        case localGame.attempts.length !== remoteGame.attempts.length: // attempt array size mismatch
+        case !attemptsMatch: // array element content mismatch
+        case localGame.id !== remoteGame.id: // game id mismatch
+        case localGame.word !== remoteGame.word: // game word mismatch
+          console.error(
+            "There is a game data mismatch, reloading the game in 3 seconds..."
+          );
+          setTimeout(() => {
+            storeSession("game", response.gameData);
+            window.location.href = "/";
+          }, 3000);
+          return;
+      }
 
-    // Update the local version of the game.
-    storeSession("game", response.gameData);
+      // Update the local version of the game.
+      storeSession("game", response.gameData);
+    }
   }
 
   // Process the response from the server.
@@ -112,7 +120,6 @@ const fetchAttemptResponse = async (game) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Bearer v5Pd3vUK9iYjRxCa1H5VsBe9L18xs8UW", // :)
     },
     body: JSON.stringify({
       word: attemptLetters.join(""),
@@ -152,6 +159,11 @@ const processServerResponse = async (game, data) => {
         message =
           data.message.at(0).toUpperCase() +
           data.message.slice(1).toLowerCase().replaceAll("_", " ");
+
+        // We hid the letter squares and need to bring them back.
+        await transformSquares(false, true);
+
+        setBlockKeyEvents(false);
         break;
 
       case "WRONG_WORD":

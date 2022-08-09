@@ -28,7 +28,7 @@ export const authenticate = async (email, password) => {
     }),
   }).catch((err) => {
     console.error(err);
-    return undefined;
+    return null;
   });
 
   const data = !response ? undefined :  await response.json();
@@ -112,6 +112,23 @@ export const logoutUser = async () => {
 
   console.log("Logout response", data);
 };
+
+export const changePassword = async (currentPassword, newPassword) => {
+  const response = await fetch(`/auth/change-password/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      currentPassword: currentPassword,
+      newPassword: newPassword,
+    }),
+  });
+
+  const data = await response.json();
+
+  console.log("Change Password response", data);
+}
 
 export const isAuthenticated = () => {
   const user = retrieveSession("user");

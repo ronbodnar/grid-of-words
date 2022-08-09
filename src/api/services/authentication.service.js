@@ -26,7 +26,7 @@ export const authenticate = async (email, pass) => {
   if (hashedPass === userHash) {
     return dbUser;
   } else {
-    return undefined;
+    return null;
   }
 };
 
@@ -34,7 +34,7 @@ export const setTokenCookie = (res, payload) => {
   // Make sure we received a payload.
   if (!payload) {
     console.error("No payload provided to setTokenCookie");
-    return undefined;
+    return null;
   }
 
   // Generate the JWT from the payload.
@@ -53,7 +53,7 @@ export const setTokenCookie = (res, payload) => {
   res.cookie("token", jwt, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    maxAge: 60 * 60 * 24 * 15, // 15 days
+    maxAge: 1000 * 60 * 60 * 24 * 15, // 15 days
     sameSite: "strict",
   });
   return jwt;
@@ -67,7 +67,7 @@ export const setApiKeyCookie = (res) => {
   res.cookie("apiKey", apiKey, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    maxAge: 60 * 60 * 24 * 30, // 30 days
+    maxAge: 1000 * 60 * 60 * 24 * 60, // 15 days
     sameSite: "strict",
   });
 };
@@ -156,12 +156,12 @@ export const getAuthenticatedUser = (req) => {
 
   // Decode token to get the payload.
   const decodedPayload = verifyToken(req.cookies.token);
-
+  
   // Validate the presence of a user object within the token's payload.
-  if (!decodedPayload?.data?.user) {
+  if (!decodedPayload?.data) {
     return null;
   }
 
   // Return the user object from the decoded payload.
-  return decodedPayload.user;
+  return decodedPayload.data;
 };

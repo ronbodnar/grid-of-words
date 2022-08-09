@@ -75,7 +75,7 @@ export const getGameById = async (id, includeAttempts = true) => {
   // Set up the SQL query string.
   const sql =
     `SELECT BIN_TO_UUID(id) AS id, BIN_TO_UUID(owner_id) AS ownerId, ` +
-    `state, max_attempts AS maxAttempts, ` +
+    `state, word, max_attempts AS maxAttempts, ` +
     `start_timestamp AS startTimestamp, end_timestamp AS endTimestamp ` +
     `FROM games WHERE id = UUID_TO_BIN(?)`;
 

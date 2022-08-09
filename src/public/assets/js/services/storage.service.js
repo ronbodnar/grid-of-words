@@ -22,7 +22,7 @@ export const removeSession = (key) => {
  */
 export const retrieveSession = (key) => {
   const value = window.sessionStorage.getItem(key);
-  if (!value) return undefined;
+  if (!value) return null;
   return JSON.parse(value);
 };
 
@@ -51,6 +51,6 @@ export const removeLocal = (key) => {
  */
 export const retrieveLocal = (key) => {
   const value = window.localStorage.getItem(key);
-  if (!value) return undefined;
+  if (!value) return null;
   return JSON.parse(value);
 };

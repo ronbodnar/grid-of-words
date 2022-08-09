@@ -196,8 +196,9 @@ strong {
 
 .flex-center {
   display: flex;
-  flex-wrap: wrap;
+  /* flex-wrap: wrap; */
   align-items: center;
+  flex-direction: column;
   justify-content: center;
 }
 

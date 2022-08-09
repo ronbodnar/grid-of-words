@@ -1,16 +1,18 @@
 import logger from "../config/winston.config.js";
 import { User } from "../models/User.class.js";
-import { findByEmail, save } from "../repository/user.repository.js";
+import { findByEmail, insertUser } from "../repository/user.repository.js";
 import {
   setTokenCookie,
   authenticate,
   verifyToken,
   setApiKeyCookie,
+  getAuthenticatedUser,
+  hashPassword,
 } from "../services/authentication.service.js";
 
 /**
  * Performs authentication for the email and password combination provided in the request.
- * 
+ *
  * Endpoint: /auth/login
  */
 export const loginUser = async (req, res) => {
@@ -96,14 +98,14 @@ export const registerUser = async (req, res) => {
     // This is a potential security risk in the future (exposing who uses the app)
     return res.status(409).json({
       status: "error",
-      message: "Email already in use",
+      message: "Email already in use.",
     });
   }
 
   const user = new User(email, username, password);
 
   // Try to save the user in the database.
-  if (await save(user)) {
+  if (await insertUser(user)) {
     return res.json({
       status: "success",
       message: "Registration successful.",
@@ -121,6 +123,37 @@ export const logoutUser = (req, res) => {
   res.json({ status: "success", message: "Goodbye" });
 };
 
+export const changePassword = (req, res) => {
+  const currentPassword = req.body.currentPassword;
+  const newPassword = req.body.newPassword;
+
+  const authenticatedUser = getAuthenticatedUser(req);
+  if (!authenticatedUser) {
+    console.error("User is not authenticated");
+    return res.status(401).json({
+      status: "error",
+      message: "User is not authenticated.",
+    });
+  }
+
+  const actualPasswordHash = authenticatedUser.hash.substring(32);
+
+  // Hash the provided current password with the user's salt (first 16 bytes/32 hex chars of user hash are the salt)
+  const providedPasswordHash = hashPassword(currentPassword, authenticatedUser.hash.substring(0, 32));
+
+  if (actualPasswordHash !== providedPasswordHash) {
+    console.error("Password hash mismatch");
+    return res.status(401).json({
+      status: "error",
+      message: "Current password is incorrect.",
+    });
+  }
+
+  console.log("Authenticated user");
+
+  console.log(currentPassword, newPassword);
+}
+
 /**
  * Extract session data from cookies sent in the request.
  */
@@ -133,13 +166,19 @@ export const getSession = (req, res) => {
   // The model to house session data like user and game information.
   let sessionData = {};
 
-  // If a JWT is present in the request, we need to verify it to provide the authenticated user.
+  // Verify the token cookie from the request if present.
   if (req.cookies?.token) {
     const payload = verifyToken(req.cookies.token);
 
+    // The payload has data containing our user object.
     if (payload?.data) {
       sessionData.user = payload.data;
     }
+  }
+
+  // Add the game data from the game cookie if found in the request.
+  if (req.cookies?.game) {
+    sessionData.game = req.cookies.game;
   }
 
   // Respond with the session data in JSON format.

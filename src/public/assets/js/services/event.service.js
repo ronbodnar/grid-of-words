@@ -5,13 +5,14 @@ import { getCurrentViewName, showView, viewHistory } from "../utils/helpers.js";
 import { DEFAULT_MAX_ATTEMPTS, DEFAULT_WORD_LENGTH } from "../constants.js";
 import {
   authenticate,
+  changePassword,
   logoutUser,
   register,
 } from "./authentication.service.js";
 import { showMessage } from "./message.service.js";
 
 // When we are performing certain tasks, we don't want to accept user input and block it conditionally.
-let blockKeyEvents = false;
+var blockKeyEvents = false;
 
 /**
  * Add event listeners for global key press events.
@@ -19,7 +20,10 @@ let blockKeyEvents = false;
 export const addKeyListeners = () => {
   // Keypress only listens for keys that emit a value
   document.addEventListener("keypress", function (event) {
-    if (blockKeyEvents) return;
+    if (blockKeyEvents) {
+      console.log("Key events are blocked.");
+      return;
+    }
 
     const key = event.key;
 
@@ -37,7 +41,10 @@ export const addKeyListeners = () => {
 
   // Keydown is for non-value keys as well
   document.addEventListener("keydown", function (event) {
-    if (blockKeyEvents) return;
+    if (blockKeyEvents) {
+      console.log("Key events are blocked.");
+      return;
+    }
 
     const key = event.key;
 
@@ -52,7 +59,10 @@ export const addKeyListeners = () => {
  */
 export const clickKeyboardKey = (letter) => {
   console.log(letter);
-  if (isBlockKeyEvents()) return;
+  if (blockKeyEvents) {
+    console.log("Key events are blocked.");
+    return;
+  }
 
   if (letter === "delete") {
     removeLastSquareValue();
@@ -186,6 +196,44 @@ export const clickRegisterButton = () => {
   register(emailInput.value, usernameInput.value, passwordInput.value);
 };
 
+export const clickChangePasswordButton = () => {
+  const submitButton = document.querySelector("button[type='submit']");
+  if (submitButton)
+    submitButton.disabled = true;
+
+  const submitLoader = document.querySelector("#submitFormLoader");
+
+  const currentPasswordInput = document.querySelector("#currentPassword");
+  const newPasswordInput = document.querySelector("#newPassword");
+  const confirmNewPasswordInput = document.querySelector("#confirmNewPassword");
+
+  if (!currentPasswordInput || !newPasswordInput || !confirmNewPasswordInput) {
+    console.error("Missing input element(s)", currentPasswordInput, newPasswordInput, confirmNewPasswordInput);
+    return;
+  }
+
+  submitLoader?.classList.remove("hidden");
+  if (submitButton)
+    submitButton.disabled = false;
+
+  const currentPassword = currentPasswordInput.value;
+  const newPassword = newPasswordInput.value;
+  const confirmNewPassword = confirmNewPasswordInput.value;
+
+  if (newPassword !== confirmNewPassword) {
+    showMessage("New passwords do not match.", false);
+    submitLoader?.classList.add("hidden");
+    if (submitButton)
+      submitButton.disabled = false;
+    return;
+  }
+
+  submitLoader?.classList.add("hidden");
+  changePassword(currentPassword, newPassword);
+  if (submitButton)
+    submitButton.disabled = false;
+};
+
 export const clickLoginMessage = async (event) => {
   const targetId = event.target.id;
   if (!targetId) return;
@@ -198,6 +246,8 @@ export const clickLoginMessage = async (event) => {
   } else if (targetId === "registerButton") {
     showView("register");
   } else if (targetId === "forgotPasswordButton") {
+    showView("forgot-password");
+  } else if (targetId === "changePassword") {
     showView("change-password");
   } else {
     console.log("Unknown event target:", targetId);

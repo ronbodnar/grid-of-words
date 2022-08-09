@@ -59,7 +59,7 @@ const buildButtonContainer = () => {
   loginMessage.addEventListener("click", clickLoginMessage);
 
   if (isAuthenticated()) {
-    loginMessage.innerHTML = `Welcome back, ${getAuthenticatedUser().username}! <a id="logoutButton">Log Out</a>`;
+    loginMessage.innerHTML = `Welcome back, ${getAuthenticatedUser().username}!<br /><a id="changePassword">Change Password</a> or <a id="logoutButton">Log Out</a>`;
   }
 
   buttonContainer.appendChild(startGameButton);
