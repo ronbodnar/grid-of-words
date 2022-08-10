@@ -1,13 +1,15 @@
+import { User } from "../models/User.class.js";
 import query from "../services/database.service.js";
 
 export const findById = async (id) => {
   if (!id) return null;
   const response = await query(
     "SELECT email, username, hash, creation_date AS creationDate, enabled, BIN_TO_UUID(id) AS id " +
-      "FROM users WHERE id = ?",
+      "FROM users WHERE id = UUID_TO_BIN(?)",
     [id]
   );
-  return response[0][0];
+  const user = new User().fromJSON(response[0][0]);
+  return user;
 };
 
 export const findByEmail = async (email) => {
@@ -17,18 +19,20 @@ export const findByEmail = async (email) => {
       "FROM users WHERE email = ?",
     [email]
   );
-  return response[0][0];
+  const user = new User().fromJSON(response[0][0]);
+  return user;
 };
 
 export const saveUser = async (user) => {
   if (!user) return null;
 
-  console.log(user);
+  console.log("Saving User", user);
 
   const response = await query(
-    "UPDATE users SET hash = ?",
-    [user.hash]
+    "UPDATE users SET username = ?, hash = ? WHERE id = UUID_TO_BIN(?)",
+    [user.username, user.getSalt() + user.getHash(), user.id]
   );
+  console.log("Response", response);
   if (response[0]?.affectedRows && response[0]?.affectedRows > 0) {
     return user;
   }
@@ -41,7 +45,7 @@ export const insertUser = async (user) => {
 
   const response = await query(
     "INSERT INTO users (email, username, hash) VALUES (?, ?, ?)",
-    [user.email, user.username, user.salt + user.hash]
+    [user.email, user.username, user.hash]
   );
   if (response[0]?.affectedRows && response[0]?.affectedRows > 0) {
     return user;

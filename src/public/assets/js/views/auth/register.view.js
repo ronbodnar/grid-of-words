@@ -81,7 +81,7 @@ const buildForm = () => {
   submitButton.classList.add("button");
   submitButton.type = "submit";
   submitButton.innerHTML =
-    "Register <span class='button-loader hidden' id='registerButtonLoader'</span>";
+    "Register <span class='button-loader hidden' id='submitButtonLoader'</span>";
   submitButton.style.width = "60%";
   submitButton.style.cursor = "pointer";
   submitButton.style.marginTop = "10px";

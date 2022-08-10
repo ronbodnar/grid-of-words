@@ -5,7 +5,7 @@ import {
 } from "../../services/event.service.js";
 import { showMessage } from "../../services/message.service.js";
 
-export const buildLoginView = (success) => {
+export const buildLoginView = (message) => {
   const contentContainer = document.querySelector(".content");
   contentContainer.id = "login";
 
@@ -27,17 +27,19 @@ export const buildLoginView = (success) => {
   contentContainer.appendChild(loginForm);
   
   // Show the registration message for 10 secs and update its class list to show green text.
-  if (success === true) {
+  if (message && message.length > 0) {
     const messageDiv = document.querySelector(".message");
     if (messageDiv) {
       messageDiv.classList.add("success");
-      // Remove the success class after 11 seconds (1 second buffer so it doesn't change while it's showing).
-      setTimeout(() => {
-        messageDiv.classList.remove("success");
-      }, 11000);
     }
 
-    showMessage("Registration successful. Please log in.", true, 10000);
+    const options = {
+      hide: true,
+      hideDelay: 10000,
+      class: "success",
+    };
+
+    showMessage(message, options);
   }
 };
 
@@ -85,7 +87,7 @@ const buildForm = () => {
   submitButton.classList.add("button");
   submitButton.type = "submit";
   submitButton.innerHTML =
-    "Log In <span class='button-loader hidden' id='loginButtonLoader'</span>";
+    "Log In <span class='button-loader hidden' id='submitButtonLoader'</span>";
   submitButton.style.width = "60%";
   submitButton.style.cursor = "pointer";
   submitButton.style.marginTop = "10px";
