@@ -84,7 +84,7 @@ export const register = async (email, username, password) => {
 
   if (data?.status === "success") {
     showView("login", {
-      success: true,
+      message: "Registration successful. Please log in to your account.",
     });
   } else {
     const message = data.message || "An error has occurred";
@@ -152,6 +152,25 @@ export const changePassword = async (currentPassword, newPassword) => {
 
   return data;
 };
+
+export const forgotPasswordResponse = async (email) => {
+  const response = await fetch(`/auth/forgot-password/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email: email,
+    }),
+  }).catch((err) => {
+    console.log(err);
+    return null;
+  });
+
+  const data = await response.json();
+
+  return data;
+}
 
 export const isAuthenticated = () => {
   const user = retrieveSession("user");

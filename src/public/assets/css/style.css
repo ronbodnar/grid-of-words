@@ -39,7 +39,7 @@ strong {
   justify-content: center;
   font-size: 24px;
   color: #f4f3f2;
-  white-space: pre;
+/*   white-space: pre; */
   height: 50px;
   width: 100%;
   margin: 0 auto;
@@ -83,7 +83,6 @@ strong {
 .form-message {
   font-size: 16px;
   font-weight: 700;
-  color: rgba(227, 34, 39, 0.9);
   margin: 15px 0;
 }
 

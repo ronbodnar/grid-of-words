@@ -16,6 +16,8 @@ import {
   hashPassword,
   generateSalt,
 } from "../services/authentication.service.js";
+import { sendEmail } from "../services/email.service.js";
+import { sendResetPasswordEmail } from "../services/reset-password.service.js";
 
 /**
  * Performs authentication for the email and password combination provided in the request.
@@ -176,6 +178,30 @@ export const changePassword = async (req, res) => {
     message: "Password changed successfully.",
   });
 };
+
+export const forgotPassword = async (req, res) => {
+  const email = req.body.email;
+
+  if (!EMAIL_REGEX.test(email)) {
+    return res.status(400).json({
+      status: "error",
+      message: "Invalid email address format.",
+    });
+  }
+
+  const dbUser = await findByEmail(email);
+
+  if (!dbUser) {
+    return res.end();
+  }
+
+  const data = await sendResetPasswordEmail(dbUser);
+  console.log(data);
+
+  res.json({
+    message: email
+  });
+}
 
 /**
  * Extract session data from cookies sent in the request.

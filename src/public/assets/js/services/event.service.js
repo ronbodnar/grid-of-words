@@ -2,10 +2,16 @@ import { fillNextSquare, removeLastSquareValue } from "./gameboard.service.js";
 import { forfeitGame, startGame } from "./game.service.js";
 import { processAttempt } from "./attempt.service.js";
 import { getCurrentViewName, showView, viewHistory } from "../utils/helpers.js";
-import { DEFAULT_MAX_ATTEMPTS, DEFAULT_WORD_LENGTH, EMAIL_REGEX, USERNAME_REGEX } from "../constants.js";
+import {
+  DEFAULT_MAX_ATTEMPTS,
+  DEFAULT_WORD_LENGTH,
+  EMAIL_REGEX,
+  USERNAME_REGEX,
+} from "../constants.js";
 import {
   authenticate,
   changePassword,
+  forgotPasswordResponse,
   logoutUser,
   register,
 } from "./authentication.service.js";
@@ -252,19 +258,23 @@ export const clickChangePasswordButton = () => {
     console.log("changePasswordResponse", response);
     if (!response || response.status === "error") {
       submitButton?.removeAttribute("disabled");
-      showMessage((response.message || "An error has occurred. Please try again."), {
-        className: "error",
-        hide: false,
-      });
+      showMessage(
+        response.message || "An error has occurred. Please try again.",
+        {
+          className: "error",
+          hide: false,
+        }
+      );
     } else if (response.status === "success") {
       showView("login", {
-        message: "Your password has been updated successfully.\r\nPlease log in with your new password."
-      })
+        message:
+          "Your password has been updated successfully.\r\nPlease log in with your new password.",
+      });
     }
   });
 };
 
-export const clickForgotPasswordButton = () => {
+export const clickForgotPasswordButton = async () => {
   const emailInput = document.querySelector("#email");
   if (!emailInput) {
     console.error("Missing email input element");
@@ -276,17 +286,25 @@ export const clickForgotPasswordButton = () => {
       className: "error",
       hide: false,
     });
+    console.error("Email is not a valid email address");
     return;
   }
 
-  showMessage("If the email address entered belongs to your account, you will receive an email link to reset your password.");
+  const data = await forgotPasswordResponse(emailInput.value);
+
+  console.log("Forgot pw", data);
+
+  emailInput.value = "";
+
+  showMessage(
+    "If the email matches an account, a password reset link will be sent with next steps.",
+    {
+      hide: false,
+    }
+  );
 
   console.log(emailInput.value);
-
-  // Verify email address
-
-  // Inform they will receive an email
-}
+};
 
 export const clickLoginMessage = async (event) => {
   const targetId = event.target.id;

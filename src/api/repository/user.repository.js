@@ -8,6 +8,9 @@ export const findById = async (id) => {
       "FROM users WHERE id = UUID_TO_BIN(?)",
     [id]
   );
+  if (!response) {
+    return null;
+  }
   const user = new User().fromJSON(response[0][0]);
   return user;
 };
@@ -19,6 +22,9 @@ export const findByEmail = async (email) => {
       "FROM users WHERE email = ?",
     [email]
   );
+  if (!response) {
+    return null;
+  }
   const user = new User().fromJSON(response[0][0]);
   return user;
 };
@@ -32,6 +38,10 @@ export const saveUser = async (user) => {
     "UPDATE users SET username = ?, hash = ? WHERE id = UUID_TO_BIN(?)",
     [user.username, user.getSalt() + user.getHash(), user.id]
   );
+  if (!response) {
+    return null;
+  }
+
   console.log("Response", response);
   if (response[0]?.affectedRows && response[0]?.affectedRows > 0) {
     return user;
@@ -47,6 +57,9 @@ export const insertUser = async (user) => {
     "INSERT INTO users (email, username, hash) VALUES (?, ?, ?)",
     [user.email, user.username, user.hash]
   );
+  if (!response) {
+    return null;
+  }
   if (response[0]?.affectedRows && response[0]?.affectedRows > 0) {
     return user;
   }
