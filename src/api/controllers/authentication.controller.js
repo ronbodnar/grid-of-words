@@ -16,7 +16,6 @@ import {
   hashPassword,
   generateSalt,
 } from "../services/authentication.service.js";
-import { sendEmail } from "../services/email.service.js";
 import { sendResetPasswordEmail } from "../services/reset-password.service.js";
 
 /**
@@ -146,6 +145,12 @@ export const changePassword = async (req, res) => {
 
   // Look up the user in the database to get current information.
   const authenticatedUser = await findById(claimUser.id);
+  if (!authenticatedUser) {
+    return res.status(401).json({
+      status: "error",
+      message: "Please log out and back in to change your password.",
+    });
+  }
 
   // Grab the salt and hashed passsword of the user.
   const salt = authenticatedUser.getSalt();
@@ -195,7 +200,9 @@ export const forgotPassword = async (req, res) => {
     return res.end();
   }
 
-  const data = await sendResetPasswordEmail(dbUser);
+  const token = generateSalt(32);
+
+  const data = await sendResetPasswordEmail(dbUser, token);
   console.log(data);
 
   res.json({

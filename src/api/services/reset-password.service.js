@@ -1,9 +1,7 @@
 import { APP_NAME } from "../constants.js";
-import { generateSalt } from "./authentication.service.js";
 import { sendEmail } from "./email.service.js";
 
-export const sendResetPasswordEmail = async (user) => {
-  const token = generateSalt(32);
+export const sendResetPasswordEmail = async (user, token) => {
   const port =
     process.env.PORT === "80" || process.env.port === "443"
       ? ""

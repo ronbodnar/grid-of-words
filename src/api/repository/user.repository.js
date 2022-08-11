@@ -31,19 +31,11 @@ export const findByEmail = async (email) => {
 
 export const saveUser = async (user) => {
   if (!user) return null;
-
-  console.log("Saving User", user);
-
   const response = await query(
     "UPDATE users SET username = ?, hash = ? WHERE id = UUID_TO_BIN(?)",
     [user.username, user.getSalt() + user.getHash(), user.id]
   );
-  if (!response) {
-    return null;
-  }
-
-  console.log("Response", response);
-  if (response[0]?.affectedRows && response[0]?.affectedRows > 0) {
+  if (response && response[0]?.affectedRows && response[0]?.affectedRows > 0) {
     return user;
   }
   return null;
@@ -51,16 +43,11 @@ export const saveUser = async (user) => {
 
 export const insertUser = async (user) => {
   if (!user) return null;
-  console.log("Saving user with hash", user.hash);
-
   const response = await query(
     "INSERT INTO users (email, username, hash) VALUES (?, ?, ?)",
     [user.email, user.username, user.hash]
   );
-  if (!response) {
-    return null;
-  }
-  if (response[0]?.affectedRows && response[0]?.affectedRows > 0) {
+  if (response && response[0]?.affectedRows && response[0]?.affectedRows > 0) {
     return user;
   }
   return null;

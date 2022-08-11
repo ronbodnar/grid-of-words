@@ -167,7 +167,7 @@ export const forgotPasswordResponse = async (email) => {
     return null;
   });
 
-  const data = await response.json();
+  const data = await response.json().catch((err) => null)
 
   return data;
 }
