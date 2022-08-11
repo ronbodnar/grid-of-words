@@ -8,8 +8,7 @@ let messageTimeout = undefined;
 /**
  * Update the message container in the current view (home or game) and sets a timeout to hide after a delay.
  *
- * @param {String} message - The message to show.
- * @param {object} options - Key/value pairs for optional parameters.
+ * @param {String} message - The message to show. * @param {object} options - Key/value pairs for optional parameters.
  */
 export const showMessage = (message, options = {}) => {
   if (message.length < 1) return;
