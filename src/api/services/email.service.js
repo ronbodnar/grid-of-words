@@ -30,7 +30,7 @@ export const sendEmail = async (to, subject, text, html) => {
   };
 
   // Obtain the response from the transporter sending the email.
-  const response = await transporter.sendMail(options).catch((err) => {
+  const sendMailResponse = await transporter.sendMail(options).catch((err) => {
     logger.error("Error sending email: ", options, {
       error: err,
     });
@@ -38,17 +38,17 @@ export const sendEmail = async (to, subject, text, html) => {
   });
 
   // Response codes 2xx are successful, we others are errored.
-  if (!response || !response.response.startsWith("2")) {
+  if (!sendMailResponse || !sendMailResponse.response.startsWith("2")) {
     logger.error("Received no response or a non 2xx response code.", options, {
-      response: response,
+      response: sendMailResponse,
     });
     return false;
   }
 
   // Check if any emails were rejected by the recipient.
-  if (response.rejected.length > 0) {
+  if (sendMailResponse.rejected.length > 0) {
     logger.error("Email(s) were rejected by recipient(s):", options, {
-      response: response,
+      response: sendMailResponse,
     });
     return false;
   }

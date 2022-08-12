@@ -18,3 +18,7 @@ export const setCookie = (res, name, value, maxAge = 1000 * 60 * 60 * 24 * 30) =
     sameSite: "strict",
   });
 };
+
+export const convertToSnakeCase = (text) => {
+  return text.replace(/([a-z])([A-Z])/g, "$1_$2").toLowerCase();
+}

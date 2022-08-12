@@ -187,6 +187,7 @@ export const changePassword = async (req, res) => {
 export const forgotPassword = async (req, res) => {
   const email = req.body.email;
 
+  // Validate the email address and respond with a 400 Bad Request error if it's not valid.
   if (!EMAIL_REGEX.test(email)) {
     return res.status(400).json({
       status: "error",
@@ -194,20 +195,51 @@ export const forgotPassword = async (req, res) => {
     });
   }
 
+  // Attempt to retrieve a user with the specified email.
+  // If no user is found, end the request (obscuring the results).
   const dbUser = await findByEmail(email);
-
   if (!dbUser) {
     return res.end();
   }
 
+  // Generate a random 32-byte hex string.
   const token = generateSalt(32);
 
-  const data = await sendResetPasswordEmail(dbUser, token);
-  console.log(data);
+  dbUser.passwordResetToken = token;
+  dbUser.passwordResetTokenExpiration = new Date(Date.now() + 1000 * 60 * 60); // 1 hour expiration.
 
-  res.json({
-    message: email
-  });
+  // Save the user with the updated token and expiration date.
+  // If the save fails, respond with a 500 Internal Server Error and log the error.
+  const saveUserResult = await dbUser.save(['passwordResetToken', 'passwordResetTokenExpiration']);
+  if (!saveUserResult) {
+    logger.error("Failed to save user with reset token", {
+      email: email,
+      token: token,
+      dbUser: dbUser,
+    });
+    return res.status(500).json({
+      status: "error",
+      message: "Failed to save user with reset token.",
+    });
+  }
+
+  // Send a password reset email to the user containing a link to reset their password.
+  // If the email sending fails, respond with a 500 Internal Server Error and log the error.
+  const sendEmailResponse = await sendResetPasswordEmail(dbUser, token);
+  if (!sendEmailResponse) {
+    logger.error("Failed to send password reset email", {
+      email: email,
+      token: token,
+      dbUser: dbUser,
+    });
+    return res.status(500).json({
+      status: "error",
+      message: "Failed to send password reset email.",
+    });
+  }
+
+  // End the request (obscuring the results)
+  res.end();
 }
 
 /**

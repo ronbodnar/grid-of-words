@@ -53,3 +53,14 @@ if (!wordList) {
     .then((response) => storeLocal("wordList", response))
     .catch((error) => console.error("Error fetching word list", error));
 }
+
+// Ensure the session has been set before redirecting the user or they may not have API access.
+
+// Redirect to the password reset page if the resetPasswordToken query parameter is set.
+const params = new URLSearchParams(window.location.search);
+const resetPasswordToken = params.get('token');
+if (resetPasswordToken) {
+  // Add the reset token to the session (how bad is this?) and swap to the reset password view.
+  storeSession("resetPasswordToken", resetPasswordToken);
+  showView("reset-password");
+}

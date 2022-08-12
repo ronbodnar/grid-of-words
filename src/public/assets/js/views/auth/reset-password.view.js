@@ -1,5 +1,6 @@
 import {
   clickBackButton,
+  clickChangePasswordButton,
   clickLoginButton,
 } from "../../services/event.service.js";
 
@@ -33,11 +34,11 @@ export const buildResetPasswordView = () => {
 const buildForm = () => {
   const form = document.createElement("form");
   form.classList.add("form");
-  form.onsubmit = () => {
-    clickLoginButton();
-    return false;
-  }; // prevent submission
   form.style.marginTop = "25px";
+  form.onsubmit = () => {
+    //clickResetPasswordButton();
+    return false;
+  };
 
   const messageDiv = document.createElement("div");
   messageDiv.classList.add("message", "form-message", "hidden");
