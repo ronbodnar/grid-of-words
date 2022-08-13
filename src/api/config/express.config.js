@@ -14,7 +14,7 @@ app.use(
   rateLimit({
     windowMs: 1000,
     limit: 1,
-    skip: (req, res) => !req.url.startsWith('/word') || !req.url.startsWith('/game') || !req.url.startsWith('/auth/session')
+    skip: (req, res) => !req.url.startsWith('/word') || !req.url.startsWith('/game') || !req.url.startsWith('/session') || !req.url.startsWith('/auth')
   })
 );
 

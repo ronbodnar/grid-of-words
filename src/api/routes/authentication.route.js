@@ -1,5 +1,5 @@
 import express from "express";
-import { loginUser, logoutUser, registerUser, getSession, changePassword, forgotPassword, resetPassword, validatePasswordResetToken } from "../controllers/authentication.controller.js";
+import { loginUser, logoutUser, registerUser, changePassword, forgotPassword, resetPassword, validatePasswordResetToken } from "../controllers/authentication.controller.js";
 
 export const router = express.Router();
 
@@ -13,6 +13,3 @@ router.route("/validate").post(validatePasswordResetToken);
 router.route("/reset-password").post(resetPassword);
 router.route("/forgot-password").post(forgotPassword);
 router.route("/change-password").post(changePassword);
-
-// Set up /auth GET routes.
-router.route("/session").get(getSession);

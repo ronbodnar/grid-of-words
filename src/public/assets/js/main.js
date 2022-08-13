@@ -18,7 +18,7 @@ showView("loading");
 
 (async () => {
   // Fetch the session data from the server.
-  const serverResponse = await fetch("/auth/session").catch((error) =>
+  const serverResponse = await fetch("/session").catch((error) =>
     console.error("Error fetching session data", error)
   );
 

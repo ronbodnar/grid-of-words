@@ -6,6 +6,7 @@ import { router as attemptRoutes } from "./attempt.route.js";
 import { router as authenticationRoutes } from "./authentication.route.js";
 import { __dirname } from "../constants.js";
 import { restrict } from "../middleware/restrict.js";
+import { getSession } from "../controllers/authentication.controller.js";
 
 export const router = express.Router();
 
@@ -17,3 +18,6 @@ router.use("/game", restrict, gameRoutes, attemptRoutes);
 
 // Add the authentication routes to the router.
 router.use("/auth", restrict, authenticationRoutes);
+
+// Set up /auth GET routes.
+router.route("/session").get(getSession);
