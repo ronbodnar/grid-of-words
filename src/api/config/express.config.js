@@ -8,15 +8,6 @@ import { __dirname } from "../constants.js";
 import logger from "./winston.config.js";
 
 export const app = express();
- 
-// Limit requests to 1 per second.
-app.use(
-  rateLimit({
-    windowMs: 1000,
-    limit: 1,
-    skip: (req, res) => req.cookies.apiKey
-  })
-);
 
 // Parse application/json content in the request body.
 app.use(bodyParser.json());
@@ -26,6 +17,15 @@ app.use(cookieParser());
 
 // Load the static assets from the assets folder
 app.use(express.static(path.join(__dirname, "..", "public")));
+ 
+// Limit requests to 1 per second.
+/* app.use(
+  rateLimit({
+    windowMs: 1000,
+    limit: 1,
+    skip: (req, res) => req.cookies.apiKey
+  })
+); */
 
 // Assign routes starting with the root path
 app.use("/", routes);
