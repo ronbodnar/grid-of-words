@@ -2,8 +2,9 @@ import {
   clickBackButton,
   clickForgotPasswordButton,
 } from "../../services/event.service.js";
+import { showMessage } from "../../services/message.service.js";
 
-export const buildForgotPasswordView = () => {
+export const buildForgotPasswordView = (message) => {
   const contentContainer = document.querySelector(".content");
   contentContainer.id = "forgot-password";
 
@@ -15,7 +16,7 @@ export const buildForgotPasswordView = () => {
 
   const header = document.createElement("h1");
   header.classList.add("view-header");
-  header.textContent = "Forgotten Password";
+  header.textContent = "Forgotten Password?";
 
   const submessage = document.createElement("div");
   submessage.classList.add("submessage");
@@ -29,6 +30,15 @@ export const buildForgotPasswordView = () => {
   contentContainer.appendChild(header);
   contentContainer.appendChild(submessage);
   contentContainer.appendChild(form);
+
+  if (message && message.length > 0) {
+    const options = {
+      hide: false,
+      className: "error",
+    };
+
+    showMessage(message, options);
+  }
 };
 
 const buildForm = () => {
@@ -60,7 +70,6 @@ const buildForm = () => {
   submitButton.innerHTML =
     "Send Email <span class='button-loader hidden' id='submitButtonLoader'</span>";
   submitButton.style.width = "60%";
-  submitButton.style.cursor = "pointer";
   submitButton.style.marginTop = "10px";
 
   form.appendChild(emailLabel);

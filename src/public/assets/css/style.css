@@ -27,6 +27,10 @@ strong {
   font-size: 20px;
 }
 
+sup {
+  font-size: 12px;
+}
+
 .hidden {
   display: none !important;
   transition: visibility 0s 2s, opacity 2s linear;
@@ -187,12 +191,7 @@ strong {
 @media screen and (min-width: 1366px) {
   .content:not(#home) {
     padding: 0;
-    width: 50%;
-    margin: 0 auto;
-  }
-
-  .content#how-to-play {
-    width: 75%;
+    width: 60%;
     margin: 0 auto;
   }
 }
@@ -350,6 +349,7 @@ strong {
   width: 100%;
   gap: 5px;
   margin: 0 auto;
+  flex-direction: row;
 }
 
 .word-row:not(:last-child) {

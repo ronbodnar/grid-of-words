@@ -14,8 +14,10 @@ import {
   forgotPasswordResponse,
   logoutUser,
   register,
+  resetPasswordResponse,
 } from "./authentication.service.js";
 import { showMessage } from "./message.service.js";
+import { removeSession, retrieveSession } from "./storage.service.js";
 
 //TODO: this has too many functions that belong in other modules.
 
@@ -29,19 +31,19 @@ export const addKeyListeners = () => {
   // Keypress only listens for keys that emit a value
   document.addEventListener("keypress", function (event) {
     if (blockKeyEvents) {
-      console.log("Key events are blocked.");
       return;
     }
 
     const key = event.key;
 
     if (key === "Enter") {
-      if (getCurrentViewName() === "home") {
+      if (getCurrentViewName() === "home" || getCurrentViewName() === "how-to-play") {
         clickStartGameButton();
         return;
+      } else if (getCurrentViewName() === "game") {
+        processAttempt();
+        return;
       }
-      processAttempt();
-      return;
     }
 
     fillNextSquare(key);
@@ -50,13 +52,12 @@ export const addKeyListeners = () => {
   // Keydown is for non-value keys as well
   document.addEventListener("keydown", function (event) {
     if (blockKeyEvents) {
-      console.log("Key events are blocked.");
       return;
     }
 
+    // Extract the key pressed from the event and remove the last letter if delete or backspace is pressed.
     const key = event.key;
-
-    if (key === "Delete" || key === "Backspace") removeLastSquareValue(key);
+    if ((key === "Delete" || key === "Backspace") && getCurrentViewName() === "game") removeLastSquareValue(key);
   });
 };
 
@@ -66,9 +67,7 @@ export const addKeyListeners = () => {
  * @param {string} letter The letter entered by the user.
  */
 export const clickKeyboardKey = (letter) => {
-  console.log(letter);
   if (blockKeyEvents) {
-    console.log("Key events are blocked.");
     return;
   }
 
@@ -217,7 +216,7 @@ export const clickRegisterButton = () => {
 
 export const clickChangePasswordButton = () => {
   const submitButton = document.querySelector("button[type='submit']");
-  const submitLoader = document.querySelector("#submitFormLoader");
+  const submitLoader = document.querySelector("#submitButtonLoader");
 
   const currentPasswordInput = document.querySelector("#currentPassword");
   const newPasswordInput = document.querySelector("#newPassword");
@@ -254,8 +253,8 @@ export const clickChangePasswordButton = () => {
 
   // Obtain the change password response from the API.
   // Re-enable the form and display an error if no response is found or if we received an error status.
+  // Upon success, remove the user session and show the login view with a confirmation message.
   changePassword(currentPassword, newPassword).then((response) => {
-    console.log("changePasswordResponse", response);
     if (!response || response.status === "error") {
       submitButton?.removeAttribute("disabled");
       showMessage(
@@ -266,9 +265,12 @@ export const clickChangePasswordButton = () => {
         }
       );
     } else if (response.status === "success") {
+      removeSession("user");
       showView("login", {
         message:
-          "Your password has been updated successfully.\r\nPlease log in with your new password.",
+          "Password successfully updated. Please log in with your new password.",
+        className: "success",
+        hideDelay: 10000,
       });
     }
   });
@@ -276,8 +278,15 @@ export const clickChangePasswordButton = () => {
 
 export const clickForgotPasswordButton = async () => {
   const emailInput = document.querySelector("#email");
-  if (!emailInput) {
-    console.error("Missing email input element");
+  const submitButton = document.querySelector("button[type='submit']");
+  if (!emailInput || !submitButton) {
+    showMessage(
+      "An unexpected error has occurred. Please try to reload the page.",
+      {
+        className: "error",
+        hide: false,
+      }
+    );
     return;
   }
 
@@ -286,15 +295,13 @@ export const clickForgotPasswordButton = async () => {
       className: "error",
       hide: false,
     });
-    console.error("Email is not a valid email address");
     return;
   }
 
-  const data = await forgotPasswordResponse(emailInput.value);
+  forgotPasswordResponse(emailInput.value).catch(() => null);
 
-  console.log("Forgot pw", data);
-
-  emailInput.value = "";
+  emailInput.disabled = true;
+  submitButton.disabled = true;
 
   showMessage(
     "If the email matches an account, a password reset link will be sent with next steps.",
@@ -302,8 +309,62 @@ export const clickForgotPasswordButton = async () => {
       hide: false,
     }
   );
+};
 
-  console.log(emailInput.value);
+export const clickResetPasswordButton = async () => {
+  const passwordResetToken = retrieveSession("passwordResetToken");
+  if (!passwordResetToken) {
+    //TODO: tell them why they returned home?
+    showView("home");
+    return;
+  }
+
+  const submitButton = document.querySelector("button[type='submit']");
+  const submitLoader = document.querySelector("#submitButtonLoader");
+
+  const newPasswordInput = document.querySelector("#newPassword");
+  const confirmNewPasswordInput = document.querySelector("#confirmNewPassword");
+
+  if (!submitButton || !newPasswordInput || !confirmNewPasswordInput) {
+    console.error(
+      "Missing input element(s)",
+      newPasswordInput,
+      confirmNewPasswordInput
+    );
+    return;
+  }
+
+  if (newPasswordInput.value !== confirmNewPasswordInput.value) {
+    console.error("pass mismatch");
+    return;
+  }
+
+  submitLoader.classList.remove("hidden");
+
+  submitButton.disabled = true;
+
+  const response = await resetPasswordResponse(
+    passwordResetToken,
+    newPasswordInput.value
+  );
+
+  if (!response || response.status === "error") {
+    submitLoader.classList.add("hidden");
+    submitButton.disabled = false;
+    showMessage(
+      response.message || "An error has occurred. Please try again.",
+      {
+        className: "error",
+        hide: false,
+      }
+    );
+  }
+
+  if (response.status === "success") {
+    showView("login", {
+      message: "Your password has been changed. Please log in using the new password.",
+    });
+  }
 };
 
 export const clickLoginMessage = async (event) => {

@@ -3,6 +3,7 @@ import {
   generateSalt,
   hashPassword,
 } from "../services/authentication.service.js";
+import { Buffer } from "node:buffer";
 
 export class User {
   id = undefined;
@@ -24,20 +25,32 @@ export class User {
 
   fromJSON(json) {
     if (json === undefined) return null;
-    console.log("fromJSON", json);
-    this.id = json.id;
+    this.id = Buffer.from(json.id);
     this.username = json.username;
     this.hash = json.hash;
     this.email = json.email;
     this.enabled = json.enabled;
     this.creationDate = json.creationDate;
+    if (json.passwordResetToken)
+      this.passwordResetToken = json.passwordResetToken;
+    if (json.passwordResetTokenExpiration)
+      this.passwordResetTokenExpiration = json.passwordResetTokenExpiration;
     return this;
   }
 
   async save(properties) {
     properties = properties || [];
+    
+    // If just one property was passed, convert it to an array.
+    if (!Array.isArray(properties)) {
+      properties = [properties]
+    }
 
     return saveUser(this, properties);
+  }
+
+  getUUID() {
+    return this.id.toString();
   }
 
   getSalt() {

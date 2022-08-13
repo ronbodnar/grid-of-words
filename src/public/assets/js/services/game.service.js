@@ -30,12 +30,14 @@ const fetchNewGame = async (options) => {
 
 /**
  * Begins a new game by querying the API for a new game object, then swaps the container view to show the game container.
+ * 
+ * @param {Object} options - An object of options to pass when creating a game.
  */
 export const startGame = async (options) => {
-  console.log("Starting game with options ", options);
+  //console.log("Starting game with options ", options);
 
-  // Show the loading view with a 500ms delay
-  let timeout = setTimeout(() => showView("loading"), 500);
+  // Show the loading view while waiting for the game response from the server.
+  showView("loading");
 
   var params = new URLSearchParams({
     wordLength: options.wordLength || DEFAULT_WORD_LENGTH,
@@ -43,9 +45,6 @@ export const startGame = async (options) => {
   });
   try {
     const fetchGameResponse = await fetchNewGame(params);
-
-    // Stop the loading screen if the game data was already loaded
-    clearTimeout(timeout);
 
     //TODO: error handler
     if (!fetchGameResponse || fetchGameResponse.status === 'error') {
@@ -71,8 +70,6 @@ export const startGame = async (options) => {
 
 export const forfeitGame = async () => {
   const game = retrieveSession("game");
-
-  console.log("Forfeiting game...", game);
 
   showMessage("Forfeiting game - please wait.");
   toggleKeyboardOverlay();
