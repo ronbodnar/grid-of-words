@@ -150,6 +150,13 @@ export const forfeitGame = async (req, res) => {
 
   // Update the game's state to FORFEIT and update the record in the repository.
   const game = await getGameById(gameId);
+  if (!game) {
+    return res.status(404).json({
+      status: "error",
+      message: "GAME NOT FOUND",
+    });
+  }
+  
   game.state = "FORFEIT";
   game.save();
 

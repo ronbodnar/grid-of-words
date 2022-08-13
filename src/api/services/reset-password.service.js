@@ -4,7 +4,7 @@ import { sendEmail } from "./email.service.js";
 
 export const sendResetPasswordEmail = async (user, token) => {
   const port =
-    process.env.PORT === "80" || process.env.port === "443"
+    process.env.NODE_ENV === "production"
       ? ""
       : ":" + process.env.PORT;
   const resetUrl = process.env.HOST + port + "?token=" + token;
