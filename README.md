@@ -121,4 +121,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Author 👤
 
-- **Ron Bodnar**: Creator and developer of the Word Puzzle Game. [GitHub Profile](https://github.com/ronbodnar)
+- **[Ron Bodnar](https://ronbodnar.com/)**: Creator and developer of the Word Puzzle Game. [GitHub Profile](https://github.com/ronbodnar)
