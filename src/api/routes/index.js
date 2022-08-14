@@ -1,12 +1,12 @@
 import express from "express";
 
-import { router as wordRoutes } from "./word.route.js";
-import { router as gameRoutes } from "./game.route.js";
-import { router as attemptRoutes } from "./attempt.route.js";
-import { router as authenticationRoutes } from "./authentication.route.js";
+import { router as wordRoutes } from "./word.routes.js";
+import { router as gameRoutes } from "./game.routes.js";
+import { router as attemptRoutes } from "./attempt.routes.js";
+import { router as authenticationRoutes } from "./authentication.routes.js";
 import { __dirname } from "../constants.js";
 import { restrict } from "../middleware/restrict.js";
-import { getSession } from "../controllers/authentication.controller.js";
+import { getSession } from "../features/auth/authentication.controller.js";
 
 export const router = express.Router();
 

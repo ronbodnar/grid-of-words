@@ -6,6 +6,7 @@ import rateLimit from "express-rate-limit";
 import { router as routes } from "../routes/index.js";
 import { __dirname } from "../constants.js";
 import logger from "./winston.config.js";
+import errorHandler from "../middleware/error-handler.js";
 
 export const app = express();
 
@@ -29,6 +30,9 @@ app.use(express.static(path.join(__dirname, "..", "public")));
 
 // Assign routes starting with the root path
 app.use("/", routes);
+
+// Handle errors in the application
+app.use(errorHandler);
 
 app.use("*", function (req, res) {
   logger.info(`Request received at: ${req.url}`);

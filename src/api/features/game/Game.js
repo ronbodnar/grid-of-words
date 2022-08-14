@@ -1,5 +1,5 @@
-import { DEFAULT_MAX_ATTEMPTS } from "../constants.js";
-import { saveGame } from "../repository/game.repository.js";
+import { DEFAULT_MAX_ATTEMPTS } from "../../constants.js";
+import { saveGame } from "./game.repository.js";
 
 /*
  * A representation of a Game.
@@ -31,7 +31,7 @@ export class Game {
     this.startTime = new Date(json.startTimestamp);
     if (json.endTimestamp != null) this.endTime = new Date();
     if (json.attempts != null) this.attempts = json.attempts;
-    this.ownerId = json.ownerId
+    this.ownerId = json.ownerId;
     return this;
   }
 

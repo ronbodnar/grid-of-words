@@ -1,5 +1,5 @@
-import logger from "../config/winston.config.js";
-import query from "../services/database.service.js";
+import logger from "../../config/winston.config.js";
+import query from "../../services/database.service.js";
 
 /*
  * Selects a random word with the specified length from the database.

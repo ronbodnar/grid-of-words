@@ -1,7 +1,7 @@
-import logger from "../config/winston.config.js";
-import { Game } from "../models/Game.class.js";
-import query from "../services/database.service.js";
-import { getAttemptsForGameId as getAttemptsByGameId } from "./attempt.repository.js";
+import logger from "../../config/winston.config.js";
+import query from "../../services/database.service.js";
+import { attemptRepository } from "../attempt/index.js";
+import { Game } from "./Game.js";
 
 /**
  * Inserts a new game into the database with the specified id and word.
@@ -99,7 +99,7 @@ export const getGameById = async (id, includeAttempts = true) => {
   // Obtain the game's attempts if includeAttempts is truthy.
   if (includeAttempts) {
     // Synchronously retrieve the attempts for the specified game id.
-    var attempts = await getAttemptsByGameId(game.id);
+    var attempts = await attemptRepository.getAttemptsByGameId(game.id);
 
     // If attempts are found, iterate over attempts and map the attempted word to the attempts array.
     if (attempts) {

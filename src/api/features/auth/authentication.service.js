@@ -1,11 +1,10 @@
 import crypto from "node:crypto";
 import jwt from "jsonwebtoken";
-import logger from "../config/winston.config.js";
-import { User } from "../models/User.class.js";
-import { findBy } from "../repository/user.repository.js";
+import logger from "../../config/winston.config.js";
+import { userRepository } from "../user/index.js";
 
 export const authenticate = async (email, password) => {
-  const dbUser = await findBy('email', email);
+  const dbUser = await userRepository.findBy('email', email);
   if (!dbUser) {
     return false;
   }

@@ -1,9 +1,6 @@
-import { saveUser } from "../repository/user.repository.js";
-import {
-  generateSalt,
-  hashPassword,
-} from "../services/authentication.service.js";
 import { Buffer } from "node:buffer";
+import { authService } from "../auth/index.js";
+import { userRepository } from "./index.js";
 
 export class User {
   id = undefined;
@@ -15,10 +12,10 @@ export class User {
 
   constructor(email, username, password) {
     if (!email) return this;
-    const salt = generateSalt();
+    const salt = authService.generateSalt();
     this.email = email;
     this.username = username;
-    this.hash = salt + hashPassword(password, salt);
+    this.hash = salt + authService.hashPassword(password, salt);
     this.enabled = true;
     this.creationDate = new Date();
   }
@@ -46,7 +43,7 @@ export class User {
       properties = [properties]
     }
 
-    return saveUser(this, properties);
+    return userRepository.saveUser(this, properties);
   }
 
   getUUID() {

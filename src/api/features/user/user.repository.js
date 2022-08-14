@@ -1,7 +1,7 @@
-import logger from "../config/winston.config.js";
-import { convertToSnakeCase } from "../helpers.js";
-import { User } from "../models/User.class.js";
-import query from "../services/database.service.js";
+import logger from "../../config/winston.config.js";
+import query from "../../services/database.service.js";
+import { convertToSnakeCase } from "../../utils/helpers.js";
+import { User } from "./User.js";
 
 /**
  * Finds a user by the specified property name and value.
