@@ -8,10 +8,11 @@ import {
   DEFAULT_WORD_LENGTH,
   MAXIMUM_WORD_LENGTH,
   MINIMUM_WORD_LENGTH,
-} from "../../constants.js";
+} from "../../utils/constants.js";
 import { isUUID, setCookie } from "../../utils/helpers.js";
 import { wordRepository } from "../word/index.js";
 import { authService } from "../auth/index.js";
+import { InternalError } from "../../errors/InternalError.js";
 
 /**
  * Generate a new game and get a random word with the provided length.
@@ -23,41 +24,42 @@ export const generateGame = async (req, res) => {
   const maxAttempts = req.query.maxAttempts || DEFAULT_MAX_ATTEMPTS;
 
   // Ensure wordLength within the allowed range.
-  // Respond with a 400 Bad Request if the value is out of bounds.
+  // Pass the error handler a ValidationError if the value is out of bounds.
   if (
     !(MINIMUM_WORD_LENGTH <= wordLength && wordLength <= MAXIMUM_WORD_LENGTH)
   ) {
-    return res.status(400).json({
-      status: "error",
-      message: "INVALID WORD LENGTH",
-    });
+    return next(
+      new ValidationError("Invalid word length.", { wordLength: wordLength })
+    );
   }
 
   // Ensure maxAttempts is within the allowed range.
-  // Respond with a 400 Bad Request if the value is out of bounds.
+  // Pass the error handler a ValidationError if the value is out of bounds.
   if (
     !(
       MINIMUM_MAX_ATTEMPTS <= maxAttempts && maxAttempts <= MAXIMUM_MAX_ATTEMPTS
     )
   ) {
-    return res.status(400).json({
-      status: "error",
-      message: "INVALID MAX ATTEMPTS",
-    });
+    return next(
+      new ValidationError("Invalid max attempts.", { maxAttempts: maxAttempts })
+    );
   }
 
   // Generate a v4 UUID for the new game.
   const uuid = uuidv4();
 
   // Select a random word of the provided length.
-  // Respond with a 500 Internal Server Error if no word was found.
+  // Pass the error handler an InternalError if no word was found.
   const word = await wordRepository.getWordOfLength(wordLength);
   if (!word) {
-    logger.error("Failed to fetch a word for new Game entry");
-    return res.status(500).json({
-      status: "error",
-      message: "Game creation failed: could not obtain a random word",
-    });
+    return next(
+      new InternalError(
+        "Failed to obtain a random word when creating a new game.",
+        {
+          wordLength: wordLength,
+        }
+      )
+    );
   }
 
   // Get the optional authenticated user who requested the new game.
@@ -67,13 +69,18 @@ export const generateGame = async (req, res) => {
   const userId = authenticatedUser?.id ? authenticatedUser.id : null;
 
   // Insert a new game with the uuid, word, maxAttempts, and userId into the database.
-  // Respond with a 500 Internal Server Error if the insertion fails.
+  // Pass the error handler an InternalError if the insertion fails.
   const createdGame = await insertGame(uuid, word, maxAttempts, userId);
   if (createdGame == null) {
-    return res.status(500).json({
-      status: "error",
-      message: "Game creation failed: could not insert game into database",
-    });
+    return next(
+      new InternalError("Failed to insert new game into the database.", {
+        uuid: uuid,
+        word: word,
+        wordLength: wordLength,
+        maxAttempts: maxAttempts,
+        userId: userId,
+      })
+    );
   }
 
   // Save the created game as a cookie in the user's browser.
@@ -149,16 +156,22 @@ export const forfeitGame = async (req, res) => {
 
   // Update the game's state to FORFEIT and update the record in the repository.
   const game = await getGameById(gameId);
-  if (!game) {
-    return res.status(404).json({
-      status: "error",
-      message: "GAME NOT FOUND",
+  if (game) {
+    game.state = "FORFEIT";
+    game.save();
+
+    res.json({
+      status: "success",
+      message: "Game forfeited successfully.",
     });
+  } else {
+    next(
+      new InternalError(
+        "Couldn't find game in repository when user tried to forfeit.",
+        {
+          gameId: gameId,
+        }
+      )
+    );
   }
-
-  game.state = "FORFEIT";
-  game.save();
-
-  // Send the game we forfeited to the server. (Why?)
-  res.json(game);
 };

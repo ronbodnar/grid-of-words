@@ -13,9 +13,9 @@ const query = async (sql, values = []) => {
     // Obtain a connection from the database connection pool.
     const connection = await pool.getConnection();
 
-    // Ensure that the values is an object if provided, otherwise log the error and return null.
-    if (typeof values !== "object") {
-      logger.error("Expected values must be an object.", {
+    // Ensure that the values is an Array, otherwise log the error and return null.
+    if (!Array.isArray(values)) {
+      logger.error("Received values for query is not an Array.", {
         query: sql,
         values: values,
       });

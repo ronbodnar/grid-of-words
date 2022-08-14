@@ -1,13 +1,12 @@
-import {
-  getAttemptsForGameId,
-  insertAttempt,
-} from "./attempt.repository.js";
+import { getAttemptsForGameId, insertAttempt } from "./attempt.repository.js";
 
 import logger from "../../config/winston.config.js";
 import { isUUID, setCookie } from "../../utils/helpers.js";
 import { gameRepository } from "../game/index.js";
 import { wordRepository } from "../word/index.js";
 import { authService } from "../auth/index.js";
+import { ValidationError } from "../../errors/ValidationError.js";
+import { InternalError } from "../../errors/InternalError.js";
 
 /**
  * Retrieves a list of attempts made for a Game.
@@ -19,18 +18,12 @@ export const getAttempts = async (req, res) => {
 
   // Ensure there is a valid gameId.
   if (gameId == null) {
-    return res.status(400).json({
-      status: "error",
-      message: "MISSING PARAMETERS",
-    });
+    return next(new ValidationError("MISSING_PARAMETERS"));
   }
 
   // Ensure the gameId is a valid UUID string.
   if (!isUUID(gameId)) {
-    return res.status(400).json({
-      status: "error",
-      message: "INVALID GAME ID FORMAT",
-    });
+    return next(new ValidationError("INVALID_GAME_ID_FORMAT"));
   }
   const attempts = await getAttemptsForGameId(gameId);
   res.json(attempts);
@@ -47,27 +40,18 @@ export const addAttempt = async (req, res) => {
 
   // Ensure that both word and gameId are present.
   if (!word === undefined || gameId === undefined) {
-    return res.status(400).json({
-      status: "error",
-      message: "MISSING_WORD_OR_GAME_ID",
-    });
+    return next(new ValidationError("MISSING_WORD_OR_GAME_ID"));
   }
 
   // Ensure the gameId is a valid UUID string.
   if (!isUUID(gameId)) {
-    return res.status(400).json({
-      status: "error",
-      message: "INVALID_GAME_ID_FORMAT",
-    });
+    return next(new ValidationError("INVALID_GAME_ID_FORMAT"));
   }
 
   // Synchronously retrieve the game object and ensure it was found.
   const game = await gameRepository.getGameById(gameId);
   if (!game) {
-    return res.status(400).json({
-      status: "error",
-      message: "GAME_NOT_FOUND",
-    });
+    return next(new ValidationError("GAME_NOT_FOUND"));
   }
 
   // Set up variables to determine conditions on the game object.
@@ -77,7 +61,7 @@ export const addAttempt = async (req, res) => {
   // Ensure the attempt is valid before proceeding.
   const validationError = await validateAttempt(word, game);
   if (validationError.length > 0) {
-    logger.debug("Attempt invalid:", {
+    return next(new ValidationError(validationError, {
       status: "error",
       message: validationError,
       game: game,
@@ -86,12 +70,7 @@ export const addAttempt = async (req, res) => {
       reqBody: req.body,
       reqCookies: req.cookies,
       authenticatedUser: authService.getAuthenticatedUser(req),
-    });
-    return res.status(400).json({
-      status: "error",
-      message: validationError,
-      gameData: game,
-    });
+    }));
   }
 
   // Add the attempt to the game's attempt list.
@@ -99,36 +78,30 @@ export const addAttempt = async (req, res) => {
 
   // Push the attempt to the repository
   if (!(await insertAttempt(gameId, word))) {
-    logger.error("Error inserting attempt into database", {
-      gameId: gameId,
-      word: word,
-      game: game,
-      reqParams: req.params,
-      reqHeaders: req.headers,
-      reqBody: req.body,
-      reqCookies: req.cookies,
-      authenticatedUser: authService.getAuthenticatedUser(req),
-    });
-    return res.status(500).json({
-      status: "error",
-      message: "Failed to insert attempt into database",
-    });
+    return next(
+      new InternalError("Failed to insert attempt into database.", {
+        reqParams: req.params,
+        reqHeaders: req.headers,
+        reqBody: req.body,
+        reqCookies: req.cookies,
+        word: word,
+        game: game,
+        gameId: gameId,
+        authenticatedUser: authService.getAuthenticatedUser(req),
+      })
+    );
   }
 
   // Save the game to the database.
   if (!game.save()) {
-    logger.error("Error saving game to database", {
+    return next(new InternalError("Failed to save game to database after attempt.", {
       reqParams: req.params,
       reqHeaders: req.headers,
       reqBody: req.body,
       reqCookies: req.cookies,
       game: game,
       authenticatedUser: authService.getAuthenticatedUser(req),
-    });
-    return res.status(500).json({
-      status: "error",
-      message: "Failed to save game after attempt",
-    });
+    }));
   }
 
   // Check if this is the final attempt in the game (either the user won or reached max attempts) and update game and remove cookies.

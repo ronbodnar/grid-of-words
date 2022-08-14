@@ -4,7 +4,7 @@ import { router as wordRoutes } from "./word.routes.js";
 import { router as gameRoutes } from "./game.routes.js";
 import { router as attemptRoutes } from "./attempt.routes.js";
 import { router as authenticationRoutes } from "./authentication.routes.js";
-import { __dirname } from "../constants.js";
+import { __dirname } from "../utils/constants.js";
 import { restrict } from "../middleware/restrict.js";
 import { getSession } from "../features/auth/authentication.controller.js";
 
