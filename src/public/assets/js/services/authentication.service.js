@@ -1,101 +1,57 @@
-import { showView } from "../utils/helpers.js";
+import { showView } from "./view.service.js";
 import { showMessage } from "./message.service.js";
-import {
-  storeSession,
-  retrieveSession,
-  removeSession,
-} from "./storage.service.js";
+import { retrieveSession, removeSession } from "./storage.service.js";
+import { fetchData } from "../utils/helpers.js";
 
-export const authenticate = async (email, password) => {
-  const loginButton = document.querySelector("#loginButton");
-  if (loginButton) {
-    loginButton.disabled = true;
-  }
-
+export const submitAuthForm = async (url, params, successFn, failureFn) => {
+  // Find the submit button on the current view.
+  const submitButton = document.querySelector("button[type='submit']");
   const submitButtonLoader = document.querySelector("#submitButtonLoader");
+
+  // Disable the button and show the button loader.
+  if (submitButton) {
+    submitButton.disabled = true;
+  }
   submitButtonLoader?.classList.remove("hidden");
 
-  console.log("Trying to authenticate", email, password);
+  // Fetch the response from the server.
+  const responsePromise = await fetchData(url, "POST", params);
 
-  const response = await fetch(`/auth/login/`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email: email,
-      password: password,
-    }),
-  }).catch((err) => {
-    console.error(err);
-    return null;
-  });
+  console.log("submitAuthForm responsePromise", responsePromise);
 
-  const data = !response ? undefined : await response.json();
-
-  if (!data || data.status === "error") {
-    const message = data?.message || "An error has occurred";
-    showMessage(message, {
-      hide: false,
-      className: "error",
-    });
-    if (loginButton) {
-      loginButton.disabled = false;
+  // Validate the response and statusCode to handle any errors.
+  // Invalid responses will display an error message, re-enable the form, then invoke an optional failureFn callback.
+  if (!responsePromise || responsePromise.statusCode !== 200) {
+    // Enable the submit button and hide the button loader.
+    if (submitButton) {
+      submitButton.disabled = false;
     }
     submitButtonLoader?.classList.add("hidden");
-  } else if (data.success) {
-  }
 
-  if (data.user) {
-    storeSession("user", data.user);
-    showView("home");
-  }
+    showMessage(
+      responsePromise?.message || "An error has occurred. Please try again.",
+      {
+        className: "error",
+        hide: false,
+      }
+    );
 
-  console.log("authenticate response", data);
-};
-
-export const register = async (email, username, password) => {
-  const registerButton = document.querySelector("#registerButton");
-  if (registerButton) registerButton.disabled = true;
-
-  const submitButtonLoader = document.querySelector("#submitButtonLoader");
-  submitButtonLoader?.classList.remove("hidden");
-
-  console.log("Trying to register", email, username, password);
-
-  const response = await fetch(`/auth/register/`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email: email,
-      username: username,
-      password: password,
-    }),
-  }).catch((err) => {
-    console.log(err);
-    return null;
-  });
-
-  const data = !response ? undefined : await response.json();
-
-  console.log("registration response", data);
-
-  if (data?.status === "success") {
-    showView("login", {
-      message: "Registration successful. Please log in to your account.",
-    });
-  } else {
-    const message = data.message || "An error has occurred";
-    showMessage(message, {
-      className: "error",
-      hide: false,
-    });
-    if (registerButton) {
-      registerButton.disabled = false;
+    // Call the optional failureFn callback with the response data if available.
+    if (failureFn) {
+      failureFn(responsePromise);
     }
-    submitButtonLoader?.classList.add("hidden");
+    return;
+  }
+
+  // Enable the submit button and hide the button loader.
+  if (submitButton) {
+    submitButton.disabled = false;
+  }
+  submitButtonLoader?.classList.add("hidden");
+
+  // Call the successFn callback with the response data.
+  if (successFn) {
+    successFn(responsePromise);
   }
 };
 
@@ -124,54 +80,6 @@ export const logoutUser = async () => {
   console.log("Logout response", data);
 };
 
-export const changePassword = async (currentPassword, newPassword) => {
-  const submitButtonLoader = document.querySelector("#submitButtonLoader");
-  const changePasswordButton = document.querySelector("#submitButton");
-
-  if (changePasswordButton) changePasswordButton.disabled = true;
-  submitButtonLoader?.classList.remove("hidden");
-
-  const response = await fetch(`/auth/change-password/`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      currentPassword: currentPassword,
-      newPassword: newPassword,
-    }),
-  }).catch((err) => {
-    console.log(err);
-    return null;
-  });
-
-  const data = !response ? undefined : await response.json();
-
-  submitButtonLoader?.classList.add("hidden");
-  if (changePasswordButton) changePasswordButton.disabled = false;
-
-  return data;
-};
-
-export const forgotPasswordResponse = async (email) => {
-  const response = await fetch(`/auth/forgot-password/`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email: email,
-    }),
-  }).catch((err) => {
-    console.log(err);
-    return null;
-  });
-
-  const data = await response.json().catch((err) => null)
-
-  return data;
-}
-
 export const resetPasswordResponse = async (token, newPassword) => {
   const response = await fetch(`/auth/reset-password/`, {
     method: "POST",
@@ -193,7 +101,7 @@ export const resetPasswordResponse = async (token, newPassword) => {
   });
 
   return data;
-}
+};
 
 export const validateResetToken = async (passwordResetToken) => {
   const response = await fetch(`/auth/validate/`, {
@@ -215,7 +123,7 @@ export const validateResetToken = async (passwordResetToken) => {
   });
 
   return data;
-}
+};
 
 export const isAuthenticated = () => {
   const user = retrieveSession("user");

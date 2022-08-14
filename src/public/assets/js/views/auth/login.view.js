@@ -25,7 +25,7 @@ export const buildLoginView = (message) => {
   contentContainer.appendChild(backButton);
   contentContainer.appendChild(header);
   contentContainer.appendChild(loginForm);
-  
+
   if (message && message.length > 0) {
     const options = {
       hide: true,

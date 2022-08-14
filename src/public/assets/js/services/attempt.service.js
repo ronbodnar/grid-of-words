@@ -6,19 +6,20 @@ import {
   storeLocal,
   storeSession,
 } from "./storage.service.js";
-import { showView } from "../utils/helpers.js";
+import { showView } from "./view.service.js";
 import { showMessage } from "./message.service.js";
 import { fetchWordList, wordExists } from "./word.service.js";
-import { Game } from "../models/Game.class.js";
+import { Game } from "../features/game/Game.js";
 import {
   shiftActiveRow,
   transformSquares,
   updateCurrentAttemptSquares,
-} from "./gameboard.service.js";
+} from "../features/gameboard/gameboard.service.js";
 import {
   toggleKeyboardOverlay,
   updateKeyboardKeys,
-} from "./keyboard.service.js";
+} from "../features/keyboard/keyboard.service.js";
+import { fetchData } from "../utils/helpers.js";
 
 // The list of letters that the user has entered for the current attempt.
 let attemptLetters = [];
@@ -50,7 +51,13 @@ export const processAttempt = async (game) => {
   }
 
   // Fetch the attempt response from the server.
-  const attemptResponsePromise = fetchAttemptResponse(game);
+  const attemptResponsePromise = fetchData(
+    `/game/${game.id}/attempts`,
+    "POST",
+    {
+      word: attemptLetters.join(""),
+    }
+  );
 
   // Wait for squares to hide before continuing.
   const transformSquaresPromise = transformSquares(true).then(() => {
@@ -108,25 +115,6 @@ export const processAttempt = async (game) => {
 };
 
 /**
- * Posts the attempt to the API and waits for the response.
- * @param {Game} game - The current game object.
- * @return {json} - The JSON response from the API.
- */
-const fetchAttemptResponse = async (game) => {
-  return fetch(`/game/${game.id}/attempts`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      word: attemptLetters.join(""),
-    }),
-  })
-    .then((response) => response.json())
-    .catch((error) => console.error("Attempt Reponse failed: ", error));
-};
-
-/**
  * Processes the response based on the message content, then displays the message.
  *
  * @param {Game} game - The current game object.
@@ -137,7 +125,7 @@ const processServerResponse = async (game, data) => {
 
   if (!data) {
     showMessage("No response from server", {
-      className: "error"
+      className: "error",
     });
     return;
   }
@@ -235,7 +223,7 @@ const processServerResponse = async (game, data) => {
 export const validateAttempt = (game) => {
   const attemptLetters = getAttemptLetters();
   const attemptWord = attemptLetters.join("");
-  
+
   // Validate word length
   if (attemptLetters.length != game.word.length) {
     showMessage("Not enough letters");

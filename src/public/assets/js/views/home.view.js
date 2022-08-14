@@ -1,6 +1,5 @@
 import { getAuthenticatedUser, isAuthenticated } from "../services/authentication.service.js";
 import { clickHowToPlayButton, clickLoginMessage, clickOptionsButton, clickStartGameButton } from "../services/event.service.js";
-import { removeSession } from "../services/storage.service.js";
 
 /**
  * Builds the home container view within the content container.

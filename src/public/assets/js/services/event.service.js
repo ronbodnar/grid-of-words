@@ -1,23 +1,20 @@
-import { fillNextSquare, removeLastSquareValue } from "./gameboard.service.js";
-import { forfeitGame, startGame } from "./game.service.js";
+import { fillNextSquare, removeLastSquareValue } from "../features/gameboard/gameboard.service.js";
+import { forfeitGame, startGame } from "../features/game/game.service.js";
 import { processAttempt } from "./attempt.service.js";
-import { getCurrentViewName, showView, viewHistory } from "../utils/helpers.js";
+import { getCurrentViewName, showView, getViewHistory } from "./view.service.js";
 import {
   DEFAULT_MAX_ATTEMPTS,
   DEFAULT_WORD_LENGTH,
-  EMAIL_REGEX,
-  USERNAME_REGEX,
-} from "../constants.js";
+} from "../utils/constants.js";
 import {
-  authenticate,
-  changePassword,
-  forgotPasswordResponse,
   logoutUser,
-  register,
-  resetPasswordResponse,
 } from "./authentication.service.js";
-import { showMessage } from "./message.service.js";
-import { removeSession, retrieveSession } from "./storage.service.js";
+
+import { changePassword } from "../features/auth/change-password.js";
+import { forgotPassword } from "../features/auth/forgot-password.js";
+import { resetPassword } from "../features/auth/reset-password.js";
+import { registerUser } from "../features/auth/register.js";
+import { login } from "../features/auth/login.js";
 
 //TODO: this has too many functions that belong in other modules.
 
@@ -112,7 +109,7 @@ export const clickStartGameButton = (
  */
 export const clickBackButton = () => {
   // Pop the previous view name from the view history stack.
-  const previousView = viewHistory.pop();
+  const previousView = getViewHistory().pop();
   showView(previousView, {
     hideFromHistory: true,
   });
@@ -135,236 +132,28 @@ export const clickHowToPlayButton = () => {
 /**
  * Tries to authenticate with the server using the input username and password.
  */
-export const clickLoginButton = () => {
-  const email = document.querySelector("#email")?.value;
-  const password = document.querySelector("#password")?.value;
-
-  // Make sure the email doesn't have any invalid characters
-  if (!EMAIL_REGEX.test(email)) {
-    showMessage("Invalid e-mail address format.", {
-      className: "error",
-      hide: false,
-    });
-    return;
-  }
-
-  authenticate(email, password);
+export const clickLoginButton = async () => {
+  await login();
 };
 
 /**
  * TODO: handle logic for registration
  */
-export const clickRegisterButton = () => {
-  const emailInput = document.querySelector("#email");
-  const passwordInput = document.querySelector("#password");
-  const confirmPasswordInput = document.querySelector("#confirmPassword");
-  const usernameInput = document.querySelector("#username");
-
-  if (
-    !emailInput ||
-    !passwordInput ||
-    !confirmPasswordInput ||
-    !usernameInput
-  ) {
-    showMessage("Please check all form values and try again.", {
-      className: "error",
-      hide: false,
-    });
-    return;
-  }
-
-  if (!EMAIL_REGEX.test(emailInput.value)) {
-    showMessage("Email is not a valid email address.", {
-      className: "error",
-      hide: false,
-    });
-    emailInput.classList.add("error");
-    return;
-  } else {
-    emailInput.classList.remove("error");
-  }
-
-  if (!USERNAME_REGEX.test(usernameInput.value)) {
-    showMessage(
-      "Username must be 3-16 characters long.\r\nA-z, numbers, hyphen, underscore, spaces only.",
-      {
-        className: "error",
-        hide: false,
-      }
-    );
-    usernameInput.classList.add("error");
-    return;
-  } else {
-    usernameInput.classList.remove("error");
-  }
-
-  if (passwordInput.value !== confirmPasswordInput.value) {
-    showMessage("Passwords do not match.", {
-      className: "error",
-      hide: false,
-    });
-    passwordInput.classList.add("error");
-    confirmPasswordInput.classList.add("error");
-    return;
-  } else {
-    passwordInput.classList.remove("error");
-    confirmPasswordInput.classList.remove("error");
-  }
-
-  register(emailInput.value, usernameInput.value, passwordInput.value);
+export const clickRegisterButton = async () => {
+  await registerUser();
 };
 
-export const clickChangePasswordButton = () => {
-  const submitButton = document.querySelector("button[type='submit']");
-  const submitLoader = document.querySelector("#submitButtonLoader");
-
-  const currentPasswordInput = document.querySelector("#currentPassword");
-  const newPasswordInput = document.querySelector("#newPassword");
-  const confirmNewPasswordInput = document.querySelector("#confirmNewPassword");
-
-  if (!currentPasswordInput || !newPasswordInput || !confirmNewPasswordInput) {
-    console.error(
-      "Missing input element(s)",
-      currentPasswordInput,
-      newPasswordInput,
-      confirmNewPasswordInput
-    );
-    return;
-  }
-
-  submitButton?.setAttribute("disabled", "disabled");
-  submitLoader?.classList.remove("hidden");
-
-  const currentPassword = currentPasswordInput.value;
-  const newPassword = newPasswordInput.value;
-  const confirmNewPassword = confirmNewPasswordInput.value;
-
-  if (newPassword !== confirmNewPassword) {
-    showMessage("New passwords do not match.", {
-      className: "error",
-      hide: false,
-    });
-    submitLoader?.classList.add("hidden");
-    submitButton?.removeAttribute("disabled");
-    return;
-  }
-
-  submitLoader?.classList.add("hidden");
-
-  // Obtain the change password response from the API.
-  // Re-enable the form and display an error if no response is found or if we received an error status.
-  // Upon success, remove the user session and show the login view with a confirmation message.
-  changePassword(currentPassword, newPassword).then((response) => {
-    if (!response || response.status === "error") {
-      submitButton?.removeAttribute("disabled");
-      showMessage(
-        response.message || "An error has occurred. Please try again.",
-        {
-          className: "error",
-          hide: false,
-        }
-      );
-    } else if (response.status === "success") {
-      removeSession("user");
-      showView("login", {
-        message:
-          "Password successfully updated. Please log in with your new password.",
-        className: "success",
-        hideDelay: 10000,
-      });
-    }
-  });
+export const clickChangePasswordButton = async () => {
+  await changePassword();
 };
 
 export const clickForgotPasswordButton = async () => {
-  const emailInput = document.querySelector("#email");
-  const submitButton = document.querySelector("button[type='submit']");
-  if (!emailInput || !submitButton) {
-    showMessage(
-      "An unexpected error has occurred. Please try to reload the page.",
-      {
-        className: "error",
-        hide: false,
-      }
-    );
-    return;
-  }
-
-  if (!EMAIL_REGEX.test(emailInput.value)) {
-    showMessage("Email is not a valid email address.", {
-      className: "error",
-      hide: false,
-    });
-    return;
-  }
-
-  forgotPasswordResponse(emailInput.value).catch(() => null);
-
-  emailInput.disabled = true;
-  submitButton.disabled = true;
-
-  showMessage(
-    "If the email matches an account, a password reset link will be sent with next steps.",
-    {
-      hide: false,
-    }
-  );
+  // Because we don't want the user to see delays when we find a valid email address, don't await this function.
+  forgotPassword();
 };
 
 export const clickResetPasswordButton = async () => {
-  const passwordResetToken = retrieveSession("passwordResetToken");
-  if (!passwordResetToken) {
-    //TODO: tell them why they returned home?
-    showView("home");
-    return;
-  }
-
-  const submitButton = document.querySelector("button[type='submit']");
-  const submitLoader = document.querySelector("#submitButtonLoader");
-
-  const newPasswordInput = document.querySelector("#newPassword");
-  const confirmNewPasswordInput = document.querySelector("#confirmNewPassword");
-
-  if (!submitButton || !newPasswordInput || !confirmNewPasswordInput) {
-    console.error(
-      "Missing input element(s)",
-      newPasswordInput,
-      confirmNewPasswordInput
-    );
-    return;
-  }
-
-  if (newPasswordInput.value !== confirmNewPasswordInput.value) {
-    console.error("pass mismatch");
-    return;
-  }
-
-  submitLoader.classList.remove("hidden");
-
-  submitButton.disabled = true;
-
-  const response = await resetPasswordResponse(
-    passwordResetToken,
-    newPasswordInput.value
-  );
-
-  if (!response || response.status === "error") {
-    submitLoader.classList.add("hidden");
-    submitButton.disabled = false;
-    showMessage(
-      response.message || "An error has occurred. Please try again.",
-      {
-        className: "error",
-        hide: false,
-      }
-    );
-  }
-
-  if (response.status === "success") {
-    showView("login", {
-      message: "Your password has been changed. Please log in using the new password.",
-    });
-  }
+  await resetPassword();
 };
 
 export const clickLoginMessage = async (event) => {

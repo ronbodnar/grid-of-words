@@ -1,5 +1,5 @@
-import { buildGameBoardElement } from "../components/board/gameboard.js";
-import { buildOnScreenKeyboardElement } from "../components/keyboard/on-screen-keyboard.js";
+import { buildGameBoardElement } from "../features/gameboard/gameboard.js";
+import { buildOnScreenKeyboardElement } from "../features/keyboard/on-screen-keyboard.js";
 import { clickForfeitGameButton } from "../services/event.service.js";
 
 /**

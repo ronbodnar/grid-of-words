@@ -99,7 +99,7 @@ export const getGameById = async (id, includeAttempts = true) => {
   // Obtain the game's attempts if includeAttempts is truthy.
   if (includeAttempts) {
     // Synchronously retrieve the attempts for the specified game id.
-    var attempts = await attemptRepository.getAttemptsByGameId(game.id);
+    var attempts = await attemptRepository.getAttemptsForGameId(game.id);
 
     // If attempts are found, iterate over attempts and map the attempted word to the attempts array.
     if (attempts) {

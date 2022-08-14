@@ -6,9 +6,10 @@ import {
   storeSession,
 } from "./services/storage.service.js";
 import { addKeyListeners } from "./services/event.service.js";
-import { getCurrentViewName, showView } from "./utils/helpers.js";
+import { getCurrentViewName, showView } from "./services/view.service.js";
 import { fetchWordList } from "./services/word.service.js";
 import { validateResetToken } from "./services/authentication.service.js";
+import { fetchData } from "./utils/helpers.js";
 
 // Initialize the listeners for keyboard events.
 addKeyListeners();
@@ -18,23 +19,18 @@ showView("loading");
 
 (async () => {
   // Fetch the session data from the server.
-  const serverResponse = await fetch("/session").catch((error) =>
-    console.error("Error fetching session data", error)
-  );
+  const sessionResponse = await fetchData("/session");
 
-  // Parse the JSON response from the server.
-  const sessionData = await serverResponse.json();
+  console.info("Session Data", sessionResponse);
 
-  console.info("Session Data", sessionData);
-
-  if (sessionData?.user && sessionData?.user.id) {
-    storeSession("user", sessionData.user);
+  if (sessionResponse?.user && sessionResponse?.user.id) {
+    storeSession("user", sessionResponse.user);
   } else {
     removeSession("user");
   }
 
-  if (sessionData?.game) {
-    storeSession("game", sessionData.game);
+  if (sessionResponse?.game) {
+    storeSession("game", sessionResponse.game);
   } else {
     removeSession("game");
   }

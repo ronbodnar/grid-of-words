@@ -13,7 +13,7 @@ import { InternalError } from "../../errors/InternalError.js";
  *
  * Endpoint: GET /game/{id}/attempts
  */
-export const getAttempts = async (req, res) => {
+export const getAttempts = async (req, res, next) => {
   const gameId = req.params.id;
 
   // Ensure there is a valid gameId.
@@ -34,7 +34,7 @@ export const getAttempts = async (req, res) => {
  *
  * Endpoint: POST /game/{id}/attempts
  */
-export const addAttempt = async (req, res) => {
+export const addAttempt = async (req, res, next) => {
   const word = req.body.word;
   const gameId = req.params.id;
 

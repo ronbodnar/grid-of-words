@@ -53,7 +53,7 @@ export const loginUser = async (req, res, next) => {
   });
 };
 
-export const registerUser = async (req, res) => {
+export const registerUser = async (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
   const username = req.body.username;
@@ -106,7 +106,7 @@ export const logoutUser = (req, res) => {
   res.json({ status: "success", message: "Goodbye" });
 };
 
-export const changePassword = async (req, res) => {
+export const changePassword = async (req, res, next) => {
   // Extract the provided current password and new passwords from the request body.
   const currentPassword = req.body.currentPassword;
   const newPassword = req.body.newPassword;
@@ -169,7 +169,7 @@ export const changePassword = async (req, res) => {
   });
 };
 
-export const forgotPassword = async (req, res) => {
+export const forgotPassword = async (req, res, next) => {
   const email = req.body.email || "";
 
   // Validate the email address and throw a ValidationError if it's not valid.
@@ -222,7 +222,7 @@ export const forgotPassword = async (req, res) => {
 };
 
 // TODO: verify password isn't the same as the current password.
-export const resetPassword = async (req, res) => {
+export const resetPassword = async (req, res, next) => {
   // Extract the new password and passwordResetToken from the request body.
   const newPassword = req.body.newPassword;
   const passwordResetToken = req.body.passwordResetToken;
@@ -270,7 +270,7 @@ export const resetPassword = async (req, res) => {
   });
 };
 
-export const validatePasswordResetToken = async (req, res) => {
+export const validatePasswordResetToken = async (req, res, next) => {
   // Extract the passwordResetToken from the request body.
   const passwordResetToken = req.body.passwordResetToken;
 
@@ -305,7 +305,7 @@ export const validatePasswordResetToken = async (req, res) => {
 /**
  * Extract session data from cookies sent in the request.
  */
-export const getSession = (req, res) => {
+export const getSession = (req, res, next) => {
   // If no API Key is present in the request, provide it to the user as an HttpOnly cookie.
   if (!req.cookies?.apiKey) {
     authService.setApiKeyCookie(res);
@@ -330,9 +330,5 @@ export const getSession = (req, res) => {
   }
 
   // Respond with the session data in JSON format.
-  if (sessionData.length > 0)
-    res.json(sessionData);
-  else
-    res.end();
-  //res.json(sessionData.length > 0 ? sessionData : []);
+  res.json(sessionData.length > 0 ? sessionData : {});
 };

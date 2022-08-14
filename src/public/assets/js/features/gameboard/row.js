@@ -1,5 +1,5 @@
 import { buildSquareElement } from "./square.js";
-import { updateSquareBackground } from "../../services/gameboard.service.js";
+import { updateSquareBackground } from "./gameboard.service.js";
 import { getValidatedLetters } from "../../utils/helpers.js";
 
 /**

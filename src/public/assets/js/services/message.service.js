@@ -1,6 +1,6 @@
 // TODO: Eventually do a queue system here to stack up the messages?
 
-import { HIDE_MESSAGE_DELAY } from "../constants.js";
+import { HIDE_MESSAGE_DELAY } from "../utils/constants.js";
 
 // Used to clear any existing message timeouts.
 let messageTimeout = undefined;

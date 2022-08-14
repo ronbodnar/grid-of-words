@@ -6,7 +6,7 @@ import {
   DEFAULT_MAX_ATTEMPTS,
   MINIMUM_MAX_ATTEMPTS,
   MAXIMUM_MAX_ATTEMPTS,
-} from "../constants.js";
+} from "../utils/constants.js";
 import {
   clickBackButton,
   clickStartGameButton,

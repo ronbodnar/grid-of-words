@@ -19,7 +19,8 @@ export const buildChangePasswordView = () => {
 
   const submessage = document.createElement("div");
   submessage.classList.add("submessage");
-  submessage.textContent = "Enter your current password and a new password for your account.";
+  submessage.textContent =
+    "Enter your current password and a new password for your account.";
 
   const form = buildForm();
 
@@ -33,11 +34,11 @@ export const buildChangePasswordView = () => {
 const buildForm = () => {
   const form = document.createElement("form");
   form.classList.add("form");
+  form.style.marginTop = "25px";
   form.onsubmit = () => {
     clickChangePasswordButton();
     return false;
-  }; // prevent submission
-  form.style.marginTop = "25px";
+  };
 
   const messageDiv = document.createElement("div");
   messageDiv.classList.add("message", "form-message", "hidden");
