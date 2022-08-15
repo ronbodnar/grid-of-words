@@ -1,6 +1,6 @@
+import { createButton } from "../components/button.js";
 import { buildGameBoardElement } from "../features/gameboard/gameboard.js";
 import { buildOnScreenKeyboardElement } from "../features/keyboard/on-screen-keyboard.js";
-import { clickForfeitGameButton } from "../services/event.service.js";
 
 /**
  * Builds the game container based on the provided options (assumed to be a Game object or wordLength/maxAttempts)
@@ -19,10 +19,11 @@ export const buildGameView = (options) => {
   const gameboard = getGameBoardElement(options);
   const keyboard = buildOnScreenKeyboardElement(options.game);
 
-  const forfeitButton = document.createElement("div");
-  forfeitButton.classList.add("back-button", "forfeit");
-  forfeitButton.innerHTML = "<img src='/assets/material-icons/block.svg' style='vertical-align: -4px;' width='18px' height='18px'> Forfeit Game";
-  forfeitButton.addEventListener("click", clickForfeitGameButton);
+  // Img was 18x18 px and -4px vertical align.
+  const forfeitButton = createButton("Forfeit", "forfeitGame", {
+    icon: "block",
+    classes: ["back-button", "forfeit"],
+  });
 
   // Clear the existing content from the content container
   contentContainer.innerHTML = "";
@@ -53,30 +54,4 @@ const getGameBoardElement = (options) => {
     );
     return buildGameBoardElement(options.maxAttempts, options.wordLength);
   }
-};
-
-/**
- * Builds the button container.
- *
- * @returns {Element} The built button container element.
- */
-const buildButtonContainer = () => {
-  const buttonContainer = document.createElement("div");
-  buttonContainer.style.display = "flex";
-  buttonContainer.style.justifyContent = "start";
-
-  const forfeitButton = document.createElement("button");
-  forfeitButton.classList.add("button", "forfeit");
-  forfeitButton.id = "forfeit-game";
-  forfeitButton.style.justifySelf = "start";
-  forfeitButton.style.justifyContent = "start";
-  forfeitButton.style.textAlign = "start";
-  forfeitButton.style.width = "auto";
-  forfeitButton.type = "button";
-  forfeitButton.innerHTML = "Forfeit";
-  forfeitButton.addEventListener("click", clickForfeitGameButton);
-
-  buttonContainer.appendChild(forfeitButton);
-
-  return buttonContainer;
 };

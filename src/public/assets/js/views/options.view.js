@@ -7,10 +7,7 @@ import {
   MINIMUM_MAX_ATTEMPTS,
   MAXIMUM_MAX_ATTEMPTS,
 } from "../utils/constants.js";
-import {
-  clickBackButton,
-  clickStartGameButton,
-} from "../services/event.service.js";
+import { createButton } from "../components/button.js";
 
 /**
  * Builds and displays the options view.
@@ -19,11 +16,11 @@ export const buildOptionsView = () => {
   const contentContainer = document.querySelector(".content");
   contentContainer.id = "options";
 
-  const backButton = document.createElement("div");
-  backButton.classList.add("back-button");
-  backButton.innerHTML = "<img src='/assets/material-icons/keyboard-backspace.svg' style='vertical-align: -6px;'> Back";
-  backButton.addEventListener("click", clickBackButton);
-
+  const backButton = createButton("Back", "back", {
+    icon: "keyboard-backspace",
+    classes: ["back-button"]
+  });
+  
   const header = document.createElement("h1");
   header.classList.add("view-header");
   header.textContent = "Options";
@@ -82,29 +79,23 @@ const buildButtonContainer = () => {
   const buttonContainer = document.createElement("div");
   buttonContainer.classList.add("button-container");
 
-  const startGameButton = document.createElement("button");
-  startGameButton.classList.add("button", "fixed");
-  startGameButton.type = "button";
-  startGameButton.innerHTML =
-    "<img src='/assets/material-icons/play-arrow.svg' style='vertical-align: -6px'> Start Game";
-  startGameButton.addEventListener("click", () => {
-    const wordLength = document.querySelector("#wordLengthSlider")?.value;
-    const maxAttempts = document.querySelector("#maxAttemptsSlider")?.value;
-    clickStartGameButton(null, wordLength, maxAttempts);
+  const startGameButton = createButton("Start Game", "startGame", {
+    icon: "play-arrow",
+    eventArgs: {
+      wordLength: document.querySelector("#wordLengthSlider")?.value,
+      maxAttempts: document.querySelector("#maxAttemptsSlider")?.value,
+    }
   });
 
-  const randomGameButton = document.createElement("button");
-  randomGameButton.classList.add("button", "fixed");
-  randomGameButton.type = "button";
-  randomGameButton.innerHTML =
-    "<img src='/assets/material-icons/shuffle.svg' style='vertical-align: -6px'> Random Game";
-  randomGameButton.addEventListener("click", () => {
-    const wordLength = getRandomInt(MINIMUM_WORD_LENGTH, MAXIMUM_WORD_LENGTH);
-    const maxAttempts = getRandomInt(
-      MINIMUM_MAX_ATTEMPTS,
-      MAXIMUM_MAX_ATTEMPTS
-    );
-    clickStartGameButton(null, wordLength, maxAttempts);
+  const randomGameButton = createButton("Random Game", "randomGame", {
+    icon: "shuffle",
+    eventArgs: {
+      wordLength: getRandomInt(MINIMUM_WORD_LENGTH, MAXIMUM_WORD_LENGTH),
+      maxAttempts: getRandomInt(
+        MINIMUM_MAX_ATTEMPTS,
+        MAXIMUM_MAX_ATTEMPTS
+      ),
+    }
   });
 
   buttonContainer.appendChild(startGameButton);

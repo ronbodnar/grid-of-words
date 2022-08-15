@@ -1,17 +1,11 @@
-import {
-  clickBackButton,
-  clickResetPasswordButton,
-} from "../../services/event.service.js";
-
 export const buildResetPasswordView = () => {
   const contentContainer = document.querySelector(".content");
   contentContainer.id = "reset-password";
 
-  const backButton = document.createElement("div");
-  backButton.classList.add("back-button");
-  backButton.innerHTML =
-    "<img src='/assets/material-icons/keyboard-backspace.svg' style='vertical-align: -6px;'> Back";
-  backButton.addEventListener("click", clickBackButton);
+  const backButton = createButton("Back", "back", {
+    icon: "keyboard-backspace",
+    classes: ["back-button"]
+  });
 
   const header = document.createElement("h1");
   header.classList.add("view-header");
@@ -35,7 +29,6 @@ const buildForm = () => {
   form.classList.add("form");
   form.style.marginTop = "25px";
   form.onsubmit = () => {
-    clickResetPasswordButton();
     return false;
   };
 

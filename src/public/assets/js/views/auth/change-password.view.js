@@ -1,17 +1,13 @@
-import {
-  clickBackButton,
-  clickChangePasswordButton,
-} from "../../services/event.service.js";
+import { createButton } from "../../components/button.js";
 
 export const buildChangePasswordView = () => {
   const contentContainer = document.querySelector(".content");
   contentContainer.id = "change-password";
 
-  const backButton = document.createElement("div");
-  backButton.classList.add("back-button");
-  backButton.innerHTML =
-    "<img src='/assets/material-icons/keyboard-backspace.svg' style='vertical-align: -6px;'> Back";
-  backButton.addEventListener("click", clickBackButton);
+  const backButton = createButton("Back", "back", {
+    icon: "keyboard-backspace",
+    classes: ["back-button"]
+  });
 
   const header = document.createElement("h1");
   header.classList.add("view-header");
@@ -36,7 +32,6 @@ const buildForm = () => {
   form.classList.add("form");
   form.style.marginTop = "25px";
   form.onsubmit = () => {
-    clickChangePasswordButton();
     return false;
   };
 
@@ -73,13 +68,10 @@ const buildForm = () => {
   confirmPasswordInput.required = true;
   confirmPasswordInput.id = "confirmNewPassword";
 
-  const submitButton = document.createElement("button");
-  submitButton.classList.add("button");
-  submitButton.type = "submit";
-  submitButton.innerHTML =
-    "Change Password <span class='button-loader hidden' id='submitButtonLoader'</span>";
-  submitButton.style.width = "60%";
-  submitButton.style.marginTop = "10px";
+  const submitButton = createButton("Change Password", "changePassword", {
+    loader: true,
+    classes: ["button"]
+  });
 
   form.appendChild(currentPasswordLabel);
   form.appendChild(currentPasswordInput);

@@ -1,19 +1,13 @@
-import {
-  clickBackButton,
-  clickLoginButton,
-  clickLoginMessage,
-} from "../../services/event.service.js";
 import { showMessage } from "../../services/message.service.js";
 
 export const buildLoginView = (message) => {
   const contentContainer = document.querySelector(".content");
   contentContainer.id = "login";
 
-  const backButton = document.createElement("div");
-  backButton.classList.add("back-button");
-  backButton.innerHTML =
-    "<img src='/assets/material-icons/keyboard-backspace.svg' style='vertical-align: -6px;'> Back";
-  backButton.addEventListener("click", clickBackButton);
+  const backButton = createButton("Back", "back", {
+    icon: "keyboard-backspace",
+    classes: ["back-button"]
+  });
 
   const header = document.createElement("h1");
   header.classList.add("view-header");
@@ -41,9 +35,8 @@ const buildForm = () => {
   const form = document.createElement("form");
   form.classList.add("form");
   form.onsubmit = () => {
-    clickLoginButton();
     return false;
-  }; // prevent submission
+  };
 
   const messageDiv = document.createElement("div");
   messageDiv.classList.add("message", "form-message");
@@ -74,7 +67,7 @@ const buildForm = () => {
   forgotPasswordMessage.classList.add("submessage");
   forgotPasswordMessage.innerHTML =
     "<a class='form-link' id='forgotPasswordButton'>Forgot password?</a>";
-  forgotPasswordMessage.addEventListener("click", clickLoginMessage);
+  //forgotPasswordMessage.addEventListener("click", clickLoginMessage);
   forgotPasswordMessage.style.marginTop = "0";
 
   const submitButton = document.createElement("button");
@@ -89,7 +82,7 @@ const buildForm = () => {
   registerMessage.classList.add("submessage");
   registerMessage.innerHTML =
     "<a class='form-link' id='registerButton'>Don't have an account?</a>";
-  registerMessage.addEventListener("click", clickLoginMessage);
+  //registerMessage.addEventListener("click", clickLoginMessage);
 
   form.appendChild(messageDiv);
   form.appendChild(emailLabel);

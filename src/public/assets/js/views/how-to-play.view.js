@@ -1,4 +1,4 @@
-import { clickBackButton, clickStartGameButton } from "../services/event.service.js";
+import { createButton } from "../components/button.js";
 
 const steps = [
   "Select or type the letters of a 5<sup>*</sup> letter word, like <strong>great</strong> or <strong>place</strong>.",
@@ -18,11 +18,11 @@ export const buildHowToPlayView = () => {
   const contentContainer = document.querySelector(".content");
   contentContainer.id = "how-to-play";
 
-  const backButton = document.createElement("div");
-  backButton.classList.add("back-button");
-  backButton.innerHTML = "<img src='/assets/material-icons/keyboard-backspace.svg' style='vertical-align: -6px;'> Back";
-  backButton.addEventListener("click", clickBackButton);
-
+  const backButton = createButton("Back", "back", {
+    icon: "keyboard-backspace",
+    classes: ["back-button"]
+  });
+  
   const header = document.createElement("h1");
   header.classList.add("view-header");
   header.textContent = "How to Play";
@@ -71,12 +71,9 @@ const buildButtonContainer = () => {
   const buttonContainer = document.createElement("div");
   buttonContainer.classList.add("button-container");
 
-  const startGameButton = document.createElement("button");
-  startGameButton.classList.add("button", "fixed");
-  startGameButton.type = "button";
-  startGameButton.innerHTML =
-    "<img src='/assets/material-icons/play-arrow.svg' style='vertical-align: -6px'> Start Game";
-  startGameButton.addEventListener("click", clickStartGameButton);
+  const startGameButton = createButton("Start Game", "startGame", {
+    icon: "play-arrow",
+  });
 
   buttonContainer.appendChild(startGameButton);
 
