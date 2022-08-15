@@ -1,6 +1,6 @@
-import { EMAIL_REGEX } from "../../utils/constants.js";
-import { showMessage } from "../../services/message.service.js";
-import { submitAuthForm } from "../../services/authentication.service.js";
+import { EMAIL_REGEX } from "../../../utils/constants.js";
+import { showMessage } from "../../../services/message.service.js";
+import { submitAuthForm } from "../authentication.service.js";
 
 export const forgotPassword = async () => {
   const emailInput = document.querySelector("#email");
@@ -25,7 +25,7 @@ export const forgotPassword = async () => {
 
   const params = {
     email: emailInput.value,
-  }
+  };
 
   submitAuthForm("/auth/forgot-password", params);
 

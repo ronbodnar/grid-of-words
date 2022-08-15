@@ -1,3 +1,5 @@
+import { createButton } from "../../../components/button.js";
+
 export const buildResetPasswordView = () => {
   const contentContainer = document.querySelector(".content");
   contentContainer.id = "reset-password";
@@ -55,11 +57,10 @@ const buildForm = () => {
   confirmPasswordInput.required = true;
   confirmPasswordInput.id = "confirmNewPassword";
 
-  const submitButton = document.createElement("button");
-  submitButton.classList.add("button");
-  submitButton.type = "submit";
-  submitButton.innerHTML =
-    "Update Password <span class='button-loader hidden' id='submitButtonLoader'</span>";
+  const submitButton = createButton("Reset Password", "resetPassword", {
+    loader: true,
+    type: "submit"
+  });
   submitButton.style.width = "60%";
   submitButton.style.marginTop = "10px";
 

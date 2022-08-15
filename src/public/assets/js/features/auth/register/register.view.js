@@ -1,3 +1,6 @@
+import { createButton } from "../../../components/button.js";
+import { handleClickEvent } from "../../../services/event.service.js";
+
 export const buildRegisterView = () => {
   const contentContainer = document.querySelector(".content");
   contentContainer.id = "register";
@@ -69,19 +72,16 @@ const buildForm = () => {
   confirmPasswordInput.required = true;
   confirmPasswordInput.id = "confirmPassword";
 
-  const submitButton = document.createElement("button");
-  submitButton.classList.add("button");
-  submitButton.type = "submit";
-  submitButton.innerHTML =
-    "Register <span class='button-loader hidden' id='submitButtonLoader'</span>";
-  submitButton.style.width = "60%";
+  const submitButton = createButton("Register", "register", {
+    loader: true,
+    type: "submit",
+  });
   submitButton.style.marginTop = "10px";
-  submitButton.id = "registerButton";
 
   const loginMessage = document.createElement("p");
   loginMessage.classList.add("submessage");
-  loginMessage.innerHTML = "<a id='loginButton'>Already have an account?</a>";
- // loginMessage.addEventListener("click", clickLoginMessage);
+  loginMessage.innerHTML = "<a id='showLogin'>Already have an account?</a>";
+  loginMessage.addEventListener("click", handleClickEvent);
 
   form.appendChild(messageDiv);
   form.appendChild(emailLabel);

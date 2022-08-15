@@ -1,4 +1,4 @@
-import { createButton } from "../../components/button.js";
+import { createButton } from "../../../components/button.js";
 
 export const buildChangePasswordView = () => {
   const contentContainer = document.querySelector(".content");
@@ -13,17 +13,11 @@ export const buildChangePasswordView = () => {
   header.classList.add("view-header");
   header.textContent = "Change Password";
 
-  const submessage = document.createElement("div");
-  submessage.classList.add("submessage");
-  submessage.textContent =
-    "Enter your current password and a new password for your account.";
-
   const form = buildForm();
 
   contentContainer.innerHTML = "";
   contentContainer.appendChild(backButton);
   contentContainer.appendChild(header);
-  //contentContainer.appendChild(submessage);
   contentContainer.appendChild(form);
 };
 
@@ -70,8 +64,8 @@ const buildForm = () => {
 
   const submitButton = createButton("Change Password", "changePassword", {
     loader: true,
-    classes: ["button"]
   });
+  submitButton.style.marginTop = "10px";
 
   form.appendChild(currentPasswordLabel);
   form.appendChild(currentPasswordInput);

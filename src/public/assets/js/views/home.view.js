@@ -2,7 +2,8 @@ import { createButton } from "../components/button.js";
 import {
   getAuthenticatedUser,
   isAuthenticated,
-} from "../services/authentication.service.js";
+} from "../features/auth/authentication.service.js";
+import { handleClickEvent } from "../services/event.service.js";
 
 /**
  * Builds the home container view within the content container.
@@ -16,9 +17,24 @@ export const buildHomeView = () => {
   header.textContent = "Word Puzzle Game";
 
   const message = document.createElement("p");
-  message.classList.add("message");
+  message.classList.add("message", "hidden");
   message.textContent = "";
   message.style.fontSize = "18px";
+
+  const loginMessage = document.createElement("p");
+  loginMessage.classList.add("submessage");
+  loginMessage.innerHTML =
+    'Want to save your progress?<br /><a id="showLogin">Log In</a> or <a id="showRegister">Register</a>';
+
+  // Replace the message content with options for authenticated users.
+  if (isAuthenticated()) {
+    loginMessage.innerHTML = `Welcome back, ${
+      getAuthenticatedUser().username
+    }!<br /><a id="showChangePassword">Change Password</a> or <a id="logout">Log Out</a>`;
+  }
+
+  // Add the custom click event handler.
+  loginMessage.addEventListener("click", handleClickEvent);
 
   const buttonContainer = buildButtonContainer();
 
@@ -26,6 +42,7 @@ export const buildHomeView = () => {
   contentContainer.appendChild(header);
   contentContainer.appendChild(message);
   contentContainer.appendChild(buttonContainer);
+  contentContainer.appendChild(loginMessage);
 };
 
 /**
@@ -49,22 +66,9 @@ const buildButtonContainer = () => {
     icon: "tune",
   });
 
-  const loginMessage = document.createElement("p");
-  loginMessage.classList.add("submessage");
-  loginMessage.innerHTML =
-    'Want to save your progress?<br /><a id="showLoginViewButton">Log In</a> or <a id="Button">Register</a>';
-  //loginMessage.addEventListener("click", clickLoginMessage);
-
-  if (isAuthenticated()) {
-    loginMessage.innerHTML = `Welcome back, ${
-      getAuthenticatedUser().username
-    }!<br /><a id="changePassword">Change Password</a> or <a id="logoutButton">Log Out</a>`;
-  }
-
   buttonContainer.appendChild(startGameButton);
   buttonContainer.appendChild(howToPlayButton);
   buttonContainer.appendChild(optionsButton);
-  buttonContainer.appendChild(loginMessage);
 
   return buttonContainer;
 };

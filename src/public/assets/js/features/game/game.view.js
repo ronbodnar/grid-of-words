@@ -1,6 +1,6 @@
-import { createButton } from "../components/button.js";
-import { buildGameBoardElement } from "../features/gameboard/gameboard.js";
-import { buildOnScreenKeyboardElement } from "../features/keyboard/on-screen-keyboard.js";
+import { createButton } from "../../components/button.js";
+import { buildGameBoardElement } from "../gameboard/gameboard.js";
+import { buildOnScreenKeyboardElement } from "../keyboard/on-screen-keyboard.js";
 
 /**
  * Builds the game container based on the provided options (assumed to be a Game object or wordLength/maxAttempts)
@@ -19,7 +19,6 @@ export const buildGameView = (options) => {
   const gameboard = getGameBoardElement(options);
   const keyboard = buildOnScreenKeyboardElement(options.game);
 
-  // Img was 18x18 px and -4px vertical align.
   const forfeitButton = createButton("Forfeit", "forfeitGame", {
     icon: "block",
     classes: ["back-button", "forfeit"],

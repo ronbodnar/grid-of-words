@@ -1,6 +1,6 @@
 import { removeSession, retrieveSession, storeSession } from "../../services/storage.service.js";
 import { showView } from "../../services/view.service.js";
-import { DEFAULT_WORD_LENGTH } from "../../utils/constants.js";
+import { DEFAULT_MAX_ATTEMPTS, DEFAULT_WORD_LENGTH } from "../../utils/constants.js";
 import { toggleKeyboardOverlay } from "../keyboard/keyboard.service.js";
 import { showMessage } from "../../services/message.service.js";
 
@@ -38,6 +38,8 @@ export const startGame = async (options) => {
 
   // Show the loading view while waiting for the game response from the server.
   showView("loading");
+
+  options = options || {};
 
   var params = new URLSearchParams({
     wordLength: options.wordLength || DEFAULT_WORD_LENGTH,

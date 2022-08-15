@@ -36,10 +36,12 @@ export const loginUser = async (req, res, next) => {
   // Pass the error handler an InternalError if the token generation fails.
   const generatedToken = authService.setTokenCookie(res, authenticatedUser);
   if (!generatedToken) {
-    return next(new InternalError("Adding token to cookies failed.", {
-      email: email,
-      authenticatedUser: authenticatedUser
-    }));
+    return next(
+      new InternalError("Adding token to cookies failed.", {
+        email: email,
+        authenticatedUser: authenticatedUser,
+      })
+    );
   }
 
   // Remove sensitive information from the token.
@@ -66,7 +68,11 @@ export const registerUser = async (req, res, next) => {
 
   // Ensure the username format is valid.
   if (!USERNAME_REGEX.test(username)) {
-    return next(new ValidationError("Username must be 3-16 characters long.\r\nNo symbols other than - and _ allowed."));
+    return next(
+      new ValidationError(
+        "Username must be 3-16 characters long.\r\nNo symbols other than - and _ allowed."
+      )
+    );
   }
 
   // Ensure the e-mail format is valid.
@@ -76,7 +82,9 @@ export const registerUser = async (req, res, next) => {
 
   // Ensure the password is at least 8 characters long.
   if (password.length < 8) {
-    return next(new ValidationError("Password must be at least 8 characters long."));
+    return next(
+      new ValidationError("Password must be at least 8 characters long.")
+    );
   }
 
   // Try to find an existing user with the same email.
@@ -95,9 +103,11 @@ export const registerUser = async (req, res, next) => {
       message: "Registration successful.",
     });
   } else {
-    return next(new InternalError("Failed to insert new user into the database.", {
-      user: user
-    }))
+    return next(
+      new InternalError("Failed to insert new user into the database.", {
+        user: user,
+      })
+    );
   }
 };
 
@@ -113,17 +123,25 @@ export const changePassword = async (req, res, next) => {
 
   // Validate that the required parameters are provided.
   if (!newPassword || !currentPassword) {
-    return next(new ValidationError("Current and new passwords must be provided."));
+    return next(
+      new ValidationError("Current and new passwords must be provided.")
+    );
   }
 
   // Validate that the new password does not match the current password.
   if (newPassword === currentPassword) {
-    return next(new ValidationError("New password cannot be the same as the current password."));
+    return next(
+      new ValidationError(
+        "New password cannot be the same as the current password."
+      )
+    );
   }
 
   // Validate that the new password meets the complexity requirements.
   if (newPassword.length < 8) {
-    return next(new ValidationError("New password must be at least 8 characters long."));
+    return next(
+      new ValidationError("New password must be at least 8 characters long.")
+    );
   }
 
   // Grab the user that the token is claiming to be authenticate.
@@ -134,10 +152,17 @@ export const changePassword = async (req, res, next) => {
   }
 
   // Look up the user in the database to get current information.
-  const authenticatedUser = await userRepository.findBy("id", claimUser.getUUID());
+  const authenticatedUser = await userRepository.findBy(
+    "id",
+    claimUser.getUUID()
+  );
   if (!authenticatedUser) {
     // Should it should show the login view?
-    return next(new UnauthorizedError("Please log out and back in to change your password."));
+    return next(
+      new UnauthorizedError(
+        "Please log out and back in to change your password."
+      )
+    );
   }
 
   // Grab the salt and hashed passsword of the user.
@@ -149,12 +174,15 @@ export const changePassword = async (req, res, next) => {
 
   // Passwords aren't a match, so we respond with a 401 Unauthorized error.
   if (actualPasswordHash !== providedPasswordHash) {
-    return next(new UnauthorizedError("The current password you provided is not correct."));
+    return next(
+      new UnauthorizedError("The current password you provided is not correct.")
+    );
   }
 
   // Hash the new password with a new salt and then prepend with hash with the salt.
   const newSalt = authService.generateSalt();
-  const newPasswordHash = newSalt + authService.hashPassword(newPassword, newSalt);
+  const newPasswordHash =
+    newSalt + authService.hashPassword(newPassword, newSalt);
 
   // Update the user's hashed password and save it in the database.
   authenticatedUser.hash = newPasswordHash;
@@ -172,16 +200,28 @@ export const changePassword = async (req, res, next) => {
 export const forgotPassword = async (req, res, next) => {
   const email = req.body.email || "";
 
+  // Blanket response to the client
+  const successResponse = res.json({
+    statusCode: 200,
+    message:
+      "If the email matches an account, a password reset link will be sent with next steps.",
+  });
+
   // Validate the email address and throw a ValidationError if it's not valid.
   if (!EMAIL_REGEX.test(email)) {
-    return next(new ValidationError("The email address is not a valid email format."));
+    return next(
+      new ValidationError("The email address is not a valid email format.")
+    );
   }
 
   // Attempt to retrieve a user with the specified email.
   // If no user is found, end the request (obscuring the results).
   const dbUser = await userRepository.findBy("email", email);
   if (!dbUser) {
-    return res.end();
+    logger.debug("Trying to reset password for invalid email address", {
+      email: email,
+    })
+    return successResponse;
   }
 
   // Generate a random 32-byte hex string.
@@ -202,7 +242,7 @@ export const forgotPassword = async (req, res, next) => {
       token: token,
       dbUser: dbUser,
     });
-    return res.end();
+    return successResponse;
   }
 
   // Send a password reset email to the user containing a link to reset their password.
@@ -214,11 +254,11 @@ export const forgotPassword = async (req, res, next) => {
       token: token,
       dbUser: dbUser,
     });
-    return res.end();
+    return successResponse;
   }
 
   // End the request (obscuring the results)
-  res.end();
+  return successResponse;
 };
 
 // TODO: verify password isn't the same as the current password.
@@ -235,7 +275,9 @@ export const resetPassword = async (req, res, next) => {
 
   // Password complexity requires 8 characters.
   if (newPassword.length < 8) {
-    return next(new ValidationError("New password must be at least 8 characters long."));
+    return next(
+      new ValidationError("New password must be at least 8 characters long.")
+    );
   }
 
   // Look up the reset token in the database.
@@ -249,7 +291,8 @@ export const resetPassword = async (req, res, next) => {
 
   // Hash the new password with a new salt and then prepend with hash with the salt.
   const newSalt = authService.generateSalt();
-  const newPasswordHash = newSalt + authService.hashPassword(newPassword, newSalt);
+  const newPasswordHash =
+    newSalt + authService.hashPassword(newPassword, newSalt);
 
   // Update the user's hashed password and invalidate the passwordResetToken, then save the user with those values.
   authenticatedUser.hash = newPasswordHash;
@@ -284,7 +327,11 @@ export const validatePasswordResetToken = async (req, res, next) => {
     passwordResetToken
   );
   if (!authenticatedUser) {
-    return next(new UnauthorizedError("The password reset token is invalid. Please request a new token."));
+    return next(
+      new UnauthorizedError(
+        "The password reset token is invalid. Please request a new token."
+      )
+    );
   }
 
   // Verify the current time is greater than the expiration of the password reset token.
@@ -293,7 +340,11 @@ export const validatePasswordResetToken = async (req, res, next) => {
     authenticatedUser.passwordResetTokenExpiration
   );
   if (Date.now() >= tokenExpiration) {
-    return next(new UnauthorizedError("The password reset token has expired. Please request a new token."));
+    return next(
+      new UnauthorizedError(
+        "The password reset token has expired. Please request a new token."
+      )
+    );
   }
 
   return res.json({
@@ -318,6 +369,8 @@ export const getSession = (req, res, next) => {
   if (req.cookies?.token) {
     const payload = authService.verifyToken(req.cookies.token);
 
+    console.log("Payload", payload)
+
     // The payload has data containing our user object.
     if (payload?.data) {
       sessionData.user = payload.data;
@@ -330,5 +383,5 @@ export const getSession = (req, res, next) => {
   }
 
   // Respond with the session data in JSON format.
-  res.json(sessionData.length > 0 ? sessionData : {});
+  res.json(Object.keys(sessionData).length > 0 ? sessionData : {});
 };

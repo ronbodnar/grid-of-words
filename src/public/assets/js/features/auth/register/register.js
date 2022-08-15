@@ -1,8 +1,9 @@
-import { EMAIL_REGEX, USERNAME_REGEX } from "../../utils/constants.js";
-import { showMessage } from "../../services/message.service.js";
-import { submitAuthForm } from "../../services/authentication.service.js";
+import { EMAIL_REGEX, USERNAME_REGEX } from "../../../utils/constants.js";
+import { showMessage } from "../../../services/message.service.js";
+import { showView } from "../../../services/view.service.js";
+import { submitAuthForm } from "../authentication.service.js";
 
-export const registerUser = async () => {
+export const register = async () => {
   const emailInput = document.querySelector("#email");
   const passwordInput = document.querySelector("#password");
   const confirmPasswordInput = document.querySelector("#confirmPassword");

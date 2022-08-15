@@ -1,5 +1,5 @@
-import { createButton } from "../../components/button.js";
-import { showMessage } from "../../services/message.service.js";
+import { createButton } from "../../../components/button.js";
+import { showMessage } from "../../../services/message.service.js";
 
 export const buildForgotPasswordView = (message) => {
   const contentContainer = document.querySelector(".content");
@@ -59,11 +59,10 @@ const buildForm = () => {
   emailInput.required = true;
   emailInput.id = "email";
 
-  const submitButton = document.createElement("button");
-  submitButton.classList.add("button");
-  submitButton.type = "submit";
-  submitButton.innerHTML =
-    "Send Email <span class='button-loader hidden' id='submitButtonLoader'</span>";
+  const submitButton = createButton("Send Email", "forgotPassword", {
+    loader: true,
+    type: "submit"
+  });
   submitButton.style.width = "60%";
   submitButton.style.marginTop = "10px";
 

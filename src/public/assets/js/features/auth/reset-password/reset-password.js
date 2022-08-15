@@ -1,7 +1,7 @@
-import { submitAuthForm } from "../../services/authentication.service.js";
-import { showMessage } from "../../services/message.service.js";
-import { retrieveSession } from "../../services/storage.service.js";
-import { showView } from "../../services/view.service.js";
+import { submitAuthForm } from "../../../features/auth/authentication.service.js";
+import { showMessage } from "../../../services/message.service.js";
+import { retrieveSession } from "../../../services/storage.service.js";
+import { showView } from "../../../services/view.service.js";
 
 export const resetPassword = async () => {
   const passwordResetToken = retrieveSession("passwordResetToken");

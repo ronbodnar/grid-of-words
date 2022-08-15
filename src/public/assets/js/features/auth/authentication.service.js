@@ -1,7 +1,7 @@
-import { showView } from "./view.service.js";
-import { showMessage } from "./message.service.js";
-import { retrieveSession, removeSession } from "./storage.service.js";
-import { fetchData } from "../utils/helpers.js";
+import { showView } from "../../services/view.service.js";
+import { showMessage } from "../../services/message.service.js";
+import { retrieveSession, removeSession } from "../../services/storage.service.js";
+import { fetchData } from "../../utils/helpers.js";
 
 export const submitAuthForm = async (url, params, successFn, failureFn) => {
   // Find the submit button on the current view.
@@ -55,20 +55,10 @@ export const submitAuthForm = async (url, params, successFn, failureFn) => {
   }
 };
 
-export const logoutUser = async () => {
-  const response = await fetch(`/auth/logout/`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  }).catch((err) => {
-    console.error(err);
-    return null;
-  });
+export const logout = async () => {
+  const data = await fetchData("/auth/logout", "POST");
 
-  const data = !response ? undefined : await response.json();
-
-  if (data && data.status) {
+  if (data && data.statusCode === 200) {
     removeSession("user");
     removeSession("game");
     showView("home");
@@ -78,29 +68,6 @@ export const logoutUser = async () => {
     console.log("Error logging out");
   }
   console.log("Logout response", data);
-};
-
-export const resetPasswordResponse = async (token, newPassword) => {
-  const response = await fetch(`/auth/reset-password/`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      passwordResetToken: token,
-      newPassword: newPassword,
-    }),
-  }).catch((err) => {
-    console.log(err);
-    return null;
-  });
-
-  const data = await response.json().catch((err) => {
-    console.error("Error parsing json response", err);
-    return null;
-  });
-
-  return data;
 };
 
 export const validateResetToken = async (passwordResetToken) => {
@@ -134,3 +101,9 @@ export const getAuthenticatedUser = () => {
   const user = retrieveSession("user");
   return user;
 };
+
+export { changePassword } from "./change-password/change-password.js";
+export { resetPassword } from "./reset-password/reset-password.js";
+export { forgotPassword } from "./forgot-password/forgot-password.js";
+export { login } from "./login/login.js";
+export { register } from "./register/register.js";

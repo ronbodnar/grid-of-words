@@ -8,8 +8,8 @@ import {
 import { addKeyListeners } from "./services/event.service.js";
 import { getCurrentViewName, showView } from "./services/view.service.js";
 import { fetchWordList } from "./services/word.service.js";
-import { validateResetToken } from "./services/authentication.service.js";
 import { fetchData } from "./utils/helpers.js";
+import { validateResetToken } from "./features/auth/authentication.service.js";
 
 // Initialize the listeners for keyboard events.
 addKeyListeners();

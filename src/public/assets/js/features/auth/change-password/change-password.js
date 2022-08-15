@@ -1,7 +1,7 @@
-import { showView } from "../../services/view.service.js";
-import { showMessage } from "../../services/message.service.js";
-import { removeSession } from "../../services/storage.service.js";
-import { submitAuthForm } from "../../services/authentication.service.js";
+import { showView } from "../../../services/view.service.js";
+import { showMessage } from "../../../services/message.service.js";
+import { removeSession } from "../../../services/storage.service.js";
+import { submitAuthForm } from "../authentication.service.js";
 
 export const changePassword = async () => {
   const currentPasswordInput = document.querySelector("#currentPassword");

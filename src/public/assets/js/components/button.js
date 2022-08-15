@@ -1,3 +1,5 @@
+import { handleClickEvent } from "../services/event.service.js";
+
 export const createButton = (text, id, options) => {
   // Set up options and button attributes.
   options = options || {};
@@ -26,7 +28,7 @@ export const createButton = (text, id, options) => {
     button.innerHTML += "<span class='button-loader hidden' id='submitButtonLoader'</span>";
   }
 
-  button.addEventListener("click", (event) => handleButtonClick(event, options.eventArgs));
+  button.addEventListener("click", (event) => handleClickEvent(event, options.eventArgs));
 
   return button;
 };

@@ -1,8 +1,8 @@
-import { submitAuthForm } from "../../services/authentication.service.js";
-import { showMessage } from "../../services/message.service.js";
-import { storeSession } from "../../services/storage.service.js";
-import { showView } from "../../services/view.service.js";
-import { EMAIL_REGEX } from "../../utils/constants.js";
+import { showMessage } from "../../../services/message.service.js";
+import { storeSession } from "../../../services/storage.service.js";
+import { showView } from "../../../services/view.service.js";
+import { EMAIL_REGEX } from "../../../utils/constants.js";
+import { submitAuthForm } from "../authentication.service.js";
 
 export const login = async () => {
   const emailInput = document.querySelector("#email");

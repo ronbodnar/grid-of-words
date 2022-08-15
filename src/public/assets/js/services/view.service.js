@@ -1,9 +1,9 @@
-import { buildChangePasswordView } from "../views/auth/change-password.view.js";
-import { buildForgotPasswordView } from "../views/auth/forgot-password.view.js";
-import { buildLoginView } from "../views/auth/login.view.js";
-import { buildRegisterView } from "../views/auth/register.view.js";
-import { buildResetPasswordView } from "../views/auth/reset-password.view.js";
-import { buildGameView } from "../views/game.view.js";
+import { buildChangePasswordView } from "../features/auth/change-password/change-password.view.js";
+import { buildForgotPasswordView } from "../features/auth/forgot-password/forgot-password.view.js";
+import { buildLoginView } from "../features/auth/login/login.view.js";
+import { buildRegisterView } from "../features/auth/register/register.view.js";
+import { buildResetPasswordView } from "../features/auth/reset-password/reset-password.view.js";
+import { buildGameView } from "../features/game/game.view.js";
 import { buildHomeView } from "../views/home.view.js";
 import { buildHowToPlayView } from "../views/how-to-play.view.js";
 import { buildLoadingView } from "../views/loading.view.js";

@@ -13,14 +13,11 @@ import {
   DEFAULT_MAX_ATTEMPTS,
   DEFAULT_WORD_LENGTH,
 } from "../utils/constants.js";
-import { logoutUser } from "./authentication.service.js";
+import { changePassword, forgotPassword, resetPassword, login, logout, register } from "../features/auth/authentication.service.js";
 
-import { changePassword } from "../features/auth/change-password.js";
-import { forgotPassword } from "../features/auth/forgot-password.js";
-import { resetPassword } from "../features/auth/reset-password.js";
-import { registerUser } from "../features/auth/register.js";
-import { login } from "../features/auth/login.js";
-
+/**
+ * Used to map a button identifier to its function.
+ */
 const buttonFunctions = {
   // Navigation
   back: () => {
@@ -38,11 +35,12 @@ const buttonFunctions = {
   showChangePassword: () => showView("change-password"),
 
   // Games
-  startGame: (args) => {
+  startGame, randomGame: (args) => {
+    console.log(args);
     startGame({
-      wordLength: args.wordLength || DEFAULT_WORD_LENGTH,
-      maxAttempts: args.maxAttempts || DEFAULT_MAX_ATTEMPTS,
-      language: args.languageCode || "enUS",
+      wordLength: args?.wordLength || DEFAULT_WORD_LENGTH,
+      maxAttempts: args?.maxAttempts || DEFAULT_MAX_ATTEMPTS,
+      language: args?.languageCode || "enUS",
     });
   },
   forfeitGame: async () => {
@@ -53,19 +51,27 @@ const buttonFunctions = {
 
   // Authentication
   login: async () => await login(),
-  register: async () => await registerUser(),
-  logout: async () => await logoutUser(),
+  register: async () => await register(),
+  logout: async () => await logout(),
   changePassword: async () => await changePassword(),
   forgotPassword: () => forgotPassword(), // Don't await so user can't tell if the email is valid.
   resetPassword: async () => await resetPassword(),
 };
 
 /**
- * Handles the mapping of button click events to their respective handler functions.
+ * Handles the mapping of click events to their respective handler functions.
  */
-export const handleButtonClick = (event, ...args) => {
-  // Verify required event properties and throw an error if they are missing.
-  if (!event || !event.target || !event.target.id) {
+export const handleClickEvent = (event, args) => {
+  // Ensure the event is defined. If not, log an error and return early.
+  if (!event) {
+    console.error("Event is missing");
+    return;
+  }
+
+  // Find the proper identifier for the click event.
+  // Some buttons may have icons with nested elements and we fallback to check the parent element in this case.
+  const targetId = event.target?.id || event.target?.parentElement?.id;
+  if (!targetId) {
     console.error("Invalid event or missing button id for handleButtonClick.", {
       event: event,
     });
@@ -73,8 +79,7 @@ export const handleButtonClick = (event, ...args) => {
   }
 
   // Extract the button id from the event target and the button name from the button id.
-  const buttonId = event.target.id;
-  const buttonName = buttonId.replace("Button", "");
+  const buttonName = targetId.replace("Button", "");
 
   // Verify that the button clicked has a mapped function.
   if (!buttonFunctions.hasOwnProperty(buttonName)) {
