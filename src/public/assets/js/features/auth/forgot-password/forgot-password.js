@@ -1,5 +1,5 @@
-import { EMAIL_REGEX } from "../../../utils/constants.js";
-import { showMessage } from "../../../services/message.service.js";
+import { EMAIL_REGEX } from "../../../shared/utils/constants.js";
+import { showMessage } from "../../../shared/services/message.service.js";
 import { submitAuthForm } from "../authentication.service.js";
 
 export const forgotPassword = async () => {

@@ -1,8 +1,15 @@
-import { handleClickEvent } from "../services/event.service.js";
+import { handleClickEvent } from "../../shared/services/event.service.js";
+import { convertToCamelCase } from "../../shared/utils/helpers.js";
 
-export const createButton = (text, id, options) => {
+export const createButton = (text, options) => {
+  if (!text) {
+    console.error("Missing button text");
+    return;
+  }
+
   // Set up options and button attributes.
   options = options || {};
+  const id = options.id || convertToCamelCase(text);
   const type = options.type || "button";
   const classes = options.classes || ["button", "fixed"];
 

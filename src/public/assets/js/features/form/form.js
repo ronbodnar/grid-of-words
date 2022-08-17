@@ -1,4 +1,4 @@
-import { handleClickEvent } from "../../services/event.service.js";
+import { handleClickEvent } from "../../shared/services/event.service.js";
 import { createInput } from "./input.js";
 import { createLabel } from "./label.js";
 
@@ -6,10 +6,7 @@ import { createLabel } from "./label.js";
 
 /*
  * Options:
- *  - message (string)
- *  - hasMessage (boolean)
  *  - submessage (string)
- *  - hasSubmessage (boolean)
  */
 export const buildForm = (inputGroups, buttons, options) => {
   options = options || {};
@@ -26,16 +23,6 @@ export const buildForm = (inputGroups, buttons, options) => {
   form.onsubmit = () => {
     return false;
   };
-
-  // Add the message element to the form.
-  if (options.hasMessage) {
-    const messageDiv = document.createElement("div");
-    messageDiv.classList.add("message", "form-message");
-    if (options.message) {
-      messageDiv.innerHTML = options.message;
-    }
-    form.appendChild(messageDiv);
-  }
 
   // Generate the label / input field pairs for each field and add them to the form.
   for (let i = 0; i < inputGroups.length; i++) {
@@ -69,12 +56,12 @@ export const buildForm = (inputGroups, buttons, options) => {
   for (let i = 0; i < buttons.length; i++) {
     const button = buttons[i];
     button.style.marginTop = "10px";
-    console.log(typeof button);
+    console.log(button);
     form.appendChild(button);
   }
 
   // Create a submessage element, set the text and add the global click handler.
-  if (options.hasSubmessage && options.submessage) {
+  if (options.submessage) {
     const submessageDiv = document.createElement("p");
     submessageDiv.classList.add("submessage");
     submessageDiv.innerHTML = options.submessage;

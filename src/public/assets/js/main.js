@@ -4,11 +4,11 @@ import {
   retrieveSession,
   storeLocal,
   storeSession,
-} from "./services/storage.service.js";
-import { addKeyListeners } from "./services/event.service.js";
-import { getCurrentViewName, showView } from "./services/view.service.js";
-import { fetchWordList } from "./services/word.service.js";
-import { fetchData } from "./utils/helpers.js";
+} from "./shared/services/storage.service.js";
+import { addKeyListeners } from "./shared/services/event.service.js";
+import { getCurrentViewName, showView } from "./features/navigation/navigation.service.js";
+import { fetchWordList } from "./shared/services/word.service.js";
+import { fetchData } from "./shared/utils/helpers.js";
 import { validateResetToken } from "./features/auth/authentication.service.js";
 
 // Initialize the listeners for keyboard events.

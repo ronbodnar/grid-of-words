@@ -1,4 +1,4 @@
-import { buildLoadingElement } from "../components/loading.js";
+import { buildLoadingElement } from "./loading.js";
 
 /**
  * Builds and displays a loading view within the content container.

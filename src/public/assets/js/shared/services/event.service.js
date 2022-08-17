@@ -1,19 +1,19 @@
 import {
   fillNextSquare,
   removeLastSquareValue,
-} from "../features/gameboard/gameboard.service.js";
-import { forfeitGame, startGame } from "../features/game/game.service.js";
-import { processAttempt } from "./attempt.service.js";
+} from "../../features/gameboard/gameboard.service.js";
+import { forfeitGame, startGame } from "../../features/game/game.service.js";
+import { processAttempt } from "../../features/attempts/attempt.service.js";
 import {
   getCurrentViewName,
   showView,
   getViewHistory,
-} from "./view.service.js";
+} from "../../features/navigation/navigation.service.js";
 import {
   DEFAULT_MAX_ATTEMPTS,
   DEFAULT_WORD_LENGTH,
 } from "../utils/constants.js";
-import { changePassword, forgotPassword, resetPassword, login, logout, register } from "../features/auth/authentication.service.js";
+import { changePassword, forgotPassword, resetPassword, login, logout, register } from "../../features/auth/authentication.service.js";
 
 /**
  * Used to map a button identifier to its function.
@@ -92,6 +92,9 @@ export const handleClickEvent = (event, args) => {
   const buttonFn = buttonFunctions[buttonName];
   if (typeof buttonFn === "function") {
     buttonFn(args);
+    console.info("Performing button function with arguments");
+    console.log(buttonFn);
+    console.log(args);
   } else {
     console.error(`Invalid type for ${buttonName}. Expected a function.`);
   }

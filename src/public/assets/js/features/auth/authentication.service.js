@@ -1,7 +1,7 @@
-import { showView } from "../../services/view.service.js";
-import { showMessage } from "../../services/message.service.js";
-import { retrieveSession, removeSession } from "../../services/storage.service.js";
-import { fetchData } from "../../utils/helpers.js";
+import { showView } from "../navigation/navigation.service.js";
+import { showMessage } from "../../shared/services/message.service.js";
+import { retrieveSession, removeSession } from "../../shared/services/storage.service.js";
+import { fetchData } from "../../shared/utils/helpers.js";
 
 export const submitAuthForm = async (url, params, successFn, failureFn) => {
   // Find the submit button on the current view.

@@ -1,10 +1,13 @@
-import { createButton } from "../../../components/button.js";
+import { createButton } from "../../../shared/components/button.js";
 
+/**
+ * Generates all components for the change password view (form, headers, nav) and adds them to the content container.
+ */
 export const buildChangePasswordView = () => {
   const contentContainer = document.querySelector(".content");
   contentContainer.id = "change-password";
 
-  const backButton = createButton("Back", "back", {
+  const backButton = createButton("Back", {
     icon: "keyboard-backspace",
     classes: ["back-button"]
   });
@@ -62,7 +65,7 @@ const buildForm = () => {
   confirmPasswordInput.required = true;
   confirmPasswordInput.id = "confirmNewPassword";
 
-  const submitButton = createButton("Change Password", "changePassword", {
+  const submitButton = createButton("Change Password", {
     loader: true,
   });
   submitButton.style.marginTop = "10px";

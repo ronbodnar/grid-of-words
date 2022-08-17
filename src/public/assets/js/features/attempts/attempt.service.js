@@ -1,25 +1,25 @@
-import { setBlockKeyEvents } from "./event.service.js";
+import { setBlockKeyEvents } from "../../shared/services/event.service.js";
 import {
   removeSession,
   retrieveLocal,
   retrieveSession,
   storeLocal,
   storeSession,
-} from "./storage.service.js";
-import { showView } from "./view.service.js";
-import { showMessage } from "./message.service.js";
-import { fetchWordList, wordExists } from "./word.service.js";
-import { Game } from "../features/game/Game.js";
+} from "../../shared/services/storage.service.js";
+import { showView } from "../navigation/navigation.service.js";
+import { showMessage } from "../../shared/services/message.service.js";
+import { fetchWordList, wordExists } from "../../shared/services/word.service.js";
+import { Game } from "../game/Game.js";
 import {
   shiftActiveRow,
   transformSquares,
   updateCurrentAttemptSquares,
-} from "../features/gameboard/gameboard.service.js";
+} from "../gameboard/gameboard.service.js";
 import {
   toggleKeyboardOverlay,
   updateKeyboardKeys,
-} from "../features/keyboard/keyboard.service.js";
-import { fetchData } from "../utils/helpers.js";
+} from "../keyboard/keyboard.service.js";
+import { fetchData } from "../../shared/utils/helpers.js";
 
 // The list of letters that the user has entered for the current attempt.
 let attemptLetters = [];

@@ -149,13 +149,12 @@ sup {
   justify-content: start;
 }
 
-/* .content#home,
 .content#login,
 .content#loading,
 .content#register,
 .content[id$="-password"] {
   flex-direction: column;
-} */
+}
 
 @media screen and (max-width: 768px) {
   .content#game {

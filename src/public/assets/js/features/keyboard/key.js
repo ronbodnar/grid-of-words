@@ -1,5 +1,5 @@
-import { EXACT_MATCH, PARTIAL_MATCH, NO_MATCH } from "../../utils/constants.js";
-import { clickKeyboardKey } from "../../services/event.service.js";
+import { EXACT_MATCH, PARTIAL_MATCH, NO_MATCH } from "../../shared/utils/constants.js";
+import { clickKeyboardKey } from "../../shared/services/event.service.js";
 
 /**
  * Builds a key element based on the letter and className (for styling) and processes events for that key.

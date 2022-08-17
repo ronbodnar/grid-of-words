@@ -1,8 +1,8 @@
-import { removeSession, retrieveSession, storeSession } from "../../services/storage.service.js";
-import { showView } from "../../services/view.service.js";
-import { DEFAULT_MAX_ATTEMPTS, DEFAULT_WORD_LENGTH } from "../../utils/constants.js";
+import { removeSession, retrieveSession, storeSession } from "../../shared/services/storage.service.js";
+import { showView } from "../navigation/navigation.service.js";
+import { DEFAULT_MAX_ATTEMPTS, DEFAULT_WORD_LENGTH } from "../../shared/utils/constants.js";
 import { toggleKeyboardOverlay } from "../keyboard/keyboard.service.js";
-import { showMessage } from "../../services/message.service.js";
+import { showMessage } from "../../shared/services/message.service.js";
 
 // The current Game object if the user has a game in progress.
 let currentGame;

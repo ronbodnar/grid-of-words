@@ -1,4 +1,4 @@
-import { buildLoadingElement } from "../../components/loading.js";
+import { buildLoadingElement } from "../loading/loading.js";
 import { initializeKeyboardKeys, getKeyboardKey } from "../keyboard/keyboard.service.js";
 
 /**

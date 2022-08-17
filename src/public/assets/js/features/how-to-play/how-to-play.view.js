@@ -1,4 +1,4 @@
-import { createButton } from "../components/button.js";
+import { createButton } from "../../shared/components/button.js";
 
 const steps = [
   "Select or type the letters of a 5<sup>*</sup> letter word, like <strong>great</strong> or <strong>place</strong>.",

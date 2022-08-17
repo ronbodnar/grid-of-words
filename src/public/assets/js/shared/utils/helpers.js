@@ -158,5 +158,5 @@ export const convertToCamelCase = (str) => {
       strParts[i] = part.charAt(0).toUpperCase() + part.slice(1);
     }
   });
-  return strParts.join();
+  return strParts.join('');
 };

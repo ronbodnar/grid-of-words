@@ -1,9 +1,9 @@
-import { createButton } from "../components/button.js";
+import { createButton } from "../../shared/components/button.js";
 import {
   getAuthenticatedUser,
   isAuthenticated,
-} from "../features/auth/authentication.service.js";
-import { handleClickEvent } from "../services/event.service.js";
+} from "../auth/authentication.service.js";
+import { handleClickEvent } from "../../shared/services/event.service.js";
 
 /**
  * Builds the home container view within the content container.
@@ -54,15 +54,15 @@ const buildButtonContainer = () => {
   const buttonContainer = document.createElement("div");
   buttonContainer.classList.add("button-container");
 
-  const startGameButton = createButton("Start Game", "startGame", {
+  const startGameButton = createButton("Start Game", {
     icon: "play-arrow",
   });
 
-  const howToPlayButton = createButton("How To Play", "howToPlay", {
+  const howToPlayButton = createButton("How To Play", {
     icon: "help",
   });
 
-  const optionsButton = createButton("Options", "options", {
+  const optionsButton = createButton("Options", {
     icon: "tune",
   });
 

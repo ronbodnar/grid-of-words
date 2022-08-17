@@ -1,4 +1,4 @@
-import { convertToCamelCase } from "../../utils/helpers.js";
+import { convertToCamelCase } from "../../shared/utils/helpers.js";
 
 export const createLabel = (text) => {
   const label = document.createElement("label");

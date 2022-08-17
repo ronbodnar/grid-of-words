@@ -1,12 +1,20 @@
-import { showMessage } from "../../../services/message.service.js";
-import { storeSession } from "../../../services/storage.service.js";
-import { showView } from "../../../services/view.service.js";
-import { EMAIL_REGEX } from "../../../utils/constants.js";
+import { showMessage } from "../../../shared/services/message.service.js";
+import { storeSession } from "../../../shared/services/storage.service.js";
+import { showView } from "../../navigation/navigation.service.js";
+import { EMAIL_REGEX } from "../../../shared/utils/constants.js";
 import { submitAuthForm } from "../authentication.service.js";
 
 export const login = async () => {
   const emailInput = document.querySelector("#email");
   const passwordInput = document.querySelector("#password");
+
+  if (!emailInput || !passwordInput) {
+    showMessage("Please enter your email address and password.", {
+      className: "error",
+      hide: false,
+    });
+    return;
+  }
 
   // Make sure the email doesn't have any invalid characters
   if (!EMAIL_REGEX.test(emailInput.value)) {

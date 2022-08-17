@@ -1,14 +1,14 @@
-import { buildChangePasswordView } from "../features/auth/change-password/change-password.view.js";
-import { buildForgotPasswordView } from "../features/auth/forgot-password/forgot-password.view.js";
-import { buildLoginView } from "../features/auth/login/login.view.js";
-import { buildRegisterView } from "../features/auth/register/register.view.js";
-import { buildResetPasswordView } from "../features/auth/reset-password/reset-password.view.js";
-import { buildGameView } from "../features/game/game.view.js";
-import { buildHomeView } from "../views/home.view.js";
-import { buildHowToPlayView } from "../views/how-to-play.view.js";
-import { buildLoadingView } from "../views/loading.view.js";
-import { buildOptionsView } from "../views/options.view.js";
-import { retrieveSession } from "./storage.service.js";
+import { buildChangePasswordView } from "../auth/change-password/change-password.view.js";
+import { buildForgotPasswordView } from "../auth/forgot-password/forgot-password.view.js";
+import { buildLoginView } from "../auth/login/login.view.js";
+import { buildRegisterView } from "../auth/register/register.view.js";
+import { buildResetPasswordView } from "../auth/reset-password/reset-password.view.js";
+import { buildGameView } from "../game/game.view.js";
+import { buildHomeView } from "../home/home.view.js";
+import { buildHowToPlayView } from "../how-to-play/how-to-play.view.js";
+import { buildLoadingView } from "../loading/loading.view.js";
+import { buildOptionsView } from "../options/options.view.js";
+import { retrieveSession } from "../../shared/services/storage.service.js";
 
 // The stack of views so that the back button can return the user to where they were (does not keep previous states).
 let viewHistory = [];

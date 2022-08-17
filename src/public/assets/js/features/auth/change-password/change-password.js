@@ -1,6 +1,6 @@
-import { showView } from "../../../services/view.service.js";
-import { showMessage } from "../../../services/message.service.js";
-import { removeSession } from "../../../services/storage.service.js";
+import { showView } from "../../navigation/navigation.service.js";
+import { showMessage } from "../../../shared/services/message.service.js";
+import { removeSession } from "../../../shared/services/storage.service.js";
 import { submitAuthForm } from "../authentication.service.js";
 
 export const changePassword = async () => {

@@ -1,4 +1,4 @@
-import { createButton } from "../../components/button.js";
+import { createButton } from "../../shared/components/button.js";
 import { buildGameBoardElement } from "../gameboard/gameboard.js";
 import { buildOnScreenKeyboardElement } from "../keyboard/on-screen-keyboard.js";
 

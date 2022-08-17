@@ -1,6 +1,6 @@
-import { getValidatedLetters } from "../../utils/helpers.js";
-import { getAttemptLetters } from "../../services/attempt.service.js";
-import { NO_MATCH, EXACT_MATCH, PARTIAL_MATCH } from "../../utils/constants.js";
+import { getValidatedLetters } from "../../shared/utils/helpers.js";
+import { getAttemptLetters } from "../attempts/attempt.service.js";
+import { NO_MATCH, EXACT_MATCH, PARTIAL_MATCH } from "../../shared/utils/constants.js";
 
 /**
  * Moves the active class from the current row to the next row for new word attempts.

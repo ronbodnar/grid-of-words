@@ -1,4 +1,4 @@
-import { getRandomInt } from "../utils/helpers.js";
+import { getRandomInt } from "../../shared/utils/helpers.js";
 import {
   DEFAULT_WORD_LENGTH,
   MINIMUM_WORD_LENGTH,
@@ -6,8 +6,8 @@ import {
   DEFAULT_MAX_ATTEMPTS,
   MINIMUM_MAX_ATTEMPTS,
   MAXIMUM_MAX_ATTEMPTS,
-} from "../utils/constants.js";
-import { createButton } from "../components/button.js";
+} from "../../shared/utils/constants.js";
+import { createButton } from "../../shared/components/button.js";
 
 /**
  * Builds and displays the options view.
