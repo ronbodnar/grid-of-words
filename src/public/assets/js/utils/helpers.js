@@ -147,3 +147,16 @@ export const fetchData = async (url, method, params) => {
 
   return data;
 };
+
+export const convertToCamelCase = (str) => {
+  // Convert the field name into camelCase
+  const strParts = str.split(" ");
+  strParts.forEach((part, i) => {
+    if (i === 0) {
+      strParts[i] = part.toLowerCase();
+    } else {
+      strParts[i] = part.charAt(0).toUpperCase() + part.slice(1);
+    }
+  });
+  return strParts.join();
+};
