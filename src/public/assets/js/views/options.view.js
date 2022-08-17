@@ -63,10 +63,6 @@ const buildOptionsContainer = () => {
     )
   );
 
-    /*   contentContainer.appendChild(
-    buildCheckboxSection("rememberOptions", "Remember Options?", false)
-  ); */
-
   return optionsContainer;
 };
 
@@ -153,43 +149,6 @@ const buildSliderSection = (id, title, minValue, maxValue, defaultValue) => {
   // Add the header text and slider container to the option container
   container.appendChild(header);
   container.appendChild(sliderContainer);
-
-  return container;
-};
-
-/**
- * Builds a checkbox section with a title and a checkbox input.
- *
- * @param {string} id - The unique identifier for the checkbox elements.
- * @param {string} title - The title to display next to the checkbox.
- * @param {boolean} selected - The initial selected state of the checkbox.
- * @returns {HTMLDivElement} The container element containing the checkbox section.
- */
-const buildCheckboxSection = (id, title, selected) => {
-  const container = document.createElement("div");
-  container.classList.add("flex-center", "option-row-checkbox");
-
-  const text = document.createElement("h5");
-  text.textContent = title;
-  text.style.fontSize = "18px";
-
-  const header = document.createElement("div");
-  header.style.textAlign = "start";
-  header.appendChild(text);
-
-  const checkboxContainer = document.createElement("div");
-  checkboxContainer.style.textAlign = "center";
-
-  const checkbox = document.createElement("input");
-  checkbox.type = "checkbox";
-  checkbox.selected = selected;
-  checkbox.id = `${id}Checkbox`;
-
-  checkboxContainer.appendChild(checkbox);
-
-  // Add the header text and slider container to the option container
-  container.appendChild(header);
-  container.appendChild(checkboxContainer);
 
   return container;
 };

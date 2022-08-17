@@ -53,8 +53,11 @@ const buildStepContainer = () => {
     let step = document.createElement("li");
     step.style.margin = "20px 0";
     step.style.fontSize = "20px";
-    if (i === steps.length - 1) step.innerHTML = `${steps[i]}`;
-    else step.innerHTML = `${i + 1}. ${steps[i]}`;
+    if (i === steps.length - 1) {
+      step.innerHTML = `${steps[i]}`;
+    } else {
+      step.innerHTML = `${i + 1}. ${steps[i]}`;
+    }
     stepList.appendChild(step);
   }
   stepContainer.appendChild(stepList);
