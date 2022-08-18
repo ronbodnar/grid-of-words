@@ -47,7 +47,7 @@ export const showView = (name, options) => {
       viewHistory = [];
       break;
 
-    case "how-to-play":
+    case "howToPlay":
       buildHowToPlayView();
       break;
 
@@ -67,11 +67,11 @@ export const showView = (name, options) => {
       buildRegisterView();
       break;
 
-    case "forgot-password":
+    case "forgotPassword":
       buildForgotPasswordView(options?.message || undefined);
       break;
 
-    case "reset-password":
+    case "resetPassword":
       const passwordResetToken = retrieveSession("passwordResetToken");
       if (!passwordResetToken) {
         console.error("No reset token provided");
@@ -81,7 +81,7 @@ export const showView = (name, options) => {
       buildResetPasswordView();
       break;
 
-    case "change-password":
+    case "changePassword":
       buildChangePasswordView();
       break;
 

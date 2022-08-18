@@ -6,9 +6,8 @@ import {
   storeSession,
 } from "./shared/services/storage.service.js";
 import { addKeyListeners } from "./shared/services/event.service.js";
-import { getCurrentViewName, showView } from "./features/navigation/navigation.service.js";
-import { fetchWordList } from "./shared/services/word.service.js";
-import { fetchData } from "./shared/utils/helpers.js";
+import { getCurrentViewName, showView } from "./features/view/view.service.js";
+import { fetchData, fetchWordList } from "./shared/services/api.service.js";
 import { validateResetToken } from "./features/auth/authentication.service.js";
 
 // Initialize the listeners for keyboard events.
@@ -62,7 +61,7 @@ showView("loading");
 
     // Validate the passwordResetToken
     const validateTokenResponse = await validateResetToken(tokenParam);
-    if (!validateTokenResponse || validateTokenResponse.status === "error") {
+    if (!validateTokenResponse || validateTokenResponse.statusCode !== 200) {
       showView("forgot-password", {
         message:
           validateTokenResponse.message ||

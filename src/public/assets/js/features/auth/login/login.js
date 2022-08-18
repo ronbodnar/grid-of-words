@@ -1,6 +1,6 @@
 import { showMessage } from "../../../shared/services/message.service.js";
 import { storeSession } from "../../../shared/services/storage.service.js";
-import { showView } from "../../navigation/navigation.service.js";
+import { showView } from "../../view/view.service.js";
 import { EMAIL_REGEX } from "../../../shared/utils/constants.js";
 import { submitAuthForm } from "../authentication.service.js";
 

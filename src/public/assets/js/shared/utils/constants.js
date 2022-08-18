@@ -1,3 +1,5 @@
+export const APP_NAME = "Word Puzzle Game";
+
 // Max attempt declarations
 export const DEFAULT_MAX_ATTEMPTS = 6;
 export const MINIMUM_MAX_ATTEMPTS = 3;

@@ -1,6 +1,17 @@
-import { handleClickEvent } from "../../shared/services/event.service.js";
-import { convertToCamelCase } from "../../shared/utils/helpers.js";
+import { handleClickEvent } from "../services/event.service.js";
+import { convertToCamelCase } from "../utils/helpers.js";
 
+/**
+ * Creates a button element with the specified text and options.
+ * @param {*} text The text to be displayed on the button.
+ * @param {*} options An object with the following properties:
+ * - id: The id to assign the button element. (default: camelCase version of text).
+ * - type: Type type to use for the button (eg: submit, button) (default: "button").
+ * - classes: An array of class names to add to the button. (default: ["button", "fixed"]).
+ * - icon: The name of the icon to add to the button. (File must be in /assets/material-icons as an SVG). (optional)
+ * - loader: Whether or not to the add a (hidden) loading spinner to the button. (optional)
+ * @returns {HTMLButtonElement} The created HTML button element.
+ */
 export const createButton = (text, options) => {
   if (!text) {
     console.error("Missing button text");

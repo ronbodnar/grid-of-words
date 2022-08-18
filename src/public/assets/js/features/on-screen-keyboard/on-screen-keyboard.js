@@ -1,5 +1,5 @@
 import { buildLoadingElement } from "../loading/loading.js";
-import { initializeKeyboardKeys, getKeyboardKey } from "../keyboard/keyboard.service.js";
+import { initializeKeyboardKeys, getKeyboardKey } from "./keyboard.service.js";
 
 /**
  * Builds the on screen keyboard container and all children.

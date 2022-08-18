@@ -1,7 +1,7 @@
 import { createButton } from "../../../shared/components/button.js";
 import { FormGroup } from "../../form/FormGroup.js";
 import { buildForm } from "../../form/form.js";
-import { buildView } from "../../navigation/view.js";
+import { buildView } from "../../view/view.js";
 
 /**
  * Generates all components for the registration view (form, headers, nav) and adds them to the content container.
@@ -28,7 +28,7 @@ export const buildRegisterView = () => {
   const form = buildForm(formFields, formButtons, formOptions);
 
   buildView("register", {
-    header: "Register Account",
+    headerText: "Register Account",
     hasNavigationButton: true,
     additionalElements: [form],
     message: {},

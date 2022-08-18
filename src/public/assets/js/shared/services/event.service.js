@@ -8,7 +8,7 @@ import {
   getCurrentViewName,
   showView,
   getViewHistory,
-} from "../../features/navigation/navigation.service.js";
+} from "../../features/view/view.service.js";
 import {
   DEFAULT_MAX_ATTEMPTS,
   DEFAULT_WORD_LENGTH,
@@ -28,11 +28,11 @@ const buttonFunctions = {
     });
   },
   options: () => showView("options"),
-  howToPlay: () => showView("how-to-play"),
+  howToPlay: () => showView("howToPlay"),
   showLogin: () => showView("login"),
   showRegister: () => showView("register"),
-  showForgotPassword: () => showView("forgot-password"),
-  showChangePassword: () => showView("change-password"),
+  showForgotPassword: () => showView("forgotPassword"),
+  showChangePassword: () => showView("changePassword"),
 
   // Games
   startGame, randomGame: (args) => {

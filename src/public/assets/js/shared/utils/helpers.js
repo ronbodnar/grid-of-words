@@ -88,69 +88,9 @@ export const getRandomInt = (min, max) => {
   return Math.floor(Math.random() * (max - min) + min);
 };
 
-/**
- * Fetches and parses data using the fetch API and injects the statusCode into the response JSON object.
- *
- * @param {*} url The URL to fetch data from.
- * @param {*} params An object of key/values to pass in the query (GET) or body (POST, PUT, etc) parameters.
- * @param {*} method The request method to use with the fetch request.
- * @returns {Promise<any>} A promise that resolves when the data has been made available.
- */
-export const fetchData = async (url, method, params) => {
-  const allowedMethods = ["GET", "POST", "PUT", "PATCH", "DELETE"];
-
-  method = method || "GET";
-  params = params || {};
-
-  // Verify that the method is allowed.
-  if (!allowedMethods.includes(method)) {
-    console.error(
-      `Invalid method: ${method}. Only ${allowedMethods.join(
-        ", "
-      )} are allowed.`
-    );
-    return null;
-  }
-
-  // Wait for the fetch API to respond with the data from the url.
-  const fetchResponse = await fetch(url, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    method: method,
-
-    // Body will only be populated with data if the request method isn't GET.
-    body: method !== "GET" ? JSON.stringify(params) : undefined,
-
-    // Params will only be populated with data if the request method is GET.
-    params: method === "GET" ? JSON.stringify(params) : undefined,
-  }).catch((err) => {
-    console.error(
-      `Could not fetch data from ${url} with params ${JSON.stringify(
-        params
-      )}: ${err}`
-    );
-    return null;
-  });
-
-  const data = !fetchResponse
-    ? undefined
-    : await fetchResponse.json().catch((err) => {
-        console.error(`Error parsing JSON response from ${url}: ${err}`);
-        return null;
-      });
-
-  // Add a 200 status code to responses that are successful but have no status code.
-  if (fetchResponse && Object.keys(data).length > 0) {
-    data.statusCode = fetchResponse.status;
-  }
-
-  return data;
-};
-
 export const convertToCamelCase = (str) => {
   // Convert the field name into camelCase
-  const strParts = str.split(" ");
+  const strParts = str.split(/[ -]/g);
   strParts.forEach((part, i) => {
     if (i === 0) {
       strParts[i] = part.toLowerCase();
@@ -160,3 +100,6 @@ export const convertToCamelCase = (str) => {
   });
   return strParts.join('');
 };
+
+convertToCamelCase("Hey how are ya");
+convertToCamelCase("how-are-u-doin");

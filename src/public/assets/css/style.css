@@ -47,6 +47,9 @@ sup {
   height: 50px;
   width: 100%;
   margin: 0 auto;
+  font-size: 16px;
+  font-weight: 700;
+  margin: 15px 0;
 }
 
 @media screen and (max-width: 768px) {
@@ -63,9 +66,10 @@ sup {
   color: rgba(227, 34, 39, 0.9);
 }
 
+.subheader,
 .submessage {
   font-size: 16px;
-  margin-top: 20px;
+  margin: 10px 0;
 }
 
 .submessage > a {
@@ -82,12 +86,6 @@ sup {
 
 .submessage > a:hover {
   opacity: 0.6;
-}
-
-.form-message {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 15px 0;
 }
 
 .form-link {
@@ -152,7 +150,7 @@ sup {
 .content#login,
 .content#loading,
 .content#register,
-.content[id$="-password"] {
+.content[id$="Password"] {
   flex-direction: column;
 }
 

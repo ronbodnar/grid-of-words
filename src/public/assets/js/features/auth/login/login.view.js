@@ -1,7 +1,7 @@
 import { createButton } from "../../../shared/components/button.js";
 import { FormGroup } from "../../form/FormGroup.js";
 import { buildForm } from "../../form/form.js";
-import { buildView } from "../../navigation/view.js";
+import { buildView } from "../../view/view.js";
 
 /**
  * Generates all components for the login view (form, headers, nav) and adds them to the content container.
@@ -33,7 +33,7 @@ export const buildLoginView = (message) => {
 
   // Build the login view with the generated form as an additional element.
   buildView("login", {
-    header: "Account Login",
+    headerText: "Account Login",
     hasNavigationButton: true,
     additionalElements: [form],
     message: {

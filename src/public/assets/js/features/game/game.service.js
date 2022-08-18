@@ -1,32 +1,12 @@
 import { removeSession, retrieveSession, storeSession } from "../../shared/services/storage.service.js";
-import { showView } from "../navigation/navigation.service.js";
+import { showView } from "../view/view.service.js";
 import { DEFAULT_MAX_ATTEMPTS, DEFAULT_WORD_LENGTH } from "../../shared/utils/constants.js";
-import { toggleKeyboardOverlay } from "../keyboard/keyboard.service.js";
+import { toggleKeyboardOverlay } from "../on-screen-keyboard/keyboard.service.js";
 import { showMessage } from "../../shared/services/message.service.js";
+import { fetchData } from "../../shared/services/api.service.js";
 
 // The current Game object if the user has a game in progress.
 let currentGame;
-
-/**
- * Fetches a new game from the API with the provided options.
- *
- * @param {Object} options - The options for the new game (wordLength, maxAttempts).
- * @returns {Promise<Game>} - A promise that resolves with the fetched game object.
- */
- // TODO: Add error handling for failed fetch
-const fetchNewGame = async (options) => {
-  return fetch(`/game/new?${options.toString()}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  })
-    .then((response) => response.json())
-    .catch((error) => {
-      console.log("Error fetching new game: ", error);
-      return null;
-    });
-};
 
 /**
  * Begins a new game by querying the API for a new game object, then swaps the container view to show the game container.
@@ -46,10 +26,10 @@ export const startGame = async (options) => {
     maxAttempts: options.maxAttempts || DEFAULT_MAX_ATTEMPTS,
   });
   try {
-    const fetchGameResponse = await fetchNewGame(params);
+    const fetchNewGameResponse = await fetchData(`/game/new?${params.toString()}`, "GET");
 
     //TODO: error handler
-    if (!fetchGameResponse || fetchGameResponse.status === 'error') {
+    if (!fetchNewGameResponse || fetchNewGameResponse.statusCode !== 200) {
       console.log("Failed to fetch new game");
       showMessage("Failed to fetch new game");
       return;
@@ -61,9 +41,9 @@ export const startGame = async (options) => {
     });
 
     // Add the game to localStorage
-    storeSession("game", fetchGameResponse);
+    storeSession("game", fetchNewGameResponse);
 
-    console.log("Created Game Response", fetchGameResponse);
+    console.log("Created Game Response", fetchNewGameResponse);
   } catch (error) {
     console.error(error);
     showMessage("An unknown error has occurred. Please try again.");
@@ -76,33 +56,21 @@ export const forfeitGame = async () => {
   showMessage("Forfeiting game - please wait.");
   toggleKeyboardOverlay();
 
-  return fetch(`/game/${game.id}/forfeit`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  })
-    .then((response) => response.json())
-    .then(() => {
-      removeSession("game");
-      showView("home");
-      return null;
-    });
-};
+  const forfeitGameResponse = await fetchData(`/game/${game.id}/forfeit`, "POST");
 
-export const fetchGameData = async (id) => {
-  try {
-    var response = await fetch(`/game/${id}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
+  if (!forfeitGameResponse || forfeitGameResponse.statusCode !== 200) {
+    console.log("Failed to forfeit game", {
+      game: game,
+      forfeitGameResponse: forfeitGameResponse,
     });
-    return await response.json();
-  } catch (error) {
-    console.log(`Failed to fetch game data for id ${id}`, error);
-    return null;
+    showMessage("Failed to forfeit game");
+    return;
   }
+
+  removeSession("game");
+  showView("home");
+  
+  return forfeitGameResponse;
 };
 
 export const getCurrentGame = () => {

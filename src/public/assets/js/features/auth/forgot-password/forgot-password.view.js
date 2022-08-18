@@ -1,7 +1,7 @@
 import { createButton } from "../../../shared/components/button.js";
 import { FormGroup } from "../../form/FormGroup.js";
 import { buildForm } from "../../form/form.js";
-import { buildView } from "../../navigation/view.js";
+import { buildView } from "../../view/view.js";
 
 /**
  * Generates all components for the forgot password view (form, headers, nav) and adds them to the content container.
@@ -23,16 +23,13 @@ export const buildForgotPasswordView = (message) => {
   // Build the forgotten password form and then generate the view
   const form = buildForm(formFields, formButtons);
 
-  buildView("reset-password", {
-    header: "Forgotten Password?",
-    subheader: "Enter your email address to receive a password reset link.",
+  buildView("forgotPassword", {
+    headerText: "Forgotten Password?",
+    subheaderText: "Enter your email address to receive a password reset link.",
     hasNavigationButton: true,
     additionalElements: [form],
     message: {
-      hidden: true,
-      text: message,
-      hide: false,
-      className: "error",
+      hidden: true
     },
   });
 };

@@ -11,6 +11,7 @@ import { createLabel } from "./label.js";
 export const buildForm = (inputGroups, buttons, options) => {
   options = options || {};
 
+  // Check if inputGroups is an array. If not, log an error and return.
   if (!inputGroups || !Array.isArray(inputGroups)) {
     console.error("Fields must be an array");
     return;
@@ -19,7 +20,14 @@ export const buildForm = (inputGroups, buttons, options) => {
   // Set up the basic form structure and disable form submission events.
   const form = document.createElement("form");
   form.classList.add("form");
-  form.id = options.id; // this can be undefined
+  //form.style.marginTop = "15px";
+
+  // Set the form's id only if the option is present.
+  if (options.id) {
+    form.id = options.id;
+  }
+
+  // Block the submission as we handle the logic in the event service.
   form.onsubmit = () => {
     return false;
   };
@@ -55,7 +63,7 @@ export const buildForm = (inputGroups, buttons, options) => {
   // Generate the buttons
   for (let i = 0; i < buttons.length; i++) {
     const button = buttons[i];
-    button.style.marginTop = "10px";
+    button.style.marginTop = "25px";
     console.log(button);
     form.appendChild(button);
   }

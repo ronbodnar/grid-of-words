@@ -1,4 +1,4 @@
-import { showView } from "../../navigation/navigation.service.js";
+import { showView } from "../../view/view.service.js";
 import { showMessage } from "../../../shared/services/message.service.js";
 import { removeSession } from "../../../shared/services/storage.service.js";
 import { submitAuthForm } from "../authentication.service.js";
@@ -20,6 +20,14 @@ export const changePassword = async () => {
 
   if (newPasswordInput.value !== confirmNewPasswordInput.value) {
     showMessage("New passwords do not match.", {
+      className: "error",
+      hide: false,
+    });
+    return;
+  }
+
+  if (currentPasswordInput.value.length < 1 || newPasswordInput.value.length < 1 || confirmNewPasswordInput.value.length < 1) {
+    showMessage("Passwords must be at least 1 character long.", {
       className: "error",
       hide: false,
     });

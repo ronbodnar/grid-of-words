@@ -1,6 +1,6 @@
 import { EMAIL_REGEX, USERNAME_REGEX } from "../../../shared/utils/constants.js";
 import { showMessage } from "../../../shared/services/message.service.js";
-import { showView } from "../../navigation/navigation.service.js";
+import { showView } from "../../view/view.service.js";
 import { submitAuthForm } from "../authentication.service.js";
 
 export const register = async () => {

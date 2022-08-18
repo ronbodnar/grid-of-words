@@ -6,9 +6,9 @@ import {
   storeLocal,
   storeSession,
 } from "../../shared/services/storage.service.js";
-import { showView } from "../navigation/navigation.service.js";
+import { showView } from "../view/view.service.js";
 import { showMessage } from "../../shared/services/message.service.js";
-import { fetchWordList, wordExists } from "../../shared/services/word.service.js";
+import { fetchWordList, wordExists } from "../../shared/services/api.service.js";
 import { Game } from "../game/Game.js";
 import {
   shiftActiveRow,
@@ -18,8 +18,8 @@ import {
 import {
   toggleKeyboardOverlay,
   updateKeyboardKeys,
-} from "../keyboard/keyboard.service.js";
-import { fetchData } from "../../shared/utils/helpers.js";
+} from "../on-screen-keyboard/keyboard.service.js";
+import { fetchData } from "../../shared/services/api.service.js";
 
 // The list of letters that the user has entered for the current attempt.
 let attemptLetters = [];
@@ -89,7 +89,7 @@ export const processAttempt = async (game) => {
     );
 
     // We received an updated game object with the correct attempt and need to validate the values.
-    if (response.status === "success") {
+    if (response.statusCode === 200) {
       switch (true) {
         case localGame.attempts.length !== remoteGame.attempts.length: // attempt array size mismatch
         case !attemptsMatch: // array element content mismatch

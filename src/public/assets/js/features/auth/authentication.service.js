@@ -1,7 +1,10 @@
-import { showView } from "../navigation/navigation.service.js";
+import { showView } from "../view/view.service.js";
 import { showMessage } from "../../shared/services/message.service.js";
-import { retrieveSession, removeSession } from "../../shared/services/storage.service.js";
-import { fetchData } from "../../shared/utils/helpers.js";
+import {
+  retrieveSession,
+  removeSession,
+} from "../../shared/services/storage.service.js";
+import { fetchData } from "../../shared/services/api.service.js";
 
 export const submitAuthForm = async (url, params, successFn, failureFn) => {
   // Find the submit button on the current view.
@@ -71,25 +74,9 @@ export const logout = async () => {
 };
 
 export const validateResetToken = async (passwordResetToken) => {
-  const response = await fetch(`/auth/validate/`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      passwordResetToken: passwordResetToken,
-    }),
-  }).catch((err) => {
-    console.log(err);
-    return null;
+  return await fetchData("/auth/validate", "POST", {
+    passwordResetToken: passwordResetToken,
   });
-
-  const data = await response.json().catch((err) => {
-    console.error("Error parsing json response", err);
-    return null;
-  });
-
-  return data;
 };
 
 export const isAuthenticated = () => {

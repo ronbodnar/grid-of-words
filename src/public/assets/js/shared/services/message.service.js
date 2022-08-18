@@ -14,10 +14,12 @@ let messageTimeout = undefined;
 export const showMessage = (message, options = {}) => {
   if (message.length < 1) return;
 
+  const messageSelector = options.messageSelector || ".message"
+
   //console.log(`Showing message "${message}" with ${(options.hideDelay ? options.hideDelay + 'ms' : 'no')} delay`);
 
   // Update the message div with the response message
-  var messageDiv = document.querySelector(".message");
+  var messageDiv = document.querySelector(messageSelector);
   if (messageDiv && message) {
     messageDiv.classList.remove("hidden");
     messageDiv.classList.remove("success", "error")
@@ -35,7 +37,7 @@ export const showMessage = (message, options = {}) => {
   // Set the message timeout to clear after the delay if hide is true.
   if (options.hide && options.hide === true) {
     messageTimeout = setTimeout(() => {
-      messageDiv.textContent = "";
+      messageDiv.innerHTML = "";
       messageDiv.classList.remove(options.className);
     }, (options.hideDelay || HIDE_MESSAGE_DELAY));
   }
