@@ -1,7 +1,9 @@
+import { logger } from "../../main.js";
+
 /**
  * Adds the specified key/value pair to the sessionStorage and encodes the value into JSON.
  * @param {string} key - The key to store.
- * @param {string} value - The value to store.
+ * @param {any} value - The value to store as a JSON string.
  */
 export const storeSession = (key, value) => {
   window.sessionStorage.setItem(key, JSON.stringify(value));
@@ -18,7 +20,7 @@ export const removeSession = (key) => {
 /**
  * Retrieves the value associated with the given key from sessionStorage.
  * @param {string} key - The key to look up in storage.
- * @return {string} - The value associated with the key.
+ * @returns {any} - The decoded value associated with the key.
  */
 export const retrieveSession = (key) => {
   const value = window.sessionStorage.getItem(key);
@@ -29,10 +31,10 @@ export const retrieveSession = (key) => {
 /**
  * Adds the specified key/value pair to the localStorage and encodes the value into JSON.
  * @param {string} key - The key to store.
- * @param {string} value - The value to store.
+ * @param {any} value - The value to store as a JSON string.
  */
 export const storeLocal = (key, value) => {
-  console.log("Storing to localStorage", key, value);
+  logger.debug("Storing to localStorage", key, value);
   window.localStorage.setItem(key, JSON.stringify(value));
 };
 
@@ -45,9 +47,9 @@ export const removeLocal = (key) => {
 };
 
 /**
- * Retrieves the value associated with the given key from localStorage.
+ * Retrieves the raw value associated with the given key from localStorage.
  * @param {string} key - The key to look up in storage.
- * @return {string} - The value associated with the key.
+ * @returns {any} - The decoded value associated with the key.
  */
 export const retrieveLocal = (key) => {
   const value = window.localStorage.getItem(key);

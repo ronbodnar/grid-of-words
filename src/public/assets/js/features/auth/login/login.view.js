@@ -33,13 +33,14 @@ export const buildLoginView = (message) => {
 
   // Build the login view with the generated form as an additional element.
   buildView("login", {
-    headerText: "Account Login",
-    hasNavigationButton: true,
-    additionalElements: [form],
+    header: {
+      text: "Account Login",
+    },
     message: {
       text: message,
       className: "success",
       hidden: false,
     },
+    additionalElements: [form],
   });
 };

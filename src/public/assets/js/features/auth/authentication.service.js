@@ -5,6 +5,7 @@ import {
   removeSession,
 } from "../../shared/services/storage.service.js";
 import { fetchData } from "../../shared/services/api.service.js";
+import { logger } from "../../main.js";
 
 export const submitAuthForm = async (url, params, successFn, failureFn) => {
   // Find the submit button on the current view.
@@ -20,7 +21,7 @@ export const submitAuthForm = async (url, params, successFn, failureFn) => {
   // Fetch the response from the server.
   const responsePromise = await fetchData(url, "POST", params);
 
-  console.log("submitAuthForm responsePromise", responsePromise);
+  logger.debug("submitAuthForm responsePromise", responsePromise);
 
   // Validate the response and statusCode to handle any errors.
   // Invalid responses will display an error message, re-enable the form, then invoke an optional failureFn callback.
@@ -68,9 +69,9 @@ export const logout = async () => {
     showMessage(data.message || "You have been successfully logged out.");
     //window.location.reload(); // Force refresh to clear session data (can this be avoided?)
   } else {
-    console.log("Error logging out");
+    logger.warn("Error logging out");
   }
-  console.log("Logout response", data);
+  logger.debug("Logout response", data);
 };
 
 export const validateResetToken = async (passwordResetToken) => {

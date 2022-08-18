@@ -2,6 +2,7 @@ import { showView } from "../../view/view.service.js";
 import { showMessage } from "../../../shared/services/message.service.js";
 import { removeSession } from "../../../shared/services/storage.service.js";
 import { submitAuthForm } from "../authentication.service.js";
+import { logger } from "../../../main.js";
 
 export const changePassword = async () => {
   const currentPasswordInput = document.querySelector("#currentPassword");
@@ -9,7 +10,7 @@ export const changePassword = async () => {
   const confirmNewPasswordInput = document.querySelector("#confirmNewPassword");
 
   if (!currentPasswordInput || !newPasswordInput || !confirmNewPasswordInput) {
-    console.error(
+    logger.error(
       "Missing input element(s)",
       currentPasswordInput,
       newPasswordInput,
@@ -40,7 +41,7 @@ export const changePassword = async () => {
   };
 
   const successFn = (test) => {
-    console.log("Running successFn", test);
+    logger.debug("Running successFn", test);
     removeSession("user");
     showView("login", {
       message:

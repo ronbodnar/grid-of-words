@@ -28,9 +28,10 @@ export const buildRegisterView = () => {
   const form = buildForm(formFields, formButtons, formOptions);
 
   buildView("register", {
-    headerText: "Register Account",
-    hasNavigationButton: true,
-    additionalElements: [form],
+    header: {
+      text: "Register Account",
+    },
     message: {},
+    additionalElements: [form],
   });
 };

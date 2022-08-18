@@ -13,6 +13,7 @@ export const buildLoadingView = () => {
   loadingAnimation.classList.add("loading-animation");
   
   buildView("loading", {
+    title: "Loading...",
     additionalElements: [loadingMessage, loadingAnimation],
   });
 };

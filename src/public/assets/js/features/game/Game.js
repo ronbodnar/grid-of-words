@@ -8,7 +8,6 @@ export class Game {
   endTime;
 
   constructor(json) {
-    //console.log("Received json: ", json);
     if (json === undefined) return this;
     this.id = json.id;
     this.word = json.word;

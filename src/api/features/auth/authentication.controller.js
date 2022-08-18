@@ -269,7 +269,7 @@ export const resetPassword = async (req, res, next) => {
 
   // Verify we have all the required body parameters.
   if (!newPassword || !passwordResetToken) {
-    console.log("missing params");
+    logger.error("missing params");
     return next(new ValidationError("Missing required fields."));
   }
 
@@ -369,7 +369,9 @@ export const getSession = (req, res, next) => {
   if (req.cookies?.token) {
     const payload = authService.verifyToken(req.cookies.token);
 
-    console.log("Payload", payload)
+    logger.info("Payload data from session token", {
+      payload: payload
+    });
 
     // The payload has data containing our user object.
     if (payload?.data) {

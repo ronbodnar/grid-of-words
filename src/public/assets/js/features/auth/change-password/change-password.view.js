@@ -23,12 +23,15 @@ export const buildChangePasswordView = () => {
   const form = buildForm(formFields, formButtons);
 
   buildView("changePassword", {
-    headerText: "Change Password",
-    subheaderText: "Enter your current password and a new password to change your password.",
-    hasNavigationButton: true,
-    additionalElements: [form],
+    header: {
+      text: "Change Password",
+    },
+    subheader: {
+      text: "Enter your current password and a new password to change your password.",
+    },
     message: {
       hidden: true,
     },
+    additionalElements: [form],
   });
 };

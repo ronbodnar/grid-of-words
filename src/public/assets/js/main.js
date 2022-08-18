@@ -10,6 +10,10 @@ import { getCurrentViewName, showView } from "./features/view/view.service.js";
 import { fetchData, fetchWordList } from "./shared/services/api.service.js";
 import { validateResetToken } from "./features/auth/authentication.service.js";
 
+// Initialize and export the logger
+const loggerInstance = logger();
+export { loggerInstance as logger };
+
 // Initialize the listeners for keyboard events.
 addKeyListeners();
 
@@ -20,7 +24,7 @@ showView("loading");
   // Fetch the session data from the server.
   const sessionResponse = await fetchData("/session");
 
-  console.info("Session Data", sessionResponse);
+  loggerInstance.debug("Session Data", sessionResponse);
 
   if (sessionResponse?.user && sessionResponse?.user.id) {
     storeSession("user", sessionResponse.user);
@@ -46,7 +50,7 @@ showView("loading");
   if (!wordList) {
     fetchWordList()
       .then((response) => storeLocal("wordList", response))
-      .catch((error) => console.error("Error fetching word list", error));
+      .catch((error) => loggerInstance.error("Error fetching word list", error));
   }
 })();
 

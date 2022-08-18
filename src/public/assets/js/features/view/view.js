@@ -2,99 +2,86 @@ import { showMessage } from "../../shared/services/message.service.js";
 import { APP_NAME } from "../../shared/utils/constants.js";
 import { createNavigationButton } from "./navigation-button.js";
 import { createText } from "../../shared/components/text.js";
+import { logger } from "../../main.js";
 
 /**
  * Clears the content container and builds a standard view with specified additional elements and options.
  *
- * @param {*} name The name to be assigned to the view container.
- * @param {*} options Additional options to be passed to the view.
+ * @param {string} name - The name to be assigned to the view container.
+ * @param {Object} [options={}] - Additional options to be passed to the view.
+ * @param {string} [options.title] - The title for the view.
+ * @param {boolean} [options.hasNavigationButton=true] - Whether to include a navigation button.
+ * @param {Object} [options.header={}] - The header details.
+ * @param {Object} [options.subheader={}] - The subheader details.
+ * @param {Object} [options.message={}] - The message details.
+ * @param {Object} [options.submessage={}] - The submessage details.
+ * @param {Array} [options.additionalElements=[]] - Additional elements to include in the view.
  */
-export const buildView = (name, options) => {
+export const buildView = (name, options = {}) => {
   if (!name) {
-    console.error("No name provided");
+    logger.error("No name provided");
     return;
   }
 
-  // Update the title of the page to reflect the current view.
-  window.document.title = options.title || APP_NAME;
+  const {
+    hasNavigationButton = true,
+    header,
+    subheader,
+    message,
+    submessage,
+    additionalElements,
+  } = options;
 
-  options = options || {};
+  const titlePrefix = header?.text === APP_NAME ? "" : header?.text + " | ";
+  window.document.title = titlePrefix + APP_NAME;
 
-  // Find the content container, set the id and clear the innerHTML.
   const contentContainer = document.querySelector(".content");
   contentContainer.id = name;
   contentContainer.innerHTML = "";
 
-  // Create the navigation button and add it to the content container.
-  if (options.hasNavigationButton) {
+  if (hasNavigationButton) {
     const navigationButton = createNavigationButton(name);
     contentContainer.appendChild(navigationButton);
   }
 
-  // Create the optional header element
-  if (options.headerText) {
-    const header = createText({
-      text: options.headerText,
-      type: "view-header",
-    });
-    contentContainer.appendChild(header);
-  }
-
-  // Create an optional subheader element
-  if (options.subheaderText) {
-    const subheader = createText({
-      type: "subheader",
-      text: options.subheaderText,
-    });
-    contentContainer.appendChild(subheader);
-  }
-
-  // Extract the message details from the options and add a default location if not present.
-  const message = options.message;
-  const messageLocation = message?.location || "top";
-  let messageElement;
-  if (message) {
-    messageElement = createText({
-      type: "message",
-      hidden: message.hidden,
-    });
-
-    // Only add the message element here if the messageLocation is set to "top".
-    if (messageLocation === "top") {
-      contentContainer.appendChild(messageElement);
+  // Iterate over optional header, subheader, and message elements.
+  // For each defined element, create a corresponding text element and append it to the content container.
+  // The 'type' is determined based on the element's position in the array.
+  [header, subheader, message].forEach((element, index) => {
+    if (element) {
+      contentContainer.appendChild(
+        createText({
+          type: ["view-header", "subheader", "message"][index],
+          text: element.text || "",
+          hidden: element.hidden || false,
+          emitClickEvent: element.emitClickEvent || false,
+          classes: element.classes || [],
+        })
+      );
     }
-  }
+  });
 
-  // Each view has its specific elements and they're added here.
-  if (options.additionalElements) {
-    if (!Array.isArray(options.additionalElements)) {
-      console.error("Additional elements must be an array");
-      return;
+  if (additionalElements) {
+    if (!Array.isArray(additionalElements)) {
+      throw new Error("Additional elements must be an array");
     }
-    options.additionalElements.forEach((element) => {
-      contentContainer.appendChild(element);
-    });
+    additionalElements.forEach((element) =>
+      contentContainer.appendChild(element)
+    );
   }
 
-  // Some views push the message to the bottom of the container
-  // If the message element was created and the message.location is "bottom", add it here.
-  if (messageElement && messageLocation === "bottom") {
-    contentContainer.appendChild(messageElement);
-  }
-
-  // Some views may have an additional submessage below the additional elements
-  // If passed a submessage, B=build the submessage element and append it to the content container.
-  if (options.submessageText) {
-    const submessage = createText({
+  if (submessage) {
+    const submessageElement = createText({
       type: "submessage",
-      text: options.submessageText,
-      emitClickEvent: true,
+      text: options.submessage.text,
+      hidden: options.submessage.hidden || false,
+      emitClickEvent: options.submessage.emitClickEvent || false,
+      classes: options.submessage.classes || [],
     });
-    contentContainer.appendChild(submessage);
+    contentContainer.appendChild(submessageElement);
   }
 
-  // Display the message with the specified options.
-  if (message && message.text?.length > 0 && messageElement) {
+  if (message && message.text) {
     const options = {
       hide: message.hide || true,
       hideDelay: message.hideDelay || 10000,

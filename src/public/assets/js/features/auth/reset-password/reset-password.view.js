@@ -22,12 +22,15 @@ export const buildResetPasswordView = () => {
 
   // Build the reset password view with the generated form as an additional element.
   buildView("resetPassword", {
-    headerText: "Reset Password",
-    subheaderText: "Enter a new password for your account.",
-    hasNavigationButton: true,
-    additionalElements: [form],
+    header: {
+      text: "Reset Password",
+    },
+    subheader: {
+      text: "Enter a new password for your account.",
+    },
     message: {
       hidden: true,
     },
+    additionalElements: [form],
   });
 };

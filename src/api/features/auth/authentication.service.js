@@ -33,14 +33,14 @@ export const authenticate = async (email, password) => {
 export const setTokenCookie = (res, payload) => {
   // Make sure we received a payload.
   if (!payload) {
-    console.error("No payload provided to setTokenCookie");
+    logger.error("No payload provided to setTokenCookie");
     return null;
   }
 
   // Generate the JWT from the payload.
   const jwt = generateToken(payload);
   if (!jwt) {
-    console.error("No JWT provided to setTokenCookie");
+    logger.warn("No JWT provided to setTokenCookie");
     return null;
   }
 
@@ -137,7 +137,7 @@ export const generateToken = (payload, expiresIn = "15d") => {
  */
 export const verifyToken = (token) => {
   if (!token) {
-    console.log("no token");
+    logger.warn("no token");
     return null;
   }
   try {

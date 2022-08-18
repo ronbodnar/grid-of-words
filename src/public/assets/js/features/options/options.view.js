@@ -16,8 +16,9 @@ import { buildSliderSection } from "./slider.js";
  */
 export const buildOptionsView = () => {
   buildView("options", {
-    headerText: "Game Options",
-    hasNavigationButton: true,
+    header: {
+      text: "Game Options",
+    },
     additionalElements: [buildOptionsContainer(), buildButtonContainer()],
   });
 };
@@ -74,6 +75,7 @@ const buildButtonContainer = () => {
   });
 
   const randomGameButton = createButton("Random Game", {
+    id: "startGame",
     icon: "shuffle",
     eventArgs: {
       wordLength: getRandomInt(MINIMUM_WORD_LENGTH, MAXIMUM_WORD_LENGTH),

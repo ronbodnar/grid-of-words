@@ -1,4 +1,5 @@
 import { EXACT_MATCH, PARTIAL_MATCH, NO_MATCH } from "./constants.js";
+import logger from "./logger.js";
 
 /**
  * Compares two words of assumed equal length to see which guessWord letter positions match, are invalid, or don't exist in the gameWord.
@@ -8,7 +9,7 @@ import { EXACT_MATCH, PARTIAL_MATCH, NO_MATCH } from "./constants.js";
  */
 export const getValidatedLetters = (guessWord, targetWord) => {
   if (targetWord.length !== guessWord.length) {
-    console.error("Words must be of the same length");
+    logger.error("Words must be of the same length");
     return null;
   }
 

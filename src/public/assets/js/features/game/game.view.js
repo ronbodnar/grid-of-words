@@ -1,5 +1,6 @@
+import { logger } from "../../main.js";
 import { buildGameBoardElement } from "../gameboard/gameboard.js";
-import { buildOnScreenKeyboardElement } from "../on-screen-keyboard/on-screen-keyboard.js";
+import { buildOnScreenKeyboardElement } from "../keyboard/keyboard.js";
 import { buildView } from "../view/view.js";
 
 /**
@@ -9,7 +10,7 @@ import { buildView } from "../view/view.js";
  */
 export const buildGameView = (options) => {
   if (!options) {
-    console.error("No options present");
+    logger.error("No options present");
     return;
   }
 
@@ -17,7 +18,6 @@ export const buildGameView = (options) => {
   const gameboard = buildGameBoardElement(options);
   const keyboard = buildOnScreenKeyboardElement(options.game);
   buildView("game", {
-    hasNavigationButton: true,
     additionalElements: [gameboard, keyboard],
   });
 };

@@ -24,12 +24,15 @@ export const buildForgotPasswordView = (message) => {
   const form = buildForm(formFields, formButtons);
 
   buildView("forgotPassword", {
-    headerText: "Forgotten Password?",
-    subheaderText: "Enter your email address to receive a password reset link.",
-    hasNavigationButton: true,
-    additionalElements: [form],
+    header: {
+      text: "Forgotten Password?",
+    },
+    subheader: {
+      text: "Enter your email address to receive a password reset link.",
+    },
     message: {
       hidden: true
     },
+    additionalElements: [form],
   });
 };

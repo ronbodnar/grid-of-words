@@ -1,6 +1,7 @@
 import { buildKeyElement } from "./key.js";
 import { getLetterStates } from "../../shared/utils/helpers.js";
 import { EXACT_MATCH, NO_MATCH, PARTIAL_MATCH } from "../../shared/utils/constants.js";
+import { logger } from "../../main.js";
 
 let keyboardKeys = {};
 
@@ -47,7 +48,7 @@ export const updateKeyboardKeys = (gameWord, attemptedWord) => {
 
     // The key element could not be found.
     if (!key) {
-      console.error(`No key found for letter ${letter}`);
+      logger.error(`No key found for letter ${letter}`);
       continue;
     }
 

@@ -11,21 +11,26 @@ import { buildView } from "../view/view.js";
 export const buildHomeView = () => {
   // Set the submessage inviting the user to log in or register.
   // If the user is already authenticated, they're shown change password/logout links.
-  let submessage =
+  let submessageText =
     'Want to save your progress?<br /><a id="showLogin">Log In</a> or <a id="showRegister">Register</a>';
   if (isAuthenticated()) {
-    submessage = `Welcome back, ${
+    submessageText = `Welcome back, ${
       getAuthenticatedUser().username
     }!<br /><a id="showChangePassword">Change Password</a> or <a id="logout">Log Out</a>`;
   }
 
   buildView("home", {
-    headerText: "Word Puzzle Game",
-    additionalElements: [buildButtonContainer()],
-    message: {
-      hidden: true
+    header: {
+      text: "Word Puzzle Game"
     },
-    submessageText: submessage,
+    message: {
+      hidden: true,
+    },
+    submessage: {
+      text: submessageText,
+    },
+    hasNavigationButton: false,
+    additionalElements: [buildButtonContainer()],
   });
 };
 

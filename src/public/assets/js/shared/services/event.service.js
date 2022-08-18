@@ -13,11 +13,16 @@ import {
   DEFAULT_MAX_ATTEMPTS,
   DEFAULT_WORD_LENGTH,
 } from "../utils/constants.js";
-import { changePassword, forgotPassword, resetPassword, login, logout, register } from "../../features/auth/authentication.service.js";
+import {
+  changePassword,
+  forgotPassword,
+  resetPassword,
+  login,
+  logout,
+  register,
+} from "../../features/auth/authentication.service.js";
+import { logger } from "../../main.js";
 
-/**
- * Used to map a button identifier to its function.
- */
 const buttonFunctions = {
   // Navigation
   back: () => {
@@ -35,8 +40,10 @@ const buttonFunctions = {
   showChangePassword: () => showView("changePassword"),
 
   // Games
-  startGame, randomGame: (args) => {
-    console.log(args);
+  startGame: (args) => {
+    logger.info("Starting game with arguments", {
+      arguments: args,
+    });
     startGame({
       wordLength: args?.wordLength || DEFAULT_WORD_LENGTH,
       maxAttempts: args?.maxAttempts || DEFAULT_MAX_ATTEMPTS,
@@ -59,68 +66,59 @@ const buttonFunctions = {
 };
 
 /**
- * Handles the mapping of click events to their respective handler functions.
+ * Maps click events to their respective handler functions and invokes the function.
  */
 export const handleClickEvent = (event, args) => {
   // Ensure the event is defined. If not, log an error and return early.
   if (!event) {
-    console.error("Event is missing");
-    return;
+    throw new Error("Missing event parameter");
   }
 
-  // Find the proper identifier for the click event.
-  // Some buttons may have icons with nested elements and we fallback to check the parent element in this case.
   const targetId = event.target?.id || event.target?.parentElement?.id;
   if (!targetId) {
-    console.error("Invalid event or missing button id for handleButtonClick.", {
-      event: event,
-    });
-    return;
+    throw new Error(
+      "Invalid event or missing button id for handleButtonClick.",
+      {
+        event: event,
+      }
+    );
   }
 
-  // Extract the button id from the event target and the button name from the button id.
   const buttonName = targetId.replace("Button", "");
-
-  // Verify that the button clicked has a mapped function.
   if (!buttonFunctions.hasOwnProperty(buttonName)) {
-    console.error(`${buttonName} does not have a mapped function.`);
-    return;
+    throw new Error(`${buttonName} does not have a mapped function`);
   }
 
-  // Try to extract the button function by its name.
-  // If the buttonFn is a function, invoke it. If it's not, throw an error.
-  const buttonFn = buttonFunctions[buttonName];
-  if (typeof buttonFn === "function") {
-    buttonFn(args);
-    console.info("Performing button function with arguments");
-    console.log(buttonFn);
-    console.log(args);
+  const buttonFunction = buttonFunctions[buttonName];
+  if (typeof buttonFunction === "function") {
+    buttonFunction(args);
   } else {
-    console.error(`Invalid type for ${buttonName}. Expected a function.`);
+    throw new Error(`Invalid type for ${buttonName}. Expected a function`);
   }
 };
 
 /**
- * Handles the event when a user taps a key on the on-screen keyboard.
+ * Handles the event when a user taps/clicks a key on the on-screen keyboard.
  *
  * @param {string} letter The letter entered by the user.
  */
 export const clickKeyboardKey = (letter) => {
-  if (isBlockKeyEvents()) {
-    return;
-  }
+  // Exit early if key events are blocked.
+  if (isBlockKeyEvents()) return;
 
-  if (letter === "delete") {
-    removeLastSquareValue();
-    return;
-  }
+  switch (letter) {
+    case "delete":
+      removeLastSquareValue();
+      break;
 
-  if (letter === "enter") {
-    processAttempt();
-    return;
-  }
+    case "enter":
+      processAttempt();
+      break;
 
-  fillNextSquare(letter);
+    default:
+      fillNextSquare(letter);
+      break;
+  }
 };
 
 /**
@@ -129,41 +127,40 @@ export const clickKeyboardKey = (letter) => {
 export const addKeyListeners = () => {
   // Keypress only listens for keys that emit a value
   document.addEventListener("keypress", function (event) {
-    if (isBlockKeyEvents()) {
-      return;
-    }
+    // Exit early if key events are blocked.
+    if (isBlockKeyEvents()) return;
 
-    const key = event.key;
+    const { key } = event;
+    const currentView = getCurrentViewName();
 
     if (key === "Enter") {
-      if (
-        getCurrentViewName() === "home" ||
-        getCurrentViewName() === "how-to-play"
-      ) {
-        clickStartGameButton();
-        return;
-      } else if (getCurrentViewName() === "game") {
-        processAttempt();
-        return;
-      }
-    }
+      switch (currentView) {
+        case "home":
+        case "howToPlay":
+          buttonFunctions.startGame();
+          break;
 
-    fillNextSquare(key);
+        case "game":
+          processAttempt();
+          break;
+      }
+    } else {
+      fillNextSquare(key);
+    }
   });
 
   // Keydown is for non-value keys as well
   document.addEventListener("keydown", function (event) {
-    if (isBlockKeyEvents()) {
-      return;
-    }
+    // Exit early if key events are blocked.
+    if (isBlockKeyEvents()) return;
 
-    // Extract the key pressed from the event and remove the last letter if delete or backspace is pressed.
-    const key = event.key;
-    if (
-      (key === "Delete" || key === "Backspace") &&
-      getCurrentViewName() === "game"
-    )
+    const { key } = event;
+    const isDeleteKey = key === "Delete" || key === "Backspace";
+    const currentView = getCurrentViewName();
+
+    if (isDeleteKey && currentView === "game") {
       removeLastSquareValue(key);
+    }
   });
 };
 

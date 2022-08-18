@@ -3,6 +3,7 @@ import { storeSession } from "../../../shared/services/storage.service.js";
 import { showView } from "../../view/view.service.js";
 import { EMAIL_REGEX } from "../../../shared/utils/constants.js";
 import { submitAuthForm } from "../authentication.service.js";
+import { logger } from "../../../main.js";
 
 export const login = async () => {
   const emailInput = document.querySelector("#email");
@@ -38,7 +39,7 @@ export const login = async () => {
       storeSession("user", response.user);
       showView("home");
     } else {
-      console.error("Couldn't login: no user in response", response);
+      logger.error("Couldn't login: no user in response", response);
     }
   };
 

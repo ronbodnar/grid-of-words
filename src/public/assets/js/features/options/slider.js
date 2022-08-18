@@ -16,35 +16,31 @@ export const buildSliderSection = (id, title, minValue, maxValue, defaultValue) 
     header.textContent = title;
     header.style.fontSize = "18px";
   
-    // Todo cookies for preferred/previous value and move to stylesheet
     const sliderContainer = document.createElement("div");
     sliderContainer.style.display = "flex";
     sliderContainer.style.alignItems = "center";
     sliderContainer.style.justifyContent = "end";
     sliderContainer.style.width = "100%";
   
-    // The text showing what the value of the word length slider is
-    const inputValue = document.createElement("p");
-    inputValue.id = `${id}SliderValue`;
-    inputValue.classList.add("slider-value");
-    inputValue.textContent = defaultValue;
+    const sliderValueLabel = document.createElement("label");
+    sliderValueLabel.id = `${id}SliderValue`;
+    sliderValueLabel.classList.add("slider-value");
+    sliderValueLabel.textContent = defaultValue;
+    sliderValueLabel.style.marginBottom = "0";
   
-    // Set up the slider element
-    const inputSlider = document.createElement("input");
-    inputSlider.type = "range";
-    inputSlider.min = minValue;
-    inputSlider.max = maxValue;
-    inputSlider.value = defaultValue;
-    inputSlider.id = `${id}Slider`;
-    inputSlider.addEventListener("input", (event) => {
-      inputValue.innerHTML = event.target.value;
+    const sliderInput = document.createElement("input");
+    sliderInput.type = "range";
+    sliderInput.min = minValue;
+    sliderInput.max = maxValue;
+    sliderInput.value = defaultValue;
+    sliderInput.id = `${id}Slider`;
+    sliderInput.addEventListener("input", (event) => {
+      sliderValueLabel.innerHTML = event.target.value;
     });
-  
-    // Add the slider components to the slider container
-    sliderContainer.appendChild(inputSlider);
-    sliderContainer.appendChild(inputValue);
-  
-    // Add the header text and slider container to the option container
+    
+    sliderContainer.appendChild(sliderInput);
+    sliderContainer.appendChild(sliderValueLabel);
+
     container.appendChild(header);
     container.appendChild(sliderContainer);
   

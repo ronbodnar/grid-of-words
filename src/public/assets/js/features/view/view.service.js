@@ -9,100 +9,87 @@ import { buildHowToPlayView } from "../how-to-play/how-to-play.view.js";
 import { buildLoadingView } from "../loading/loading.view.js";
 import { buildOptionsView } from "../options/options.view.js";
 import { retrieveSession } from "../../shared/services/storage.service.js";
+import { logger } from "../../main.js";
 
-// The stack of views so that the back button can return the user to where they were (does not keep previous states).
 let viewHistory = [];
+
+const viewFunctions = {
+  // Main view functions
+  home: () => {
+    viewHistory = [];
+    buildHomeView();
+  },
+  game: (options = {}) => {
+    buildGameView({
+      game: options.game,
+      wordLength: options.wordLength,
+      maxAttempts: options.maxAttempts,
+    });
+    viewHistory = [];
+  },
+  howToPlay: () => buildHowToPlayView(),
+  loading: () => buildLoadingView(),
+  options: () => buildOptionsView(),
+
+  // Authentication view functions
+  changePassword: () => buildChangePasswordView(),
+  forgotPassword: (options = {}) => buildForgotPasswordView(options.message),
+  login: (options = {}) => buildLoginView(options.message),
+  register: () => buildRegisterView(),
+  resetPassword: () => {
+    const passwordResetToken = retrieveSession("passwordResetToken");
+    if (!passwordResetToken) {
+      logger.error("No reset token provided");
+      // TODO: the user experience
+      return;
+    }
+    buildResetPasswordView();
+  },
+};
 
 /**
  * Clears the current content container's innerHTML and builds view containers.
  * @param {string} name - The name of the view container to build and display.
  * @param {object} options - A list of options that can be passed to views.
  */
-// TODO: Lets convert this into a ViewManager later on.
-export const showView = (name, options) => {
-  // If no name is provided we will just show the home view.
-  if (!name || name === "") {
+export const showView = (name, options = {}) => {
+  if (!name) {
     showView("home");
     return;
   }
 
-  // Do not add to history when current view is "loading" or "game", or when options.hideFromHistory is true.
-  if (
-    getCurrentViewName() !== "loading" &&
-    getCurrentViewName() !== "game" &&
-    !options?.hideFromHistory
-  ) {
+  const { hideFromHistory = false } = options;
+
+  const currentView = getCurrentViewName();
+  const addToHistory =
+    currentView !== "loading" && currentView !== "game" && !hideFromHistory;
+
+  if (addToHistory) {
     viewHistory.push(getCurrentViewName());
   }
 
-  switch (name) {
-    case "game":
-      buildGameView({
-        game: options.game,
-        wordLength: options.wordLength,
-        maxAttempts: options.maxAttempts,
-      });
-
-      // Reset the view history
-      viewHistory = [];
-      break;
-
-    case "howToPlay":
-      buildHowToPlayView();
-      break;
-
-    case "loading":
-      buildLoadingView();
-      break;
-
-    case "options":
-      buildOptionsView();
-      break;
-
-    case "login":
-      buildLoginView(options?.message || undefined);
-      break;
-
-    case "register":
-      buildRegisterView();
-      break;
-
-    case "forgotPassword":
-      buildForgotPasswordView(options?.message || undefined);
-      break;
-
-    case "resetPassword":
-      const passwordResetToken = retrieveSession("passwordResetToken");
-      if (!passwordResetToken) {
-        console.error("No reset token provided");
-        //TODO: the user experience
-        return;
-      }
-      buildResetPasswordView();
-      break;
-
-    case "changePassword":
-      buildChangePasswordView();
-      break;
-
-    default:
-      buildHomeView();
-
-      // Reset the view history
-      viewHistory = [];
-      break;
+  const viewFunction = viewFunctions[name];
+  if (viewFunction && typeof viewFunction === "function") {
+    viewFunction(options);
+  } else {
+    buildHomeView();
+    viewHistory = [];
+    logger.error(`View "${name}" does not have a mapped function.`);
   }
 };
 
 /**
  * Retrieves the current view from the id tag of the main content container.
- * @return {string} - The name of the current view.
+ * @returns {string} The name of the current view.
  */
 export const getCurrentViewName = () => {
   const currentView = document.querySelector(".content");
   return currentView?.id;
 };
 
+/**
+ * @returns {Array} A stack of views that have been visited, for navigation.
+ */
 export const getViewHistory = () => {
-    return viewHistory;
-}
+  return viewHistory;
+};

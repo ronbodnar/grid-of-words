@@ -9,8 +9,9 @@ export const buildHowToPlayView = () => {
   const buttonContainer = buildButtonContainer();
 
   buildView("howToPlay", {
-    headerText: "How to Play",
-    hasNavigationButton: true,
+    header: {
+      text: "How to Play",
+    },
     additionalElements: [stepContainer, buttonContainer],
   });
 };

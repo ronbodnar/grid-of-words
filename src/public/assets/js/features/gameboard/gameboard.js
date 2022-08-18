@@ -1,3 +1,4 @@
+import { logger } from "../../main.js";
 import { DEFAULT_MAX_ATTEMPTS, DEFAULT_WORD_LENGTH } from "../../shared/utils/constants.js";
 import { buildWordRowElement } from "./row.js";
 
@@ -8,7 +9,7 @@ import { buildWordRowElement } from "./row.js";
  */
 export const buildGameBoardElement = (options) => {
   if (!options) {
-    console.error("Missing options for gameboard element");
+    logger.error("Missing options for gameboard element");
     return;
   }
   const rows = options.game?.maxAttempts || options.maxAttempts || DEFAULT_MAX_ATTEMPTS;

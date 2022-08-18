@@ -1,8 +1,8 @@
 // TODO: Eventually do a queue system here to stack up the messages?
 
+import { logger } from "../../main.js";
 import { HIDE_MESSAGE_DELAY } from "../utils/constants.js";
 
-// Used to clear any existing message timeouts.
 let messageTimeout = undefined;
 
 /**
@@ -14,31 +14,33 @@ let messageTimeout = undefined;
 export const showMessage = (message, options = {}) => {
   if (message.length < 1) return;
 
-  const messageSelector = options.messageSelector || ".message"
+  const {
+    hide = false,
+    hideDelay = HIDE_MESSAGE_DELAY,
+    messageSelector = ".message",
+    className,
+  } = options;
 
-  //console.log(`Showing message "${message}" with ${(options.hideDelay ? options.hideDelay + 'ms' : 'no')} delay`);
+  logger.debug(`Showing message "${message}" with ${(options.hideDelay ? options.hideDelay + 'ms' : 'no')} delay`);
 
-  // Update the message div with the response message
   var messageDiv = document.querySelector(messageSelector);
-  if (messageDiv && message) {
-    messageDiv.classList.remove("hidden");
-    messageDiv.classList.remove("success", "error")
-    if (options.className) {
-      messageDiv.classList.add(options.className);
-    }
+  if (messageDiv) {
     messageDiv.innerHTML = message;
+    messageDiv.classList.remove("hidden", "success", "error");
+    if (className) {
+      messageDiv.classList.add(className);
+    }
   } else {
-    console.log(`Message div not found for message "${message}"`);
+    throw new Error(`Message div not found for message "${message}"`);
   }
 
   // Clear the previous message timeout to restart the hide delay
   if (messageTimeout) clearTimeout(messageTimeout);
 
-  // Set the message timeout to clear after the delay if hide is true.
-  if (options.hide && options.hide === true) {
+  if (hide) {
     messageTimeout = setTimeout(() => {
       messageDiv.innerHTML = "";
-      messageDiv.classList.remove(options.className);
-    }, (options.hideDelay || HIDE_MESSAGE_DELAY));
+      messageDiv.classList.remove(className);
+    }, hideDelay);
   }
 };

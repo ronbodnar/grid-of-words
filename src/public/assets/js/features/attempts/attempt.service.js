@@ -18,8 +18,9 @@ import {
 import {
   toggleKeyboardOverlay,
   updateKeyboardKeys,
-} from "../on-screen-keyboard/keyboard.service.js";
+} from "../keyboard/keyboard.service.js";
 import { fetchData } from "../../shared/services/api.service.js";
+import { logger } from "../../main.js";
 
 // The list of letters that the user has entered for the current attempt.
 let attemptLetters = [];
@@ -35,7 +36,7 @@ export const processAttempt = async (game) => {
     if (game) {
       processAttempt(game);
     } else {
-      console.error("No game found");
+      logger.error("No game found");
     }
     return;
   }
@@ -95,7 +96,7 @@ export const processAttempt = async (game) => {
         case !attemptsMatch: // array element content mismatch
         case localGame.id !== remoteGame.id: // game id mismatch
         case localGame.word !== remoteGame.word: // game word mismatch
-          console.error(
+          logger.error(
             "There is a game data mismatch, reloading the game in 10 seconds..."
           );
           setTimeout(() => {
@@ -240,13 +241,13 @@ export const validateAttempt = (game) => {
   const wordList = retrieveLocal("wordList");
   if (!wordList) {
     // re-fetch word list synchronously? pass to server for validation while asynchronously fetching the word list?
-    console.info("No word list found locally, fetching...");
+    logger.info("No word list found locally, fetching...");
     fetchWordList()
       .then((response) => {
         storeLocal("wordList", response);
-        console.info(`Stored ${response.length} words in the wordList.`);
+        logger.info(`Stored ${response.length} words in the wordList.`);
       })
-      .catch((error) => console.error("Error fetching word list", error));
+      .catch((error) => logger.error("Error fetching word list", error));
   } else {
     if (!wordExists(attemptWord)) {
       showMessage("Not in word list");

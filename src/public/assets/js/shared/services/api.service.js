@@ -1,17 +1,27 @@
-import { MAXIMUM_WORD_LENGTH, MINIMUM_WORD_LENGTH } from "../utils/constants.js";
+import { logger } from "../../main.js";
+import {
+  MAXIMUM_WORD_LENGTH,
+  MINIMUM_WORD_LENGTH,
+} from "../utils/constants.js";
 import { retrieveLocal } from "./storage.service.js";
 
-
-
 /**
- * Fetches and parses data using the fetch API and injects the statusCode into the response JSON object.
+ * Fetches and parses data using the fetch API and injects the statusCode into the response object.
  *
- * @param {*} url The URL to fetch data from.
- * @param {*} params An object of key/values to pass in the query (GET) or body (POST, PUT, etc) parameters.
- * @param {*} method The request method to use with the fetch request.
- * @returns {Promise<any>} A promise that resolves when the data has been made available.
+ * @param {string} url The URL to fetch data from.
+ * @param {string} [method='GET'] - (optional) - The request method to use with the fetch request.
+ * @param {Object} [params={}] - (optional) - An object of key/values to pass in the query (GET) or body (POST, PUT, etc) parameters.
+ * @returns {Promise<any>} A promise that resolves to an object containing the parsed response data, or `null` if an error occurs or no data is fetched.
  */
-export const fetchData = async (url, method, params) => {
+export const fetchData = async (url, method, params, timeoutDelay = 15000) => {
+  // Set up the abort controller signal for timeout handling.
+  const controller = new AbortController();
+  const { signal } = controller;
+
+  const timeout = setTimeout(() => {
+    controller.abort();
+  }, timeoutDelay);
+
   // Allowed fetch methods
   const allowedMethods = ["GET", "POST", "PUT", "PATCH", "DELETE"];
 
@@ -21,48 +31,56 @@ export const fetchData = async (url, method, params) => {
 
   // Verify that the method is allowed.
   if (!allowedMethods.includes(method)) {
-    console.error(
+    logger.error(
       `Invalid method: ${method}. Only ${allowedMethods.join(
         ", "
       )} are allowed.`
     );
-    return null;
+    return;
   }
 
-  // Wait for the fetch API to respond with the data from the url.
-  const fetchResponse = await fetch(url, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    method: method,
+  try {
+    // Wait for the fetch API to respond with the data from the url.
+    const fetchResponse = await fetch(url, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: method,
 
-    // Body will only be populated with data if the request method isn't GET.
-    body: method !== "GET" ? JSON.stringify(params) : undefined,
+      // Body will only be populated with data if the request method isn't GET.
+      body: method !== "GET" ? JSON.stringify(params) : undefined,
 
-    // Params will only be populated with data if the request method is GET.
-    params: method === "GET" ? JSON.stringify(params) : undefined,
-  }).catch((err) => {
-    console.error(
-      `Could not fetch data from ${url} with params ${JSON.stringify(
-        params
-      )}: ${err}`
-    );
-    return null;
-  });
+      // Params will only be populated with data if the request method is GET.
+      params: method === "GET" ? JSON.stringify(params) : undefined,
+      signal: signal,
+    });
 
-  const data = !fetchResponse
-    ? undefined
-    : await fetchResponse.json().catch((err) => {
-        console.error(`Error parsing JSON response from ${url}: ${err}`);
-        return null;
-      });
+    clearTimeout(timeout);
 
-  // Add the statusCode from the fetchResponse if data is populated.
-  if (fetchResponse && Object.keys(data).length > 0) {
-    data.statusCode = fetchResponse.status;
+    const data = !fetchResponse
+      ? undefined
+      : await fetchResponse.json().catch((err) => {
+          logger.error(`Error parsing JSON response from ${url}: ${err}`);
+          return null;
+        });
+
+    // Add the statusCode from the fetchResponse if data is populated.
+    if (fetchResponse && Object.keys(data).length > 0) {
+      data.statusCode = fetchResponse.status;
+    }
+
+    return data;
+  } catch (err) {
+    if (err.name === "AbortError") {
+      logger.error(`Request to ${url} timed out.`);
+    } else {
+      logger.error(
+        `Could not fetch data from ${url} with params ${JSON.stringify(
+          params
+        )}: ${err}`
+      );
+    }
   }
-
-  return data;
 };
 
 /**
@@ -77,8 +95,8 @@ export const fetchWordList = async (
   maxLength = MAXIMUM_WORD_LENGTH
 ) => {
   return fetchData(`word/list`, "GET", {
-      minLength: minLength,
-      maxLength: maxLength,
+    minLength: minLength,
+    maxLength: maxLength,
   });
 };
 

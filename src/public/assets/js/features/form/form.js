@@ -1,3 +1,4 @@
+import { logger } from "../../main.js";
 import { handleClickEvent } from "../../shared/services/event.service.js";
 import { createInput } from "./input.js";
 import { createLabel } from "./label.js";
@@ -13,7 +14,7 @@ export const buildForm = (inputGroups, buttons, options) => {
 
   // Check if inputGroups is an array. If not, log an error and return.
   if (!inputGroups || !Array.isArray(inputGroups)) {
-    console.error("Fields must be an array");
+    logger.error("Fields must be an array");
     return;
   }
 
@@ -36,7 +37,7 @@ export const buildForm = (inputGroups, buttons, options) => {
   for (let i = 0; i < inputGroups.length; i++) {
     const group = inputGroups[i];
     if (!group) {
-      console.error("Invalid field provided");
+      logger.error("Invalid field provided");
       continue;
     }
 
@@ -64,7 +65,6 @@ export const buildForm = (inputGroups, buttons, options) => {
   for (let i = 0; i < buttons.length; i++) {
     const button = buttons[i];
     button.style.marginTop = "25px";
-    console.log(button);
     form.appendChild(button);
   }
 

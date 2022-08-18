@@ -1,6 +1,7 @@
 import { getValidatedLetters } from "../../shared/utils/helpers.js";
 import { getAttemptLetters } from "../attempts/attempt.service.js";
 import { NO_MATCH, EXACT_MATCH, PARTIAL_MATCH } from "../../shared/utils/constants.js";
+import { logger } from "../../main.js";
 
 /**
  * Moves the active class from the current row to the next row for new word attempts.
@@ -108,7 +109,7 @@ export const updateCurrentAttemptSquares = (word) => {
   );
 
   if (validatedPositions.length !== fullSquares.length) {
-    console.error(
+    logger.error(
       "Somehow the square elements found differs from the chars in the word"
     );
     return;

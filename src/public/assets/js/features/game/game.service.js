@@ -1,9 +1,10 @@
 import { removeSession, retrieveSession, storeSession } from "../../shared/services/storage.service.js";
 import { showView } from "../view/view.service.js";
 import { DEFAULT_MAX_ATTEMPTS, DEFAULT_WORD_LENGTH } from "../../shared/utils/constants.js";
-import { toggleKeyboardOverlay } from "../on-screen-keyboard/keyboard.service.js";
+import { toggleKeyboardOverlay } from "../keyboard/keyboard.service.js";
 import { showMessage } from "../../shared/services/message.service.js";
 import { fetchData } from "../../shared/services/api.service.js";
+import { logger } from "../../main.js";
 
 // The current Game object if the user has a game in progress.
 let currentGame;
@@ -13,13 +14,8 @@ let currentGame;
  * 
  * @param {Object} options - An object of options to pass when creating a game.
  */
-export const startGame = async (options) => {
-  //console.log("Starting game with options ", options);
-
-  // Show the loading view while waiting for the game response from the server.
+export const startGame = async (options={}) => {
   showView("loading");
-
-  options = options || {};
 
   var params = new URLSearchParams({
     wordLength: options.wordLength || DEFAULT_WORD_LENGTH,
@@ -30,8 +26,10 @@ export const startGame = async (options) => {
 
     //TODO: error handler
     if (!fetchNewGameResponse || fetchNewGameResponse.statusCode !== 200) {
-      console.log("Failed to fetch new game");
       showMessage("Failed to fetch new game");
+      error("Failed to fetch new game", {
+        options: options
+      });
       return;
     }
 
@@ -43,9 +41,9 @@ export const startGame = async (options) => {
     // Add the game to localStorage
     storeSession("game", fetchNewGameResponse);
 
-    console.log("Created Game Response", fetchNewGameResponse);
+    logger.info("Created Game Response", fetchNewGameResponse);
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     showMessage("An unknown error has occurred. Please try again.");
   }
 };
@@ -59,7 +57,7 @@ export const forfeitGame = async () => {
   const forfeitGameResponse = await fetchData(`/game/${game.id}/forfeit`, "POST");
 
   if (!forfeitGameResponse || forfeitGameResponse.statusCode !== 200) {
-    console.log("Failed to forfeit game", {
+    logger.error("Failed to forfeit game", {
       game: game,
       forfeitGameResponse: forfeitGameResponse,
     });
