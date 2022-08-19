@@ -1,0 +1,32 @@
+.options-container {
+  margin: 100px 0;
+}
+
+@media screen and (min-width: 768px) {
+  .options-container {
+    width: 60%;
+    padding: 20px;
+    margin: 50px 0;
+  }
+}
+
+.option-row {
+  text-align: start;
+}
+
+.option-row > * {
+  flex: 1;
+}
+
+.option-row:not(:last-of-type) {
+  margin-bottom: 20px;
+}
+
+.option-row-checkbox {
+  gap: 50px;
+}
+
+.slider-value {
+  font-size: 18px;
+  margin-left: 15px;
+}

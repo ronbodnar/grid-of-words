@@ -7,7 +7,6 @@ import { buildView } from "../../view/view.js";
  * Generates all components for the change password view (form, headers, nav) and adds them to the content container.
  */
 export const buildChangePasswordView = () => {
-  // Set up the parameters for building the forgotten password form
   const formFields = [
     new FormGroup("Current Password").setType("password").setAutoFocus(true),
     new FormGroup("New Password").setType("password"),
@@ -18,8 +17,6 @@ export const buildChangePasswordView = () => {
       type: "submit",
     }),
   ];
-
-  // Build the forgotten password form and then generate the view
   const form = buildForm(formFields, formButtons);
 
   buildView("changePassword", {
@@ -29,9 +26,7 @@ export const buildChangePasswordView = () => {
     subheader: {
       text: "Enter your current password and a new password to change your password.",
     },
-    message: {
-      hidden: true,
-    },
+    message: {},
     additionalElements: [form],
   });
 };

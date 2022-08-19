@@ -32,7 +32,6 @@ const buildOptionsContainer = () => {
   const optionsContainer = document.createElement("div");
   optionsContainer.classList.add("options-container");
 
-  // Add the word length slider option
   optionsContainer.appendChild(
     buildSliderSection(
       "wordLength",
@@ -43,7 +42,6 @@ const buildOptionsContainer = () => {
     )
   );
 
-  // Add the max attempts slider option
   optionsContainer.appendChild(
     buildSliderSection(
       "maxAttempts",

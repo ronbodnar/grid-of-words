@@ -6,10 +6,9 @@ import { buildView } from "../../view/view.js";
 /**
  * Generates all components for the forgot password view (form, headers, nav) and adds them to the content container.
  *
- * @param {*} message An optional message to display when building the view (shows immediately).
+ * @param {string} message An optional message to display when building the view (shows immediately).
  */
 export const buildForgotPasswordView = (message) => {
-  // Set up the parameters for building the forgotten password form
   const formFields = [
     new FormGroup("Email").setType("email").setAutoFocus(true),
   ];
@@ -19,8 +18,6 @@ export const buildForgotPasswordView = (message) => {
       type: "submit",
     }),
   ];
-
-  // Build the forgotten password form and then generate the view
   const form = buildForm(formFields, formButtons);
 
   buildView("forgotPassword", {

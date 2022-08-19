@@ -1,0 +1,81 @@
+.board {
+  flex: 0 0 auto;
+}
+
+.square {
+  width: 50px;
+  height: 50px;
+  border: 1px solid rgba(244, 243, 242, 0.3);
+  border-radius: 5px;
+}
+
+.square:hover .square-value {
+  opacity: 0;
+}
+
+.square-value-container {
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  transition: 0.75s;
+}
+
+@media screen and (min-width: 400px) {
+  .square {
+    width: 65px;
+    height: 65px;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .square {
+    width: 65px;
+    height: 65px;
+  }
+}
+
+@media screen and (min-width: 768px) and (max-height: 768px) {
+  .square {
+    width: 50px;
+    height: 50px;
+  }
+}
+
+.square-value {
+  font-size: 36px;
+  font-weight: bold;
+  color: rgba(0, 163, 108, 0.6);
+  color: rgba(244, 243, 242, 0.6);
+  transition: 1s;
+}
+
+@media screen and (min-width: 768px) and (max-height: 768px) {
+  .square-value {
+    font-size: 24px;
+    line-height: 1.5em;
+  }
+}
+
+.word-row {
+  position: relative;
+  width: 100%;
+  gap: 5px;
+  margin: 0 auto;
+  flex-direction: row;
+}
+
+.word-row:not(:last-child) {
+  margin-bottom: 5px;
+}
+
+@media screen and (min-width: 768px) {
+  .word-row {
+    width: 100%;
+    gap: 3px;
+    margin: 0 auto;
+  }
+
+  .word-row:not(:last-child) {
+    margin-bottom: 3px;
+  }
+}

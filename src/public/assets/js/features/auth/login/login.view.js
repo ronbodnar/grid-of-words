@@ -6,10 +6,9 @@ import { buildView } from "../../view/view.js";
 /**
  * Generates all components for the login view (form, headers, nav) and adds them to the content container.
  *
- * @param {*} message An optional message to display when building the view (shows immediately).
+ * @param {string} message An optional message to display when building the view (shows immediately).
  */
 export const buildLoginView = (message) => {
-  // Set up the field, button, and option parameters for the view, then build it.
   const formFields = [
     new FormGroup("Email").setAutoFocus(true),
     new FormGroup("Password")
@@ -28,10 +27,8 @@ export const buildLoginView = (message) => {
     submessage:
       "<a class='form-link' id='showRegister'>Don't have an account?</a>",
   };
-
   const form = buildForm(formFields, formButtons, formOptions);
 
-  // Build the login view with the generated form as an additional element.
   buildView("login", {
     header: {
       text: "Account Login",

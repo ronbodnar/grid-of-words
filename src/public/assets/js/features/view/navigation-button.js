@@ -9,8 +9,7 @@ import { createButton } from "../../shared/components/button.js";
  */
 export const createNavigationButton = (viewName) => {
   if (!viewName) {
-    logger.error("View name is missing.");
-    return;
+    throw new Error("Missing viewName");
   }
 
   const isGameView = viewName === "game";

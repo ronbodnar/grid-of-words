@@ -15,7 +15,7 @@ export const createText = (options = {}) => {
     type,
     text = "",
     hidden = false,
-    emitClickEvents = false,
+    emitClickEvent = false,
     classes = [],
   } = options;
 
@@ -34,7 +34,7 @@ export const createText = (options = {}) => {
   classes.forEach((class_) => textElement.classList.add(class_));
 
   // Add the global click event handler
-  if (emitClickEvents) {
+  if (emitClickEvent) {
     textElement.addEventListener("click", (event) => handleClickEvent(event));
   }
 

@@ -2,7 +2,10 @@ import { EMAIL_REGEX } from "../../../shared/utils/constants.js";
 import { showMessage } from "../../../shared/services/message.service.js";
 import { submitAuthForm } from "../authentication.service.js";
 
-export const forgotPassword = async () => {
+/**
+ * Handles the submission of the forgot password form by validating inputs, invoking {@link submitAuthForm}, and displaying a message to the user.
+ */
+export const submitForgotPasswordForm = async () => {
   const emailInput = document.querySelector("#email");
   if (!emailInput) {
     showMessage(
@@ -27,9 +30,9 @@ export const forgotPassword = async () => {
     email: emailInput.value,
   };
 
+  // Don't await because the user doesn't need to know we found the email address (or not).
   submitAuthForm("/auth/forgot-password", params);
 
-  // Show a confirmation message to the user and re-enable the email field.
   showMessage(
     "If the email matches an account, a password reset link will be sent with next steps.",
     {

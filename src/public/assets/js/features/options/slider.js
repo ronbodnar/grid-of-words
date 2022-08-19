@@ -11,6 +11,7 @@
 export const buildSliderSection = (id, title, minValue, maxValue, defaultValue) => {
     const container = document.createElement("div");
     container.classList.add("flex-center", "option-row");
+    container.style.flexDirection = "row";
   
     const header = document.createElement("h5");
     header.textContent = title;
@@ -20,7 +21,6 @@ export const buildSliderSection = (id, title, minValue, maxValue, defaultValue) 
     sliderContainer.style.display = "flex";
     sliderContainer.style.alignItems = "center";
     sliderContainer.style.justifyContent = "end";
-    sliderContainer.style.width = "100%";
   
     const sliderValueLabel = document.createElement("label");
     sliderValueLabel.id = `${id}SliderValue`;

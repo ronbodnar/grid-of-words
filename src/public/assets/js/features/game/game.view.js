@@ -10,11 +10,9 @@ import { buildView } from "../view/view.js";
  */
 export const buildGameView = (options) => {
   if (!options) {
-    logger.error("No options present");
-    return;
+    throw new Error("No options passed to buildGameView");
   }
 
-  // Generate the gameboard and keyboard
   const gameboard = buildGameBoardElement(options);
   const keyboard = buildOnScreenKeyboardElement(options.game);
   buildView("game", {

@@ -1,4 +1,5 @@
 import { createButton } from "../../shared/components/button.js";
+import { showMessage } from "../../shared/services/message.service.js";
 import {
   getAuthenticatedUser,
   isAuthenticated,
@@ -8,9 +9,7 @@ import { buildView } from "../view/view.js";
 /**
  * Builds the home container view within the content container.
  */
-export const buildHomeView = () => {
-  // Set the submessage inviting the user to log in or register.
-  // If the user is already authenticated, they're shown change password/logout links.
+export const buildHomeView = (options) => {
   let submessageText =
     'Want to save your progress?<br /><a id="showLogin">Log In</a> or <a id="showRegister">Register</a>';
   if (isAuthenticated()) {
@@ -19,19 +18,31 @@ export const buildHomeView = () => {
     }!<br /><a id="showChangePassword">Change Password</a> or <a id="logout">Log Out</a>`;
   }
 
+  const { message } = options;
+
   buildView("home", {
     header: {
       text: "Word Puzzle Game"
     },
     message: {
-      hidden: true,
+      hide: false,
     },
     submessage: {
       text: submessageText,
+      emitClickEvent: true,
     },
     hasNavigationButton: false,
     additionalElements: [buildButtonContainer()],
   });
+
+  if (message) {
+    const options = {
+      hide: message.hide || true,
+      hideDelay: message.hideDelay || 3000,
+      className: message.className,
+    };
+    showMessage(message.text, options);
+  }
 };
 
 /**
@@ -43,7 +54,6 @@ const buildButtonContainer = () => {
   const buttonContainer = document.createElement("div");
   buttonContainer.classList.add("button-container");
 
-  // Add the Start Game, How To Play, and Options buttons to the button container.
   buttonContainer.appendChild(
     createButton("Start Game", {
       icon: "play-arrow",

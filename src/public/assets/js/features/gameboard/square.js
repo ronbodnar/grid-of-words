@@ -1,5 +1,6 @@
 /**
  * The individual square that houses a single letter in the word grid.
+ * 
  * @param {boolean} active - Whether the letter is "typeable" or part of the current attempt's row.
  */
 export const buildSquareElement = () => {

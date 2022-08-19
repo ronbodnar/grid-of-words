@@ -4,19 +4,16 @@ import { removeSession } from "../../../shared/services/storage.service.js";
 import { submitAuthForm } from "../authentication.service.js";
 import { logger } from "../../../main.js";
 
-export const changePassword = async () => {
+/**
+ * Handles submission of the change password form by validating inputs and awaiting {@link submitAuthForm}.
+ */
+export const submitChangePasswordForm = async () => {
   const currentPasswordInput = document.querySelector("#currentPassword");
   const newPasswordInput = document.querySelector("#newPassword");
   const confirmNewPasswordInput = document.querySelector("#confirmNewPassword");
 
   if (!currentPasswordInput || !newPasswordInput || !confirmNewPasswordInput) {
-    logger.error(
-      "Missing input element(s)",
-      currentPasswordInput,
-      newPasswordInput,
-      confirmNewPasswordInput
-    );
-    return;
+    throw new Error("Missing input element(s)");
   }
 
   if (newPasswordInput.value !== confirmNewPasswordInput.value) {
@@ -27,8 +24,12 @@ export const changePassword = async () => {
     return;
   }
 
-  if (currentPasswordInput.value.length < 1 || newPasswordInput.value.length < 1 || confirmNewPasswordInput.value.length < 1) {
-    showMessage("Passwords must be at least 1 character long.", {
+  if (
+    currentPasswordInput.value.length < 8 ||
+    newPasswordInput.value.length < 8 ||
+    confirmNewPasswordInput.value.length < 8
+  ) {
+    showMessage("Passwords must be at least 8 character long.", {
       className: "error",
       hide: false,
     });

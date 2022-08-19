@@ -19,8 +19,7 @@ import { logger } from "../../main.js";
  */
 export const buildView = (name, options = {}) => {
   if (!name) {
-    logger.error("No name provided");
-    return;
+    throw new Error("No name provided to buildView");
   }
 
   const {
@@ -73,10 +72,10 @@ export const buildView = (name, options = {}) => {
   if (submessage) {
     const submessageElement = createText({
       type: "submessage",
-      text: options.submessage.text,
-      hidden: options.submessage.hidden || false,
-      emitClickEvent: options.submessage.emitClickEvent || false,
-      classes: options.submessage.classes || [],
+      text: submessage.text,
+      hidden: submessage.hidden || false,
+      emitClickEvent: submessage.emitClickEvent || false,
+      classes: submessage.classes || [],
     });
     contentContainer.appendChild(submessageElement);
   }
@@ -84,7 +83,7 @@ export const buildView = (name, options = {}) => {
   if (message && message.text) {
     const options = {
       hide: message.hide || true,
-      hideDelay: message.hideDelay || 10000,
+      hideDelay: message.hideDelay || 5000,
       className: message.className,
     };
 

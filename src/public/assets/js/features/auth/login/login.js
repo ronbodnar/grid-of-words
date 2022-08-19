@@ -3,9 +3,11 @@ import { storeSession } from "../../../shared/services/storage.service.js";
 import { showView } from "../../view/view.service.js";
 import { EMAIL_REGEX } from "../../../shared/utils/constants.js";
 import { submitAuthForm } from "../authentication.service.js";
-import { logger } from "../../../main.js";
 
-export const login = async () => {
+/**
+ * Handles the login form submission by validating inputs and awaiting {@link submitAuthForm} with a `successFn` callback.
+ */
+export const submitLoginForm = async () => {
   const emailInput = document.querySelector("#email");
   const passwordInput = document.querySelector("#password");
 
@@ -37,9 +39,18 @@ export const login = async () => {
   const successFn = (response) => {
     if (response?.user) {
       storeSession("user", response.user);
-      showView("home");
+      showView("home", {
+        message: {
+          text: `Welcome, ${response.user.username}!\n\nYou have successfully logged in.`,
+          className: "success",
+          hide: true,
+          hideDelay: 2500,
+        }
+      });
     } else {
-      logger.error("Couldn't login: no user in response", response);
+      throw new Error("Couldn't login: no user in response", {
+        response: response
+      })
     }
   };
 

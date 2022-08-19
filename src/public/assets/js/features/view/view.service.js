@@ -15,9 +15,9 @@ let viewHistory = [];
 
 const viewFunctions = {
   // Main view functions
-  home: () => {
+  home: (options = {}) => {
     viewHistory = [];
-    buildHomeView();
+    buildHomeView(options);
   },
   game: (options = {}) => {
     buildGameView({
@@ -39,9 +39,8 @@ const viewFunctions = {
   resetPassword: () => {
     const passwordResetToken = retrieveSession("passwordResetToken");
     if (!passwordResetToken) {
-      logger.error("No reset token provided");
       // TODO: the user experience
-      return;
+      throw new Error("Password reset token not present");
     }
     buildResetPasswordView();
   },
@@ -74,7 +73,7 @@ export const showView = (name, options = {}) => {
   } else {
     buildHomeView();
     viewHistory = [];
-    logger.error(`View "${name}" does not have a mapped function.`);
+    throw new Error(`View "${name}" does not have a mapped function`);
   }
 };
 

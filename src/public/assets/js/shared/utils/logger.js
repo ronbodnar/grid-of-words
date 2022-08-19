@@ -21,11 +21,13 @@ const logger = () => {
    * @param {...*} args Additional arguments to log.
    */
   const log = (level, message, ...args) => {
+    // temporarily disable logging for debug/trace
+    if (level > LogLevel.INFO) {
+      return;
+    }
     const timestamp = new Date().toISOString();
     console.log(
-      `[${timestamp}] [${Object.keys(LogLevel).find(
-        (key) => LogLevel[key] === level
-      )}]`,
+      `[${Object.keys(LogLevel).find((key) => LogLevel[key] === level)}]`,
       message,
       ...args
     );

@@ -12,7 +12,9 @@ let messageTimeout = undefined;
  * @param {object} options - Key/value pairs for optional parameters.
  */
 export const showMessage = (message, options = {}) => {
-  if (message.length < 1) return;
+  if (message == null) {
+    throw new Error("No message provided to showMessage");
+  }
 
   const {
     hide = false,
@@ -39,8 +41,11 @@ export const showMessage = (message, options = {}) => {
 
   if (hide) {
     messageTimeout = setTimeout(() => {
-      messageDiv.innerHTML = "";
-      messageDiv.classList.remove(className);
+      messageDiv.style.opacity = 0;
+      setTimeout(() => {
+        messageDiv.innerHTML = "";
+        messageDiv.classList.remove(className);
+      }, 1000);
     }, hideDelay);
   }
 };

@@ -31,12 +31,11 @@ export const fetchData = async (url, method, params, timeoutDelay = 15000) => {
 
   // Verify that the method is allowed.
   if (!allowedMethods.includes(method)) {
-    logger.error(
+    throw new Error(
       `Invalid method: ${method}. Only ${allowedMethods.join(
         ", "
       )} are allowed.`
     );
-    return;
   }
 
   try {
@@ -80,6 +79,7 @@ export const fetchData = async (url, method, params, timeoutDelay = 15000) => {
         )}: ${err}`
       );
     }
+    return null;
   }
 };
 

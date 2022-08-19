@@ -9,6 +9,7 @@ import { addKeyListeners } from "./shared/services/event.service.js";
 import { getCurrentViewName, showView } from "./features/view/view.service.js";
 import { fetchData, fetchWordList } from "./shared/services/api.service.js";
 import { validateResetToken } from "./features/auth/authentication.service.js";
+import logger from "./shared/utils/logger.js";
 
 // Initialize and export the logger
 const loggerInstance = logger();

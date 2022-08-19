@@ -1,7 +1,10 @@
 import { getValidatedLetters } from "../../shared/utils/helpers.js";
 import { getAttemptLetters } from "../attempts/attempt.service.js";
-import { NO_MATCH, EXACT_MATCH, PARTIAL_MATCH } from "../../shared/utils/constants.js";
-import { logger } from "../../main.js";
+import {
+  NO_MATCH,
+  EXACT_MATCH,
+  PARTIAL_MATCH,
+} from "../../shared/utils/constants.js";
 
 /**
  * Moves the active class from the current row to the next row for new word attempts.
@@ -53,25 +56,26 @@ export const transformSquares = (hide, instant) => {
  * @param {string} letter - The letter to be filled into the next available square.
  */
 export const fillNextSquare = (letter) => {
-  // Block any key that isnt an alpha character.
   if (/[^a-zA-Z]/.test(letter)) {
     return;
   }
 
-  // Find all available squares in the active word row.
-  const nextAvailableSquare = document.querySelector(
+  const activeRowSquares = document.querySelector(
     ".word-row.active > .square:not(.full)"
   );
+  if (activeRowSquares) {
+    activeRowSquares.classList.add("full");
 
-  // Ensure there's a square available, update the square properties, and add it to our stack of letters.
-  if (nextAvailableSquare) {
-    nextAvailableSquare.classList.add("full");
-    nextAvailableSquare.children[0].textContent = letter.toUpperCase();
-    nextAvailableSquare.children[0].style.transition = "0.3s";
-    nextAvailableSquare.children[0].style.transform = "scale(1.2)";
+    const nextAvailableSquare = activeRowSquares.children[0];
+    nextAvailableSquare.textContent = letter.toUpperCase();
+
+    // Peak animations right here
+    nextAvailableSquare.style.transition = "0.3s";
+    nextAvailableSquare.style.transform = "scale(1.2)";
     setTimeout(() => {
-      nextAvailableSquare.children[0].style.transform = "scale(1)";
+      nextAvailableSquare.style.transform = "scale(1)";
     }, 200);
+
     getAttemptLetters().push(letter.toLowerCase());
   }
 };
@@ -80,14 +84,12 @@ export const fillNextSquare = (letter) => {
  * Pops the stack of letters in the attempt word and updates the square text content.
  */
 export const removeLastSquareValue = () => {
-  // Find all full squares in the active word row.
-  const squares = document.querySelectorAll(
+  const activeRowSquares = document.querySelectorAll(
     ".word-row.active > .square:is(.full)"
   );
 
-  // If there are letters, adjust the square properties and pop the attemptLetter stack.
   if (getAttemptLetters().length > 0) {
-    const lastSquare = squares[getAttemptLetters().length  - 1];
+    const lastSquare = activeRowSquares[getAttemptLetters().length - 1];
     lastSquare.classList.remove("full");
     lastSquare.children[0].textContent = "";
     getAttemptLetters().pop();
@@ -104,19 +106,16 @@ export const updateCurrentAttemptSquares = (word) => {
     getAttemptLetters().join(""),
     word
   );
-  const fullSquares = document.querySelectorAll(
+  const squaresWithLetters = document.querySelectorAll(
     ".word-row.active > .square:is(.full) > .square-value-container"
   );
 
-  if (validatedPositions.length !== fullSquares.length) {
-    logger.error(
-      "Somehow the square elements found differs from the chars in the word"
-    );
-    return;
+  if (validatedPositions.length !== squaresWithLetters.length) {
+    throw new Error("Invalid number of square elements detected");
   }
 
   for (let i = 0; i < validatedPositions.length; i++) {
-    updateSquareBackground(fullSquares[i], validatedPositions[i]);
+    updateSquareBackground(squaresWithLetters[i], validatedPositions[i]);
   }
 };
 

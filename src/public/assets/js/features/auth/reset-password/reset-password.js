@@ -3,11 +3,16 @@ import { showMessage } from "../../../shared/services/message.service.js";
 import { retrieveSession } from "../../../shared/services/storage.service.js";
 import { showView } from "../../view/view.service.js";
 
-export const resetPassword = async () => {
+/**
+ * Handles the reset password for submission by validating inputs and awaiting {@link submitAuthForm} with a `successFn` callback.
+ */
+export const submitResetPasswordForm = async () => {
   const passwordResetToken = retrieveSession("passwordResetToken");
   if (!passwordResetToken) {
-    // TODO: tell users why they were returned home
-    showView("home");
+    showView("home", {
+      message:
+        "Invalid or expired password reset token. Please request a new password reset.",
+    });
     return;
   }
 
@@ -24,7 +29,7 @@ export const resetPassword = async () => {
 
   if (newPasswordInput.value !== confirmNewPasswordInput.value) {
     showMessage("Passwords do not match.", {
-      className: "error"
+      className: "error",
     });
     return;
   }
@@ -39,7 +44,7 @@ export const resetPassword = async () => {
       message:
         "Your password has been changed. Please log in using the new password.",
     });
-  }
+  };
 
   await submitAuthForm("/auth/reset-password", params, successFn);
 };

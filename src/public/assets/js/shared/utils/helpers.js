@@ -3,14 +3,14 @@ import logger from "./logger.js";
 
 /**
  * Compares two words of assumed equal length to see which guessWord letter positions match, are invalid, or don't exist in the gameWord.
+ * 
  * @param {string} guessWord - The word to compare against the known correct word.
  * @param {string} targetWord - The known word to compare against.
  * @return {list} - The in-order list of the guessWord letters placement validation.
  */
 export const getValidatedLetters = (guessWord, targetWord) => {
   if (targetWord.length !== guessWord.length) {
-    logger.error("Words must be of the same length");
-    return null;
+    throw new Error("Length mismatch");
   }
 
   const length = targetWord.length;
@@ -45,6 +45,7 @@ export const getValidatedLetters = (guessWord, targetWord) => {
 
 /**
  * Determines the states of letters (exact, partial, or no match) between to words for updating the on-screen keyboard.
+ * 
  * @param {string} targetWord - The target word to compare against.
  * @param {object} attemptedWords - An array of attempted words to compare.
  * @return {object} - The states of each letter found.
@@ -52,26 +53,22 @@ export const getValidatedLetters = (guessWord, targetWord) => {
 export const getLetterStates = (gameWord, attemptedWords) => {
   let letterMatchStates = [];
 
-  // Iterate each attempted word in the list of attemptedWords.
   for (let i = 0; i < attemptedWords.length; i++) {
     let word = attemptedWords[i];
 
-    // Iterate each character in the attempted word.
     for (let j = 0; j < word.length; j++) {
+      let wordMatchState;
       if (gameWord.at(j) === word.at(j)) {
-        // The letters match.
-        letterMatchStates[word.at(j)] = EXACT_MATCH;
+        wordMatchState = EXACT_MATCH;
       } else if (gameWord.includes(word.at(j))) {
-        // The letter is in the gameWord.
-        if (letterMatchStates[word.at(j)] === EXACT_MATCH) {
-          // The letter was already found previously as an exact match, so skip it.
+        if (wordMatchState === EXACT_MATCH) {
           continue; // Skip this character as it's already been matched.
         }
-        letterMatchStates[word.at(j)] = PARTIAL_MATCH;
+        wordMatchState = PARTIAL_MATCH;
       } else {
-        // The letter was not found.
-        letterMatchStates[word.at(j)] = NO_MATCH;
+        wordMatchState = NO_MATCH;
       }
+      letterMatchStates[word.at(j)] = wordMatchState;
     }
   }
 
@@ -81,6 +78,7 @@ export const getLetterStates = (gameWord, attemptedWords) => {
 
 /**
  * Gets a random integer between the specified min and max range.
+ * 
  * @param {number} min - The minimum value for the random integer.
  * @param {number} max - The maximum value for the random integer.
  * @return {number} - The random numer.
@@ -89,9 +87,18 @@ export const getRandomInt = (min, max) => {
   return Math.floor(Math.random() * (max - min) + min);
 };
 
+/**
+ * Converts the given string-containing-hyphens or spaces into camelCase.
+ * 
+ * @param {string} str The string to be converted.
+ * @returns The camelCase representation of the given string.
+ */
 export const convertToCamelCase = (str) => {
   // Convert the field name into camelCase
   const strParts = str.split(/[ -]/g);
+  if (strParts.length === 1) {
+    return strParts[0];
+  }
   strParts.forEach((part, i) => {
     if (i === 0) {
       strParts[i] = part.toLowerCase();
@@ -99,8 +106,5 @@ export const convertToCamelCase = (str) => {
       strParts[i] = part.charAt(0).toUpperCase() + part.slice(1);
     }
   });
-  return strParts.join('');
+  return strParts.join("");
 };
-
-convertToCamelCase("Hey how are ya");
-convertToCamelCase("how-are-u-doin");

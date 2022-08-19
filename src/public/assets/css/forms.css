@@ -1,0 +1,45 @@
+.form > *:not(:nth-last-child(-n + 2)):not(.back-button):not(label) {
+  margin-bottom: 15px;
+}
+
+@media screen and (min-width: 768px) {
+  .form {
+    width: 50%;
+    margin: 0 auto;
+    position: relative;
+    flex-direction: column;
+  }
+}
+
+input {
+  padding: 0.25em;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  transition: 0.75s;
+  width: 100%;
+  height: 50px;
+  font-size: 20px;
+}
+
+input.error {
+  border: 2px solid rgba(227, 34, 39, 1);
+  box-shadow: inset 0px 1px 0px rgba(255, 255, 255);
+}
+
+label {
+  float: left;
+  margin-bottom: 8px;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+@media screen and (max-width: 380px) {
+  input {
+    height: 40px;
+    font-size: 16px;
+  }
+
+  label {
+    margin-bottom: 4px;
+  }
+}

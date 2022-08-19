@@ -7,7 +7,6 @@ import { buildView } from "../../view/view.js";
  * Generates all components for the reset password view (form, header, subheader, nav) and adds them to the content container.
  */
 export const buildResetPasswordView = () => {
-  // Set up the field, button, and option parameters for the view, then build it.
   const formFields = [
     new FormGroup("New Password").setType("password").setAutoFocus(true),
     new FormGroup("Confirm New Password").setType("password"),
@@ -20,7 +19,6 @@ export const buildResetPasswordView = () => {
   ];
   const form = buildForm(formFields, formButtons);
 
-  // Build the reset password view with the generated form as an additional element.
   buildView("resetPassword", {
     header: {
       text: "Reset Password",

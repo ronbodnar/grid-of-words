@@ -1,4 +1,5 @@
 import { logger } from "../../main.js";
+import { createText } from "../../shared/components/text.js";
 import { handleClickEvent } from "../../shared/services/event.service.js";
 import { createInput } from "./input.js";
 import { createLabel } from "./label.js";
@@ -9,29 +10,22 @@ import { createLabel } from "./label.js";
  * Options:
  *  - submessage (string)
  */
-export const buildForm = (inputGroups, buttons, options) => {
-  options = options || {};
+export const buildForm = (inputGroups, buttons, options = {}) => {
+  const { id, submessage } = options;
 
-  // Check if inputGroups is an array. If not, log an error and return.
   if (!inputGroups || !Array.isArray(inputGroups)) {
-    logger.error("Fields must be an array");
-    return;
+    throw new Error("inputGroups must be an Array.");
   }
 
-  // Set up the basic form structure and disable form submission events.
   const form = document.createElement("form");
   form.classList.add("form");
-  //form.style.marginTop = "15px";
-
-  // Set the form's id only if the option is present.
-  if (options.id) {
-    form.id = options.id;
-  }
-
-  // Block the submission as we handle the logic in the event service.
   form.onsubmit = () => {
     return false;
   };
+
+  if (id) {
+    form.id = id;
+  }
 
   // Generate the label / input field pairs for each field and add them to the form.
   for (let i = 0; i < inputGroups.length; i++) {
@@ -51,11 +45,12 @@ export const buildForm = (inputGroups, buttons, options) => {
 
     // Add a submessage element under the input field and add it to the form.
     if (group.message) {
-      const inputMessageDiv = document.createElement("p");
+      const inputMessageDiv = createText({
+        type: "submessage",
+        text: group.message,
+        emitClickEvent: true,
+      });
       inputMessageDiv.style.textAlign = "start";
-      inputMessageDiv.classList.add("submessage");
-      inputMessageDiv.innerHTML = group.message;
-      inputMessageDiv.addEventListener("click", handleClickEvent);
       inputMessageDiv.style.marginTop = "0";
       form.appendChild(inputMessageDiv);
     }
@@ -69,11 +64,12 @@ export const buildForm = (inputGroups, buttons, options) => {
   }
 
   // Create a submessage element, set the text and add the global click handler.
-  if (options.submessage) {
-    const submessageDiv = document.createElement("p");
-    submessageDiv.classList.add("submessage");
-    submessageDiv.innerHTML = options.submessage;
-    submessageDiv.addEventListener("click", handleClickEvent);
+  if (submessage) {
+    const submessageDiv = createText({
+      type: "submessage",
+      text: submessage,
+      emitClickEvent: true,
+    });
     form.appendChild(submessageDiv);
   }
 

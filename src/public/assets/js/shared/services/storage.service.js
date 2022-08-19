@@ -2,6 +2,7 @@ import { logger } from "../../main.js";
 
 /**
  * Adds the specified key/value pair to the sessionStorage and encodes the value into JSON.
+ * 
  * @param {string} key - The key to store.
  * @param {any} value - The value to store as a JSON string.
  */
@@ -11,6 +12,7 @@ export const storeSession = (key, value) => {
 
 /**
  * Removes a key from sessionStorage.
+ * 
  * @param {string} key - The key to remove from storage.
  */
 export const removeSession = (key) => {
@@ -19,6 +21,7 @@ export const removeSession = (key) => {
 
 /**
  * Retrieves the value associated with the given key from sessionStorage.
+ * 
  * @param {string} key - The key to look up in storage.
  * @returns {any} - The decoded value associated with the key.
  */
@@ -30,6 +33,7 @@ export const retrieveSession = (key) => {
 
 /**
  * Adds the specified key/value pair to the localStorage and encodes the value into JSON.
+ * 
  * @param {string} key - The key to store.
  * @param {any} value - The value to store as a JSON string.
  */
@@ -40,6 +44,7 @@ export const storeLocal = (key, value) => {
 
 /**
  * Removes a key from localStorage.
+ * 
  * @param {string} key - The key to remove from storage.
  */
 export const removeLocal = (key) => {
@@ -48,6 +53,7 @@ export const removeLocal = (key) => {
 
 /**
  * Retrieves the raw value associated with the given key from localStorage.
+ * 
  * @param {string} key - The key to look up in storage.
  * @returns {any} - The decoded value associated with the key.
  */

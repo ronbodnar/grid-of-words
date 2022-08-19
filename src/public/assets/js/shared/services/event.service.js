@@ -23,7 +23,7 @@ import {
 } from "../../features/auth/authentication.service.js";
 import { logger } from "../../main.js";
 
-const buttonFunctions = {
+const clickFunctions = {
   // Navigation
   back: () => {
     // Pop the previous view name from the view history stack.
@@ -41,18 +41,37 @@ const buttonFunctions = {
 
   // Games
   startGame: (args) => {
+    const { wordLength, maxAttempts, languageCode } = args;
     logger.info("Starting game with arguments", {
       arguments: args,
     });
     startGame({
-      wordLength: args?.wordLength || DEFAULT_WORD_LENGTH,
-      maxAttempts: args?.maxAttempts || DEFAULT_MAX_ATTEMPTS,
-      language: args?.languageCode || "enUS",
+      wordLength: wordLength || DEFAULT_WORD_LENGTH,
+      maxAttempts: maxAttempts || DEFAULT_MAX_ATTEMPTS,
+      language: languageCode || "enUS",
     });
   },
   forfeitGame: async () => {
     if (window.confirm("Are you sure you want to forfeit the game?")) {
       await forfeitGame();
+    }
+  },
+
+  // On-screen keyboard key events
+  key: (args) => {
+    const { letter } = args;
+    switch (letter) {
+      case "delete":
+        removeLastSquareValue();
+        break;
+
+      case "enter":
+        processAttempt();
+        break;
+
+      default:
+        fillNextSquare(letter);
+        break;
     }
   },
 
@@ -66,10 +85,12 @@ const buttonFunctions = {
 };
 
 /**
- * Maps click events to their respective handler functions and invokes the function.
+ * Handles the event when a user taps/clicks a square on the gameboard by invoking the mappped function.
+ *
+ * @param {Event} event The click event.
+ * @param {string} letter The letter entered by the user.
  */
 export const handleClickEvent = (event, args) => {
-  // Ensure the event is defined. If not, log an error and return early.
   if (!event) {
     throw new Error("Missing event parameter");
   }
@@ -84,40 +105,16 @@ export const handleClickEvent = (event, args) => {
     );
   }
 
-  const buttonName = targetId.replace("Button", "");
-  if (!buttonFunctions.hasOwnProperty(buttonName)) {
-    throw new Error(`${buttonName} does not have a mapped function`);
+  const targetName = targetId.replace("Button", "").replace(/-[a-z]{1,}/g, "");
+  if (!clickFunctions.hasOwnProperty(targetName)) {
+    throw new Error(`${targetName} does not have a mapped function`);
   }
 
-  const buttonFunction = buttonFunctions[buttonName];
-  if (typeof buttonFunction === "function") {
-    buttonFunction(args);
+  const fn = clickFunctions[targetName];
+  if (typeof fn === "function") {
+    fn(args);
   } else {
-    throw new Error(`Invalid type for ${buttonName}. Expected a function`);
-  }
-};
-
-/**
- * Handles the event when a user taps/clicks a key on the on-screen keyboard.
- *
- * @param {string} letter The letter entered by the user.
- */
-export const clickKeyboardKey = (letter) => {
-  // Exit early if key events are blocked.
-  if (isBlockKeyEvents()) return;
-
-  switch (letter) {
-    case "delete":
-      removeLastSquareValue();
-      break;
-
-    case "enter":
-      processAttempt();
-      break;
-
-    default:
-      fillNextSquare(letter);
-      break;
+    throw new Error(`Invalid type for ${targetName}. Expected a function`);
   }
 };
 
@@ -137,7 +134,7 @@ export const addKeyListeners = () => {
       switch (currentView) {
         case "home":
         case "howToPlay":
-          buttonFunctions.startGame();
+          clickFunctions.startGame();
           break;
 
         case "game":

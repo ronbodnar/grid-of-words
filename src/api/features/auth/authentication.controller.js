@@ -113,7 +113,7 @@ export const registerUser = async (req, res, next) => {
 
 export const logoutUser = (req, res) => {
   res.clearCookie("token");
-  res.json({ status: "success", message: "Goodbye" });
+  res.json({ status: "success", message: "You have logged out successfully." });
 };
 
 export const changePassword = async (req, res, next) => {

@@ -5,14 +5,11 @@ import { buildView } from "../view/view.js";
  * Builds and displays the how-to-play view within the content container.
  */
 export const buildHowToPlayView = () => {
-  const stepContainer = buildStepContainer();
-  const buttonContainer = buildButtonContainer();
-
   buildView("howToPlay", {
     header: {
       text: "How to Play",
     },
-    additionalElements: [stepContainer, buttonContainer],
+    additionalElements: [buildStepContainer(), buildButtonContainer()],
   });
 };
 
@@ -37,17 +34,19 @@ const buildStepContainer = () => {
     "Try to guess the correct word before your 6<sup>th</sup><sup>*</sup> attempt!",
     "<small style='font-size: 14px; font-weight: 500; font-style: italic; margin-left: 20px;'>* Default values. Both word length and maximum attempts can be modified in the game options.</small>",
   ];
-  for (let i = 0; i < steps.length; i++) {
-    let step = document.createElement("li");
-    step.style.margin = "20px 0";
-    step.style.fontSize = "20px";
+  steps.forEach((step, i) => {
+    let stepElement = document.createElement("li");
+    // TODO: add to stylesheet
+    stepElement.style.margin = "20px 0";
+    stepElement.style.fontSize = "20px";
     if (i === steps.length - 1) {
-      step.innerHTML = `${steps[i]}`;
+      stepElement.innerHTML = `${step}`;
     } else {
-      step.innerHTML = `${i + 1}. ${steps[i]}`;
+      stepElement.innerHTML = `${i + 1}. ${step}`;
     }
-    stepList.appendChild(step);
-  }
+    stepList.appendChild(stepElement);
+  });
+
   stepContainer.appendChild(stepList);
 
   return stepContainer;

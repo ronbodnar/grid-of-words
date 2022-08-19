@@ -1,28 +1,22 @@
 import { setBlockKeyEvents } from "../../shared/services/event.service.js";
 import {
-  removeSession,
   retrieveLocal,
   retrieveSession,
   storeLocal,
   storeSession,
 } from "../../shared/services/storage.service.js";
-import { showView } from "../view/view.service.js";
 import { showMessage } from "../../shared/services/message.service.js";
-import { fetchWordList, wordExists } from "../../shared/services/api.service.js";
+import {
+  fetchWordList,
+  wordExists,
+} from "../../shared/services/api.service.js";
 import { Game } from "../game/Game.js";
-import {
-  shiftActiveRow,
-  transformSquares,
-  updateCurrentAttemptSquares,
-} from "../gameboard/gameboard.service.js";
-import {
-  toggleKeyboardOverlay,
-  updateKeyboardKeys,
-} from "../keyboard/keyboard.service.js";
+import { transformSquares } from "../gameboard/gameboard.service.js";
+import { toggleKeyboardOverlay } from "../keyboard/keyboard.service.js";
 import { fetchData } from "../../shared/services/api.service.js";
 import { logger } from "../../main.js";
+import { processAttemptResponse } from "./attempt-response.js";
 
-// The list of letters that the user has entered for the current attempt.
 let attemptLetters = [];
 
 /**
@@ -32,26 +26,28 @@ let attemptLetters = [];
  */
 export const processAttempt = async (game) => {
   if (!game) {
+    // Try to find a cached game from the session as a fallback.
+    // Process the attempt on the game if we find it.
     const game = retrieveSession("game");
     if (game) {
       processAttempt(game);
     } else {
-      logger.error("No game found");
+      throw new Error("No game found in the session");
     }
     return;
   }
-  // Block key events.
+
   setBlockKeyEvents(true);
 
-  // Check to see if there's any validation errors we can handle on the client side before making a request to the server.
   const valid = validateAttempt(game);
   if (!valid) {
-    // Enable key events.
     setBlockKeyEvents(false);
     return;
   }
 
-  // Fetch the attempt response from the server.
+  // Clear the message content while processing the attempt.
+  showMessage("");
+
   const attemptResponsePromise = fetchData(
     `/game/${game.id}/attempts`,
     "POST",
@@ -60,36 +56,31 @@ export const processAttempt = async (game) => {
     }
   );
 
-  // Wait for squares to hide before continuing.
   const transformSquaresPromise = transformSquares(true).then(() => {
     // Show the loading overlay in case the response hasn't been received from the server.
     toggleKeyboardOverlay(true);
   });
 
-  // Wait for both promises to complete.
   const [response] = await Promise.all([
     attemptResponsePromise,
     transformSquaresPromise,
   ]);
 
-  // Hide the keyboard overlay
   toggleKeyboardOverlay(false);
 
-  // We need to check the local and remote game objects to ensure we are working with the same data.
   if (response.gameData) {
-    // Create a copy of the local game and push the new attempt.
+    // Set up remote and local Game copies.
+    const remoteGame = new Game(response.gameData);
     const localGame = new Game(game);
+
+    // Add the most recent attempt to the local copy since remote copy will contain it.
     localGame.attempts.push(attemptLetters.join(""));
 
-    // Instantiate the remote game with the response data.
-    const remoteGame = new Game(response.gameData);
-
-    // Check if both games have the same number of attempts made.
+    // Check to make sure every attempt in the remoteGame exists in the localGame.
     const attemptsMatch = Array.from(remoteGame.attempts).every((a) =>
       localGame.attempts.includes(a)
     );
 
-    // We received an updated game object with the correct attempt and need to validate the values.
     if (response.statusCode === 200) {
       switch (true) {
         case localGame.attempts.length !== remoteGame.attempts.length: // attempt array size mismatch
@@ -105,118 +96,15 @@ export const processAttempt = async (game) => {
           }, 10000);
           return;
       }
-
-      // Update the local version of the game.
       storeSession("game", response.gameData);
     }
   }
-
-  // Process the response from the server.
-  await processServerResponse(game, response);
+  await processAttemptResponse(game, response);
 };
 
 /**
- * Processes the response based on the message content, then displays the message.
- *
- * @param {Game} game - The current game object.
- * @param {object} data - The response data from the server.
- */
-const processServerResponse = async (game, data) => {
-  var message = "Error";
-
-  if (!data) {
-    showMessage("No response from server", {
-      className: "error",
-    });
-    return;
-  }
-
-  if (data.message) {
-    switch (data.message) {
-      // Edge cases to handle gracefully
-      case "NO_WORD_OR_NO_ID":
-      case "GAME_NOT_FOUND":
-      case "ATTEMPTS_EXCEEDED":
-      case "WORD_LENGTH_MISMATCH":
-      case "ADD_ATTEMPT_REPOSITORY_ERROR":
-
-      // Only ones that are handled as of now.
-      case "NOT_IN_WORD_LIST":
-      case "DUPLICATE_ATTEMPT":
-        // Proper case the message
-        message =
-          data.message.at(0).toUpperCase() +
-          data.message.slice(1).toLowerCase().replaceAll("_", " ");
-
-        // We hid the letter squares and need to bring them back.
-        await transformSquares(false, true);
-
-        setBlockKeyEvents(false);
-        break;
-
-      case "WRONG_WORD":
-        // Update the backgrounds of the squares depending on its validation status.
-        updateCurrentAttemptSquares(game.word);
-
-        // Bring the letter squares back into view one by one.
-        await transformSquares(false);
-
-        // Show the letter states on the keyboard after the squares have returned.
-        updateKeyboardKeys(game.word, attemptLetters);
-
-        // Move the active row down one.
-        shiftActiveRow();
-
-        // Clear properties.
-        attemptLetters = [];
-        message = "";
-
-        // Enable key events again.
-        setBlockKeyEvents(false);
-        break;
-
-      case "WINNER":
-      case "LOSER":
-        // Clear the game from local storage.
-        removeSession("game");
-
-        // Set up the resposne message.
-        if (data.message === "LOSER") {
-          message = data.gameData.word.toUpperCase();
-        } else {
-          message = data.message;
-        }
-
-        // Update the backgrounds of the squares depending on its validation status.
-        updateCurrentAttemptSquares(game.word);
-
-        // Bring the letter squares back into view one by one.
-        await transformSquares(false);
-
-        // Reinitialize the attempt letter array.
-        attemptLetters = [];
-
-        // Return to the home page after 3 seconds and enable key events again.
-        setTimeout(() => {
-          setBlockKeyEvents(false);
-          showView("home");
-        }, 3000);
-        break;
-    }
-  }
-
-  // Update the response message element
-  showMessage(message);
-};
-
-/**
- * Validates the attempt by checking the following:
- * - The attempt has enough letters.
- * - The attempt has not been tried before.
- * - The attempt is a valid word from the word list.
- *
- * If the word list is not found in local storage, we retrieve it from the server for next time.
- * The server validates the attempt so we can safely pass a true return value.
+ * Validates the attempt has enough letters, has not been tried before, and is a valid word from the word list.
+ * If the word list is not found in local storage, it's retrieved from the server asynchronously for next time.
  *
  * @param {Game} game - The game to validate the attempt against.
  * @return {boolean} true if the attempt is valid, false otherwise.
@@ -225,34 +113,30 @@ export const validateAttempt = (game) => {
   const attemptLetters = getAttemptLetters();
   const attemptWord = attemptLetters.join("");
 
-  // Validate word length
   if (attemptLetters.length != game.word.length) {
     showMessage("Not enough letters");
     return false;
   }
 
-  // Validate duplicate attempts
   if (game.attempts.includes(attemptWord)) {
     showMessage("Word already tried");
     return false;
   }
 
-  // Validate word exists in word list.
   const wordList = retrieveLocal("wordList");
-  if (!wordList) {
-    // re-fetch word list synchronously? pass to server for validation while asynchronously fetching the word list?
-    logger.info("No word list found locally, fetching...");
+  if (wordList) {
+    if (!wordExists(attemptWord)) {
+      showMessage("Not in word list");
+      return false;
+    }
+  } else {
+    logger.info("No word list found locally, fetching in the background...");
     fetchWordList()
       .then((response) => {
         storeLocal("wordList", response);
         logger.info(`Stored ${response.length} words in the wordList.`);
       })
       .catch((error) => logger.error("Error fetching word list", error));
-  } else {
-    if (!wordExists(attemptWord)) {
-      showMessage("Not in word list");
-      return false;
-    }
   }
   return true;
 };
@@ -260,6 +144,5 @@ export const validateAttempt = (game) => {
 /**
  * Returns the stack of letters in the current attempt word.
  */
-export const getAttemptLetters = () => {
-  return attemptLetters;
-};
+export const getAttemptLetters = () => attemptLetters;
+export const clearAttemptLetters = () => (attemptLetters = []);

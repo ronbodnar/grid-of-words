@@ -1,19 +1,19 @@
 import { buildView } from "../view/view.js";
-import { buildLoadingElement } from "./loading.js";
+import { buildLoaderElement } from "./loader.js";
 
 /**
  * Builds and displays a loading view within the content container.
  */
 export const buildLoadingView = () => {
-  const loadingMessage = document.createElement("p");
-  loadingMessage.textContent = "We'll be with you shortly";
-  loadingMessage.style.marginBottom = "20px";
+  const message = document.createElement("p");
+  message.textContent = "We'll be with you shortly";
+  message.style.marginBottom = "20px";
 
-  const loadingAnimation = buildLoadingElement();
-  loadingAnimation.classList.add("loading-animation");
+  const loader = buildLoaderElement();
+  loader.classList.add("loading-animation");
   
   buildView("loading", {
-    title: "Loading...",
-    additionalElements: [loadingMessage, loadingAnimation],
+    hasNavigationButton: false,
+    additionalElements: [message, loader],
   });
 };

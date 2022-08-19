@@ -7,7 +7,6 @@ import { buildView } from "../../view/view.js";
  * Generates all components for the registration view (form, headers, nav) and adds them to the content container.
  */
 export const buildRegisterView = () => {
-  // Set up the field, button, and option parameters for the view, then build it.
   const formFields = [
     new FormGroup("Email").setAutoFocus(true),
     new FormGroup("Username"),
@@ -23,8 +22,6 @@ export const buildRegisterView = () => {
   const formOptions = {
     submessage: "<a id='showLogin'>Already have an account?</a>",
   };
-
-  // Build the registration form and then generate the view
   const form = buildForm(formFields, formButtons, formOptions);
 
   buildView("register", {

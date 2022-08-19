@@ -7,18 +7,23 @@ import {
 import { fetchData } from "../../shared/services/api.service.js";
 import { logger } from "../../main.js";
 
+/**
+ * Posts form data to the specified `url` and invokes `successFn()` or `failureFn()` depending on the response.
+ * 
+ * @param {string} url The url used in the fetch request.
+ * @param {object} params The parameters to pass in the fetch request.
+ * @param {Function} successFn A function that will be called when the response is received.
+ * @param {Function} failureFn A function that will be called if an error or timeout occurs.
+ */
 export const submitAuthForm = async (url, params, successFn, failureFn) => {
-  // Find the submit button on the current view.
   const submitButton = document.querySelector("button[type='submit']");
   const submitButtonLoader = document.querySelector("#submitButtonLoader");
 
-  // Disable the button and show the button loader.
   if (submitButton) {
     submitButton.disabled = true;
   }
   submitButtonLoader?.classList.remove("hidden");
 
-  // Fetch the response from the server.
   const responsePromise = await fetchData(url, "POST", params);
 
   logger.debug("submitAuthForm responsePromise", responsePromise);
@@ -26,7 +31,6 @@ export const submitAuthForm = async (url, params, successFn, failureFn) => {
   // Validate the response and statusCode to handle any errors.
   // Invalid responses will display an error message, re-enable the form, then invoke an optional failureFn callback.
   if (!responsePromise || responsePromise.statusCode !== 200) {
-    // Enable the submit button and hide the button loader.
     if (submitButton) {
       submitButton.disabled = false;
     }
@@ -59,39 +63,60 @@ export const submitAuthForm = async (url, params, successFn, failureFn) => {
   }
 };
 
+/**
+ * Attempts to log the user out, remove session data, and redirect them home with a confirmation message.
+ */
 export const logout = async () => {
   const data = await fetchData("/auth/logout", "POST");
 
+  // TODO: the user shouldn't care if it fails, should they? should we?
   if (data && data.statusCode === 200) {
     removeSession("user");
     removeSession("game");
     showView("home");
-    showMessage(data.message || "You have been successfully logged out.");
-    //window.location.reload(); // Force refresh to clear session data (can this be avoided?)
+    const messageOptions = {
+      hide: true,
+      className: "success",
+    }
+    showMessage(data.message || "You have been successfully logged out.", messageOptions);
   } else {
     logger.warn("Error logging out");
   }
   logger.debug("Logout response", data);
 };
 
+/**
+ * Validates a password reset token with the API.
+ * 
+ * @param {*} passwordResetToken The password reset token to validate.
+ * @returns {Promise<any>} A promise that resolves with the API response.
+ */
 export const validateResetToken = async (passwordResetToken) => {
   return await fetchData("/auth/validate", "POST", {
     passwordResetToken: passwordResetToken,
   });
 };
 
+/**
+ * Checks if the user is authenticated based on the user session storage data.
+ * 
+ * @returns {boolean} Returns true if the user is authenticated, false otherwise.
+ */
 export const isAuthenticated = () => {
-  const user = retrieveSession("user");
-  return user ? true : false;
+  return getAuthenticatedUser();
 };
 
+/**
+ * Obtains the authenticated user object from the session storage.
+ * 
+ * @returns The authenticated user object or null if no user is authenticated.
+ */
 export const getAuthenticatedUser = () => {
-  const user = retrieveSession("user");
-  return user;
+  return retrieveSession("user");
 };
 
-export { changePassword } from "./change-password/change-password.js";
-export { resetPassword } from "./reset-password/reset-password.js";
-export { forgotPassword } from "./forgot-password/forgot-password.js";
-export { login } from "./login/login.js";
-export { register } from "./register/register.js";
+export { submitChangePasswordForm as changePassword } from "./change-password/change-password.js";
+export { submitResetPasswordForm as resetPassword } from "./reset-password/reset-password.js";
+export { submitForgotPasswordForm as forgotPassword } from "./forgot-password/forgot-password.js";
+export { submitLoginForm as login } from "./login/login.js";
+export { submitRegisterForm as register } from "./register/register.js";

@@ -3,7 +3,10 @@ import { showMessage } from "../../../shared/services/message.service.js";
 import { showView } from "../../view/view.service.js";
 import { submitAuthForm } from "../authentication.service.js";
 
-export const register = async () => {
+/**
+ * Handles the register form submission by validating inputs and awaiting {@link submitAuthForm} with a `successFn` callback.
+ */
+export const submitRegisterForm = async () => {
   const emailInput = document.querySelector("#email");
   const passwordInput = document.querySelector("#password");
   const confirmPasswordInput = document.querySelector("#confirmPassword");
