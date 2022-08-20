@@ -94,10 +94,10 @@ export const getRandomInt = (min, max) => {
  * @returns The camelCase representation of the given string.
  */
 export const convertToCamelCase = (str) => {
-  // Convert the field name into camelCase
+  // TODO: this wont detect something already in camel case. It will actually ruin camelCase for string already in camelCase.
   const strParts = str.split(/[ -]/g);
   if (strParts.length === 1) {
-    return strParts[0];
+    return strParts[0].toLowerCase();
   }
   strParts.forEach((part, i) => {
     if (i === 0) {

@@ -10,9 +10,24 @@ let server;
 
 // Set up the HTTP/HTTPS server based on the NODE_ENV variable
 if (process.env.NODE_ENV === "production") {
+  let key;
+  try {
+    key = fs.readFileSync(process.env.SSL_KEY_FILE);
+  } catch (err) {
+    logger.error("Error reading SSL key file:", err);
+    key = undefined;
+  }
+
+  let cert;
+  try {
+    cert = fs.readFileSync(process.env.SSL_CERT_FILE);
+  } catch (err) {
+    logger.error("Error reading SSL certificate file:", err);
+    cert = undefined;
+  }
   const options = {
-    key: fs.readFileSync(process.env.SSL_KEY_FILE),
-    cert: fs.readFileSync(process.env.SSL_CERT_FILE),
+    key: key,
+    cert: cert,
   };
 
   server = https.createServer(options, app);
