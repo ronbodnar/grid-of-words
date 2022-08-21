@@ -8,8 +8,8 @@ import {
   DEFAULT_WORD_LENGTH,
   MAXIMUM_WORD_LENGTH,
   MINIMUM_WORD_LENGTH,
-} from "../../utils/constants.js";
-import { isUUID, setCookie } from "../../utils/helpers.js";
+} from "../../shared/constants.js";
+import { isUUID, setCookie } from "../../shared/helpers.js";
 import { wordRepository } from "../word/index.js";
 import { authService } from "../auth/index.js";
 import { InternalError } from "../../errors/InternalError.js";

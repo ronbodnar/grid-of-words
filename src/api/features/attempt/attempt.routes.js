@@ -1,5 +1,6 @@
 import express from "express";
-import { attemptController } from "../features/attempt/index.js";
+
+import { attemptController } from "./index.js";
 
 export const router = express.Router();
 

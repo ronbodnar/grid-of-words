@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
 import { router as routes } from "../routes/index.js";
-import { __dirname } from "../utils/constants.js";
+import { __dirname } from "../shared/constants.js";
 import logger from "./winston.config.js";
 import errorHandler from "../middleware/error-handler.js";
 
@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 // Load the static assets from the assets folder
-app.use(express.static(path.join(__dirname, "..", "..", "public")));
+app.use(express.static(path.join(__dirname, "..", "..", "..", "public")));
  
 // Limit requests to 1 per second.
 /* app.use(

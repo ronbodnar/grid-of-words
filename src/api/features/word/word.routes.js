@@ -1,5 +1,5 @@
 import express from "express";
-import { wordController } from "../features/word/index.js";
+import { wordController } from "./index.js";
 
 export const router = express.Router();
 

@@ -1,5 +1,5 @@
-import logger from "../config/winston.config.js";
-import transporter from "../config/email.config.js";
+import logger from "../../config/winston.config.js";
+import transporter from "../../config/email.config.js";
 
 /**
  * Uses Nodemailer to send an email with the default transporter settings.
