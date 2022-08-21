@@ -1,6 +1,6 @@
 import express from "express";
 
-import { gameController } from "../features/game/index.js";
+import { gameController } from "./index.js";
 
 export const router = express.Router();
 

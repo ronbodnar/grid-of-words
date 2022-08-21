@@ -1,7 +1,7 @@
 import { getAttemptsForGameId, insertAttempt } from "./attempt.repository.js";
 
 import logger from "../../config/winston.config.js";
-import { isUUID, setCookie } from "../../utils/helpers.js";
+import { isUUID, setCookie } from "../../shared/helpers.js";
 import { gameRepository } from "../game/index.js";
 import { wordRepository } from "../word/index.js";
 import { authService } from "../auth/index.js";

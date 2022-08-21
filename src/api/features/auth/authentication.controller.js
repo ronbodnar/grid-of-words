@@ -1,9 +1,9 @@
-import { EMAIL_REGEX, USERNAME_REGEX } from "../../utils/constants.js";
+import { EMAIL_REGEX, USERNAME_REGEX } from "../../shared/constants.js";
 import logger from "../../config/winston.config.js";
 import { userRepository } from "../user/index.js";
 import { authService } from "./index.js";
 import { User } from "../user/index.js";
-import { sendPasswordResetEmail } from "../../services/reset-password.service.js";
+import { sendPasswordResetEmail } from "../email/reset-password/index.js";
 import { ValidationError } from "../../errors/ValidationError.js";
 import { UnauthorizedError } from "../../errors/UnauthorizedError.js";
 import { InternalError } from "../../errors/InternalError.js";
@@ -153,8 +153,8 @@ export const changePassword = async (req, res, next) => {
 
   // Look up the user in the database to get current information.
   const authenticatedUser = await userRepository.findBy(
-    "id",
-    claimUser.getUUID()
+    "_id",
+    claimUser._id
   );
   if (!authenticatedUser) {
     // Should it should show the login view?
@@ -314,14 +314,11 @@ export const resetPassword = async (req, res, next) => {
 };
 
 export const validatePasswordResetToken = async (req, res, next) => {
-  // Extract the passwordResetToken from the request body.
   const passwordResetToken = req.body.passwordResetToken;
-
   if (!passwordResetToken) {
     return next(new ValidationError("Missing password reset token."));
   }
 
-  // Look up the reset token in the database.
   const authenticatedUser = await userRepository.findBy(
     "passwordResetToken",
     passwordResetToken
@@ -334,8 +331,6 @@ export const validatePasswordResetToken = async (req, res, next) => {
     );
   }
 
-  // Verify the current time is greater than the expiration of the password reset token.
-  // Throw a 401 Unauthorized if the token expiration is after the current time.
   const tokenExpiration = new Date(
     authenticatedUser.passwordResetTokenExpiration
   );
@@ -362,10 +357,8 @@ export const getSession = (req, res, next) => {
     authService.setApiKeyCookie(res);
   }
 
-  // The model to house session data like user and game information.
   let sessionData = {};
 
-  // Verify the token cookie from the request if present.
   if (req.cookies?.token) {
     const payload = authService.verifyToken(req.cookies.token);
 
@@ -379,11 +372,9 @@ export const getSession = (req, res, next) => {
     }
   }
 
-  // Add the game data from the game cookie if found in the request.
   if (req.cookies?.game) {
     sessionData.game = req.cookies.game;
   }
 
-  // Respond with the session data in JSON format.
   res.json(Object.keys(sessionData).length > 0 ? sessionData : {});
 };

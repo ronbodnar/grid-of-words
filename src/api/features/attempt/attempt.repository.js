@@ -1,5 +1,4 @@
 import logger from "../../config/winston.config.js";
-import query from "../../services/database.service.js";
 
 /*
  * Inserts a new attempt into the game_attempts table.
@@ -12,7 +11,7 @@ export const insertAttempt = async (id, word) => {
   const sql = `INSERT INTO game_attempts (game_id, attempted_word) VALUES (UUID_TO_BIN(?), ?)`;
 
   // Execute the query and retrieve the response.
-  const response = await query(sql, [id, word]);
+  const response = null;//await query(sql, [id, word]);
 
   // If the insertion failed, log the error and return false.
   if (!response || response.affectedRows === 0) {
@@ -38,7 +37,7 @@ export const getAttemptsForGameId = async (id) => {
     const sql = `SELECT *, BIN_TO_UUID(game_id) AS game_id FROM game_attempts WHERE game_id = UUID_TO_BIN(?)`;
 
     // Execute the query and retrieve the response.
-    const response = await query(sql, [id]);
+    const response = null;//await query(sql, [id]);
 
     return response[0];
   } catch (err) {
