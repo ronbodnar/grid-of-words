@@ -63,8 +63,7 @@ export const fetchData = async (url, method, params, timeoutDelay = 15000) => {
           return null;
         });
 
-    // Add the statusCode from the fetchResponse if data is populated.
-    if (fetchResponse && Object.keys(data).length > 0) {
+    if (fetchResponse && data.statusCode !== fetchResponse.status) {
       data.statusCode = fetchResponse.status;
     }
 

@@ -76,7 +76,7 @@ export const forfeitGame = async () => {
   toggleKeyboardOverlay();
 
   const forfeitGameResponse = await fetchData(
-    `/game/${game.id}/forfeit`,
+    `/game/${game._id}/forfeit`,
     "POST"
   );
 

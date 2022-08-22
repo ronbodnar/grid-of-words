@@ -49,7 +49,7 @@ export const processAttempt = async (game) => {
   showMessage("");
 
   const attemptResponsePromise = fetchData(
-    `/game/${game.id}/attempts`,
+    `/game/${game.id}/attempt`,
     "POST",
     {
       word: attemptLetters.join(""),

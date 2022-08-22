@@ -155,21 +155,21 @@ export const verifyToken = (token) => {
  * @param {Request} req The request object to extract the token from.
  * @returns The user from the payload if present, otherwise undefined.
  */
-export const getAuthenticatedUser = (req) => {
+export const getAuthenticatedUser = (token) => {
   // Check if the token is present in the cookies.
-  if (!req?.cookies?.token) {
+  if (!token) {
     return null;
   }
 
   // Decode token to get the payload.
-  const decodedPayload = verifyToken(req.cookies.token);
+  const decodedPayload = verifyToken(token);
   
   // Validate the presence of a user object within the token's payload.
   if (!decodedPayload?.data) {
     return null;
   }
 
-  console.log("1", decodedPayload.data);
+  console.log("getAuthenticatedUser", decodedPayload.data);
   const user = new User().fromJSON(decodedPayload.data);
 
   // Return the user object from the decoded payload.

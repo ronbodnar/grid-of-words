@@ -8,16 +8,56 @@ import database from "../../shared/database.js";
  * @return {Word} word - An instance of the Word.
  */
 export const getWordOfLength = async (length) => {
+  if (!length) {
+    throw new Error("Word length is required");
+  }
   try {
-    const filter = {
-      text: {
-        length: length,
-      },
-    };
-    const wordCollection = database.getWordCollection();
-    const result = await wordCollection.findOne(filter);
+    length = Number(length);
 
-    console.log(`getWordOfLength(${length}) Result`, result);
+    const pipeline = [
+      {
+        $project: {
+          text: 1,
+          length: {
+            $strLenCP: "$text",
+          },
+        },
+      },
+      {
+        $match: {
+          $and: [
+            {
+              length: length,
+              text: {
+                $regex: /^[a-zA-Z]+$/,
+              },
+            },
+          ],
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          text: 1
+        }
+      },
+      {
+        $sample: {
+          size: 1,
+        },
+      },
+    ];
+    const wordCollection = database.getWordCollection();
+    const result = await wordCollection.aggregate(pipeline).toArray();
+
+    if (!result || !result[0].text) {
+      logger.error("Failed to retrieve random word from collection", {
+        length: length
+      });
+      return;
+    }
+
+    return result[0].text;
   } catch (error) {
     logger.error("Unexpected error getting random word", {
       error: error,
@@ -43,6 +83,7 @@ export const getWordsByLengthRange = async (minLength, maxLength) => {
         text: {
           $gte: minLength,
           $lte: maxLength,
+          $regex: /^[a-zA-Z]+$/
         },
       })
       .toArray();

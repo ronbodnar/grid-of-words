@@ -2,7 +2,7 @@
  * Class representing a Game.
  */
 export class Game {
-  id;
+  _id;
   word;
   attempts;
   maxAttempts;
@@ -13,7 +13,7 @@ export class Game {
   /**
    * Creates an instance of the Game class.
    * @param {Object} [json] - Optional JSON object to initialize the Game instance.
-   * @param {string} json.id - The unique identifier for the game.
+   * @param {string} json._id - The unique identifier for the game.
    * @param {string} json.word - The word to be guessed in the game.
    * @param {string} json.state - The current state of the game.
    * @param {number} json.maxAttempts - Maximum allowed attempts for the game.
