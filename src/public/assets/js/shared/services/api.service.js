@@ -72,11 +72,11 @@ export const fetchData = async (url, method, params, timeoutDelay = 15000) => {
     if (err.name === "AbortError") {
       logger.error(`Request to ${url} timed out.`);
     } else {
-      logger.error(
-        `Could not fetch data from ${url} with params ${JSON.stringify(
-          params
-        )}: ${err}`
-      );
+      logger.error("Failed to fetch data", {
+        url: url,
+        params: params,
+        error: err,
+      });
     }
     return null;
   }
@@ -89,13 +89,9 @@ export const fetchData = async (url, method, params, timeoutDelay = 15000) => {
  * @param {number} maxLength - The maximum length of words to fetch. Defaults to MAXIMUM_WORD_LENGTH.
  * @returns {Promise<Array>} A promise that resolves to an array of words.
  */
-export const fetchWordList = async (
-  minLength = MINIMUM_WORD_LENGTH,
-  maxLength = MAXIMUM_WORD_LENGTH
-) => {
+export const fetchWordList = async (length) => {
   return fetchData(`word/list`, "GET", {
-    minLength: minLength,
-    maxLength: maxLength,
+    length: length,
   });
 };
 

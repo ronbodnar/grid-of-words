@@ -1,6 +1,7 @@
 import { Game } from "./Game.js";
 import database from "../../shared/database.js";
 import { DatabaseError } from "../../errors/DatabaseError.js";
+import { ObjectId } from "mongodb";
 
 // Thought about an upsert instead of separate functions, but I couldn't think of a reliable way to get the ID of the game.
 // It seems like using the _id as a filter is causing issues by setting a default value.
@@ -12,7 +13,7 @@ import { DatabaseError } from "../../errors/DatabaseError.js";
  * @param {object} gameDoc - The game document to insert into the database.
  * @return {Promise<Game | null>} A promise that resolves with the inserted Game ID if successful.
  */
-export const insertGame = async (gameDoc) => {
+const insertGame = async (gameDoc) => {
   const cursor = await database.getGameCollection().insertOne(gameDoc)
   if (!cursor || !cursor.insertedId) {
     return new DatabaseError("Failed to insert Game in database", {
@@ -28,7 +29,7 @@ export const insertGame = async (gameDoc) => {
  * @param {Game} game - The Game object to save to the database.
  * @returns {Promise<DatabaseError | boolean>} A promise that resolves truthy if successful.
  */
-export const updateGame = async (game) => {
+const updateGame = async (game) => {
   const filter = {
     _id: game._id,
   };
@@ -48,12 +49,17 @@ export const updateGame = async (game) => {
 /**
  * Retrieves a game from the database by its id.
  *
- * @param {string} id - The unique identifier for the game.
+ * @param {string} gameId - The unique identifier for the game.
  * @return {Promise<Game | null>} - The game object or null if the game could not be found.
  */
-export const findById = async (id) => {
+const findById = async (gameId) => {
+  // Validate and convert the gameId here to avoid repeated code in the service layer.
+  if (typeof gameId === "string") {
+    gameId = new ObjectId(gameId);
+  }
+
   const cursor = await database.getGameCollection().findOne({
-    _id: id,
+    _id: gameId,
   });
   if (!cursor) {
     return null;
@@ -62,3 +68,9 @@ export const findById = async (id) => {
   var game = new Game(cursor);
   return game;
 };
+
+export default {
+  insertGame,
+  updateGame,
+  findById,
+}

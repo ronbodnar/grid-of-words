@@ -23,11 +23,11 @@ showView("loading");
 
 (async () => {
   // Fetch the session data from the server.
-  const sessionResponse = await fetchData("/session");
+  const sessionResponse = await fetchData("/auth/session");
 
   loggerInstance.debug("Session Data", sessionResponse);
 
-  if (sessionResponse?.user && sessionResponse?.user.id) {
+  if (sessionResponse?.user && sessionResponse?.user._id) {
     storeSession("user", sessionResponse.user);
   } else {
     removeSession("user");
@@ -41,18 +41,24 @@ showView("loading");
 
   const game = retrieveSession("game");
   if (game) {
-    showView("game", {
-      game: game,
-    });
+    if (game.maxViews === game.attempts?.length) {
+      showView("home");
+    } else {
+      showView("game", {
+        game: game,
+      });
+    }
   }
 
-  // Ensure the user has the word list in the local storage, if not, asynchronously fetch and store the word list.
+/*   // Ensure the user has the word list in the local storage, if not, asynchronously fetch and store the word list.
   const wordList = retrieveLocal("wordList");
   if (!wordList) {
     fetchWordList()
       .then((response) => storeLocal("wordList", response))
-      .catch((error) => loggerInstance.error("Error fetching word list", error));
-  }
+      .catch((error) =>
+        loggerInstance.error("Error fetching word list", error)
+      );
+  } */
 })();
 
 // Ensure the session has been set before redirecting the user or they may not have API access.

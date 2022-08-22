@@ -90,6 +90,13 @@ export const removeLastSquareValue = () => {
 
   if (getAttemptLetters().length > 0) {
     const lastSquare = activeRowSquares[getAttemptLetters().length - 1];
+    if (!lastSquare) {
+      console.error("Encountered a bug in the attempt where attemptLetters seems to be inconsistent.", {
+        activeRowSquares: activeRowSquares,
+        attemptLetters: getAttemptLetters(),
+      });
+      return;
+    }
     lastSquare.classList.remove("full");
     lastSquare.children[0].textContent = "";
     getAttemptLetters().pop();

@@ -9,6 +9,7 @@ export class User {
   email = undefined;
   enabled = undefined;
   creationDate = undefined;
+  gameIds = [];
 
   constructor(email, username, password) {
     if (!email) return this;

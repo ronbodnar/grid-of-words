@@ -1,5 +1,4 @@
-import { GameState } from "./GameState.js";
-import { updateGame } from "./game.repository.js";
+import { GameState, gameRepository } from "./index.js";
 
 /*
  * A representation of a Game.
@@ -50,6 +49,6 @@ export class Game {
    * @returns {Promise<any>} A promise that resolves to the saved game if successful.
    */
   async save() {
-    return await updateGame(this);
+    return await gameRepository.updateGame(this);
   }
 }

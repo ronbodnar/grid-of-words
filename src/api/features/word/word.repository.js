@@ -1,15 +1,17 @@
-import logger from "../../config/winston.config.js";
+import { DatabaseError } from "../../errors/DatabaseError.js";
+import { InternalError } from "../../errors/InternalError.js";
+import { NotFoundError } from "../../errors/NotFoundError.js";
 import database from "../../shared/database.js";
 
-/*
+/**
  * Selects a random word with the specified length from the database.
  *
  * @param {number} length - The length of the word to be found.
- * @return {Word} word - An instance of the Word.
+ * @returns {Promise<string | InternalError | DatabaseError>} A promise that resolves to a random word of the specified length if successful.
  */
-export const getWordOfLength = async (length) => {
+const getWordOfLength = async (length) => {
   if (!length) {
-    throw new Error("Word length is required");
+    throw new InternalError("Word length is required");
   }
   try {
     length = Number(length);
@@ -38,8 +40,8 @@ export const getWordOfLength = async (length) => {
       {
         $project: {
           _id: 0,
-          text: 1
-        }
+          text: 1,
+        },
       },
       {
         $sample: {
@@ -51,19 +53,17 @@ export const getWordOfLength = async (length) => {
     const result = await wordCollection.aggregate(pipeline).toArray();
 
     if (!result || !result[0].text) {
-      logger.error("Failed to retrieve random word from collection", {
-        length: length
-      });
-      return;
+      return new DatabaseError(`No words found for length ${length}`);
     }
 
     return result[0].text;
   } catch (error) {
-    logger.error("Unexpected error getting random word", {
-      error: error,
-      length: length,
-    });
-    return null;
+    return new DatabaseError(
+      `Failed to retrieve random word of length ${length}`,
+      {
+        error: error,
+      }
+    );
   }
 };
 
@@ -74,28 +74,69 @@ export const getWordOfLength = async (length) => {
  * @param {number} maxLength - The maximum length of word to retrieve.
  * @return {Array} The list of words matching the length range.
  */
-export const getWordsByLengthRange = async (minLength, maxLength) => {
+const getWordsByLengthRange = async (length, sampleSize) => {
   try {
-    //^[A-Za-z]{${minLength},${maxLength}}$
-    const wordCollection = database.getWordCollection();
-    const result = await wordCollection
-      .find({
-        text: {
-          $gte: minLength,
-          $lte: maxLength,
-          $regex: /^[a-zA-Z]+$/
+    length = Number(length);
+
+    const pipeline = [
+      {
+        $project: {
+          text: 1,
+          length: {
+            $strLenCP: "$text",
+          },
         },
-      })
-      .toArray();
-    console.log(
-      `getWordsByLengthRange(${minLength}, ${maxLength}) Result`,
-      result
-    );
+      },
+      {
+        $match: {
+          $and: [
+            {
+              length: length,
+              text: {
+                $regex: /^[a-zA-Z]+$/,
+              },
+            },
+          ],
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          words: {
+            $push: "$text",
+          },
+        },
+      },
+      {
+        $replaceRoot: {
+          newRoot: "$words",
+        },
+      },
+    ];
+
+    if (sampleSize && typeof sampleSize === "number") {
+      pipeline.push({
+        $sample: {
+          size: sampleSize,
+        },
+      });
+    }
+
+    // TODO: need to add pagination here because this gets too many documents.
+    const wordCollection = database.getWordCollection();
+    const result = await wordCollection.aggregate(pipeline).toArray();
+
+    console.log(result);
+
+    if (!result || !(result.length > 0)) {
+      return new DatabaseError(
+        `No words found for word list of length ${length}`
+      );
+    }
+    return result;
   } catch (error) {
-    logger.error("Could not retrieve word list from database", {
+    return new DatabaseError(`Failed to obtain word list of length ${length}`, {
       error: error,
-      min: minLength,
-      max: maxLength,
     });
   }
 };
@@ -106,17 +147,23 @@ export const getWordsByLengthRange = async (minLength, maxLength) => {
  * @param {string} word - The word to search for.
  * @return {boolean}
  */
-export const wordExists = async (word) => {
+const wordExists = async (word) => {
   try {
     const wordCollection = database.getWordCollection();
     const result = await wordCollection.findOne({ text: word });
-    console.log("wordExists Result", result);
+    return result && result.text;
   } catch (error) {
-    // this should only error when there are no results
-    logger.info("Error validating word existence", {
-      error: error,
-      word: word,
-    });
-    return false;
+    return new NotFoundError(
+      `An error occurred while checking if "${word}" exists in the database`,
+      {
+        error: error,
+      }
+    );
   }
+};
+
+export default {
+  getWordOfLength,
+  getWordsByLengthRange,
+  wordExists,
 };

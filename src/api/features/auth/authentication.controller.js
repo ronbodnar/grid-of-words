@@ -376,5 +376,7 @@ export const getSession = (req, res, next) => {
     sessionData.game = req.cookies.game;
   }
 
+  console.log("Session data", sessionData);
+
   res.json(Object.keys(sessionData).length > 0 ? sessionData : {});
 };

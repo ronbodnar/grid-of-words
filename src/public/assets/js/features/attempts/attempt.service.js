@@ -25,9 +25,8 @@ let attemptLetters = [];
  * @param {Game} game - The game to process to attempt for.
  */
 export const processAttempt = async (game) => {
+  // Obtain the Game from session data instead of the param to avoid retrieving the game in various views.
   if (!game) {
-    // Try to find a cached game from the session as a fallback.
-    // Process the attempt on the game if we find it.
     const game = retrieveSession("game");
     if (game) {
       processAttempt(game);
@@ -45,11 +44,11 @@ export const processAttempt = async (game) => {
     return;
   }
 
-  // Clear the message content while processing the attempt.
+  // Clear the message content while processing the attempt, otherwise it may retain previous messages.
   showMessage("");
 
   const attemptResponsePromise = fetchData(
-    `/game/${game.id}/attempt`,
+    `/game/${game._id}/attempt`,
     "POST",
     {
       word: attemptLetters.join(""),
@@ -68,6 +67,14 @@ export const processAttempt = async (game) => {
 
   toggleKeyboardOverlay(false);
 
+  // An unhandled exception in the API threw a 500 internal server error.
+  if (!response) {
+    showMessage("An error occurred while attempting the word. Please try again.");
+    setBlockKeyEvents(false);
+    transformSquares(false, true);
+    return;
+  }
+
   if (response.gameData) {
     // Set up remote and local Game copies.
     const remoteGame = new Game(response.gameData);
@@ -76,7 +83,6 @@ export const processAttempt = async (game) => {
     // Add the most recent attempt to the local copy since remote copy will contain it.
     localGame.attempts.push(attemptLetters.join(""));
 
-    // Check to make sure every attempt in the remoteGame exists in the localGame.
     const attemptsMatch = Array.from(remoteGame.attempts).every((a) =>
       localGame.attempts.includes(a)
     );
@@ -85,7 +91,7 @@ export const processAttempt = async (game) => {
       switch (true) {
         case localGame.attempts.length !== remoteGame.attempts.length: // attempt array size mismatch
         case !attemptsMatch || remoteGame.attempts.length !== localGame.attempts.length: // array element content mismatch
-        case localGame.id !== remoteGame.id: // game id mismatch
+        case localGame._id !== remoteGame._id: // game id mismatch
         case localGame.word !== remoteGame.word: // game word mismatch
           logger.error(
             "There is a game data mismatch, reloading the game in 10 seconds..."
@@ -131,7 +137,7 @@ export const validateAttempt = (game) => {
     }
   } else {
     logger.info("No word list found locally, fetching in the background...");
-    fetchWordList()
+    fetchWordList(game.word.length)
       .then((response) => {
         storeLocal("wordList", response);
         logger.info(`Stored ${response.length} words in the wordList.`);
