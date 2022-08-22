@@ -1,69 +1,48 @@
-import logger from "../../config/winston.config.js";
-import { attemptRepository } from "../attempt/index.js";
 import { Game } from "./Game.js";
 import database from "../../shared/database.js";
+import { DatabaseError } from "../../errors/DatabaseError.js";
+
+// Thought about an upsert instead of separate functions, but I couldn't think of a reliable way to get the ID of the game.
+// It seems like using the _id as a filter is causing issues by setting a default value.
+// Anybody have any ideas?
 
 /**
  * Inserts a new game into the database with the specified id and word.
  *
- * @param {string} id The unique identifier for the game.
- * @param {string} word The word to be guessed.
- * @param {number} maxAttempts The maximum number of attempts in the game.
- * @param {string | null} ownerId The user id for the owner of the game.
- * @return {Promise<Game | null>} A promise that resolves with the new game object if successful.
+ * @param {object} gameDoc - The game document to insert into the database.
+ * @return {Promise<Game | null>} A promise that resolves with the inserted Game ID if successful.
  */
-export const insertGame = async (id, word, maxAttempts, ownerId) => {
-  const gameDoc = {
-    id: id,
-    word: word,
-    maxAttempts: maxAttempts,
-    ownerId: ownerId
-  }
-  const usersCollection = database.getUserCollection();
-  const result = usersCollection.insertOne(gameDoc);
-
-  console.log("Result", result);
-
-  if (!result) {
-    logger.error("Failed to insert Game in database", {
-      gameDoc: gameDoc,
+export const insertGame = async (gameDoc) => {
+  const cursor = await database.getGameCollection().insertOne(gameDoc)
+  if (!cursor || !cursor.insertedId) {
+    return new DatabaseError("Failed to insert Game in database", {
+      document: gameDoc,
     });
-    return null;
   }
-
-  // Return the inserted Game object synchronously.
-  return await getGameById(id);
+  return cursor.insertedId;
 };
 
 /**
  * Updates the game record within the database.
  *
- * @param {Game} game - The game to update.
- * @param {boolean} updateEndTime - Whether or not to set the endTime in the query.
+ * @param {Game} game - The Game object to save to the database.
+ * @returns {Promise<DatabaseError | boolean>} A promise that resolves truthy if successful.
  */
-export const saveGame = async (game, updateEndTime = false) => {
-  // Build the SQL query string with endTime if updateEndTime is set to true.
-  var sql = `UPDATE games SET state = ?`;
-  if (updateEndTime) sql += `, endTime = ?`;
-  sql += ` WHERE id = UUID_TO_BIN(?)`;
-
-  // Build the array of values to pass to the query, depending on updateEndTime state.
-  var values = updateEndTime
-    ? [game.state, game.endTime, game.id]
-    : [game.state, game.id];
-
-  // Execute the query and retrieve the response.
-  const response = null;//await query(sql, values);
-
-  // If the response is null, log an error.
-  if (!response) {
-    logger.error("Failed to update Game record in database", {
+export const updateGame = async (game) => {
+  const filter = {
+    _id: game._id,
+  };
+  const update = {
+    $set: game,
+  };
+  const cursor = await database.getGameCollection().updateOne(filter, update);
+  if (!cursor || !cursor.acknowledged || !(cursor.modifiedCount === 1)) {
+    return new DatabaseError("Failed to update Game record in database", {
+      cursor: cursor,
       game: game,
-      updateEndTime: updateEndTime,
-      sql: sql,
     });
   }
-  return response;
+  return true;
 };
 
 /**
@@ -72,41 +51,14 @@ export const saveGame = async (game, updateEndTime = false) => {
  * @param {string} id - The unique identifier for the game.
  * @return {Promise<Game | null>} - The game object or null if the game could not be found.
  */
-export const getGameById = async (id, includeAttempts = true) => {
-  // Set up the SQL query string.
-  const sql =
-    `SELECT BIN_TO_UUID(id) AS id, BIN_TO_UUID(owner_id) AS ownerId, ` +
-    `state, word, max_attempts AS maxAttempts, ` +
-    `start_timestamp AS startTimestamp, end_timestamp AS endTimestamp ` +
-    `FROM games WHERE id = UUID_TO_BIN(?)`;
-
-  // Execute the query and retrieve the response.
-  const response = null;// await query(sql, [id]);
-  if (!response) return null;
-
-  // Construct a new Game from the JSON response
-  var game = new Game().fromJson(response[0][0]);
-
-  // If the game object is null, log an error and return null.
-  if (!game) {
-    logger.error("Could not create a Game from the JSON response", {
-      game: game,
-      response: response,
-      gameData: response[0][0],
-    });
+export const findById = async (id) => {
+  const cursor = await database.getGameCollection().findOne({
+    _id: id,
+  });
+  if (!cursor) {
     return null;
   }
 
-  // Obtain the game's attempts if includeAttempts is truthy.
-  if (includeAttempts) {
-    // Synchronously retrieve the attempts for the specified game id.
-    var attempts = await attemptRepository.getAttemptsForGameId(game.id);
-
-    // If attempts are found, iterate over attempts and map the attempted word to the attempts array.
-    if (attempts) {
-      game.attempts = attempts.map((attempt) => attempt.attempted_word);
-    }
-  }
-
+  var game = new Game(cursor);
   return game;
 };
