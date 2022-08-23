@@ -1,15 +1,11 @@
-/*
- * Uses a regular expression to validate a string against the UUID string format.
- *
- * @param {string} uuidString - The string to validate.
- * @return {boolean} true if the string is a valid UUID string, false otherwise.
+/**
+ * Sets an HttpOnly cookie in the response header. The cookie is secure if NODE_ENV is production.
+ * 
+ * @param {Response} res The express response object.
+ * @param {string} name The name of the cookie.
+ * @param {any} value The value of the cookie.
+ * @param {number} [maxAge=(1000 * 60 * 60 * 24 * 30)] The max age to set for the cookie. 
  */
-export const isUUID = (uuidString) => {
-  const pattern =
-    /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/;
-  return pattern.test(uuidString);
-};
-
 export const setCookie = (res, name, value, maxAge = 1000 * 60 * 60 * 24 * 30) => {
   res.cookie(name, value, {
     httpOnly: true,
@@ -18,7 +14,3 @@ export const setCookie = (res, name, value, maxAge = 1000 * 60 * 60 * 24 * 30) =
     sameSite: "strict",
   });
 };
-
-export const convertToSnakeCase = (text) => {
-  return text.replace(/([a-z])([A-Z])/g, "$1_$2").toLowerCase();
-}

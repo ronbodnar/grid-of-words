@@ -13,6 +13,7 @@ import { showMessage } from "../../shared/services/message.service.js";
 import { fetchData } from "../../shared/services/api.service.js";
 import { logger } from "../../main.js";
 import { Game } from "./Game.js";
+import { clearAttemptLetters } from "../attempts/attempt.service.js";
 
 /**
  * Begins a new game by querying the API for a new game object, then swaps the container view to show the game container.
@@ -80,6 +81,7 @@ export const forfeitGame = async () => {
     "POST"
   );
 
+  // TODO: Should we even display errors (potentially blocking users from returning home)?
   if (!forfeitGameResponse || forfeitGameResponse.statusCode !== 200) {
     logger.error("Failed to forfeit game", {
       game: game,
@@ -90,6 +92,7 @@ export const forfeitGame = async () => {
     return;
   }
 
+  clearAttemptLetters();
   removeSession("game");
   showView("home");
 

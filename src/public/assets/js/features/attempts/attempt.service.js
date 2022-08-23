@@ -1,13 +1,10 @@
 import { setBlockKeyEvents } from "../../shared/services/event.service.js";
 import {
-  retrieveLocal,
   retrieveSession,
-  storeLocal,
   storeSession,
 } from "../../shared/services/storage.service.js";
 import { showMessage } from "../../shared/services/message.service.js";
 import {
-  fetchWordList,
   wordExists,
 } from "../../shared/services/api.service.js";
 import { Game } from "../game/Game.js";
@@ -69,7 +66,9 @@ export const processAttempt = async (game) => {
 
   // An unhandled exception in the API threw a 500 internal server error.
   if (!response) {
-    showMessage("An error occurred while attempting the word. Please try again.");
+    showMessage(
+      "An error occurred while attempting the word. Please try again."
+    );
     setBlockKeyEvents(false);
     transformSquares(false, true);
     return;
@@ -90,7 +89,8 @@ export const processAttempt = async (game) => {
     if (response.statusCode === 200) {
       switch (true) {
         case localGame.attempts.length !== remoteGame.attempts.length: // attempt array size mismatch
-        case !attemptsMatch || remoteGame.attempts.length !== localGame.attempts.length: // array element content mismatch
+        case !attemptsMatch ||
+          remoteGame.attempts.length !== localGame.attempts.length: // array element content mismatch
         case localGame._id !== remoteGame._id: // game id mismatch
         case localGame.word !== remoteGame.word: // game word mismatch
           logger.error(
@@ -129,20 +129,9 @@ export const validateAttempt = (game) => {
     return false;
   }
 
-  const wordList = retrieveLocal("wordList");
-  if (wordList) {
-    if (!wordExists(attemptWord)) {
-      showMessage("Not in word list");
-      return false;
-    }
-  } else {
-    logger.info("No word list found locally, fetching in the background...");
-    fetchWordList(game.word.length)
-      .then((response) => {
-        storeLocal("wordList", response);
-        logger.info(`Stored ${response.length} words in the wordList.`);
-      })
-      .catch((error) => logger.error("Error fetching word list", error));
+  if (!wordExists(attemptWord)) {
+    showMessage("Not in word list");
+    return false;
   }
   return true;
 };

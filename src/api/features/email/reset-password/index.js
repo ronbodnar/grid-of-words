@@ -1,20 +1,41 @@
+import { ValidationError } from "../../../errors/ValidationError.js";
 import { APP_NAME } from "../../../shared/constants.js";
-import { sendEmail } from "../email.service.js";
+import { emailService } from "../index.js";
 
-export const sendPasswordResetEmail = async (user, token) => {
-  const port =
-    process.env.NODE_ENV === "production" ? "" : ":" + process.env.PORT;
-  const resetUrl = process.env.APP_URL + port + "?token=" + token;
-  const text =
-    `Dear ${user.username},\n\n` +
-    `We received a request to reset your password for your ${APP_NAME} account. If you didn't make this request, please ignore this email.\n\n` +
-    `Please copy this link into your address bar to reset your password:\n` +
-    `${resetUrl}\n\n` +
-    `Please note that this password reset link is only valid for 1 hour. After that, you'll need to request a new one.\n\n` +
-    `Thank you\n` +
-    `The ${APP_NAME} Team`;
+/**
+ * Sends a password reset email with the `token` to the `User`'s email address.
+ *
+ * @param {*} user The {@link User} to send the password reset email to.
+ * @param {*} token The password reset token that was assigned to the user.
+ * @returns {Promise<boolean>} A promise that resolves to the result of the {@link sendEmail} function call.
+ */
+const send = async (user, token) => {
+  if (!user) {
+    throw new ValidationError("User not provided");
+  }
 
-  const html = `
+  const { NODE_ENV, PORT, APP_URL } = process.env;
+
+  const portExtension = NODE_ENV === "production" ? "" : ":" + PORT;
+  const resetUrl = APP_URL + portExtension + "?token=" + token;
+
+  const fnOptions = {
+    appName: APP_NAME,
+    resetUrl: resetUrl,
+    username: user.username,
+  };
+
+  return emailService.sendEmail(
+    user.email,
+    `Reset Your Password for ${APP_NAME}`,
+    getText(fnOptions),
+    getHtml(fnOptions)
+  );
+};
+
+const getHtml = (options) => {
+  const { appName, resetUrl, username } = options;
+  return `
 <table width="100%" border="0" cellspacing="0" cellpadding="0" style="font-family: Arial, sans-serif;">
   <tr>
     <td align="center" bgcolor="#f6f6f6" style="padding: 20px;">
@@ -26,12 +47,12 @@ export const sendPasswordResetEmail = async (user, token) => {
         </tr>
         <tr>
           <td style="padding-bottom: 20px; font-size: 16px; color: #333333;">
-            Hello ${user.username},
+            Hello ${username},
           </td>
         </tr>
         <tr>
           <td style="padding-bottom: 20px; font-size: 16px; color: #333333;">
-            We received a request to reset your password for your ${APP_NAME} account. If you didn't make this request, please ignore this email.
+            We received a request to reset your password for your ${appName} account. If you didn't make this request, please ignore this email.
           </td>
         </tr>
         <tr>
@@ -53,7 +74,7 @@ export const sendPasswordResetEmail = async (user, token) => {
         </tr>
         <tr>
           <td style="padding-top: 20px; font-size: 14px; color: #777777;">
-            Thank you,<br/>The ${APP_NAME} Team
+            Thank you,<br/>The ${appName} Team
           </td>
         </tr>
       </table>
@@ -61,12 +82,21 @@ export const sendPasswordResetEmail = async (user, token) => {
   </tr>
 </table>
 `;
+};
 
-  const response = sendEmail(
-    user.email,
-    `Reset Your Password for ${APP_NAME}`,
-    text,
-    html
+const getText = (options) => {
+  const { appName, resetUrl, username } = options;
+  return (
+    `Dear ${username},\n\n` +
+    `We received a request to reset your password for your ${appName} account. If you didn't make this request, please ignore this email.\n\n` +
+    `Please copy this link into your address bar to reset your password:\n` +
+    `${resetUrl}\n\n` +
+    `Please note that this password reset link is only valid for 1 hour. After that, you'll need to request a new one.\n\n` +
+    `Thank you\n` +
+    `The ${appName} Team`
   );
-  return response;
+};
+
+export default {
+  send
 };

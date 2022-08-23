@@ -1,8 +1,7 @@
-export class InternalError extends Error {
+import { BaseError } from "./BaseError.js";
+
+export class InternalError extends BaseError {
     constructor(message, data) {
-        super(message);
-        this.data = data || undefined;
-        this.name = "InternalError";
-        this.statusCode = 500;
+        super(message, data);
     }
 }

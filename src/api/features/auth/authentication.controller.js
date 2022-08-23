@@ -3,10 +3,11 @@ import logger from "../../config/winston.config.js";
 import { userRepository } from "../user/index.js";
 import { authService } from "./index.js";
 import { User } from "../user/index.js";
-import { sendPasswordResetEmail } from "../email/reset-password/index.js";
+import { resetPasswordEmail } from "../email/index.js";
 import { ValidationError } from "../../errors/ValidationError.js";
 import { UnauthorizedError } from "../../errors/UnauthorizedError.js";
 import { InternalError } from "../../errors/InternalError.js";
+
 /**
  * Performs authentication for the email and password combination provided in the request.
  *
@@ -117,18 +118,17 @@ export const logoutUser = (req, res) => {
 };
 
 export const changePassword = async (req, res, next) => {
-  // Extract the provided current password and new passwords from the request body.
-  const currentPassword = req.body.currentPassword;
-  const newPassword = req.body.newPassword;
+  const authToken = req.cookies.token;
+  const {
+    currentPassword, newPassword
+  } = req.body;
 
-  // Validate that the required parameters are provided.
   if (!newPassword || !currentPassword) {
     return next(
       new ValidationError("Current and new passwords must be provided.")
     );
   }
 
-  // Validate that the new password does not match the current password.
   if (newPassword === currentPassword) {
     return next(
       new ValidationError(
@@ -137,16 +137,13 @@ export const changePassword = async (req, res, next) => {
     );
   }
 
-  // Validate that the new password meets the complexity requirements.
   if (newPassword.length < 8) {
     return next(
       new ValidationError("New password must be at least 8 characters long.")
     );
   }
 
-  // Grab the user that the token is claiming to be authenticate.
-  // Respond with a 401 Unauthorized error if no auth user was found.
-  const claimUser = authService.getAuthenticatedUser(req);
+  const claimUser = authService.getAuthenticatedUser(authToken);
   if (!claimUser) {
     return next(new UnauthorizedError("User is not authenticated."));
   }
@@ -247,7 +244,7 @@ export const forgotPassword = async (req, res, next) => {
 
   // Send a password reset email to the user containing a link to reset their password.
   // If the email sending fails, respond with a 500 Internal Server Error and log the error.
-  const sendEmailResponse = await sendPasswordResetEmail(dbUser, token);
+  const sendEmailResponse = await resetPasswordEmail.send(dbUser, token);
   if (!sendEmailResponse) {
     logger.error("Failed to send password reset email", {
       email: email,

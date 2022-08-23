@@ -1,4 +1,4 @@
-export class ValidationError extends Error {
+export class BaseError extends Error {
     constructor(message, data) {
         super(message);
         if (typeof data === "object") {

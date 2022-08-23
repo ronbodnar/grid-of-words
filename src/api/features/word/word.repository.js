@@ -9,7 +9,7 @@ import database from "../../shared/database.js";
  * @param {number} length - The length of the word to be found.
  * @returns {Promise<string | InternalError | DatabaseError>} A promise that resolves to a random word of the specified length if successful.
  */
-const getWordOfLength = async (length) => {
+const findByLength = async (length) => {
   if (!length) {
     throw new InternalError("Word length is required");
   }
@@ -49,14 +49,21 @@ const getWordOfLength = async (length) => {
         },
       },
     ];
-    const wordCollection = database.getWordCollection();
-    const result = await wordCollection.aggregate(pipeline).toArray();
-
-    if (!result || !result[0].text) {
+    const cursor = await database.getWordCollection().aggregate(pipeline);
+    if (!(await cursor.hasNext())) {
       return new DatabaseError(`No words found for length ${length}`);
     }
 
-    return result[0].text;
+    const cursorResult = await cursor.next();
+    if (!cursorResult) {
+      return new NotFoundError(
+        `Invalid randomWord of length ${length} from cursor`,
+        {
+          cursor: cursor,
+        }
+      );
+    }
+    return cursorResult.text;
   } catch (error) {
     return new DatabaseError(
       `Failed to retrieve random word of length ${length}`,
@@ -74,7 +81,10 @@ const getWordOfLength = async (length) => {
  * @param {number} maxLength - The maximum length of word to retrieve.
  * @return {Array} The list of words matching the length range.
  */
-const getWordsByLengthRange = async (length, sampleSize) => {
+const findAllByLength = async (length) => {
+  if (!length) {
+    throw new InternalError("Missing required length parameter");
+  }
   try {
     length = Number(length);
 
@@ -100,6 +110,12 @@ const getWordsByLengthRange = async (length, sampleSize) => {
         },
       },
       {
+        $sort: {
+          text: 1,
+          _id: 1,
+        },
+      },
+      {
         $group: {
           _id: null,
           words: {
@@ -109,31 +125,25 @@ const getWordsByLengthRange = async (length, sampleSize) => {
       },
       {
         $replaceRoot: {
-          newRoot: "$words",
+          newRoot: {
+            words: "$words",
+          },
         },
       },
     ];
 
-    if (sampleSize && typeof sampleSize === "number") {
-      pipeline.push({
-        $sample: {
-          size: sampleSize,
-        },
+    const cursor = await database.getWordCollection().aggregate(pipeline);
+    if (!(await cursor.hasNext())) {
+      return new NotFoundError(`No words of length ${length} were found`);
+    }
+
+    const cursorResult = await cursor.next();
+    if (!cursorResult) {
+      return new DatabaseError("Invalid cursorResult", {
+        cursorResult: cursorResult,
       });
     }
-
-    // TODO: need to add pagination here because this gets too many documents.
-    const wordCollection = database.getWordCollection();
-    const result = await wordCollection.aggregate(pipeline).toArray();
-
-    console.log(result);
-
-    if (!result || !(result.length > 0)) {
-      return new DatabaseError(
-        `No words found for word list of length ${length}`
-      );
-    }
-    return result;
+    return cursorResult.words;
   } catch (error) {
     return new DatabaseError(`Failed to obtain word list of length ${length}`, {
       error: error,
@@ -147,13 +157,13 @@ const getWordsByLengthRange = async (length, sampleSize) => {
  * @param {string} word - The word to search for.
  * @return {boolean}
  */
-const wordExists = async (word) => {
+const exists = async (word) => {
   try {
     const wordCollection = database.getWordCollection();
     const result = await wordCollection.findOne({ text: word });
     return result && result.text;
   } catch (error) {
-    return new NotFoundError(
+    return new DatabaseError(
       `An error occurred while checking if "${word}" exists in the database`,
       {
         error: error,
@@ -163,7 +173,7 @@ const wordExists = async (word) => {
 };
 
 export default {
-  getWordOfLength,
-  getWordsByLengthRange,
-  wordExists,
+  findByLength,
+  findAllByLength,
+  exists,
 };

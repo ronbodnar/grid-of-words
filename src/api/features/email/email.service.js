@@ -3,12 +3,13 @@ import transporter from "../../config/email.config.js";
 
 /**
  * Uses Nodemailer to send an email with the default transporter settings.
- * @param {*} to The receiver(s) of the emails. Multiple emails can be separated by commas.
- * @param {*} subject The subject line of the email.
- * @param {*} text The plain text version of the email if HTML is unavailable.
- * @param {*} html The HTML version of the email (if HTML is available).
+ * @param {string} to The receiver(s) of the emails. Multiple emails can be separated by commas.
+ * @param {string} subject The subject line of the email.
+ * @param {string} text The plain text version of the email if HTML is unavailable.
+ * @param {string} html The HTML version of the email (if HTML is available).
+ * @returns {Promise<boolean>} A promise that resolves to the outcome of the send operation: true or false.
  */
-export const sendEmail = async (to, subject, text, html) => {
+const sendEmail = async (to, subject, text, html) => {
   const options = {
     from: `"${process.env.SMTP_FROM}" <${process.env.SMTP_USER}>`,
     to: to,
@@ -43,3 +44,7 @@ export const sendEmail = async (to, subject, text, html) => {
 
   return true;
 };
+
+export default {
+  sendEmail,
+}

@@ -7,6 +7,7 @@ import { InternalError } from "../../errors/InternalError.js";
 import { ValidationError } from "../../errors/ValidationError.js";
 import { Game, gameService } from "./index.js";
 import { getAuthenticatedUser } from "../auth/authentication.service.js";
+import { NotFoundError } from "../../errors/NotFoundError.js";
 
 /**
  * Generates a new game with optional wordLength and maxAttempts params and adds the game to the user's cookies if successful.
@@ -34,15 +35,21 @@ const generateNewGame = async (req, res, next) => {
  * Endpoint: POST /game/{id}/attempt
  */
 const addAttempt = async (req, res, next) => {
-  const word = req.body.word;
-  const gameId = req.params.id;
   const authToken = req.cookies.token;
+  const { 
+    word, gameId
+  } = req.body;
+  
   if (!word || !gameId) {
     return next(new ValidationError("MISSING_WORD_OR_GAME_ID"));
   }
 
   const attemptResult = await gameService.addAttempt(word, gameId, authToken);
   if (attemptResult instanceof Error) {
+    // Clear cookies when the user is attempting an invalid game.
+    if (attemptResult instanceof NotFoundError) {
+      res.clearCookie("game");
+    }
     return next(attemptResult);
   }
 

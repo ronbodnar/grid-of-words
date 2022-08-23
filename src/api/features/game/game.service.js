@@ -24,36 +24,30 @@ import logger from "../../config/winston.config.js";
  * @param {User} authenticatedUser The logged in user who requested a new game.
  * @returns {Promise<Game | ValidationError | InternalError | NotFoundError>} A promise that resolves to the created Game object if successful.
  */
-const generateNewGame = async (
-  wordLength,
-  maxAttempts,
-  authenticatedUser
-) => {
+const generateNewGame = async (wordLength, maxAttempts, authenticatedUser) => {
   if (!wordLength || !maxAttempts) {
     return new ValidationError(
       "Missing required parameters: wordLength, maxAttempts"
     );
   }
 
-  if (
-    !(MINIMUM_WORD_LENGTH <= wordLength && wordLength <= MAXIMUM_WORD_LENGTH)
-  ) {
+  const validWordLength =
+    MINIMUM_WORD_LENGTH <= wordLength && wordLength <= MAXIMUM_WORD_LENGTH;
+  if (!validWordLength) {
     return new ValidationError("Invalid word length", {
       wordLength: wordLength,
     });
   }
 
-  if (
-    !(
-      MINIMUM_MAX_ATTEMPTS <= maxAttempts && maxAttempts <= MAXIMUM_MAX_ATTEMPTS
-    )
-  ) {
+  const validMaxAttempts =
+    MINIMUM_MAX_ATTEMPTS <= maxAttempts && maxAttempts <= MAXIMUM_MAX_ATTEMPTS;
+  if (validMaxAttempts) {
     return new ValidationError("Invalid max attempts", {
       maxAttempts: maxAttempts,
     });
   }
 
-  const word = await wordRepository.getWordOfLength(wordLength);
+  const word = await wordRepository.findByLength(wordLength);
   if (!word) {
     return new InternalError(
       "Failed to obtain a random word when creating a new game",
@@ -99,14 +93,15 @@ const generateNewGame = async (
 /**
  * Adds an attempt to the Game's `attempt` Array if no validation errors occur.
  *
- * @param {*} word The word that is being attempted.
- * @param {*} gameId The id of the game that the attempt is being made against.
+ * @param {string} word The word that is being attempted.
+ * @param {string | ObjectId} gameId The id of the game that the attempt is being made against.
+ * @param {string} authToken The JWT from the request header to assign an owner to the game.
  * @returns {Promise<object | ValidationError | InternalError | NotFoundError>} A promise that resolves with the attempt message and game data if successful.
  */
 const addAttempt = async (word, gameId, authToken) => {
   const game = await gameRepository.findById(gameId);
   if (!game) {
-    return new NotFoundError("No game was found when adding an attempt.", {
+    return new NotFoundError("GAME_NOT_FOUND", {
       gameId: gameId,
     });
   }
@@ -153,7 +148,7 @@ const addAttempt = async (word, gameId, authToken) => {
  * Asynchronously retrieves a {@link Game} with the `gameId` from the database.
  *
  * @param {string | ObjectId} gameId The unique ID of the game.
- * @returns {Promise<Game | null>} A promise that resolves to the Game object if successful.
+ * @returns {Promise<Game | NotFoundError>} A promise that resolves to the Game object if successful.
  */
 const getGame = async (gameId) => {
   const game = await gameRepository.findById(gameId);
@@ -210,7 +205,7 @@ const validateAttempt = async (word, game) => {
   }
 
   // Validate that the word exists in the word list
-  var validWord = await wordRepository.wordExists(word);
+  var validWord = await wordRepository.exists(word);
   if (!validWord) {
     return "NOT_IN_WORD_LIST";
   }
@@ -222,4 +217,4 @@ export default {
   addAttempt,
   getGame,
   forfeitGame,
-}
+};

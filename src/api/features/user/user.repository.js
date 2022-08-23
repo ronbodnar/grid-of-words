@@ -1,16 +1,16 @@
 import { ObjectId } from "mongodb";
 import logger from "../../config/winston.config.js";
 import database from "../../shared/database.js";
-import { User } from "./User.js";
+import { User } from "./index.js";
 
 /**
- * Finds a user by the specified property name and value.
+ * Finds a {@link User} by the specified property name and value.
  *
- * @param {*} name The name of the property to search for.
- * @param {*} value The value of the property to match.
+ * @param {string} name The name of the property to search for.
+ * @param {any} value The value of the property to match.
  * @returns {Promise<User | null>} A promise that resolves to the User if successful.
  */
-export const findBy = async (name, value) => {
+const findBy = async (name, value) => {
   // Validate the name and value of the property were passed.
   if (!name || !value) {
     logger.error("Invalid property name or value passed to User findBy", {
@@ -24,10 +24,8 @@ export const findBy = async (name, value) => {
     value = new ObjectId(value);
   }
 
-  const usersCollection = database.getUserCollection();
-
-  const result = await usersCollection.findOne({
-    [name]: value
+  const result = await database.getUserCollection().findOne({
+    [name]: value,
   });
 
   if (!result) {
@@ -41,26 +39,25 @@ export const findBy = async (name, value) => {
 };
 
 /**
- * Saves the passed User object to the database.
+ * Saves the passed {@link User} to the database.
  *
  * @param {User} user The user object to save to the database.
  * @returns {Promise<User | null>} A promise that resolves to the User if successful.
  */
-export const saveUser = async (user) => {
+const saveUser = async (user) => {
   if (!user) {
     logger.error("Missing user object passed to saveUser", {
       user: user,
     });
   }
 
-  const usersCollection = database.getUserCollection();
   const filter = {
     _id: user._id,
   };
   const update = {
-    $set: user
-  }
-  const result = await usersCollection.updateOne(filter, update);
+    $set: user,
+  };
+  const result = await database.getUserCollection().updateOne(filter, update);
   if (result && result.acknowledged && result.modifiedCount > 0) {
     return user;
   } else {
@@ -75,21 +72,23 @@ export const saveUser = async (user) => {
 };
 
 /**
- * Creates a new user in the database with the user's email, username, and password hash.
+ * Creates a new {@link User} in the database with the passed in user details.
  *
  * @param {User} user The User object to insert into the database.
- * @returns {Promise<any>} A promise that resolves to the insertion result if successful.
+ * @returns {Promise<InsertOneResult | null>} A promise that resolves to the insertion result if successful.
  */
-export const insertUser = async (user) => {
+const insertUser = async (user) => {
   if (!user) return null;
   try {
-    const usersCollection = database.getCollection("users");
-    const result = await usersCollection.insertOne(user);
+    const result = await database.getCollection("users").insertOne(user);
     if (!result.acknowledged) {
-      logger.error("Failed to insert new user into database: result not acknowledged", {
-        user: user,
-        result: result,
-      });
+      logger.error(
+        "Failed to insert new user into database: result not acknowledged",
+        {
+          user: user,
+          result: result,
+        }
+      );
       return null;
     }
     return result;
@@ -102,8 +101,14 @@ export const insertUser = async (user) => {
   }
 };
 
-export const findAll = async (req, res, next) => {
-  const response = database.getCollection("users");
-  const users = await response.find().toArray();
+const findAll = async (req, res, next) => {
+  const users = await database.getUserCollection().find().toArray();
   res.json(users);
+};
+
+export default {
+  findBy,
+  saveUser,
+  insertUser,
+  findAll,
 };

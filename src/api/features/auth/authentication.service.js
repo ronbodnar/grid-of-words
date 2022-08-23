@@ -2,6 +2,7 @@ import crypto from "node:crypto";
 import jwt from "jsonwebtoken";
 import logger from "../../config/winston.config.js";
 import { User, userRepository } from "../user/index.js";
+import { setCookie } from "../../shared/helpers.js";
 
 export const authenticate = async (email, password) => {
   const dbUser = await userRepository.findBy('email', email);
@@ -49,27 +50,14 @@ export const setTokenCookie = (res, payload) => {
     delete payload.user?.hash;
   }
 
-  // Set the HttpOnly cookie "token" to the JWT token and set the age to 15 days.
-  res.cookie("token", jwt, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    maxAge: 1000 * 60 * 60 * 24 * 15, // 15 days
-    sameSite: "strict",
-  });
+  const maxAge = 1000 * 60 * 60 * 24 * 15;
+  setCookie(res, "token", jwt, maxAge);
   return jwt;
 };
 
 export const setApiKeyCookie = (res) => {
-  // Generate a 30-day JWT for the API key.
-  const apiKey = generateToken(process.env.API_KEY, "30d");
-
-  // Add the API key to the apiKey cookie.
-  res.cookie("apiKey", apiKey, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    maxAge: 1000 * 60 * 60 * 24 * 60, // 15 days
-    sameSite: "strict",
-  });
+  const apiKeyToken = generateToken(process.env.API_KEY, "30d");
+  setCookie(res, "apiKey", apiKeyToken);
 };
 
 /**

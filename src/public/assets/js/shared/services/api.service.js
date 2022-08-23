@@ -1,9 +1,5 @@
 import { logger } from "../../main.js";
-import {
-  MAXIMUM_WORD_LENGTH,
-  MINIMUM_WORD_LENGTH,
-} from "../utils/constants.js";
-import { retrieveLocal } from "./storage.service.js";
+import { retrieveLocal, storeLocal } from "./storage.service.js";
 
 /**
  * Fetches and parses data using the fetch API and injects the statusCode into the response object.
@@ -13,7 +9,12 @@ import { retrieveLocal } from "./storage.service.js";
  * @param {Object} [params={}] - (optional) - An object of key/values to pass in the query (GET) or body (POST, PUT, etc) parameters.
  * @returns {Promise<any>} A promise that resolves to an object containing the parsed response data, or `null` if an error occurs or no data is fetched.
  */
-export const fetchData = async (url, method, params, timeoutDelay = 15000) => {
+export const fetchData = async (
+  url,
+  method = "GET",
+  params = {},
+  timeoutDelay = 15000
+) => {
   // Set up the abort controller signal for timeout handling.
   const controller = new AbortController();
   const { signal } = controller;
@@ -25,10 +26,6 @@ export const fetchData = async (url, method, params, timeoutDelay = 15000) => {
   // Allowed fetch methods
   const allowedMethods = ["GET", "POST", "PUT", "PATCH", "DELETE"];
 
-  // Set up default values
-  method = method || "GET";
-  params = params || {};
-
   // Verify that the method is allowed.
   if (!allowedMethods.includes(method)) {
     throw new Error(
@@ -39,20 +36,21 @@ export const fetchData = async (url, method, params, timeoutDelay = 15000) => {
   }
 
   try {
-    // Wait for the fetch API to respond with the data from the url.
-    const fetchResponse = await fetch(url, {
+    // Inject the query parameters into the url if the request is a GET request.
+    const encodedParams = new URLSearchParams(params);
+    if (method === "GET") {
+      url = `${url}?${encodedParams.toString()}`;
+    }
+
+    const options = {
       headers: {
         "Content-Type": "application/json",
       },
       method: method,
-
-      // Body will only be populated with data if the request method isn't GET.
       body: method !== "GET" ? JSON.stringify(params) : undefined,
-
-      // Params will only be populated with data if the request method is GET.
-      params: method === "GET" ? JSON.stringify(params) : undefined,
       signal: signal,
-    });
+    };
+    const fetchResponse = await fetch(url, options);
 
     clearTimeout(timeout);
 
@@ -90,9 +88,23 @@ export const fetchData = async (url, method, params, timeoutDelay = 15000) => {
  * @returns {Promise<Array>} A promise that resolves to an array of words.
  */
 export const fetchWordList = async (length) => {
+  if (!length) {
+    throw new Error("Word length is required");
+  }
+  // The word list is of form: { <length>: [...words], ... }
+  const localWordList = retrieveLocal("wordList") || {};
+  if (localWordList.hasOwnProperty(length)) {
+    return;
+  }
   return fetchData(`word/list`, "GET", {
     length: length,
-  });
+  })
+    .then((response) => {
+      localWordList[length] = response;
+      storeLocal("wordList", localWordList);
+      logger.info(`Stored ${response.length} ${length} letter words in local storage.`);
+    })
+    .catch((error) => logger.error("Error fetching word list", error));
 };
 
 /**
@@ -102,7 +114,12 @@ export const fetchWordList = async (length) => {
  * @returns {boolean} True if the word exists in the word list, false otherwise.
  */
 export const wordExists = (word) => {
+  const wordLen = word.length;
   const wordList = retrieveLocal("wordList");
-  if (!wordList || !Array.isArray(wordList)) return true;
-  return wordList.includes(word);
+  // We can fetch the word list in the background and safely pass validation off to the server.
+  if (!wordList || !wordList.hasOwnProperty(wordLen)) {
+    fetchWordList(wordLen);
+    return true;
+  }
+  return wordList[wordLen].includes(word);
 };

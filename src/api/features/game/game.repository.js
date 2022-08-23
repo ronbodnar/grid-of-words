@@ -1,4 +1,4 @@
-import { Game } from "./Game.js";
+import { Game } from "./index.js";
 import database from "../../shared/database.js";
 import { DatabaseError } from "../../errors/DatabaseError.js";
 import { ObjectId } from "mongodb";

@@ -1,26 +1,28 @@
 import logger from "../config/winston.config.js";
 
 /**
- * The default error handler that will build an informative response to the server with the proper status code.
+ * The default error handler that will build an informative response for the client with the proper status code and log the details.
  */
 const errorHandler = (err, req, res, next) => {
   // The default error if an invalid error is encountered.
   const defaultError = new Error("Something went wrong.");
 
-  // Set up the missing error properties with default values
   err = err || defaultError;
-  err.message = err.message || defaultError.message;
-  err.statusCode = err.statusCode || 500;
 
-  // Temporarily pass everything to the logger.
-  // TODO: pass error types to logger functions
-  logger.error(err);
+  const { name, data, message = defaultError.message, statusCode = 500, stack } = err;
+
+  logger.error("Error Handler middleware was passed an error:", {
+    name: name,
+    message: message,
+    data: data,
+    stack: stack,
+  });
 
   // Send the error response to the client.
   res.status(err.statusCode).json({
-    message: err.message,
-    statusCode: err.statusCode,
-    stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
+    message: message,
+    statusCode: statusCode,
+    stack: process.env.NODE_ENV === "development" ? stack : undefined,
   });
 };
 

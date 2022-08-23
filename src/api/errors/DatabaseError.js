@@ -1,8 +1,7 @@
-export class DatabaseError extends Error {
-    constructor(message, data) {
-        super(message);
-        this.data = data || undefined;
-        this.name = "DatabaseError";
-        this.statusCode = 500;
-    }
+import { BaseError } from "./BaseError.js";
+
+export class DatabaseError extends BaseError {
+  constructor(message, data) {
+    super(message, data);
+  }
 }
