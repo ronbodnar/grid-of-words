@@ -1,4 +1,4 @@
-export class BaseError extends Error {
+class BaseError extends Error {
     constructor(message, data) {
         super(message);
         if (typeof data === "object") {
@@ -10,3 +10,5 @@ export class BaseError extends Error {
         this.statusCode = 400;
     }
 }
+
+export default BaseError;

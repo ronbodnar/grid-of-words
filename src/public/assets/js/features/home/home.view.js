@@ -18,7 +18,7 @@ export const buildHomeView = (options) => {
     }!<br /><a id="showChangePassword">Change Password</a> or <a id="logout">Log Out</a>`;
   }
 
-  const { message } = options;
+  const message = options?.message;
 
   buildView("home", {
     header: {

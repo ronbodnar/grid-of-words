@@ -41,7 +41,7 @@ const generateNewGame = async (wordLength, maxAttempts, authenticatedUser) => {
 
   const validMaxAttempts =
     MINIMUM_MAX_ATTEMPTS <= maxAttempts && maxAttempts <= MAXIMUM_MAX_ATTEMPTS;
-  if (validMaxAttempts) {
+  if (!validMaxAttempts) {
     return new ValidationError("Invalid max attempts", {
       maxAttempts: maxAttempts,
     });

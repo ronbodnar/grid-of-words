@@ -42,6 +42,8 @@ export const startGame = async (options = {}) => {
       throw new Error("Failed to fetch a new game");
     }
 
+    clearAttemptLetters();
+    
     showView("game", {
       wordLength: wordLength || DEFAULT_WORD_LENGTH,
       maxAttempts: maxAttempts || DEFAULT_MAX_ATTEMPTS,
@@ -91,8 +93,6 @@ export const forfeitGame = async () => {
     toggleKeyboardOverlay();
     return;
   }
-
-  clearAttemptLetters();
   removeSession("game");
   showView("home");
 

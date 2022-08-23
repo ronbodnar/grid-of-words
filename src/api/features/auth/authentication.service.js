@@ -5,7 +5,7 @@ import { User, userRepository } from "../user/index.js";
 import { setCookie } from "../../shared/helpers.js";
 
 export const authenticate = async (email, password) => {
-  const dbUser = await userRepository.findBy('email', email);
+  const dbUser = await userRepository.findBy("email", email);
   if (!dbUser) {
     return false;
   }
@@ -23,7 +23,11 @@ export const authenticate = async (email, password) => {
     hashedPass: hashedPassword,
   });
 
-  // We 
+  // Remove sensitive information from the returned user object.
+  delete dbUser.hash;
+  delete dbUser.passwordResetToken;
+  delete dbUser.passwordResetTokenExpiration;
+
   if (hashedPassword === userHash) {
     return dbUser;
   } else {
@@ -31,32 +35,8 @@ export const authenticate = async (email, password) => {
   }
 };
 
-export const setTokenCookie = (res, payload) => {
-  // Make sure we received a payload.
-  if (!payload) {
-    logger.error("No payload provided to setTokenCookie");
-    return null;
-  }
-
-  // Generate the JWT from the payload.
-  const jwt = generateToken(payload);
-  if (!jwt) {
-    logger.warn("No JWT provided to setTokenCookie");
-    return null;
-  }
-
-  // Delete the user's hash (password) from the cookie payload
-  if (payload.user?.hash) {
-    delete payload.user?.hash;
-  }
-
-  const maxAge = 1000 * 60 * 60 * 24 * 15;
-  setCookie(res, "token", jwt, maxAge);
-  return jwt;
-};
-
 export const setApiKeyCookie = (res) => {
-  const apiKeyToken = generateToken(process.env.API_KEY, "30d");
+  const apiKeyToken = generateJWT(process.env.API_KEY, "30d");
   setCookie(res, "apiKey", apiKeyToken);
 };
 
@@ -91,22 +71,21 @@ export const hashPassword = (password, salt, algorithm = "sha256") => {
  * Generates a JSON Web Token for the given user.
  *
  * @param {Object} payload - The user object containing user details.
- * @param {string} expiresIn - The expiration time of the token. (default: '15d')
- * @returns {string} The generated token.
+ * @param {string | number} expiresIn - The expiration time of the token. (default: '15d')
+ * @returns {string | null} The generated token.
  */
-export const generateToken = (payload, expiresIn = "15d") => {
+export const generateJWT = (payload, expiresIn = "15d") => {
   if (!payload) {
     logger.error("No payload provided to generateToken", {
-      payload: payload
-    })
-    return;
+      payload: payload,
+    });
+    return null;
   }
-  // Remove the hash property from the user object so it doesn't get included in the payload.
+
   if (payload.data?.hash) {
     delete payload.data.hash;
   }
 
-  // Sign the payload with the JWT_SECRET and set the expiration time to 15 days.
   const token = jwt.sign(
     {
       data: payload,
@@ -125,7 +104,6 @@ export const generateToken = (payload, expiresIn = "15d") => {
  */
 export const verifyToken = (token) => {
   if (!token) {
-    logger.warn("no token");
     return null;
   }
   try {
@@ -144,22 +122,13 @@ export const verifyToken = (token) => {
  * @returns The user from the payload if present, otherwise undefined.
  */
 export const getAuthenticatedUser = (token) => {
-  // Check if the token is present in the cookies.
   if (!token) {
     return null;
   }
-
-  // Decode token to get the payload.
   const decodedPayload = verifyToken(token);
-  
-  // Validate the presence of a user object within the token's payload.
   if (!decodedPayload?.data) {
     return null;
   }
-
-  console.log("getAuthenticatedUser", decodedPayload.data);
   const user = new User().fromJSON(decodedPayload.data);
-
-  // Return the user object from the decoded payload.
   return user;
 };

@@ -35,11 +35,12 @@ const generateNewGame = async (req, res, next) => {
  * Endpoint: POST /game/{id}/attempt
  */
 const addAttempt = async (req, res, next) => {
+  console.log(req.body, req.params, req.query);
   const authToken = req.cookies.token;
-  const { 
-    word, gameId
-  } = req.body;
+  const gameId = req.params.id;
+  const word = req.body.word;
   
+  console.log(word, gameId);
   if (!word || !gameId) {
     return next(new ValidationError("MISSING_WORD_OR_GAME_ID"));
   }

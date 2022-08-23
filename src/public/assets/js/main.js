@@ -78,7 +78,7 @@ showView("loading");
 
     // Add the reset token to the session (how bad is this?) and swap to the reset password view.
     storeSession("passwordResetToken", tokenParam);
-    showView("reset-password");
+    showView("resetPassword");
   } else {
     const game = retrieveSession("game");
     if (!game) {
