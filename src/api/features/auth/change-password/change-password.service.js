@@ -1,9 +1,8 @@
 import { authService } from "../index.js";
-import { UnauthorizedError } from "../../../errors/UnauthorizedError.js";
-import { ValidationError } from "../../../errors/ValidationError.js";
+import { UnauthorizedError } from "../../../errors/index.js";
 import userRepository from "../../user/user.repository.js";
 
-const changePassword = async (newPassword, currentPassword, authToken) => {
+export const changePassword = async (newPassword, currentPassword, authToken) => {
   if (newPassword === currentPassword) {
     return new ValidationError(
       "New password cannot be the same as the current password."
@@ -57,8 +56,4 @@ const changePassword = async (newPassword, currentPassword, authToken) => {
     status: "success",
     message: "Password changed successfully.",
   };
-};
-
-export default {
-  changePassword,
 };

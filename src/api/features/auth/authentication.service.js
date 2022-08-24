@@ -1,44 +1,7 @@
 import crypto from "node:crypto";
 import jwt from "jsonwebtoken";
-import logger from "../../config/winston.config.js";
-import { User, userRepository } from "../user/index.js";
-import { setCookie } from "../../shared/helpers.js";
-
-export const authenticate = async (email, password) => {
-  const dbUser = await userRepository.findBy("email", email);
-  if (!dbUser) {
-    return false;
-  }
-
-  const salt = dbUser.getSalt();
-  const userHash = dbUser.getHash();
-
-  // Hash the password with the user's salt (first 16 bytes/32 hex chars are the salt)
-  const hashedPassword = hashPassword(password, salt);
-
-  logger.debug("Authentication Request received", {
-    dbUserHashValue: dbUser.hash,
-    salt: salt,
-    userHash: userHash,
-    hashedPass: hashedPassword,
-  });
-
-  // Remove sensitive information from the returned user object.
-  delete dbUser.hash;
-  delete dbUser.passwordResetToken;
-  delete dbUser.passwordResetTokenExpiration;
-
-  if (hashedPassword === userHash) {
-    return dbUser;
-  } else {
-    return null;
-  }
-};
-
-export const setApiKeyCookie = (res) => {
-  const apiKeyToken = generateJWT(process.env.API_KEY, "30d");
-  setCookie(res, "apiKey", apiKeyToken);
-};
+import { User } from "../user/index.js";
+import { ValidationError } from "../../errors/index.js";
 
 /**
  * Generates a random salt string.
@@ -76,19 +39,18 @@ export const hashPassword = (password, salt, algorithm = "sha256") => {
  */
 export const generateJWT = (payload, expiresIn = "15d") => {
   if (!payload) {
-    logger.error("No payload provided to generateToken", {
-      payload: payload,
-    });
-    return null;
+    return new ValidationError("No payload provided to generateJWT", { payload: payload });
   }
 
-  if (payload.data?.hash) {
-    delete payload.data.hash;
+  const { data } = payload;
+
+  if (data?.hash) {
+    delete data.hash;
   }
 
   const token = jwt.sign(
     {
-      data: payload,
+      data: payload, // sign the whole payload, not just the payload data
     },
     process.env.JWT_SECRET,
     { expiresIn: expiresIn }
@@ -97,18 +59,17 @@ export const generateJWT = (payload, expiresIn = "15d") => {
 };
 
 /**
- * Verifies a JSON Web Token and decodes it.
+ * Verifies the JSON Web Token using the secret key to decode the payload.
  *
  * @param {string} token - The JWT to verify.
  * @returns {Object|undefined} The decoded token if verification is successful, otherwise undefined.
  */
-export const verifyToken = (token) => {
+export const verifyJWT = (token) => {
   if (!token) {
     return null;
   }
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    return decoded;
+    return jwt.verify(token, process.env.JWT_SECRET);
   } catch (error) {
     return null;
   }
@@ -125,7 +86,7 @@ export const getAuthenticatedUser = (token) => {
   if (!token) {
     return null;
   }
-  const decodedPayload = verifyToken(token);
+  const decodedPayload = verifyJWT(token);
   if (!decodedPayload?.data) {
     return null;
   }

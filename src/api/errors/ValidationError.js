@@ -1,7 +1,9 @@
 import BaseError from "./BaseError.js";
 
-export class ValidationError extends BaseError {
+class ValidationError extends BaseError {
     constructor(message, data) {
         super(message, data);
     }
 }
+
+export default ValidationError;

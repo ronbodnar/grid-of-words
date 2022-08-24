@@ -37,7 +37,6 @@ export const submitLoginForm = async () => {
   };
 
   const successFn = (response) => {
-    console.log(response);
     if (response?.user) {
       storeSession("user", response.user);
       showView("home", {

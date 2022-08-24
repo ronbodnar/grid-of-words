@@ -1,8 +1,8 @@
 const GameState = Object.freeze({
-    STARTED: 'started',
-    FORFEIT: 'forfeit',
-    WINNER: 'winner',
-    LOSER: 'loser',
+    IN_PROGRESS: 'IN PROGRESS',
+    ABANDONED: 'ABANDONED',
+    WINNER: 'WINNER',
+    LOSER: 'LOSER',
 });
 
 export default GameState;

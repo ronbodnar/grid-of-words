@@ -1,5 +1,5 @@
 import logger from "../../../config/winston.config.js";
-import { ValidationError } from "../../../errors/ValidationError.js";
+import { ValidationError } from "../../../errors/index.js";
 import { EMAIL_REGEX } from "../../../shared/constants.js";
 import { resetPasswordEmail } from "../../email/index.js";
 import { userRepository } from "../../user/index.js";
@@ -11,7 +11,7 @@ import { authService } from "../index.js";
  * @param {string} email The email address that potentially belongs to a user account.
  * @returns {Promise<object | ValidationError>} A promise that resolves to an object with a success message or a ValidationError.
  */
-const forgotPassword = async (email) => {
+export const forgotPassword = async (email) => {
   const successResponse = {
     statusCode: 200,
     message:
@@ -26,9 +26,6 @@ const forgotPassword = async (email) => {
 
   const dbUser = await userRepository.findBy("email", email);
   if (!dbUser) {
-    logger.debug("Trying to reset password for invalid email address", {
-      email: email,
-    });
     return successResponse;
   }
 
@@ -58,8 +55,4 @@ const forgotPassword = async (email) => {
   }
 
   return successResponse;
-};
-
-export default {
-  forgotPassword,
 };

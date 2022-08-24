@@ -19,7 +19,7 @@ const errorHandler = (err, req, res, next) => {
   });
 
   // Send the error response to the client.
-  res.status(err.statusCode).json({
+  return res.status(err.statusCode).json({
     message: message,
     statusCode: statusCode,
     stack: process.env.NODE_ENV === "development" ? stack : undefined,

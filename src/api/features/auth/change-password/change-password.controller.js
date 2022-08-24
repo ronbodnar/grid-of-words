@@ -1,8 +1,7 @@
-import { InternalError } from "../../../errors/InternalError.js";
-import { ValidationError } from "../../../errors/ValidationError.js";
+import { InternalError, ValidationError } from "../../../errors/index.js";
 import changePasswordService from "./change-password.service.js";
 
-const changePassword = async (req, res, next) => {
+export const changePassword = async (req, res, next) => {
   const authToken = req.cookies.token;
   const { currentPassword, newPassword } = req.body;
 
@@ -27,8 +26,4 @@ const changePassword = async (req, res, next) => {
 
   res.clearCookie("token");
   res.json(changePasswordResult);
-};
-
-export default {
-  changePassword,
 };

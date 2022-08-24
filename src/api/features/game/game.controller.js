@@ -3,23 +3,29 @@ import {
   DEFAULT_WORD_LENGTH,
 } from "../../shared/constants.js";
 import { setCookie } from "../../shared/helpers.js";
-import { InternalError } from "../../errors/InternalError.js";
-import { ValidationError } from "../../errors/ValidationError.js";
+import {
+  NotFoundError,
+  InternalError,
+  ValidationError,
+} from "../../errors/index.js";
 import { Game, gameService } from "./index.js";
-import { getAuthenticatedUser } from "../auth/authentication.service.js";
-import { NotFoundError } from "../../errors/NotFoundError.js";
+import { authService } from "../auth/index.js";
 
 /**
  * Generates a new game with optional wordLength and maxAttempts params and adds the game to the user's cookies if successful.
  *
  * Endpoint: GET /game/new
  */
-const generateNewGame = async (req, res, next) => {
+export const generateNewGame = async (req, res, next) => {
   const wordLength = parseInt(req.query.wordLength) || DEFAULT_WORD_LENGTH;
   const maxAttempts = parseInt(req.query.maxAttempts) || DEFAULT_MAX_ATTEMPTS;
-  const authenticatedUser = getAuthenticatedUser(req.cookies.token);
+  const authenticatedUser = authService.getAuthenticatedUser(req.cookies.token);
 
-  const newGame = await gameService.generateNewGame(wordLength, maxAttempts, authenticatedUser);
+  const newGame = await gameService.generateNewGame(
+    wordLength,
+    maxAttempts,
+    authenticatedUser
+  );
   if (newGame instanceof Error) {
     return next(newGame);
   }
@@ -34,12 +40,12 @@ const generateNewGame = async (req, res, next) => {
  *
  * Endpoint: POST /game/{id}/attempt
  */
-const addAttempt = async (req, res, next) => {
+export const addAttempt = async (req, res, next) => {
   console.log(req.body, req.params, req.query);
   const authToken = req.cookies.token;
   const gameId = req.params.id;
   const word = req.body.word;
-  
+
   console.log(word, gameId);
   if (!word || !gameId) {
     return next(new ValidationError("MISSING_WORD_OR_GAME_ID"));
@@ -77,7 +83,7 @@ const addAttempt = async (req, res, next) => {
  *
  * Endpoint: GET /game/{id}
  */
-const getGameById = async (req, res, next) => {
+export const getGameById = async (req, res, next) => {
   const gameId = req.params.id;
   if (!gameId) {
     return next(new ValidationError("Missing id parameter"));
@@ -86,37 +92,30 @@ const getGameById = async (req, res, next) => {
 };
 
 /**
- * Forfeits the specified game and clears the game session.
+ * Abandons the specified game and clears the game session.
  *
- * Endpoint: POST /game/{id}/forfeit
+ * Endpoint: POST /game/{id}/abandon
  */
-const forfeitGameById = async (req, res, next) => {
+export const abandonGameById = async (req, res, next) => {
   const gameId = req.params.id;
   if (!gameId) {
     return next(new ValidationError("Missing id parameter"));
   }
 
-  const forfeitResult = gameService.forfeitGame(gameId);
-  if (!forfeitResult) {
-    const error = new InternalError("Failed to retrieve forfeit response", {
+  const abandonResult = gameService.abandonGame(gameId);
+  if (!abandonResult) {
+    const error = new InternalError("Failed to retrieve abandon response", {
       gameId: gameId,
-      forfeitResponse: forfeitResult,
+      abandonResponse: abandonResult,
     });
     return next(error);
   }
 
-  if (forfeitResult instanceof Error) {
-    return next(forfeitResult);
+  if (abandonResult instanceof Error) {
+    return next(abandonResult);
   }
 
   res.clearCookie("game");
 
-  return res.json(forfeitResult);
+  return res.json(abandonResult);
 };
-
-export default {
-  generateNewGame,
-  addAttempt,
-  getGameById,
-  forfeitGameById,
-}

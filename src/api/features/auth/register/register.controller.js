@@ -1,5 +1,4 @@
-import { InternalError } from "../../../errors/InternalError.js";
-import { ValidationError } from "../../../errors/ValidationError.js";
+import { InternalError, ValidationError } from "../../../errors/index.js";
 import { registerService } from "./index.js";
 
 export const register = async (req, res, next) => {
@@ -29,5 +28,3 @@ export const register = async (req, res, next) => {
   }
   return res.json(registerResult);
 };
-
-export default { register };

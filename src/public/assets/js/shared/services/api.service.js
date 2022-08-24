@@ -38,7 +38,7 @@ export const fetchData = async (
   try {
     // Inject the query parameters into the url if the request is a GET request.
     const encodedParams = new URLSearchParams(params);
-    if (method === "GET") {
+    if (method === "GET" && encodedParams.size > 0) {
       url = `${url}?${encodedParams.toString()}`;
     }
 
@@ -55,13 +55,13 @@ export const fetchData = async (
     clearTimeout(timeout);
 
     const data = !fetchResponse
-      ? undefined
+      ? {}
       : await fetchResponse.json().catch((err) => {
           logger.error(`Error parsing JSON response from ${url}: ${err}`);
-          return null;
+          return {};
         });
 
-    if (fetchResponse && data.statusCode !== fetchResponse.status) {
+    if (fetchResponse && !data?.statusCode) {
       data.statusCode = fetchResponse.status;
     }
 
@@ -102,7 +102,9 @@ export const fetchWordList = async (length) => {
     .then((response) => {
       localWordList[length] = response;
       storeLocal("wordList", localWordList);
-      logger.info(`Stored ${response.length} ${length} letter words in local storage.`);
+      logger.info(
+        `Stored ${response.length} ${length} letter words in local storage.`
+      );
     })
     .catch((error) => logger.error("Error fetching word list", error));
 };

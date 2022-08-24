@@ -14,3 +14,12 @@ export const setCookie = (res, name, value, maxAge = 1000 * 60 * 60 * 24 * 30) =
     sameSite: "strict",
   });
 };
+
+/**
+ * Adds the API key as an HTTPOnly cookie to the response object.
+ * @param {Response} res The Express {@link Response} object. 
+ */
+export const setApiKeyCookie = (res) => {
+  const apiKeyToken = generateJWT(process.env.API_KEY, "30d");
+  setCookie(res, "apiKey", apiKeyToken);
+};

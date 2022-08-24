@@ -67,36 +67,36 @@ export const startGame = async (options = {}) => {
 };
 
 /**
- * Forfeits the current game by sending a request to the server and updating the UI.
+ * Abandons the current game by sending a request to the server and updating the UI.
  * 
  * @async
- * @returns {Object|undefined} The response from the server if the game was forfeited successfully, or `undefined` if there was an error.
+ * @returns {Object|undefined} The response from the server if the game was abandoned successfully, or `undefined` if there was an error.
  */
-export const forfeitGame = async () => {
+export const abandonGame = async () => {
   const game = retrieveSession("game");
 
-  showMessage("Forfeiting game - please wait.");
+  showMessage("Abandoning game - please wait.");
   toggleKeyboardOverlay();
 
-  const forfeitGameResponse = await fetchData(
-    `/game/${game._id}/forfeit`,
+  const abandonGameResponse = await fetchData(
+    `/game/${game._id}/abandon`,
     "POST"
   );
 
   // TODO: Should we even display errors (potentially blocking users from returning home)?
-  if (!forfeitGameResponse || forfeitGameResponse.statusCode !== 200) {
-    logger.error("Failed to forfeit game", {
+  if (!abandonGameResponse || abandonGameResponse.statusCode !== 200) {
+    logger.error("Failed to abandon game", {
       game: game,
-      forfeitGameResponse: forfeitGameResponse,
+      abandonGameResponse: abandonGameResponse,
     });
-    showMessage("Failed to forfeit game");
+    showMessage("Failed to abandon game");
     toggleKeyboardOverlay();
     return;
   }
   removeSession("game");
   showView("home");
 
-  return forfeitGameResponse;
+  return abandonGameResponse;
 };
 
 let currentGame;

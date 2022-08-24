@@ -1,7 +1,7 @@
 /**
  * Handles the logout process by clearing the `token` cookie in the response object.
  */
-const logout = (req, res, next) => {
+export const logout = (req, res, next) => {
   try {
     res.clearCookie("token");
     res.json({
@@ -11,8 +11,4 @@ const logout = (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
-
-export default {
-  logout,
 };

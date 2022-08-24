@@ -34,6 +34,13 @@ export const submitResetPasswordForm = async () => {
     return;
   }
 
+  if (newPasswordInput.length < 8) {
+    showMessage("Passwords must be at least 8 character long.", {
+      className: "error",
+    });
+    return;
+  }
+
   const params = {
     passwordResetToken: passwordResetToken,
     newPassword: newPasswordInput.value,

@@ -1,6 +1,4 @@
-import { InternalError } from "../../../errors/InternalError.js";
-import { UnauthorizedError } from "../../../errors/UnauthorizedError.js";
-import { ValidationError } from "../../../errors/ValidationError.js";
+import { InternalError, UnauthorizedError, ValidationError } from "../../../errors/index.js";
 import { setCookie } from "../../../shared/helpers.js";
 import loginService from "./login.service.js";
 
@@ -9,7 +7,7 @@ import loginService from "./login.service.js";
  *
  * Endpoint: /auth/login
  */
-const login = async (req, res, next) => {
+export const login = async (req, res, next) => {
   const { email, password } = req.body;
   const authToken = req.cookies.token;
 
@@ -50,8 +48,4 @@ const login = async (req, res, next) => {
   delete loginResult.token;
 
   return res.json(loginResult);
-};
-
-export default {
-  login,
 };

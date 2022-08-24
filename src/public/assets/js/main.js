@@ -20,9 +20,9 @@ addKeyListeners();
 // Show the loading view while we fetch session data from the server.
 showView("loading");
 
+// Fetch the session data from the server.
 (async () => {
-  // Fetch the session data from the server.
-  const sessionResponse = await fetchData("/auth/session");
+  const sessionResponse = await fetchData("/session");
 
   loggerInstance.debug("Session Data", sessionResponse);
 
@@ -50,7 +50,7 @@ showView("loading");
     }
   }
 
-  // Fetch the word list in the background
+  // Fetch the word list in the background if it doesn't exist.
   fetchWordList(DEFAULT_WORD_LENGTH);
 })();
 
@@ -66,10 +66,10 @@ showView("loading");
     // Validate the passwordResetToken
     const validateTokenResponse = await validateResetToken(tokenParam);
     if (!validateTokenResponse || validateTokenResponse.statusCode !== 200) {
-      showView("forgot-password", {
-        message:
-          validateTokenResponse.message ||
-          "The password reset token is invalid. Please request a new token.",
+      showView("forgotPassword", {
+        message: 
+            validateTokenResponse?.message ||
+            "The password reset token is invalid. Please request a new token.",
         className: "error",
         hide: false,
       });

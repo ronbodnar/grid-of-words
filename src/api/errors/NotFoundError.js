@@ -1,7 +1,10 @@
+import e from "express";
 import BaseError from "./BaseError.js";
 
-export class NotFoundError extends BaseError {
+class NotFoundError extends BaseError {
     constructor(message, data) {
         super(message, data);
     }
 }
+
+export default NotFoundError;

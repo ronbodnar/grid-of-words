@@ -1,5 +1,6 @@
 import logger from "../../config/winston.config.js";
 import transporter from "../../config/email.config.js";
+import { send as sendPasswordResetEmail } from "./reset-password/index.js";
 
 /**
  * Uses Nodemailer to send an email with the default transporter settings.
@@ -9,7 +10,7 @@ import transporter from "../../config/email.config.js";
  * @param {string} html The HTML version of the email (if HTML is available).
  * @returns {Promise<boolean>} A promise that resolves to the outcome of the send operation: true or false.
  */
-const sendEmail = async (to, subject, text, html) => {
+export const sendEmail = async (to, subject, text, html) => {
   const options = {
     from: `"${process.env.SMTP_FROM}" <${process.env.SMTP_USER}>`,
     to: to,
@@ -45,6 +46,4 @@ const sendEmail = async (to, subject, text, html) => {
   return true;
 };
 
-export default {
-  sendEmail,
-}
+export { sendPasswordResetEmail };

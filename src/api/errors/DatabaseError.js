@@ -1,7 +1,9 @@
 import BaseError from "./BaseError.js";
 
-export class DatabaseError extends BaseError {
+class DatabaseError extends BaseError {
   constructor(message, data) {
     super(message, data);
   }
 }
+
+export default DatabaseError;

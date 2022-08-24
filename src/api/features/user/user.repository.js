@@ -10,7 +10,7 @@ import { User } from "./index.js";
  * @param {any} value The value of the property to match.
  * @returns {Promise<User | null>} A promise that resolves to the User if successful.
  */
-const findBy = async (name, value) => {
+export const findUserBy = async (name, value) => {
   // Validate the name and value of the property were passed.
   if (!name || !value) {
     logger.error("Invalid property name or value passed to User findBy", {
@@ -29,7 +29,7 @@ const findBy = async (name, value) => {
   });
 
   if (!result) {
-    logger.error("User not found by property", {
+    logger.warn("User not found by property", {
       prop: name,
       value: value,
     });
@@ -44,7 +44,7 @@ const findBy = async (name, value) => {
  * @param {User} user The user object to save to the database.
  * @returns {Promise<User | null>} A promise that resolves to the User if successful.
  */
-const saveUser = async (user) => {
+export const saveUser = async (user) => {
   if (!user) {
     logger.error("Missing user object passed to saveUser", {
       user: user,
@@ -77,7 +77,7 @@ const saveUser = async (user) => {
  * @param {User} user The User object to insert into the database.
  * @returns {Promise<InsertOneResult | null>} A promise that resolves to the insertion result if successful.
  */
-const insertUser = async (user) => {
+export const insertUser = async (user) => {
   if (!user) return null;
   try {
     const result = await database.getCollection("users").insertOne(user);
@@ -101,14 +101,7 @@ const insertUser = async (user) => {
   }
 };
 
-const findAll = async (req, res, next) => {
+export const findAll = async (req, res, next) => {
   const users = await database.getUserCollection().find().toArray();
   res.json(users);
-};
-
-export default {
-  findBy,
-  saveUser,
-  insertUser,
-  findAll,
 };

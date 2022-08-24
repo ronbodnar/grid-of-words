@@ -1,10 +1,9 @@
 import logger from "../../../config/winston.config.js";
-import { InternalError } from "../../../errors/InternalError.js";
-import { ValidationError } from "../../../errors/ValidationError.js";
+import { InternalError, ValidationError } from "../../../errors/index.js";
 import { EMAIL_REGEX, USERNAME_REGEX } from "../../../shared/constants.js";
 import { User, userRepository } from "../../user/index.js";
 
-const register = async (username, email, password) => {
+export const register = async (username, email, password) => {
   if (!USERNAME_REGEX.test(username)) {
     return new ValidationError(
       "Username must be 3-16 characters long.\r\nNo symbols other than - and _ allowed."
@@ -43,5 +42,3 @@ const register = async (username, email, password) => {
     message: "Registration successful",
   };
 };
-
-export default { register };

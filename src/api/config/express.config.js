@@ -35,7 +35,7 @@ app.use("/", routes);
 app.use(errorHandler);
 
 app.use("*", function (req, res) {
-  logger.info(`Request received at: ${req.url}`);
+  logger.info(`Incoming request from ${req.socket.localAddress}: ${req.url}`);
 });
 
 export default app;

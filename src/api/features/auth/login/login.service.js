@@ -1,7 +1,6 @@
-import { InternalError } from "../../../errors/InternalError.js";
-import { UnauthorizedError } from "../../../errors/UnauthorizedError.js";
-import { ValidationError } from "../../../errors/ValidationError.js";
-import { generateJWT } from "../authentication.service.js";
+import logger from "../../../config/winston.config.js";
+import { InternalError, UnauthorizedError, ValidationError } from "../../../errors/index.js";
+import { userRepository } from "../../user/index.js";
 import { authService } from "../index.js";
 
 /**
@@ -10,17 +9,17 @@ import { authService } from "../index.js";
  * @param {string} password The password for the login request.
  * @returns {Promise<object | ValidationError | UnauthorizedError | InternalError>} A promise that resolves to an object containing a success status and message, the authenticated user, and the generated JWT, or an Error.
  */
-const login = async (email, password) => {
+export const login = async (email, password) => {
   if (!email || !password) {
     throw new ValidationError("Email and password are required.");
   }
 
-  const authenticatedUser = await authService.authenticate(email, password);
+  const authenticatedUser = await authenticate(email, password);
   if (!authenticatedUser) {
     return new UnauthorizedError("Invalid email or password.");
   }
 
-  const jwt = generateJWT(authenticatedUser);
+  const jwt = authService.generateJWT(authenticatedUser);
   if (!jwt) {
     return new InternalError("Failed to generate JWT");
   }
@@ -33,6 +32,26 @@ const login = async (email, password) => {
   };
 };
 
-export default {
-  login,
+const authenticate = async (email, password) => {
+  const dbUser = await userRepository.findBy("email", email);
+  if (!dbUser) {
+    return false;
+  }
+
+  const salt = dbUser.getSalt();
+  const userHash = dbUser.getHash();
+
+  // Hash the password with the user's salt (first 16 bytes/32 hex chars are the salt)
+  const hashedPassword = authService.hashPassword(password, salt);
+
+  // Remove sensitive information from the returned user object.
+  delete dbUser.hash;
+  delete dbUser.passwordResetToken;
+  delete dbUser.passwordResetTokenExpiration;
+
+  if (hashedPassword === userHash) {
+    return dbUser;
+  } else {
+    return null;
+  }
 };
