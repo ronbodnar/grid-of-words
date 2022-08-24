@@ -1,11 +1,14 @@
 import express from "express";
-
-import { gameController } from "./index.js";
+import {
+  handleAbandonGameById,
+  handleAddAttempt,
+  handleGenerateNewGame,
+  handleGetGameById,
+} from "./game.controller.js";
 
 export const router = express.Router();
 
-// Set up /game routes.
-router.route("/new").get(gameController.generateNewGame);
-router.route("/:id").get(gameController.getGameById);
-router.route("/:id/abandon").post(gameController.abandonGameById);
-router.route("/:id/attempt").post(gameController.addAttempt);
+router.route("/new").get(handleGenerateNewGame);
+router.route("/:id").get(handleGetGameById);
+router.route("/:id/abandon").post(handleAbandonGameById);
+router.route("/:id/attempt").post(handleAddAttempt);

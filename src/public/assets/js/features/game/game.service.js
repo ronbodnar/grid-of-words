@@ -12,7 +12,6 @@ import { toggleKeyboardOverlay } from "../keyboard/keyboard.service.js";
 import { showMessage } from "../../shared/services/message.service.js";
 import { fetchData } from "../../shared/services/api.service.js";
 import { logger } from "../../main.js";
-import { Game } from "./Game.js";
 import { clearAttemptLetters } from "../attempts/attempt.service.js";
 
 /**

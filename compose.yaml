@@ -1,34 +1,16 @@
+version: '0.5'
+
 services:
-  api:
+  app:
+    container_name: word-puzzle-game
     build:
       context: .
-      target: dev
+      dockerfile: Dockerfile
     environment:
       NODE_ENV: development
+      MONGO_URI: ${MONGO_URI}
     ports:
-      - 3000:3000
-#    depends_on:
-#      db:
-#       condition: service_healthy
-#    volumes:
-#      - ./src:/usr/src/app/src
-#  db:
-#    image: mysql
-#    restart: always
-#   volumes:
-#      - db-data:/var/lib/mysql
-#    env_file:
-#      - development.env
-#    environment:
-#      - MYSQL_ROOT_PASSWORD=${DB_PASS}
-#      - MYSQL_DATABASE=${DB_NAME}
-#      - MYSQL_TCP_PORT=${DB_PORT}
-#    expose:
-#      - 3306:3306
-#    healthcheck:
-#      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-#      interval: 10s
-#      timeout: 5s
-#      retries: 5
-#volumes:
-#  db-data:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules

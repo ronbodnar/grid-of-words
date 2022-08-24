@@ -1,13 +1,13 @@
-import { ValidationError } from "../../../errors/index.js";
-import { validateTokenService } from "./index.js";
+import ValidationError from "../../../errors/ValidationError.js";
+import { validatePasswordResetToken } from "./validate.token.service.js";
 
-export const validatePasswordResetToken = async (req, res, next) => {
+export const handleValidatePasswordResetToken = async (req, res, next) => {
   const { passwordResetToken } = req.body;
   if (!passwordResetToken) {
     return next(new ValidationError("Missing password reset token."));
   }
 
-  const validTokenResult = await validateTokenService.validatePasswordResetToken(passwordResetToken);
+  const validTokenResult = await validatePasswordResetToken(passwordResetToken);
   if (!validTokenResult) {
     return next(new ValidationError("Unexpected error obtaining password reset token result"));
   }

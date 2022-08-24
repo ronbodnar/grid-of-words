@@ -1,10 +1,10 @@
 import { setApiKeyCookie } from "../../shared/helpers.js";
-import sessionService from "./session.service.js";
+import { getSessionData } from "./session.service.js";
 
 /**
  * Extract session data from cookies sent in the request.
  */
-export const getSessionData = (req, res, next) => {
+export const handleGetSessionData = (req, res, next) => {
   const { apiKey } = req.cookies;
 
   // Provide an API key to the user as an HttpOnly cookie.
@@ -12,9 +12,17 @@ export const getSessionData = (req, res, next) => {
     setApiKeyCookie(res);
   }
 
-  const sessionData = sessionService.getSessionData(req.cookies);
+  const sessionData = getSessionData(req.cookies);
   if (sessionData instanceof Error) {
     return next(sessionData);
   }
-  res.json(sessionData ? sessionData : {});
+
+  if (!sessionData.game) {
+    res.clearCookie("game");
+  }
+  if (!sessionData.user) {
+    res.clearCookie("token");
+  }
+
+  return res.json(sessionData ? sessionData : {});
 };

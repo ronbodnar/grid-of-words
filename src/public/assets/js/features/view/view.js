@@ -2,7 +2,6 @@ import { showMessage } from "../../shared/services/message.service.js";
 import { APP_NAME } from "../../shared/utils/constants.js";
 import { createNavigationButton } from "./navigation-button.js";
 import { createText } from "../../shared/components/text.js";
-import { logger } from "../../main.js";
 
 /**
  * Clears the content container and builds a standard view with specified additional elements and options.

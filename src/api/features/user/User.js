@@ -1,6 +1,5 @@
-import { authService } from "../auth/index.js";
-import { userRepository } from "./index.js";
-
+import { generateSalt, hashPassword } from "../auth/authentication.service.js";
+import { saveUser } from "../user/user.repository.js";
 class User {
   _id = undefined;
   username = undefined;
@@ -12,10 +11,10 @@ class User {
 
   constructor(email, username, password) {
     if (!email) return this;
-    const salt = authService.generateSalt();
+    const salt = generateSalt();
     this.email = email;
     this.username = username;
-    this.hash = salt + authService.hashPassword(password, salt);
+    this.hash = salt + hashPassword(password, salt);
     this.enabled = true;
     this.creationDate = new Date();
     return this;
@@ -37,7 +36,7 @@ class User {
   }
 
   async save() {
-    return userRepository.saveUser(this);
+    return saveUser(this);
   }
 
   getSalt() {

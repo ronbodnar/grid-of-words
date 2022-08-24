@@ -1,14 +1,14 @@
-import { UnauthorizedError } from "../../../errors/index.js";
-import userRepository from "../../user/user.repository.js";
+import UnauthorizedError from "../../../errors/UnauthorizedError.js";
+import { findUserBy } from "../../user/user.repository.js";
 
 /**
  * Validates a password reset token by checking the database for a match and then checking the token expiration date.
- * 
+ *
  * @param {*} passwordResetToken The password reset token that should be associated with a user.
  * @returns {Promise<true | UnauthorizedError>} A promise that resolves to `true` if the token is valid, or an UnauthorizedError.
  */
 export const validatePasswordResetToken = async (passwordResetToken) => {
-  const authenticatedUser = await userRepository.findBy(
+  const authenticatedUser = await findUserBy(
     "passwordResetToken",
     passwordResetToken
   );

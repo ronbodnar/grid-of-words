@@ -5,7 +5,9 @@ import logger from "../config/winston.config.js";
  */
 const errorHandler = (err, req, res, next) => {
   // The default error if an invalid error is encountered.
-  const defaultError = new Error("Something went wrong.");
+  const defaultError = new Error("Something went wrong.", {
+    error: err
+  });
 
   err = err || defaultError;
 

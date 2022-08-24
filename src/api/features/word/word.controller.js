@@ -1,6 +1,6 @@
-import { InternalError } from "../../errors/index.js";
-import { DEFAULT_WORD_LENGTH } from "../../shared/constants.js";
-import { wordService } from "./index.js";
+import InternalError from "../../errors/InternalError.js";
+import { DEFAULT_WORD_LENGTH } from "../../shared/constants.js"
+import { getWord, getWordList } from "./word.service.js";
 
 /**
  * Select a random word from the word table in the database.
@@ -9,10 +9,10 @@ import { wordService } from "./index.js";
  *
  * @returns {Promise<any>} A promise that resolves with a random word if successful.
  */
-export const getRandomWord = async (req, res, next) => {
+export const handleGetWord = async (req, res) => {
   const length = req.query.wordLength || DEFAULT_WORD_LENGTH;
 
-  const randomWord = await wordService.getWord(length);
+  const randomWord = await getWord(length);
   return res.json(randomWord);
 };
 
@@ -23,12 +23,14 @@ export const getRandomWord = async (req, res, next) => {
  *
  * @returns {Promise<Array | InternalError>} A promise that resolves to an Array of words with the specified length or an Error.
  */
-export const getWordList = async (req, res, next) => {
+export const handleGetWordList = async (req, res) => {
   try {
     const length = parseInt(req.query.length) || DEFAULT_WORD_LENGTH;
-    const wordList = await wordService.getWordList(length);
+    const wordList = await getWordList(length);
     return res.json(wordList);
   } catch (error) {
-    throw new InternalError("Failed to fetch word list");
+    throw new InternalError("Failed to fetch word list", {
+      error: error
+    });
   }
 };

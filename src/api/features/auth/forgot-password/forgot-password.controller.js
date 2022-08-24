@@ -1,12 +1,13 @@
-import { ValidationError } from "../../../errors/index.js";
+import ValidationError from "../../../errors/ValidationError.js";
+import { forgotPassword } from "./forgot-password.service.js";
 
-export const forgotPassword = async (req, res, next) => {
+export const handleForgotPassword = async (req, res, next) => {
   const email = req.body.email || "";
   if (!email) {
     return next(new ValidationError("Missing email."));
   }
 
-  const forgotPasswordResult = forgotPasswordService.forgotPassword(email);
+  const forgotPasswordResult = forgotPassword(email);
   if (forgotPasswordResult instanceof Error) {
     return next(forgotPasswordResult);
   }

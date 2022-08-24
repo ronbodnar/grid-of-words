@@ -1,7 +1,7 @@
 import express from "express";
-import { wordController } from "./index.js";
+import { handleGetWord, handleGetWordList } from "./word.controller.js";
 
 export const router = express.Router();
 
-router.route("/").get(wordController.getRandomWord);
-router.route("/list").get(wordController.getWordList);
+router.route("/").get(handleGetWord);
+router.route("/list").get(handleGetWordList);

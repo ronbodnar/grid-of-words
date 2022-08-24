@@ -3,55 +3,28 @@ import {
   DEFAULT_WORD_LENGTH,
 } from "../../shared/constants.js";
 import { setCookie } from "../../shared/helpers.js";
-import {
-  NotFoundError,
-  InternalError,
-  ValidationError,
-} from "../../errors/index.js";
-import { Game, gameService } from "./index.js";
-import { authService } from "../auth/index.js";
-
-/**
- * Generates a new game with optional wordLength and maxAttempts params and adds the game to the user's cookies if successful.
- *
- * Endpoint: GET /game/new
- */
-export const generateNewGame = async (req, res, next) => {
-  const wordLength = parseInt(req.query.wordLength) || DEFAULT_WORD_LENGTH;
-  const maxAttempts = parseInt(req.query.maxAttempts) || DEFAULT_MAX_ATTEMPTS;
-  const authenticatedUser = authService.getAuthenticatedUser(req.cookies.token);
-
-  const newGame = await gameService.generateNewGame(
-    wordLength,
-    maxAttempts,
-    authenticatedUser
-  );
-  if (newGame instanceof Error) {
-    return next(newGame);
-  }
-
-  setCookie(res, "game", newGame);
-
-  return res.json(newGame);
-};
+import InternalError from "../../errors/InternalError.js";
+import NotFoundError from "../../errors/NotFoundError.js";
+import ValidationError from "../../errors/ValidationError.js";
+import Game from "./Game.js";
+import { getAuthenticatedUser } from "../auth/authentication.service.js";
+import { abandonGameById, addAttempt, generateNewGame, getGameById } from "./game.service.js";
 
 /**
  * Attempts to solve the word puzzle.
  *
  * Endpoint: POST /game/{id}/attempt
  */
-export const addAttempt = async (req, res, next) => {
-  console.log(req.body, req.params, req.query);
+export const handleAddAttempt = async (req, res, next) => {
   const authToken = req.cookies.token;
   const gameId = req.params.id;
   const word = req.body.word;
 
-  console.log(word, gameId);
   if (!word || !gameId) {
     return next(new ValidationError("MISSING_WORD_OR_GAME_ID"));
   }
 
-  const attemptResult = await gameService.addAttempt(word, gameId, authToken);
+  const attemptResult = await addAttempt(word, gameId, authToken);
   if (attemptResult instanceof Error) {
     // Clear cookies when the user is attempting an invalid game.
     if (attemptResult instanceof NotFoundError) {
@@ -79,16 +52,40 @@ export const addAttempt = async (req, res, next) => {
 };
 
 /**
+ * Generates a new game with optional wordLength and maxAttempts params and adds the game to the user's cookies if successful.
+ *
+ * Endpoint: GET /game/new
+ */
+export const handleGenerateNewGame = async (req, res, next) => {
+  const wordLength = parseInt(req.query.wordLength) || DEFAULT_WORD_LENGTH;
+  const maxAttempts = parseInt(req.query.maxAttempts) || DEFAULT_MAX_ATTEMPTS;
+  const authenticatedUser = getAuthenticatedUser(req.cookies.token);
+
+  const newGame = await generateNewGame(
+    wordLength,
+    maxAttempts,
+    authenticatedUser
+  );
+  if (newGame instanceof Error) {
+    return next(newGame);
+  }
+
+  setCookie(res, "game", newGame);
+
+  return res.json(newGame);
+};
+
+/**
  * Retrieves a game object from the database.
  *
  * Endpoint: GET /game/{id}
  */
-export const getGameById = async (req, res, next) => {
+export const handleGetGameById = async (req, res, next) => {
   const gameId = req.params.id;
   if (!gameId) {
     return next(new ValidationError("Missing id parameter"));
   }
-  return res.json(gameService.getGame(gameId));
+  return res.json(getGameById(gameId));
 };
 
 /**
@@ -96,13 +93,13 @@ export const getGameById = async (req, res, next) => {
  *
  * Endpoint: POST /game/{id}/abandon
  */
-export const abandonGameById = async (req, res, next) => {
+export const handleAbandonGameById = async (req, res, next) => {
   const gameId = req.params.id;
   if (!gameId) {
     return next(new ValidationError("Missing id parameter"));
   }
 
-  const abandonResult = gameService.abandonGame(gameId);
+  const abandonResult = abandonGameById(gameId);
   if (!abandonResult) {
     const error = new InternalError("Failed to retrieve abandon response", {
       gameId: gameId,

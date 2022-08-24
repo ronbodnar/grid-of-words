@@ -1,6 +1,6 @@
-import { ValidationError } from "../../../errors/index.js";
+import ValidationError from "../../../errors/ValidationError.js";
 import { APP_NAME } from "../../../shared/constants.js";
-import { emailService } from "../index.js";
+import { sendEmail } from "../email.service.js";
 
 /**
  * Sends a password reset email with the `token` to the `User`'s email address.
@@ -25,7 +25,7 @@ export const send = async (user, token) => {
     username: user.username,
   };
 
-  return emailService.sendEmail(
+  return sendEmail(
     user.email,
     `Reset Your Password for ${APP_NAME}`,
     getText(fnOptions),

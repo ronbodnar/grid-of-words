@@ -1,6 +1,6 @@
 import { createButton } from "../../../shared/components/button.js";
-import { FormGroup } from "../../form/FormGroup.js";
-import { buildForm } from "../../form/form.js";
+import { FormGroup } from "../../formbuilder/FormGroup.js";
+import { buildForm } from "../../formbuilder/formbuilder.js";
 import { buildView } from "../../view/view.js";
 
 /**

@@ -9,14 +9,14 @@ let client;
  */
 const connect = async () => {
   try {
-    client = new MongoClient(process.env.MONGO_URL, {
+    client = new MongoClient(process.env.MONGO_URI, {
       tlsCertificateKeyFile: process.env.MONGO_CERT_PATH,
       serverApi: ServerApiVersion.v1,
     });
     await client.connect();
   } catch (error) {
     throw new DatabaseError("Couldn't connect to to MongoDB server", {
-      connectionUrl: process.env.MONGO_URL,
+      connectionUrl: process.env.MONGO_URI,
       error: error,
     });
   }

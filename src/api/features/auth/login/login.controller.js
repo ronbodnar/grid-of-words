@@ -1,13 +1,15 @@
-import { InternalError, UnauthorizedError, ValidationError } from "../../../errors/index.js";
 import { setCookie } from "../../../shared/helpers.js";
-import loginService from "./login.service.js";
+import InternalError from "../../../errors/InternalError.js";
+import UnauthorizedError from "../../../errors/UnauthorizedError.js";
+import ValidationError from "../../../errors/ValidationError.js";
+import { loginUser } from "./login.service.js";
 
 /**
  * Performs the login process for the email and password combination provided in the request.
  *
  * Endpoint: /auth/login
  */
-export const login = async (req, res, next) => {
+export const handleLoginUser = async (req, res, next) => {
   const { email, password } = req.body;
   const authToken = req.cookies.token;
 
@@ -23,16 +25,13 @@ export const login = async (req, res, next) => {
     );
   }
 
-  const loginResult = await loginService.login(email, password);
+  const loginResult = await loginUser(email, password);
   if (!loginResult) {
-    const error = new InternalError(
-      "Unexpected login result",
-      {
-        email: email,
-        password: password,
-        loginResult: loginResult,
-      }
-    );
+    const error = new InternalError("Unexpected login result", {
+      email: email,
+      password: password,
+      loginResult: loginResult,
+    });
     return next(error);
   }
 

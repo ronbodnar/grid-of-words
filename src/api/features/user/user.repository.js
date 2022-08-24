@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
 import logger from "../../config/winston.config.js";
 import database from "../../shared/database.js";
-import { User } from "./index.js";
+import User from "./User.js";
 
 /**
  * Finds a {@link User} by the specified property name and value.
@@ -101,7 +101,7 @@ export const insertUser = async (user) => {
   }
 };
 
-export const findAll = async (req, res, next) => {
+export const findAllUsers = async (req, res) => {
   const users = await database.getUserCollection().find().toArray();
   res.json(users);
 };

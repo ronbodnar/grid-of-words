@@ -1,5 +1,4 @@
 import { DEFAULT_MAX_ATTEMPTS, DEFAULT_WORD_LENGTH } from "../../shared/utils/constants.js";
-import { Game } from "../game/Game.js";
 import { buildWordRowElement } from "./row.js";
 
 /**

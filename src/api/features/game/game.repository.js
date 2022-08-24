@@ -1,7 +1,7 @@
-import { Game } from "./index.js";
-import database from "../../shared/database.js";
-import { DatabaseError } from "../../errors/index.js";
 import { ObjectId } from "mongodb";
+import Game from "./Game.js";
+import database from "../../shared/database.js";
+import DatabaseError from "../../errors/DatabaseError.js";
 
 // Thought about an upsert instead of separate functions, but I couldn't think of a reliable way to get the ID of the game.
 // It seems like using the _id as a filter is causing issues by setting a default value.

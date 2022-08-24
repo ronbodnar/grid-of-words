@@ -66,9 +66,10 @@ export const processAttemptResponse = async (game, data) => {
             text: "The game could not be found. Please start a new game.",
             hideDelay: 5000,
             className: "error",
-          }
+          },
         });
-        return; // Return early so the message is not overwritten.
+        // Return early so the message is not overwritten.
+        return;
 
       // Edge cases to handle gracefully
       case "NO_WORD_OR_NO_ID":
@@ -77,6 +78,7 @@ export const processAttemptResponse = async (game, data) => {
       case "ADD_ATTEMPT_REPOSITORY_ERROR":
 
       // Only ones that are handled as of now.
+      // eslint-disable-next-line no-fallthrough
       case "NOT_IN_WORD_LIST":
       case "DUPLICATE_ATTEMPT":
       default:
