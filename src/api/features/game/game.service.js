@@ -127,6 +127,9 @@ export const addAttempt = async (word, gameId, authToken) => {
   if (isFinalAttempt || isCorrectAttempt) {
     game.state = isCorrectAttempt ? GameState.WINNER : GameState.LOSER;
     game.endTime = new Date();
+    authenticatedUser.stats.wins[game.word.length] += 1;
+    authenticatedUser.stats.abandoned += 10;
+    authenticatedUser.save();
     responseMessage = isCorrectAttempt ? "WINNER" : "LOSER";
   }
 

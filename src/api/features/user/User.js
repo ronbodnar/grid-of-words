@@ -1,5 +1,7 @@
 import { generateSalt, hashPassword } from "../auth/authentication.service.js";
 import { saveUser } from "../user/user.repository.js";
+import UserStats from "./UserStats.js";
+
 class User {
   _id = undefined;
   username = undefined;
@@ -7,16 +9,21 @@ class User {
   email = undefined;
   enabled = undefined;
   creationDate = undefined;
-  gameIds = [];
+  gameIds = undefined;
+  stats = undefined;
 
   constructor(email, username, password) {
-    if (!email) return this;
+    if (!email || !username || !password) {
+      return null;
+    }
     const salt = generateSalt();
+
     this.email = email;
     this.username = username;
     this.hash = salt + hashPassword(password, salt);
     this.enabled = true;
     this.creationDate = new Date();
+    this.stats = new UserStats();
     return this;
   }
 
@@ -28,6 +35,7 @@ class User {
     this.email = json.email;
     this.enabled = json.enabled;
     this.creationDate = json.creationDate;
+    this.stats = new UserStats(json.stats || this.stats);
     if (json.passwordResetToken)
       this.passwordResetToken = json.passwordResetToken;
     if (json.passwordResetTokenExpiration)

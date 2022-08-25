@@ -20,8 +20,8 @@ addKeyListeners();
 // Show the loading view while we fetch session data from the server.
 showView("loading");
 
-// Fetch the session data from the server.
-(async () => {
+// Fetch the session data from the server before moving on.
+await (async () => {
   const sessionResponse = await fetchData("/session");
 
   loggerInstance.debug("Session Data", sessionResponse);
@@ -42,7 +42,6 @@ showView("loading");
   if (game) {
     if (game.maxViews === game.attempts?.length) {
       removeSession("game");
-      showView("home");
     } else {
       showView("game", {
         game: game,
