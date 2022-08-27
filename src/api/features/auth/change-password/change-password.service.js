@@ -50,8 +50,9 @@ export const changePassword = async (newPassword, currentPassword, authToken) =>
     newSalt + hashPassword(newPassword, newSalt);
 
   // Update the user's hashed password and save it in the database.
-  authenticatedUser.hash = newPasswordHash;
-  authenticatedUser.save("hash");
+  authenticatedUser.save({
+    hash: newPasswordHash
+  });
 
   return {
     status: "success",

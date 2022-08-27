@@ -14,5 +14,5 @@ export const handleValidatePasswordResetToken = async (req, res, next) => {
   if (validTokenResult instanceof Error) {
     return next(validTokenResult);
   }
-  return res.json(validTokenResult);
+  return res.json({});
 };

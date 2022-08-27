@@ -7,7 +7,7 @@ import { sendPasswordResetEmail } from "../../email/email.service.js";
 
 /**
  * Processes the request to send a password reset link via email. Most errors default to a success to hide output to users.
- * 
+ *
  * @param {string} email The email address that potentially belongs to a user account.
  * @returns {Promise<object | ValidationError>} A promise that resolves to an object with a success message or a ValidationError.
  */
@@ -30,11 +30,12 @@ export const forgotPassword = async (email) => {
   }
 
   const token = generateSalt(32);
+  const tokenExpiration = new Date(Date.now() + 1000 * 60 * 60);
 
-  dbUser.passwordResetToken = token;
-  dbUser.passwordResetTokenExpiration = new Date(Date.now() + 1000 * 60 * 60);
-
-  const saveUserResult = await dbUser.save();
+  const saveUserResult = await dbUser.save({
+    passwordResetToken: token,
+    passwordResetTokenExpiration: tokenExpiration,
+  });
   if (!saveUserResult) {
     logger.error("Failed to save user with reset token", {
       email: email,

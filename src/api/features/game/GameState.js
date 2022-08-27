@@ -3,6 +3,7 @@ const GameState = Object.freeze({
     ABANDONED: 'ABANDONED',
     WINNER: 'WINNER',
     LOSER: 'LOSER',
+    HIDDEN: 'HIDDEN',
 });
 
 export default GameState;

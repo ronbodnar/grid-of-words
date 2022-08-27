@@ -125,12 +125,10 @@ export const addAttempt = async (word, gameId, authToken) => {
 
   let responseMessage = "WRONG_WORD";
   if (isFinalAttempt || isCorrectAttempt) {
-    game.state = isCorrectAttempt ? GameState.WINNER : GameState.LOSER;
-    game.endTime = new Date();
-    authenticatedUser.stats.wins[game.word.length] += 1;
-    authenticatedUser.stats.abandoned += 10;
-    authenticatedUser.save();
     responseMessage = isCorrectAttempt ? "WINNER" : "LOSER";
+    
+    game.state = isWinner ? GameState.WINNER : GameState.LOSER;
+    game.endTime = new Date();
   }
 
   // Add the attempt to the game's Array of attempts before saving!

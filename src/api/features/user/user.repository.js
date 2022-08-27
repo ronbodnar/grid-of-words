@@ -2,6 +2,7 @@ import { ObjectId } from "mongodb";
 import logger from "../../config/winston.config.js";
 import database from "../../shared/database.js";
 import User from "./User.js";
+import ValidationError from "../../errors/ValidationError.js";
 
 /**
  * Finds a {@link User} by the specified property name and value.
@@ -13,11 +14,10 @@ import User from "./User.js";
 export const findUserBy = async (name, value) => {
   // Validate the name and value of the property were passed.
   if (!name || !value) {
-    logger.error("Invalid property name or value passed to User findBy", {
+    return new ValidationError("Invalid property name or value passed to User findBy", {
       prop: name,
       value: value,
     });
-    return null;
   }
 
   if (name === "_id" && typeof value === "string") {
@@ -35,7 +35,7 @@ export const findUserBy = async (name, value) => {
     });
     return null;
   }
-  return new User().fromJSON(result);
+  return new User(result);
 };
 
 /**
@@ -44,18 +44,32 @@ export const findUserBy = async (name, value) => {
  * @param {User} user The user object to save to the database.
  * @returns {Promise<User | null>} A promise that resolves to the User if successful.
  */
-export const saveUser = async (user) => {
+export const updateUser = async (user, properties) => {
   if (!user) {
-    logger.error("Missing user object passed to saveUser", {
+    return new ValidationError("Missing user object passed to saveUser", {
       user: user,
     });
   }
 
+  if (!properties || typeof properties !== "object") {
+    return new ValidationError("Invalid properties object passed to updateUser", {
+      properties: properties,
+    });
+  }
+
+  console.log("Properties", properties);
+
+  const filteredProperties = Object.entries(properties).filter(([key, value]) => user.hasOwnProperty(key) && key !== "_id" && value != null);
+  const undefinedProperties = Object.entries(properties).filter(([key, value]) => value == null);
+  console.log("Filtered Properties", filteredProperties);
+  console.log("Undefined Properties", undefinedProperties);
+
   const filter = {
-    _id: user._id,
+    _id: new ObjectId(user._id),
   };
   const update = {
-    $set: user,
+    $set: Object.fromEntries(filteredProperties),
+    $unset: Object.fromEntries(undefinedProperties),
   };
   const result = await database.getUserCollection().updateOne(filter, update);
   if (result && result.acknowledged && result.modifiedCount > 0) {
@@ -78,9 +92,13 @@ export const saveUser = async (user) => {
  * @returns {Promise<InsertOneResult | null>} A promise that resolves to the insertion result if successful.
  */
 export const insertUser = async (user) => {
-  if (!user) return null;
+  if (!user) {
+    throw new ValidationError("Missing user object passed to insertUser", {
+      user: user,
+    });
+  }
   try {
-    const result = await database.getCollection("users").insertOne(user);
+    const result = await database.getCollection("users").insertOne(user.getWithoutUndefined());
     if (!result.acknowledged) {
       logger.error(
         "Failed to insert new user into database: result not acknowledged",
