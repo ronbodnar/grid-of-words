@@ -1,3 +1,4 @@
+import logger from "../../config/winston.config.js";
 import ValidationError from "../../errors/ValidationError.js";
 import {
   MAXIMUM_MAX_ATTEMPTS,
@@ -11,10 +12,8 @@ class UserStats {
   bestWinStreak = 0;
   totalGames = 0;
   wins = new Array(winsArraySize).fill(0);
-  winRate = 0.0;
   losses = 0;
   abandoned = 0;
-  abandonRate = 0.0;
 
   constructor(obj = {}) {
     if (typeof obj !== "object") {
@@ -27,7 +26,8 @@ class UserStats {
     //TODO: remove some of the validation
     for (const [key, value] of objEntries) {
       if (!validKeys.includes(key)) {
-        throw new ValidationError("Invalid entry for UserStats: " + key);
+        logger.warn("Invalid entry for UserStats: " + key);
+        continue;
       }
 
       if (key === "wins") {
@@ -39,14 +39,21 @@ class UserStats {
           value.forEach((val) => {
             if (typeof val !== "number") {
               throw new ValidationError(
-                "Invalid argument: wins array values must be numbers"
+                "Invalid argument: wins array values must be numbers",
+                {
+                  value: val,
+                }
               );
             }
           });
         }
       } else if (key !== "wins" && typeof value !== "number") {
         throw new ValidationError(
-          "Invalid argument: obj values must be numbers"
+          "Invalid argument: obj values must be numbers",
+          {
+            key: key,
+            value: value,
+          }
         );
       }
 
@@ -54,13 +61,17 @@ class UserStats {
     }
   }
 
-  updateFromGame = (finalGameState) => {
-    if (!finalGameState) {
-      throw new ValidationError(
-        "Invalid argument: finalGameState must be provided"
-      );
+  getWinRate() {
+    if (this.totalGames === 0) {
+      return 0.0;
     }
-  };
+    const sumOfWins = this.wins.forEach((winCount) => (sumOfWins += winCount));
+    return (this.wins[this.totalGames] / this.totalGames) * 100.0;
+  }
+
+  toObject() {
+    return Object.fromEntries(Object.entries(this));
+  }
 }
 
 export default UserStats;

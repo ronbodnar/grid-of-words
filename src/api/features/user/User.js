@@ -1,19 +1,27 @@
 import ValidationError from "../../errors/ValidationError.js";
 import { generateSalt, hashPassword } from "../auth/authentication.service.js";
+import GameState from "../game/GameState.js";
 import UserStats from "./UserStats.js";
 import { updateUser, insertUser } from "./user.repository.js";
 
 class User {
+  // Account Details
   _id = undefined;
   hash = undefined;
   email = undefined;
   username = undefined;
   password = undefined;
+  lastGameState = undefined;
+  lastConnectionIP = undefined;
+  lastConnectionTimestamp = undefined;
+
+  
   stats = undefined;
   passwordResetToken = undefined;
   passwordResetTokenExpiration = undefined;
 
-  // These properties are written to all User documents by default. Undefined values are ignored.
+  // These properties are written to all User documents by default.
+  // Undefined and null values are ignored when updating documents.
   enabled = true;
   creationDate = new Date();
 
@@ -75,6 +83,35 @@ class User {
     this.stats = new UserStats(stats) || this.stats;
     this.passwordResetToken = passwordResetToken;
     this.passwordResetTokenExpiration = passwordResetTokenExpiration;
+  }
+
+  async updateStats(numAttempts, finalGameState) {
+    if (!this.stats) {
+      this.stats = new UserStats();
+    }
+
+    const isWinner = finalGameState === GameState.WINNER;
+    const isAbandoned = finalGameState === GameState.ABANDONED;
+
+    this.stats.totalGames += 1;
+    this.stats.wins[numAttempts] += isWinner ? 1 : 0;
+    this.stats.losses += isWinner ? 0 : 1;
+    this.stats.abandoned += isAbandoned ? 1 : 0;
+
+    if (isWinner) {
+      this.stats.winStreak += 1;
+      if (this.stats.bestWinStreak < this.stats.winStreak) {
+        this.stats.bestWinStreak = this.stats.winStreak;
+      }
+    } else {
+      this.stats.winStreak = 0;
+    }
+
+    const userSavedSuccessfully = this.save({
+      stats: this.stats.toObject(),
+      lastGameState: finalGameState,
+    });
+    console.log(userSavedSuccessfully);
   }
 
   async save(properties) {

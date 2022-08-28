@@ -12,6 +12,8 @@ import ValidationError from "../../errors/ValidationError.js";
 import { exists, findByLength } from "../word/word.repository.js";
 import { findGameById, insertGame } from "./game.repository.js";
 import { getAuthenticatedUser } from "../auth/authentication.service.js";
+import { findUserBy } from "../user/user.repository.js";
+import logger from "../../config/winston.config.js";
 
 // TODO: separate validation / implement Joi
 
@@ -120,15 +122,20 @@ export const addAttempt = async (word, gameId, authToken) => {
     });
   }
 
+  const numAttempts = game.attempts.length + 1;
   const isCorrectAttempt = game.word === word;
-  const isFinalAttempt = game.attempts.length + 1 === game.maxAttempts;
+  const isFinalAttempt = numAttempts === game.maxAttempts;
 
   let responseMessage = "WRONG_WORD";
   if (isFinalAttempt || isCorrectAttempt) {
     responseMessage = isCorrectAttempt ? "WINNER" : "LOSER";
-    
-    game.state = isWinner ? GameState.WINNER : GameState.LOSER;
+
+    game.state = isCorrectAttempt ? GameState.WINNER : GameState.LOSER;
     game.endTime = new Date();
+
+    if (authenticatedUser) {
+      authenticatedUser.updateStats(numAttempts, game.state);
+    }
   }
 
   // Add the attempt to the game's Array of attempts before saving!
@@ -171,21 +178,39 @@ export const getGameById = async (gameId) => {
  */
 export const abandonGameById = async (gameId) => {
   const game = await findGameById(gameId);
-  if (game) {
-    game.state = GameState.ABANDON;
-    const gameSavedSuccessfully = await game.save();
-    if (!gameSavedSuccessfully) {
-      return new InternalError("Failed to save game to the database", {
-        gameId: gameId,
-        game: game,
-      });
-    }
-    return {};
+  if (!game) {
+    return new NotFoundError("No game found for abandon request", {
+      gameId: gameId,
+    });
   }
 
-  return new NotFoundError("No game found for abandon request", {
-    gameId: gameId,
-  });
+  game.state = GameState.ABANDON;
+
+  // Update the user's statistics if the game had an owner.
+  if (game.ownerId) {
+    const authenticatedUser = await findUserBy("_id", game.ownerId);
+    if (authenticatedUser) {
+      authenticatedUser.updateStats(game.attempts.length, game.state);
+    } else {
+      logger.error(
+        "During game abandonment an ownerId was found but no authenticatedUser found with id",
+        {
+          game: game,
+          gameId: gameId,
+          authenticatedUser: authenticatedUser,
+        }
+      );
+    }
+  }
+
+  const gameSavedSuccessfully = await game.save();
+  if (!gameSavedSuccessfully) {
+    return new InternalError("Failed to save game to the database", {
+      gameId: gameId,
+      game: game,
+    });
+  }
+  return {};
 };
 
 /**

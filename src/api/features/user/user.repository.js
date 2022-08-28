@@ -57,20 +57,17 @@ export const updateUser = async (user, properties) => {
     });
   }
 
-  console.log("Properties", properties);
-
   const filteredProperties = Object.entries(properties).filter(([key, value]) => user.hasOwnProperty(key) && key !== "_id" && value != null);
   const undefinedProperties = Object.entries(properties).filter(([key, value]) => value == null);
-  console.log("Filtered Properties", filteredProperties);
-  console.log("Undefined Properties", undefinedProperties);
 
   const filter = {
     _id: new ObjectId(user._id),
   };
   const update = {
     $set: Object.fromEntries(filteredProperties),
-    $unset: Object.fromEntries(undefinedProperties),
+    $unset: Object.fromEntries(undefinedProperties)
   };
+  
   const result = await database.getUserCollection().updateOne(filter, update);
   if (result && result.acknowledged && result.modifiedCount > 0) {
     return user;
