@@ -14,6 +14,7 @@ import { findGameById, insertGame } from "./game.repository.js";
 import { getAuthenticatedUser } from "../auth/authentication.service.js";
 import { findUserBy } from "../user/user.repository.js";
 import logger from "../../config/winston.config.js";
+import { updateStats } from "../user/user.service.js";
 
 // TODO: separate validation / implement Joi
 
@@ -98,7 +99,7 @@ export const generateNewGame = async (
  * Adds an attempt to the Game's `attempt` Array if no validation errors occur.
  *
  * @param {string} word The word that is being attempted.
- * @param {string | ObjectId} gameId The id of the game that the attempt is being made against.
+ * @param {ObjectId} gameId The id of the game that the attempt is being made against.
  * @param {string} authToken The JWT from the request header to assign an owner to the game.
  * @returns {Promise<object | ValidationError | InternalError | NotFoundError>} A promise that resolves with the attempt message and game data if successful.
  */
@@ -110,7 +111,7 @@ export const addAttempt = async (word, gameId, authToken) => {
     });
   }
 
-  const authenticatedUser = getAuthenticatedUser(authToken);
+  const authenticatedUser = await getAuthenticatedUser(authToken);
 
   const validationMessage = await validateAttempt(word, game);
   if (validationMessage.length > 0) {
@@ -134,7 +135,7 @@ export const addAttempt = async (word, gameId, authToken) => {
     game.endTime = new Date();
 
     if (authenticatedUser) {
-      authenticatedUser.updateStats(numAttempts, game.state);
+      updateStats(authenticatedUser, numAttempts, game.state);
     }
   }
 
@@ -157,7 +158,7 @@ export const addAttempt = async (word, gameId, authToken) => {
 /**
  * Asynchronously retrieves a {@link Game} with the `gameId` from the database.
  *
- * @param {string | ObjectId} gameId The unique ID of the game.
+ * @param {ObjectId} gameId The unique ID of the game.
  * @returns {Promise<Game | NotFoundError>} A promise that resolves to the Game object if successful.
  */
 export const getGameById = async (gameId) => {
@@ -173,10 +174,10 @@ export const getGameById = async (gameId) => {
 /**
  * Finds the specified {@link Game} ID in the database and abandons the game if found.
  *
- * @param {string | ObjectId} gameId The id of the game to abandon.
+ * @param {ObjectId} gameId The id of the game to abandon.
  * @returns {Promise<object | InternalError | NotFoundError>} A promise that resolves to an empty object if successful.
  */
-export const abandonGameById = async (gameId) => {
+export const abandonGameById = async (gameId, authToken) => {
   const game = await findGameById(gameId);
   if (!game) {
     return new NotFoundError("No game found for abandon request", {
@@ -184,22 +185,22 @@ export const abandonGameById = async (gameId) => {
     });
   }
 
-  game.state = GameState.ABANDON;
-
   // Update the user's statistics if the game had an owner.
   if (game.ownerId) {
-    const authenticatedUser = await findUserBy("_id", game.ownerId);
+    const authenticatedUser = await getAuthenticatedUser(authToken);
     if (authenticatedUser) {
-      authenticatedUser.updateStats(game.attempts.length, game.state);
-    } else {
-      logger.error(
-        "During game abandonment an ownerId was found but no authenticatedUser found with id",
-        {
-          game: game,
-          gameId: gameId,
-          authenticatedUser: authenticatedUser,
-        }
-      );
+      if (authenticatedUser._id.toString() === game.ownerId.toString()) {
+        updateStats(authenticatedUser, -1, GameState.ABANDONED);
+      } else {
+        logger.warn(
+          "Failed to update stats on abandon: Authenticated user id does not match the game's owner id",
+          {
+            game: game,
+            gameId: gameId,
+            authenticatedUser: authenticatedUser,
+          }
+        );
+      }
     }
   }
 

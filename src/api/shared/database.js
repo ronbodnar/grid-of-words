@@ -1,6 +1,6 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
 import DatabaseError from "../errors/DatabaseError.js";
-import ValidationError from "../errors/ValidationError.js";
+import InternalError from "../errors/InternalError.js";
 
 let client;
 
@@ -30,7 +30,7 @@ const connect = async () => {
  */
 const getCollection = (name, database = process.env.MONGO_DB_NAME) => {
     if (!name) {
-    throw new ValidationError("Collection name must be provided.");
+    throw new InternalError("Collection name must be provided.");
   }
   if (!client) {
     throw new DatabaseError("Mongo client could not be found.");

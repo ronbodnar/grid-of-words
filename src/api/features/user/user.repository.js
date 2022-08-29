@@ -1,8 +1,8 @@
-import { ObjectId } from "mongodb";
 import logger from "../../config/winston.config.js";
 import database from "../../shared/database.js";
 import User from "./User.js";
 import ValidationError from "../../errors/ValidationError.js";
+import { ObjectId } from "mongodb";
 
 /**
  * Finds a {@link User} by the specified property name and value.
@@ -14,14 +14,17 @@ import ValidationError from "../../errors/ValidationError.js";
 export const findUserBy = async (name, value) => {
   // Validate the name and value of the property were passed.
   if (!name || !value) {
-    return new ValidationError("Invalid property name or value passed to User findBy", {
-      prop: name,
-      value: value,
-    });
+    return new ValidationError(
+      "Invalid property name or value passed to User findBy",
+      {
+        prop: name,
+        value: value,
+      }
+    );
   }
 
-  if (name === "_id" && typeof value === "string") {
-    value = new ObjectId(value);
+  if (name === "_id" && !(value instanceof ObjectId)) {
+    value = ObjectId.createFromHexString(value);
   }
 
   const result = await database.getUserCollection().findOne({
@@ -32,6 +35,7 @@ export const findUserBy = async (name, value) => {
     logger.warn("User not found by property", {
       prop: name,
       value: value,
+      valueType: typeof value,
     });
     return null;
   }
@@ -52,22 +56,29 @@ export const updateUser = async (user, properties) => {
   }
 
   if (!properties || typeof properties !== "object") {
-    return new ValidationError("Invalid properties object passed to updateUser", {
-      properties: properties,
-    });
+    return new ValidationError(
+      "Invalid properties object passed to updateUser",
+      {
+        properties: properties,
+      }
+    );
   }
 
-  const filteredProperties = Object.entries(properties).filter(([key, value]) => user.hasOwnProperty(key) && key !== "_id" && value != null);
-  const undefinedProperties = Object.entries(properties).filter(([key, value]) => value == null);
+  const filteredProperties = Object.entries(properties).filter(
+    ([key, value]) => user.hasOwnProperty(key) && key !== "_id" && value != null
+  );
+  const undefinedProperties = Object.entries(properties).filter(
+    ([key, value]) => value == null
+  );
 
   const filter = {
-    _id: new ObjectId(user._id),
+    _id: user._id,
   };
   const update = {
     $set: Object.fromEntries(filteredProperties),
-    $unset: Object.fromEntries(undefinedProperties)
+    $unset: Object.fromEntries(undefinedProperties),
   };
-  
+
   const result = await database.getUserCollection().updateOne(filter, update);
   if (result && result.acknowledged && result.modifiedCount > 0) {
     return user;
@@ -95,7 +106,9 @@ export const insertUser = async (user) => {
     });
   }
   try {
-    const result = await database.getCollection("users").insertOne(user.getWithoutUndefined());
+    const result = await database
+      .getCollection("users")
+      .insertOne(user.getWithoutUndefined());
     if (!result.acknowledged) {
       logger.error(
         "Failed to insert new user into database: result not acknowledged",

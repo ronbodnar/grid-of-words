@@ -1,8 +1,7 @@
-import ValidationError from "../../errors/ValidationError.js";
-import { generateSalt, hashPassword } from "../auth/authentication.service.js";
-import GameState from "../game/GameState.js";
 import UserStats from "./UserStats.js";
+import { generateSalt, hashPassword } from "../auth/authentication.service.js";
 import { updateUser, insertUser } from "./user.repository.js";
+import InternalError from "../../errors/InternalError.js";
 
 class User {
   // Account Details
@@ -15,7 +14,6 @@ class User {
   lastConnectionIP = undefined;
   lastConnectionTimestamp = undefined;
 
-  
   stats = undefined;
   passwordResetToken = undefined;
   passwordResetTokenExpiration = undefined;
@@ -40,11 +38,11 @@ class User {
    * @param {string} [userData.passwordResetToken] - The token used for resetting the user's password.
    * @param {Date|string} [userData.passwordResetTokenExpiration] - The expiration date of the password reset token.
    *
-   * @throws {ValidationError} If userData is not an object or if required fields are missing.
+   * @throws {InternalError} If userData is not an object or if required fields are missing.
    */
   constructor(userData) {
     if (!userData || typeof userData !== "object") {
-      throw new ValidationError("userData must be an object");
+      throw new InternalError("userData must be an object");
     }
 
     const {
@@ -72,7 +70,7 @@ class User {
 
     // Handling of a standard userData object
     if (!_id) {
-      throw new ValidationError("User ID is required");
+      throw new InternalError("User ID is required");
     }
     this._id = _id;
     this.hash = hash;
@@ -80,42 +78,13 @@ class User {
     this.email = email;
     this.enabled = enabled === true;
     this.creationDate = new Date(creationDate);
-    this.stats = new UserStats(stats) || this.stats;
+    this.stats = (stats && new UserStats(stats)) || this.stats;
     this.passwordResetToken = passwordResetToken;
     this.passwordResetTokenExpiration = passwordResetTokenExpiration;
   }
 
-  async updateStats(numAttempts, finalGameState) {
-    if (!this.stats) {
-      this.stats = new UserStats();
-    }
-
-    const isWinner = finalGameState === GameState.WINNER;
-    const isAbandoned = finalGameState === GameState.ABANDONED;
-
-    this.stats.totalGames += 1;
-    this.stats.wins[numAttempts] += isWinner ? 1 : 0;
-    this.stats.losses += isWinner ? 0 : 1;
-    this.stats.abandoned += isAbandoned ? 1 : 0;
-
-    if (isWinner) {
-      this.stats.winStreak += 1;
-      if (this.stats.bestWinStreak < this.stats.winStreak) {
-        this.stats.bestWinStreak = this.stats.winStreak;
-      }
-    } else {
-      this.stats.winStreak = 0;
-    }
-
-    const userSavedSuccessfully = this.save({
-      stats: this.stats.toObject(),
-      lastGameState: finalGameState,
-    });
-    console.log(userSavedSuccessfully);
-  }
-
   async save(properties) {
-    return updateUser(this, properties)
+    return updateUser(this, properties);
   }
 
   /**
