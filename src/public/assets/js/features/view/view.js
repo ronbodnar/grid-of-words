@@ -30,7 +30,11 @@ export const buildView = (name, options = {}) => {
     additionalElements,
   } = options;
 
-  const titlePrefix = header?.text === APP_NAME ? "" : header?.text + " | ";
+  const titlePrefix = header?.text
+    ? header.text === APP_NAME
+      ? ""
+      : header.text + " | "
+    : "";
   window.document.title = titlePrefix + APP_NAME;
 
   const contentContainer = document.querySelector(".content");

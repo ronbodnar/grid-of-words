@@ -16,7 +16,7 @@ export const handleGetSessionData = (req, res, next) => {
   if (sessionData instanceof Error) {
     return next(sessionData);
   }
-
+  
   if (!sessionData.game) {
     res.clearCookie("game");
   }

@@ -80,7 +80,10 @@ export const logout = async () => {
     }
     showMessage(data.message || "You have been successfully logged out.", messageOptions);
   } else {
-    logger.warn("Error logging out");
+    showMessage("An error occurred while logging out. Please try again.", {
+      className: "error",
+      hide: false,
+    });
   }
   logger.debug("Logout response", data);
 };
