@@ -9,7 +9,7 @@ import { buildHowToPlayView } from "../how-to-play/how-to-play.view.js";
 import { buildLoadingView } from "../loading/loading.view.js";
 import { buildOptionsView } from "../options/options.view.js";
 import { retrieveSession } from "../../shared/services/storage.service.js";
-import { buildStatisticsView } from "../stats/stats.view.js";
+import { buildStatisticsView } from "../statistics/statistics.view.js";
 
 let viewHistory = [];
 

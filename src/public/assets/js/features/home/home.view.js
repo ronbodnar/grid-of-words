@@ -22,7 +22,7 @@ export const buildHomeView = (options) => {
 
   buildView("home", {
     header: {
-      text: "Word Puzzle Game"
+      text: "Word Puzzle Game",
     },
     message: {
       hide: false,
@@ -65,11 +65,15 @@ const buildButtonContainer = () => {
       icon: "help",
     })
   );
-  buttonContainer.appendChild(
-    createButton("Statistics", {
-      icon: "bar-chart",
-    })
-  );
+
+  if (isAuthenticated()) {
+    buttonContainer.appendChild(
+      createButton("Statistics", {
+        icon: "bar-chart",
+      })
+    );
+  }
+
   buttonContainer.appendChild(
     createButton("Options", {
       icon: "tune",

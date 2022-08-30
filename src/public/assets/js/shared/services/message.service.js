@@ -23,7 +23,8 @@ export const showMessage = (message, options = {}) => {
     className,
   } = options;
 
-  logger.debug(`Showing message "${message}" with ${(options.hideDelay ? options.hideDelay + 'ms' : 'no')} delay`);
+  logger.debug(`Showing message "${message}" with ${(options.hideDelay ? options.hideDelay + 'ms' : 'no')} hide delay`);
+  logger.debug(`Hides? ${(hide ? "yes" : "no")}`)
 
   var messageDiv = document.querySelector(messageSelector);
   if (messageDiv) {
