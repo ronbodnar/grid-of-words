@@ -1,3 +1,4 @@
+import { getAuthenticatedUser } from "../../features/auth/authentication.service.js";
 import { logger } from "../../main.js";
 import { retrieveLocal, storeLocal } from "./storage.service.js";
 
@@ -79,6 +80,16 @@ export const fetchData = async (
     return null;
   }
 };
+
+export const loadStatistics = async () => {
+  const authenticatedUser = getAuthenticatedUser();
+  if (!authenticatedUser) {
+    return null;
+  }
+  const statisticsResult = await fetchData(`/statistics`);
+  console.log("Statistics result", statisticsResult)
+  return statisticsResult;
+}
 
 /**
  * Fetches a list of words from the server with a specified length range.

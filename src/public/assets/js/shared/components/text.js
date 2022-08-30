@@ -17,6 +17,7 @@ export const createText = (options = {}) => {
     hidden = false,
     emitClickEvent = false,
     classes = [],
+    styles = {},
   } = options;
 
   if (!type) {
@@ -30,6 +31,7 @@ export const createText = (options = {}) => {
   if (hidden) {
     textElement.classList.add("hidden");
   }
+  Object.entries(styles).forEach(([key, value]) => textElement.style[key] = value);
   // Add additional class names to the element.
   classes.forEach((class_) => textElement.classList.add(class_));
 

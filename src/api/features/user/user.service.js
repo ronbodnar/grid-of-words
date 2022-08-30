@@ -48,3 +48,11 @@ export const updateStats = async (user, numAttempts, finalGameState) => {
     lastGameState: finalGameState,
   });
 };
+
+export const getStatistics = async (user) => {
+  if (!user) {
+    return new InternalError("Missing required argument: user");
+  }
+  console.log(user);
+  return user.stats;
+}

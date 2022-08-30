@@ -27,7 +27,7 @@ const clickFunctions = {
   // Navigation
   options: () => showView("options"),
   howToPlay: () => showView("howToPlay"),
-  statistics: () => showView("statistics"),
+  statistics: async () => showView("statistics"),
   showLogin: () => showView("login"),
   showRegister: () => showView("register"),
   showForgotPassword: () => showView("forgotPassword"),

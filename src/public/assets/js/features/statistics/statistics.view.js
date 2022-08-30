@@ -1,85 +1,77 @@
 import { buildView } from "../view/view.js";
-import "../../chart.umd.js";
-import "../../chartjs-plugin-datalabels.min.js";
+import { createText } from "../../shared/components/text.js";
+import { getGameOutcomesChart } from "./charts/game-outcomes.js";
+import { getWinDistributionChart } from "./charts/win-distribution.js";
+import { getAuthenticatedUser } from "../auth/authentication.service.js";
+import { showView } from "../view/view.service.js";
+import { loadStatistics } from "../../shared/services/api.service.js";
 
 /**
- * Builds and displays a loading view within the content container.
+ * Builds and displays the statistics view within the content container and loads all charts into their canvas.
  */
-export const buildStatisticsView = () => {
+export const buildStatisticsView = async () => {
+  showView("loading");
+  
+  const statistics = await loadStatistics();
+  if (!statistics) {
+    showView("home", {
+      message: {
+        text: "Failed to load statistics. Please try again later.",
+        hide: false,
+        className: "error",
+      },
+    });
+    return;
+  }
+
+  const { totalGames, wins } = statistics;
+
+  const distributionHeader = createText({
+    type: "subheader",
+    text: "Win Distribution by Attempt",
+    styles: {
+      fontSize: "20px",
+      fontWeight: "bold",
+      marginTop: "40px",
+    },
+  });
+
   buildView("statistics", {
     header: {
       text: "Game Statistics",
     },
     message: {
-      text: "You've played a total of 170 games",
+      text: `You've played a total of ${totalGames} games`,
       hide: false,
     },
     hasNavigationButton: true,
-    additionalElements: [buildGameOutcomeGraph()],
+    additionalElements: [
+      buildChartContainer("gameOutcomesChart", 300, 300),
+      distributionHeader,
+      buildChartContainer("winDistributionChart", 300, 150),
+    ],
   });
-  loadCharts();
+
+  const gameOutcomesChart = getGameOutcomesChart(statistics);
+  const winDistributionChart = getWinDistributionChart(wins);
 };
 
-const buildGameOutcomeGraph = () => {
-  const outcomeGraphDiv = document.createElement("div");
-  outcomeGraphDiv.style.width = "325px";
-  outcomeGraphDiv.style.height = "325px";
+/**
+ * Builds a canvas div container for charts/graphs.
+ * 
+ * @param {*} id The id to assign the canvas.
+ * @param {*} width The width of the canvas parent container.
+ * @param {*} height The height of the canvas parent container.
+ * @returns {HTMLDivElement} The build chart container element with a blank canvas.
+ */
+const buildChartContainer = (id, width, height) => {
+  const graphContainer = document.createElement("div");
+  graphContainer.style.width = width + "px";
+  graphContainer.style.height = height + "px";
 
   const ctx = document.createElement("canvas");
-  ctx.id = "gameOutcomeChart";
+  ctx.id = id;
 
-  outcomeGraphDiv.appendChild(ctx);
-  return outcomeGraphDiv;
-};
-
-const loadCharts = () => {
-  const ctx = document.getElementById("gameOutcomeChart");
-  new Chart(ctx, {
-    type: "doughnut",
-    data: {
-      labels: ["Win", "Loss", "Abandon"],
-      datasets: [
-        {
-          backgroundColor: ['rgba(0, 163, 108, 0.6)', 'rgba(227, 34, 39, 0.6)', 'rgba(89, 96, 109, 0.6)'],
-          data: [150, 13, 7],
-          borderWidth: 0,
-          borderColor: 'transparent',
-        },
-      ],
-    },
-    plugins: [ChartDataLabels],
-    options: {
-      cutout: "40%",
-      rotation: '-50',
-      circumference: '270',
-      plugins: {
-        legend: {
-          position: 'chartArea',
-          labels: {
-            color: '#fff'
-          },
-        },
-        datalabels: {
-          color: "#fff",
-          font: {
-            size: 14,
-          },
-          align: "start",
-          anchor: "end",
-          formatter: (value, ctx) => {
-            const percent = value / 170 * 100.0;
-            console.log(value);
-            return `${percent.toFixed(2)}%`;
-          },
-        },
-      },
-      scales: {
-        y: {
-          ticks: {
-            display: false,
-          },
-        },
-      },
-    },
-  });
+  graphContainer.appendChild(ctx);
+  return graphContainer;
 };
