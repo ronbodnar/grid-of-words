@@ -1,7 +1,6 @@
 import UnauthorizedError from "../../errors/UnauthorizedError.js";
 import { verifyJWT } from "../auth/authentication.service.js";
 import GameState from "../game/GameState.js";
-import { findUserBy } from "../user/user.repository.js";
 
 /**
  * Retrieves data such as user and game details from the request cookies and builds an object of the data.
@@ -27,7 +26,6 @@ export const getSessionData = (cookies = {}) => {
     if (!payload) {
       return new UnauthorizedError("Invalid token");
     }
-    const user = findUserBy("_id", payload.data._id);
     sessionData.user = payload.data;
   }
   return sessionData;

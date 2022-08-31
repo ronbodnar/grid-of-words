@@ -27,17 +27,18 @@ const initialize = async () => {
     process.exit(1);
   }
 
-  logger.info(`Setting up Express ${productionMode ? "HTTPS" : "HTTP"} server...`);
-  const server =
-    productionMode
-      ? createProductionServer()
-      : createDevelopmentServer();
+  logger.info(
+    `Setting up Express ${productionMode ? "HTTPS" : "HTTP"} server...`
+  );
+  const server = productionMode
+    ? createProductionServer()
+    : createDevelopmentServer();
   startServer(server);
 };
 
 /**
  * Creates an Express http server instance.
- * 
+ *
  * @returns {Server} The Express server instance.
  */
 const createDevelopmentServer = () => {
@@ -53,7 +54,7 @@ const createDevelopmentServer = () => {
 
 /**
  * Creates an Express https server instance using an SSL cert stored as a pem file.
- * 
+ *
  * @returns {Server} The Express server instance.
  */
 const createProductionServer = () => {
@@ -73,7 +74,7 @@ const createProductionServer = () => {
 
 /**
  * Starts the Express HTTP/HTTPS server by listening to the PORT environment variable.
- * 
+ *
  * @param {Server} server The server instance to listen on.
  */
 const startServer = (server) => {

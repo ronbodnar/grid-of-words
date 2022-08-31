@@ -1,8 +1,8 @@
-import InternalError from "../../../errors/InternalError.js";
-import UnauthorizedError from "../../../errors/UnauthorizedError.js";
-import ValidationError from "../../../errors/ValidationError.js";
-import { findUserBy } from "../../user/user.repository.js";
-import { generateJWT, hashPassword } from "../authentication.service.js";
+import InternalError from '../../../errors/InternalError.js'
+import UnauthorizedError from '../../../errors/UnauthorizedError.js'
+import ValidationError from '../../../errors/ValidationError.js'
+import { findUserBy } from '../../user/user.repository.js'
+import { generateJWT, hashPassword } from '../authentication.service.js'
 
 /**
  * Attempts to log in by authenticating the email/password combination and generates a JWT if successful.
@@ -12,45 +12,45 @@ import { generateJWT, hashPassword } from "../authentication.service.js";
  */
 export const loginUser = async (email, password) => {
   if (!email || !password) {
-    throw new ValidationError("Email and password are required.");
+    throw new ValidationError('Email and password are required.')
   }
 
-  const authenticatedUser = await authenticate(email, password);
+  const authenticatedUser = await authenticate(email, password)
   if (!authenticatedUser) {
-    return new UnauthorizedError("Invalid email or password.");
+    return new UnauthorizedError('Invalid email or password.')
   }
 
-  const jwt = generateJWT(authenticatedUser.getAccountDetails());
+  const jwt = generateJWT(authenticatedUser.getAccountDetails())
   if (!jwt) {
-    return new InternalError("Failed to generate JWT", {
+    return new InternalError('Failed to generate JWT', {
       email: email,
-      authenticatedUser: authenticatedUser,
-    });
+      authenticatedUser: authenticatedUser
+    })
   }
 
   return {
-    status: "success",
-    message: "Login successful.",
+    status: 'success',
+    message: 'Login successful.',
     user: authenticatedUser,
-    token: jwt,
-  };
-};
+    token: jwt
+  }
+}
 
 const authenticate = async (email, password) => {
-  const dbUser = await findUserBy("email", email);
+  const dbUser = await findUserBy('email', email)
   if (!dbUser) {
-    return false;
+    return false
   }
 
-  const salt = dbUser.getSalt();
-  const userHash = dbUser.getHash();
+  const salt = dbUser.getSalt()
+  const userHash = dbUser.getHash()
 
   // Hash the password with the user's salt (first 16 bytes/32 hex chars are the salt)
-  const hashedPassword = hashPassword(password, salt);
+  const hashedPassword = hashPassword(password, salt)
 
   if (hashedPassword === userHash) {
-    return dbUser;
+    return dbUser
   } else {
-    return null;
+    return null
   }
-};
+}

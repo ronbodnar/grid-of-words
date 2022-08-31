@@ -14,4 +14,4 @@ router.use("/game", restrict, gameRoutes);
 router.use("/auth", restrict, authRoutes);
 router.route("/session").get(handleGetSessionData);
 router.route("/test").get(findAllUsers);
-router.route("/statistics").get(handleGetStatistics)
+router.route("/statistics").get(handleGetStatistics);

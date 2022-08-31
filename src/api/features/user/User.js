@@ -1,6 +1,6 @@
 import UserStats from "./UserStats.js";
 import { generateSalt, hashPassword } from "../auth/authentication.service.js";
-import { updateUser, insertUser } from "./user.repository.js";
+import { updateUser, insertUser } from "./user.repository.js"; // eslint-disable-line no-unused-vars
 import InternalError from "../../errors/InternalError.js";
 
 class User {
@@ -119,8 +119,8 @@ class User {
 
   /**
    * Export basic account information in the form of an object for JWT generation.
-   * 
-   * @returns The account details for the JWT payload. 
+   *
+   * @returns The account details for the JWT payload.
    */
   getAccountDetails() {
     return {

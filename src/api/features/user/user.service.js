@@ -1,4 +1,3 @@
-import logger from "../../config/winston.config.js";
 import InternalError from "../../errors/InternalError.js";
 import GameState from "../game/GameState.js";
 import UserStats from "./UserStats.js";
@@ -20,8 +19,6 @@ export const updateStats = async (user, numAttempts, finalGameState) => {
   const hasBestWinStreak =
     isWinner && user.stats?.bestWinStreak < user.stats?.winStreak + 1;
 
-  logger.debug("User stats before update", user.stats);
-
   // User stats will be undefined until they end their first game, so we have to assign it here.
   if (!user.stats) {
     user.stats = new UserStats();
@@ -41,8 +38,6 @@ export const updateStats = async (user, numAttempts, finalGameState) => {
     user.stats.wins[numAttempts] += 1;
   }
 
-  logger.debug("User stats after update", user.stats);
-
   return user.save({
     stats: user.stats,
     lastGameState: finalGameState,
@@ -53,6 +48,5 @@ export const getStatistics = async (user) => {
   if (!user) {
     return new InternalError("Missing required argument: user");
   }
-  console.log(user);
   return user.stats;
-}
+};

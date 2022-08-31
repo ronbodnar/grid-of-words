@@ -65,7 +65,7 @@ export const updateUser = async (user, properties) => {
   }
 
   const filteredProperties = Object.entries(properties).filter(
-    ([key, value]) => user.hasOwnProperty(key) && key !== "_id" && value != null
+    ([key, value]) => Object.hasOwn(user, key) && key !== "_id" && value != null
   );
   const undefinedProperties = Object.entries(properties).filter(
     ([key, value]) => value == null

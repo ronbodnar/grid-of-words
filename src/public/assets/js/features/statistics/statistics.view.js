@@ -9,7 +9,7 @@ import { fetchStatistics } from "./statistics.service.js";
  * Builds and displays the statistics view within the content container and loads all charts into their canvas.
  */
 export const buildStatisticsView = async (options) => {
-  const { statistics } = options;
+  let { statistics } = options;
   if (!statistics) {
     showView("loading");
 
@@ -43,11 +43,24 @@ export const buildStatisticsView = async (options) => {
       buildChartContainer("gameOutcomesChart", 300, 300),
       getWinDistributionHeader(),
       buildChartContainer("winDistributionChart", 300, 150),
+      getHoverMessage(),
     ],
   });
 
   loadGameOutcomesChart(statistics);
   loadWinDistributionChart(wins);
+};
+
+const getHoverMessage = () => {
+  return createText({
+    type: "submessage",
+    text: "Hover over or tap the charts to see percentages.",
+    styles: {
+      marginTop: "10px",
+      fontSize: "12px",
+      fontStyle: "italic",
+    },
+  });
 };
 
 /**
@@ -62,7 +75,7 @@ const getWinDistributionHeader = () => {
     styles: {
       fontSize: "20px",
       fontWeight: "bold",
-      marginTop: "20px",
+      marginTop: "30px",
     },
   });
 };
@@ -82,7 +95,7 @@ const buildStreakContainer = (winStreak, bestWinStreak) => {
     winStreak,
     "Current Streak",
     bestWinStreak,
-    "Best Win Streak",
+    "Best Streak",
   ];
 
   // Create containers for the elements equal to half the elementText array

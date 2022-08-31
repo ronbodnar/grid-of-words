@@ -1,6 +1,6 @@
-import InternalError from "../../../errors/InternalError.js";
-import { APP_NAME } from "../../../shared/constants.js";
-import { sendEmail } from "../email.service.js";
+import InternalError from '../../../errors/InternalError.js'
+import { APP_NAME } from '../../../shared/constants.js'
+import { sendEmail } from '../email.service.js'
 
 /**
  * Sends a password reset email with the `token` to the `User`'s email address.
@@ -11,30 +11,30 @@ import { sendEmail } from "../email.service.js";
  */
 export const send = async (user, token) => {
   if (!user) {
-    throw new InternalError("User not provided");
+    throw new InternalError('User not provided')
   }
 
-  const { NODE_ENV, PORT, APP_URL } = process.env;
+  const { NODE_ENV, PORT, APP_URL } = process.env
 
-  const portExtension = NODE_ENV === "production" ? "" : ":" + PORT;
-  const resetUrl = APP_URL + portExtension + "?token=" + token;
+  const portExtension = NODE_ENV === 'production' ? '' : ':' + PORT
+  const resetUrl = APP_URL + portExtension + '?token=' + token
 
   const fnOptions = {
     appName: APP_NAME,
     resetUrl: resetUrl,
-    username: user.username,
-  };
+    username: user.username
+  }
 
   return sendEmail(
     user.email,
     `Reset Your Password for ${APP_NAME}`,
     getText(fnOptions),
     getHtml(fnOptions)
-  );
-};
+  )
+}
 
 const getHtml = (options) => {
-  const { appName, resetUrl, username } = options;
+  const { appName, resetUrl, username } = options
   return `
 <table width="100%" border="0" cellspacing="0" cellpadding="0" style="font-family: Arial, sans-serif;">
   <tr>
@@ -81,11 +81,11 @@ const getHtml = (options) => {
     </td>
   </tr>
 </table>
-`;
-};
+`
+}
 
 const getText = (options) => {
-  const { appName, resetUrl, username } = options;
+  const { appName, resetUrl, username } = options
   return (
     `Dear ${username},\n\n` +
     `We received a request to reset your password for your ${appName} account. If you didn't make this request, please ignore this email.\n\n` +
@@ -94,5 +94,5 @@ const getText = (options) => {
     `Please note that this password reset link is only valid for 1 hour. After that, you'll need to request a new one.\n\n` +
     `Thank you\n` +
     `The ${appName} Team`
-  );
-};
+  )
+}

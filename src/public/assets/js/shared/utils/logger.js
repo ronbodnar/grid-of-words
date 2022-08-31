@@ -10,8 +10,8 @@ const logger = () => {
     WARN: 3,
     INFO: 4,
     DEBUG: 5,
-    TRACE: 6,
-  };
+    TRACE: 6
+  }
 
   /**
    * Logs a message with a specified log level.
@@ -29,15 +29,15 @@ const logger = () => {
       `[${Object.keys(LogLevel).find((key) => LogLevel[key] === level)}]`,
       message,
       ...args
-    );
-  };
+    )
+  }
 
-  const trace = (message, ...args) => log(LogLevel.TRACE, message, ...args);
-  const debug = (message, ...args) => log(LogLevel.DEBUG, message, ...args);
-  const info = (message, ...args) => log(LogLevel.INFO, message, ...args);
-  const warn = (message, ...args) => log(LogLevel.WARN, message, ...args);
-  const error = (message, ...args) => log(LogLevel.ERROR, message, ...args);
-  const fatal = (message, ...args) => log(LogLevel.FATAL, message, ...args);
+  const trace = (message, ...args) => log(LogLevel.TRACE, message, ...args)
+  const debug = (message, ...args) => log(LogLevel.DEBUG, message, ...args)
+  const info = (message, ...args) => log(LogLevel.INFO, message, ...args)
+  const warn = (message, ...args) => log(LogLevel.WARN, message, ...args)
+  const error = (message, ...args) => log(LogLevel.ERROR, message, ...args)
+  const fatal = (message, ...args) => log(LogLevel.FATAL, message, ...args)
 
   // Return an object containing all logging functions and the LogLevel mapping.
   return {
@@ -48,8 +48,8 @@ const logger = () => {
     warn,
     error,
     fatal,
-    LogLevel,
-  };
-};
+    LogLevel
+  }
+}
 
-export default logger;
+export default logger

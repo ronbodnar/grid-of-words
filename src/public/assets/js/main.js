@@ -24,7 +24,7 @@ showView("loading");
 await (async () => {
   const sessionResponse = await fetchData("/session");
 
-  const { user, game } = sessionResponse?.payload;
+  const { user, game } = sessionResponse?.payload || {};
 
   loggerInstance.debug("Session Data", sessionResponse);
 
@@ -66,11 +66,14 @@ await (async () => {
 
     // Validate the passwordResetToken
     const validateTokenResponse = await validateResetToken(tokenParam);
-    if (!validateTokenResponse?.payload || validateTokenResponse.statusCode !== 200) {
+    if (
+      !validateTokenResponse?.payload ||
+      validateTokenResponse.statusCode !== 200
+    ) {
       showView("forgotPassword", {
-        message: 
-            validateTokenResponse.payload.message ||
-            "The password reset token is invalid. Please request a new token.",
+        message:
+          validateTokenResponse.payload.message ||
+          "The password reset token is invalid. Please request a new token.",
         className: "error",
         hide: false,
       });

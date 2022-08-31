@@ -1,4 +1,4 @@
-import { handleClickEvent } from "../services/event.service.js";
+import { handleClickEvent } from '../services/event.service.js'
 
 /**
  * Creates a paragraph text element with the given text and options.
@@ -13,32 +13,32 @@ import { handleClickEvent } from "../services/event.service.js";
 export const createText = (options = {}) => {
   const {
     type,
-    text = "",
+    text = '',
     hidden = false,
     emitClickEvent = false,
     classes = [],
-    styles = {},
-  } = options;
+    styles = {}
+  } = options
 
   if (!type) {
-    throw new Error("Missing required option: type");
+    throw new Error('Missing required option: type')
   }
 
-  const textElement = document.createElement("p");
-  textElement.innerHTML = text;
+  const textElement = document.createElement('p')
+  textElement.innerHTML = text
 
-  textElement.classList.add(type);
+  textElement.classList.add(type)
   if (hidden) {
-    textElement.classList.add("hidden");
+    textElement.classList.add('hidden')
   }
-  Object.entries(styles).forEach(([key, value]) => textElement.style[key] = value);
+  Object.entries(styles).forEach(([key, value]) => (textElement.style[key] = value))
   // Add additional class names to the element.
-  classes.forEach((class_) => textElement.classList.add(class_));
+  classes.forEach((class_) => textElement.classList.add(class_))
 
   // Add the global click event handler
   if (emitClickEvent) {
-    textElement.addEventListener("click", (event) => handleClickEvent(event));
+    textElement.addEventListener('click', (event) => handleClickEvent(event))
   }
 
-  return textElement;
-};
+  return textElement
+}
