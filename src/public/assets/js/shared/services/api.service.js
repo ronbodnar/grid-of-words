@@ -53,6 +53,7 @@ export const fetchData = async (
     };
     const fetchResponse = await fetch(url, options);
 
+    // Clear the timeout for aborting after 15 seconds if the fetch was successful.
     clearTimeout(timeout);
 
     const data = !fetchResponse
@@ -62,9 +63,18 @@ export const fetchData = async (
           return {};
         });
 
-    if (fetchResponse && !data?.statusCode) {
-      data.statusCode = fetchResponse.status;
+    // Reformat the response data object to separate the payload and the status code.
+    if (fetchResponse) {
+      const dataCopy = structuredClone(data);
+      const statusCode = data?.statusCode || fetchResponse.status;
+
+      Object.keys(data).forEach((key) => delete data[key]);
+
+      data.payload = dataCopy;
+      data.statusCode = statusCode;
     }
+
+    logger.debug("fetchData", data);
 
     return data;
   } catch (err) {
@@ -80,16 +90,6 @@ export const fetchData = async (
     return null;
   }
 };
-
-export const loadStatistics = async () => {
-  const authenticatedUser = getAuthenticatedUser();
-  if (!authenticatedUser) {
-    return null;
-  }
-  const statisticsResult = await fetchData(`/statistics`);
-  console.log("Statistics result", statisticsResult)
-  return statisticsResult;
-}
 
 /**
  * Fetches a list of words from the server with a specified length range.

@@ -24,27 +24,29 @@ showView("loading");
 await (async () => {
   const sessionResponse = await fetchData("/session");
 
+  const { user, game } = sessionResponse?.payload;
+
   loggerInstance.debug("Session Data", sessionResponse);
 
-  if (sessionResponse?.user && sessionResponse?.user._id) {
-    storeSession("user", sessionResponse.user);
+  if (user?._id) {
+    storeSession("user", user);
   } else {
     removeSession("user");
   }
 
-  if (sessionResponse?.game) {
-    storeSession("game", sessionResponse.game);
+  if (game) {
+    storeSession("game", game);
   } else {
     removeSession("game");
   }
 
-  const game = retrieveSession("game");
-  if (game) {
-    if (game.maxViews === game.attempts?.length) {
+  const localGame = retrieveSession("game");
+  if (localGame) {
+    if (localGame.maxViews === localGame.attempts?.length) {
       removeSession("game");
     } else {
       showView("game", {
-        game: game,
+        game: localGame,
       });
     }
   }
@@ -64,10 +66,10 @@ await (async () => {
 
     // Validate the passwordResetToken
     const validateTokenResponse = await validateResetToken(tokenParam);
-    if (!validateTokenResponse || validateTokenResponse.statusCode !== 200) {
+    if (!validateTokenResponse?.payload || validateTokenResponse.statusCode !== 200) {
       showView("forgotPassword", {
         message: 
-            validateTokenResponse?.message ||
+            validateTokenResponse.payload.message ||
             "The password reset token is invalid. Please request a new token.",
         className: "error",
         hide: false,

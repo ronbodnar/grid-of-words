@@ -30,14 +30,14 @@ export const submitAuthForm = async (url, params, successFn, failureFn) => {
 
   // Validate the response and statusCode to handle any errors.
   // Invalid responses will display an error message, re-enable the form, then invoke an optional failureFn callback.
-  if (!responsePromise || responsePromise.statusCode !== 200) {
+  if (!responsePromise?.payload || responsePromise.statusCode !== 200) {
     if (submitButton) {
       submitButton.disabled = false;
     }
     submitButtonLoader?.classList.add("hidden");
 
     showMessage(
-      responsePromise?.message || "An error has occurred. Please try again.",
+      responsePromise?.payload?.message || "An error has occurred. Please try again.",
       {
         className: "error",
         hide: false,
@@ -46,7 +46,7 @@ export const submitAuthForm = async (url, params, successFn, failureFn) => {
 
     // Call the optional failureFn callback with the response data if available.
     if (failureFn) {
-      failureFn(responsePromise);
+      failureFn(responsePromise?.payload);
     }
     return;
   }
@@ -59,7 +59,7 @@ export const submitAuthForm = async (url, params, successFn, failureFn) => {
 
   // Call the successFn callback with the response data.
   if (successFn) {
-    successFn(responsePromise);
+    successFn(responsePromise.payload);
   }
 };
 
@@ -67,10 +67,10 @@ export const submitAuthForm = async (url, params, successFn, failureFn) => {
  * Attempts to log the user out, remove session data, and redirect them home with a confirmation message.
  */
 export const logout = async () => {
-  const data = await fetchData("/auth/logout", "POST");
+  const logoutResponse = await fetchData("/auth/logout", "POST");
 
   // TODO: the user shouldn't care if it fails, should they? should we?
-  if (data && data.statusCode === 200) {
+  if (logoutResponse?.statusCode === 200) {
     removeSession("user");
     removeSession("game");
     showView("home");
@@ -78,14 +78,14 @@ export const logout = async () => {
       hide: true,
       className: "success",
     }
-    showMessage(data.message || "You have been successfully logged out.", messageOptions);
+    showMessage(logoutResponse.payload?.message || "You have been successfully logged out.", messageOptions);
   } else {
     showMessage("An error occurred while logging out. Please try again.", {
       className: "error",
       hide: false,
     });
   }
-  logger.debug("Logout response", data);
+  logger.debug("Logout response", logoutResponse);
 };
 
 /**

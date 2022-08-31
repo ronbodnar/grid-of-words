@@ -1,7 +1,7 @@
 import "../../../chart.umd.js";
 import "../../../chartjs-plugin-datalabels.min.js";
 
-export const getWinDistributionChart = (wins) => {
+export const loadWinDistributionChart = (wins) => {
   const sumOfWins = Object.values(wins).reduce((sum, w) => sum + w);
   const winDistributionContext = document.getElementById(
     "winDistributionChart"
@@ -26,13 +26,16 @@ const getChartData = (wins) => {
   }
 
   const data = new Array(labels.length).fill(0);
-  Object.entries(wins).forEach(([key, value]) => (data[key] = value));
+
+  // Populate the data array with the number of wins for each game length. Subtract 1 to match 0 index.
+  Object.entries(wins).forEach(([key, value]) => (data[Number(key) - 1] = value));
+
   return {
-    labels: labels, //Object.keys(wins).map((key) => Number(key) + 3),
+    labels: labels,
     datasets: [
       {
         backgroundColor: "rgba(0, 163, 108, 0.6)",
-        data: data, //Object.values(wins),
+        data: data,
       },
     ],
   };
@@ -40,24 +43,10 @@ const getChartData = (wins) => {
 
 const getChartOptions = (sumOfWins) => {
   return {
-    fill: false,
     indexAxis: "y",
     plugins: {
       tooltip: {
-        displayColors: false,
-        callbacks: {
-          title: function (context) {
-            let label = context[0].label || "???";
-            const val = Number(label);
-            let suffix =
-              val === 1 ? "st" : val === 2 ? "nd" : val === 3 ? "rd" : "th";
-            return `Wins on the ${label + suffix} attempt`;
-          },
-          label: function (context) {
-            let label = context.formattedValue || "";
-            return `${label} Games`;
-          },
-        },
+        enabled: false,
       },
       legend: {
         display: false,
@@ -71,7 +60,7 @@ const getChartOptions = (sumOfWins) => {
         anchor: "end",
         formatter: (value, ctx) => {
           const percent = (value / sumOfWins) * 100.0;
-          return `${percent.toFixed(2)}%`;
+          return ctx?.active ? `${percent.toFixed(1)}%` : value;
         },
       },
     },

@@ -37,7 +37,7 @@ export const startGame = async (options = {}) => {
       "GET"
     );
 
-    if (!fetchNewGameResponse || fetchNewGameResponse.statusCode !== 200) {
+    if (!fetchNewGameResponse?.payload || fetchNewGameResponse.statusCode !== 200) {
       throw new Error("Failed to fetch a new game");
     }
 
@@ -48,9 +48,9 @@ export const startGame = async (options = {}) => {
       maxAttempts: maxAttempts || DEFAULT_MAX_ATTEMPTS,
     });
 
-    storeSession("game", fetchNewGameResponse);
+    storeSession("game", fetchNewGameResponse.payload);
 
-    logger.info("Created Game Response", fetchNewGameResponse);
+    logger.info("Created Game Response", fetchNewGameResponse.payload);
   } catch (error) {
     logger.error("Error creating new game", {
       error: error,
@@ -83,7 +83,7 @@ export const abandonGame = async () => {
   );
 
   // TODO: Should we even display errors (potentially blocking users from returning home)?
-  if (!abandonGameResponse || abandonGameResponse.statusCode !== 200) {
+  if (!abandonGameResponse?.payload || abandonGameResponse.statusCode !== 200) {
     logger.error("Failed to abandon game", {
       game: game,
       abandonGameResponse: abandonGameResponse,
@@ -95,7 +95,7 @@ export const abandonGame = async () => {
   removeSession("game");
   showView("home");
 
-  return abandonGameResponse;
+  return abandonGameResponse.payload;
 };
 
 let currentGame;

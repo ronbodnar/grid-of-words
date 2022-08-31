@@ -1,0 +1,20 @@
+.streak-container {
+    display: flex;
+    justify-content: center;
+    padding: 15px 0;
+}
+
+@media screen and (min-width: 768px) {
+    .streak-container {
+        width: 50%;
+        margin: 0 auto;
+    }
+}
+
+.total-games-stats {
+    border-radius: 8px;
+    border: 1px solid #F4F3F2;
+    padding: 0 5px;
+    margin: 0 3px;
+    font-size: 20px;
+}

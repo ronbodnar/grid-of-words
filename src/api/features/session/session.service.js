@@ -16,7 +16,7 @@ export const getSessionData = (cookies = {}) => {
 
   if (game) {
     const validState = game.state === GameState.IN_PROGRESS;
-    const validAttempts = (game.attempts?.length || 10) >= game.maxAttempts;
+    const validAttempts = (game.attempts?.length || 10) <= game.maxAttempts;
     if (game._id && validAttempts && validState) {
       sessionData.game = game;
     }

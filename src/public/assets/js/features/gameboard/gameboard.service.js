@@ -135,15 +135,15 @@ export const updateCurrentAttemptSquares = (word) => {
 export const updateSquareBackground = (square, match) => {
   switch (match) {
     case EXACT_MATCH:
-      square.style.backgroundColor = "rgba(0, 163, 108, 0.9)";
+      square.style.backgroundColor = "rgba(0, 163, 108, 0.7)";
       break;
 
     case PARTIAL_MATCH:
-      square.style.backgroundColor = "rgba(255, 165, 0, 0.9)";
+      square.style.backgroundColor = "rgba(255, 165, 0, 0.7)";
       break;
 
     case NO_MATCH:
-      square.style.color = "rgba(244, 243, 242, 0.6)";
+      square.style.backgroundColor = "rgba(49, 56, 79, 0.7)";
       break;
   }
 };

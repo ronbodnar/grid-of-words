@@ -91,6 +91,10 @@ sup {
   justify-content: space-between;
 }
 
+.content#statistics {
+  padding: 75px 0;
+}
+
 @media screen and (min-width: 768px) {
   .content#game {
     padding-top: 0;

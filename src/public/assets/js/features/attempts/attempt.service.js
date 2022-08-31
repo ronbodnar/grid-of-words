@@ -4,9 +4,7 @@ import {
   storeSession,
 } from "../../shared/services/storage.service.js";
 import { showMessage } from "../../shared/services/message.service.js";
-import {
-  wordExists,
-} from "../../shared/services/api.service.js";
+import { wordExists } from "../../shared/services/api.service.js";
 import { Game } from "../game/Game.js";
 import { transformSquares } from "../gameboard/gameboard.service.js";
 import { toggleKeyboardOverlay } from "../keyboard/keyboard.service.js";
@@ -64,8 +62,7 @@ export const processAttempt = async (game) => {
 
   toggleKeyboardOverlay(false);
 
-  // An unhandled exception in the API threw a 500 internal server error.
-  if (!response) {
+  if (!response?.payload || response.statusCode !== 200) {
     showMessage(
       "An error occurred while attempting the word. Please try again."
     );
@@ -74,9 +71,11 @@ export const processAttempt = async (game) => {
     return;
   }
 
-  if (response.gameData) {
+  const { gameData } = response.payload;
+
+  if (gameData) {
     // Set up remote and local Game copies.
-    const remoteGame = new Game(response.gameData);
+    const remoteGame = new Game(gameData);
     const localGame = new Game(game);
 
     // Add the most recent attempt to the local copy since remote copy will contain it.
@@ -86,27 +85,40 @@ export const processAttempt = async (game) => {
       localGame.attempts.includes(a)
     );
 
-    if (response.statusCode === 200) {
-      switch (true) {
-        case localGame.attempts.length !== remoteGame.attempts.length: // attempt array size mismatch
-        case !attemptsMatch ||
-          remoteGame.attempts.length !== localGame.attempts.length: // array element content mismatch
-        case localGame._id !== remoteGame._id: // game id mismatch
-        case localGame.word !== remoteGame.word: // game word mismatch
-          logger.error(
-            "There is a game data mismatch, reloading the game in 10 seconds..."
-          );
-          setTimeout(() => {
-            storeSession("game", response.gameData);
-            window.location.href = "/";
-          }, 10000);
-          return;
-      }
-      storeSession("game", response.gameData);
+    switch (true) {
+      case localGame.attempts.length === remoteGame.attempts.length: // attempt array size mismatch
+      case !attemptsMatch ||
+        remoteGame.attempts.length !== localGame.attempts.length: // array element content mismatch
+      case localGame._id !== remoteGame._id: // game id mismatch
+      case localGame.word !== remoteGame.word: // game word mismatch
+        const reloadDelay = 5;
+        logger.error(
+          `There is a game data mismatch, reloading the game in ${reloadDelay} seconds...`
+        );
+        showMessage(`Game data mismatch. Reloading in <span id='mismatchCounter'>${reloadDelay}</span> seconds`);
+        decreaseCounterToZero(reloadDelay);
+
+        setTimeout(() => {
+          storeSession("game", gameData);
+          window.location.href = "/";
+        }, reloadDelay * 1000);
+        return;
     }
+    storeSession("game", gameData);
   }
-  await processAttemptResponse(game, response);
+  await processAttemptResponse(game, response.payload);
 };
+
+const decreaseCounterToZero = (counter) => {
+  if (counter <= 0) {
+    return;
+  }
+  setTimeout(() => {
+    const counterElement = document.getElementById("mismatchCounter");
+    counterElement.textContent = counter;
+    decreaseCounterToZero(counter - 1);
+  }, 1000);
+}
 
 /**
  * Validates the attempt has enough letters, has not been tried before, and is a valid word from the word list.

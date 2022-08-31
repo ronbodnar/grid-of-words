@@ -58,6 +58,7 @@ export const buildView = (name, options = {}) => {
           hidden: element.hidden || false,
           emitClickEvent: element.emitClickEvent || false,
           classes: element.classes || [],
+          styles: element.styles || {},
         })
       );
     }
@@ -79,6 +80,7 @@ export const buildView = (name, options = {}) => {
       hidden: submessage.hidden || false,
       emitClickEvent: submessage.emitClickEvent || false,
       classes: submessage.classes || [],
+      styles: submessage.styles || {},
     });
     contentContainer.appendChild(submessageElement);
   }

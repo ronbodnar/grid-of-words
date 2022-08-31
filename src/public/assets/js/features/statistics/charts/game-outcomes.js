@@ -1,78 +1,101 @@
 import "../../../chart.umd.js";
 import "../../../chartjs-plugin-datalabels.min.js";
 
-export const getGameOutcomesChart = (userStatistics) => {
-  const { totalGames, wins, losses, abandoned } = userStatistics;
-  const sumOfWins = Object.values(wins).reduce((sum, wins) => sum + wins);
+export const loadGameOutcomesChart = (userStatistics) => {
   const gameOutcomeContext = document.getElementById("gameOutcomesChart");
   return new Chart(gameOutcomeContext, {
     type: "doughnut",
-    data: getChartData(sumOfWins, losses, abandoned),
-    options: getChartOptions(totalGames),
-    plugins: [ChartDataLabels],
+    data: getChartData(userStatistics),
+    options: getChartOptions(),
+    plugins: [
+      ChartDataLabels,
+      {
+        // Increases padding between the chart and the legend by increasing the legend height.
+        beforeInit: function (chart) {
+          const originalFit = chart.legend.fit;
+          chart.legend.fit = function fit() {
+            originalFit.bind(chart.legend)();
+            this.height += 20;
+          };
+        },
+      },
+    ],
   });
 };
 
-const getChartData = (sumOfWins, losses, abandoned) => {
-  let labels = ["Win", "Loss", "Abandoned"];
+const getChartData = (userStatistics) => {
+  const { totalGames, wins, losses, abandoned } = userStatistics;
+  const sumOfWins = Object.values(wins).reduce((sum, wins) => sum + wins);
+
+  let labels = ["Win", "Loss", "Abandon"];
   let data = [sumOfWins, losses, abandoned];
   let backgroundColors = [
     "rgba(0, 163, 108, 0.6)",
     "rgba(227, 34, 39, 0.6)",
-    "rgba(89, 96, 109, 0.6)",
+    "rgba(49, 56, 79, 0.6)",
   ];
-  if (sumOfWins === 0) {
-    labels = labels.pop();
-    data = data.pop();
-    backgroundColors = backgroundColors.pop();
-  }
+
   if (losses === 0) {
-    labels = labels.filter((val, index) => index !== 1);
-    data = data.filter((val, index) => index !== 1);
-    backgroundColors = backgroundColors.filter((val, index) => index !== 1);
+    labels = labels.filter((_, i) => i !== 1);
+    data = data.filter((_, i) => i !== 1);
+    backgroundColors = backgroundColors.filter((_, i) => i !== 1);
+  }
+  if (sumOfWins === 0) {
+    labels.shift();
+    data.shift();
+    backgroundColors.shift();
   }
   if (abandoned === 0) {
-    labels = labels.shift();
-    data = data.shift();
-    backgroundColors = backgroundColors.shift();
+    labels.pop();
+    data.pop();
+    backgroundColors.pop();
   }
+
   return {
     labels: labels,
     datasets: [
       {
         backgroundColor: backgroundColors,
         data: data,
-        borderWidth: 1,
-        borderColor: "transparent",
+        borderWidth: 3,
+        borderColor: "#0d1117",
+        datalabels: {
+          labels: {
+            value: {
+              offset: -4,
+              align: "end",
+              anchor: "end",
+              font: {
+                size: 16,
+              },
+              formatter: (value, ctx) => {
+                const percent = (value / (totalGames + 100)) * 100.0;
+                if (percent <= 0 || percent > 100) return "";
+                return ctx.active ? `${percent.toFixed(1)}%` : value;
+              },
+            },
+          },
+        },
       },
     ],
   };
 };
 
-const getChartOptions = (totalGames) => {
+const getChartOptions = () => {
   return {
-    hoverOffset: 2,
-    cutout: "40%",
+    hoverOffset: 6,
+    cutout: "25%",
     rotation: "-30",
-    circumference: "270",
+    circumference: "360",
     plugins: {
       tooltip: {
-        displayColors: false,
-        callbacks: {
-          title: function (context) {
-            const translations = {
-              Win: "Games Won",
-              Loss: "Games Lost",
-              Abandoned: "Games Abandoned",
-            };
-            let label = context[0].label || "???";
-            return translations[label];
-          },
-        },
+        enabled: false,
       },
       legend: {
-        position: "chartArea",
+        display: true,
+        position: "top",
         labels: {
+          boxWidth: 30,
           color: "rgb(244, 243, 242)",
         },
       },
@@ -81,17 +104,14 @@ const getChartOptions = (totalGames) => {
         font: {
           size: 14,
         },
-        align: "middle",
-        anchor: "end",
-        formatter: (value, ctx) => {
-          const percent = (value / totalGames) * 100.0;
-          if (percent === 0.0) return "";
-          return `${percent.toFixed(2)}%`;
-        },
       },
     },
     layout: {
-      padding: 15,
+      padding: {
+        left: 20,
+        right: 20,
+        bottom: 20,
+      },
     },
     scales: {
       y: {

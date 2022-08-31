@@ -30,7 +30,7 @@ const viewFunctions = {
   howToPlay: () => buildHowToPlayView(),
   loading: () => buildLoadingView(),
   options: () => buildOptionsView(),
-  statistics: () => buildStatisticsView(),
+  statistics: (options = {}) => buildStatisticsView(options),
 
   // Authentication view functions
   changePassword: () => buildChangePasswordView(),
@@ -62,7 +62,7 @@ export const showView = (name, options = {}) => {
 
   const currentView = getCurrentViewName();
   const addToHistory =
-    currentView !== "loading" && currentView !== "game" && !hideFromHistory;
+    currentView !== "loading" && currentView !== "game" && currentView !== "statistics" && !hideFromHistory;
 
   if (addToHistory) {
     viewHistory.push(getCurrentViewName());

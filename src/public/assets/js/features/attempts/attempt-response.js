@@ -1,12 +1,15 @@
+import { logger } from "../../main.js";
 import { setBlockKeyEvents } from "../../shared/services/event.service.js";
 import { showMessage } from "../../shared/services/message.service.js";
 import { removeSession } from "../../shared/services/storage.service.js";
+import { getAuthenticatedUser } from "../auth/authentication.service.js";
 import {
   shiftActiveRow,
   transformSquares,
   updateCurrentAttemptSquares,
 } from "../gameboard/gameboard.service.js";
 import { updateKeyboardKeys } from "../keyboard/keyboard.service.js";
+import { fetchStatistics } from "../statistics/statistics.service.js";
 import { showView } from "../view/view.service.js";
 import { clearAttemptLetters, getAttemptLetters } from "./attempt.service.js";
 
@@ -17,7 +20,7 @@ import { clearAttemptLetters, getAttemptLetters } from "./attempt.service.js";
  * @param {object} data - The response data from the server.
  */
 export const processAttemptResponse = async (game, data) => {
-  let message = "Error";
+  let responseMessage = "Error";
 
   if (!data) {
     showMessage("No response from server", {
@@ -26,8 +29,10 @@ export const processAttemptResponse = async (game, data) => {
     return;
   }
 
-  if (data.message) {
-    switch (data.message) {
+  const { message, gameData } = data;
+
+  if (message) {
+    switch (message) {
       case "WRONG_WORD":
         updateCurrentAttemptSquares(game.word);
 
@@ -38,7 +43,7 @@ export const processAttemptResponse = async (game, data) => {
         shiftActiveRow();
 
         clearAttemptLetters();
-        message = "";
+        responseMessage = "";
 
         setBlockKeyEvents(false);
         break;
@@ -46,18 +51,28 @@ export const processAttemptResponse = async (game, data) => {
       case "WINNER":
       case "LOSER":
         removeSession("game");
-        if (data.message === "LOSER") {
-          message = data.gameData.word.toUpperCase();
+        if (message === "LOSER") {
+          responseMessage = gameData.word.toUpperCase();
         } else {
-          message = data.message;
+          responseMessage = message;
         }
         updateCurrentAttemptSquares(game.word);
         await transformSquares(false);
         clearAttemptLetters();
+
+        // Pre-fetch the statistics to pass to the stats view and avoid redirecting to handle it below.
+        const statistics = await fetchStatistics(false);
         setTimeout(() => {
           setBlockKeyEvents(false);
-          showView("home");
-        }, 3000);
+          if (statistics) {
+            showView("statistics", {
+              statistics: statistics,
+            });
+          } else {
+            // TODO: extra CTA to get users to log in/register?
+            showView("home");
+          }
+        }, 5000);
         break;
 
       case "GAME_NOT_FOUND":
@@ -82,9 +97,9 @@ export const processAttemptResponse = async (game, data) => {
       case "NOT_IN_WORD_LIST":
       case "DUPLICATE_ATTEMPT":
       default:
-        message =
-          data.message.at(0).toUpperCase() +
-          data.message.slice(1).toLowerCase().replaceAll("_", " ");
+        responseMessage =
+          message.at(0).toUpperCase() +
+          message.slice(1).toLowerCase().replaceAll("_", " ");
 
         await transformSquares(false, true);
 
@@ -92,9 +107,9 @@ export const processAttemptResponse = async (game, data) => {
         break;
     }
   } else {
-    console.error("No message found in data", data);
+    logger.warn("No message found in data", data);
   }
 
   // Update the response message element
-  showMessage(message);
+  showMessage(responseMessage);
 };
