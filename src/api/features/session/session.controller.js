@@ -3,7 +3,9 @@ import { setApiKeyCookie } from "../../shared/helpers.js";
 import { getSessionData } from "./session.service.js";
 
 /**
- * Extract session data from cookies sent in the request.
+ * Extracts session data from cookies sent in the request and clears expired/invalid cookies.
+ * 
+ * Endpoint: GET /session
  */
 export const handleGetSessionData = (req, res, next) => {
   const { apiKey } = req.cookies;

@@ -2,6 +2,13 @@ import InternalError from '../../../errors/InternalError.js'
 import ValidationError from '../../../errors/ValidationError.js'
 import { registerUser } from './register.service.js'
 
+/**
+ * Handles the registration of new {@link User} accounts.
+ * 
+ * Endpoint: POST /auth/register
+ * 
+ * @async
+ */
 export const handleRegisterUser = async (req, res, next) => {
   const { email, password, username } = req.body
 

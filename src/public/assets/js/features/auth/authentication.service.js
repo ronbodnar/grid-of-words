@@ -7,6 +7,7 @@ import { logger } from '../../main.js'
 /**
  * Posts form data to the specified `url` and invokes `successFn()` or `failureFn()` depending on the response.
  *
+ * @async
  * @param {string} url The url used in the fetch request.
  * @param {object} params The parameters to pass in the fetch request.
  * @param {Function} successFn A function that will be called when the response is received.
@@ -59,6 +60,8 @@ export const submitAuthForm = async (url, params, successFn, failureFn) => {
 
 /**
  * Attempts to log the user out, remove session data, and redirect them home with a confirmation message.
+ * 
+ * @async
  */
 export const logout = async () => {
   const logoutResponse = await fetchData('/auth/logout', 'POST')
@@ -88,7 +91,8 @@ export const logout = async () => {
 /**
  * Validates a password reset token with the API.
  *
- * @param {*} passwordResetToken The password reset token to validate.
+ * @async
+ * @param {string} passwordResetToken The password reset token to validate.
  * @returns {Promise<any>} A promise that resolves with the API response.
  */
 export const validateResetToken = async (passwordResetToken) => {
@@ -109,7 +113,7 @@ export const isAuthenticated = () => {
 /**
  * Obtains the authenticated user object from the session storage.
  *
- * @returns The authenticated user object or null if no user is authenticated.
+ * @returns {User|null} The authenticated user object or null if no user is authenticated.
  */
 export const getAuthenticatedUser = () => {
   return retrieveSession('user')

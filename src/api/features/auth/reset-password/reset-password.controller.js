@@ -2,6 +2,13 @@ import InternalError from '../../../errors/InternalError.js'
 import ValidationError from '../../../errors/ValidationError.js'
 import { resetPassword } from './reset-password.service.js'
 
+/**
+ * Handle the request to reset a password and clears any existing token.
+ * 
+ * Endpoint: POST /auth/reset-password
+ * 
+ * @async
+ */
 export const handleResetPassword = async (req, res, next) => {
   const { newPassword, passwordResetToken } = req.body
 

@@ -1,12 +1,12 @@
-import { EXACT_MATCH, PARTIAL_MATCH, NO_MATCH } from '../../shared/utils/constants.js'
-import { handleClickEvent } from '../../shared/services/event.service.js'
+import { EXACT_MATCH, PARTIAL_MATCH, NO_MATCH } from '../../../shared/utils/constants.js'
+import { handleClickEvent } from '../../../shared/services/event.service.js'
 
 /**
  * Builds a key element based on the letter and className (for styling) and processes events for that key.
  *
  * @param {string} letter - The letter to be displayed on the key.
  * @param {string} className - The class to be applied to the key, "incorrect", "partial", or "exact".
- * @return {Element} The built key element.
+ * @returns {Element} The built key element.
  */
 export const buildKeyElement = (letter, className) => {
   var key = document.createElement('div')

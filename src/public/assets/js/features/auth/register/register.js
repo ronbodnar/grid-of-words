@@ -5,6 +5,8 @@ import { submitAuthForm } from '../authentication.service.js'
 
 /**
  * Handles the register form submission by validating inputs and awaiting {@link submitAuthForm} with a `successFn` callback.
+ * 
+ * @async
  */
 export const submitRegisterForm = async () => {
   const emailInput = document.querySelector('#email')

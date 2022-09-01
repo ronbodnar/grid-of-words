@@ -7,12 +7,12 @@ import { ObjectId } from "mongodb";
 /**
  * Finds a {@link User} by the specified property name and value.
  *
+ * @async
  * @param {string} name The name of the property to search for.
  * @param {any} value The value of the property to match.
- * @returns {Promise<User | null>} A promise that resolves to the User if successful.
+ * @returns {Promise<User|null>} A promise that resolves to the User if successful.
  */
 export const findUserBy = async (name, value) => {
-  // Validate the name and value of the property were passed.
   if (!name || !value) {
     return new ValidationError(
       "Invalid property name or value passed to User findBy",
@@ -23,6 +23,7 @@ export const findUserBy = async (name, value) => {
     );
   }
 
+  // Convert the _id field value to an ObjectId instance of the value.
   if (name === "_id" && !(value instanceof ObjectId)) {
     value = ObjectId.createFromHexString(value);
   }
@@ -45,8 +46,9 @@ export const findUserBy = async (name, value) => {
 /**
  * Saves the passed {@link User} to the database.
  *
+ * @async
  * @param {User} user The user object to save to the database.
- * @returns {Promise<User | null>} A promise that resolves to the User if successful.
+ * @returns {Promise<User|null>} A promise that resolves to the User if successful.
  */
 export const updateUser = async (user, properties) => {
   if (!user) {
@@ -64,6 +66,7 @@ export const updateUser = async (user, properties) => {
     );
   }
 
+  // Remove the _id key from the properties and ensure they are valid and defined in User.
   const filteredProperties = Object.entries(properties).filter(
     ([key, value]) => Object.hasOwn(user, key) && key !== "_id" && value != null
   );
@@ -96,8 +99,9 @@ export const updateUser = async (user, properties) => {
 /**
  * Creates a new {@link User} in the database with the passed in user details.
  *
+ * @async
  * @param {User} user The User object to insert into the database.
- * @returns {Promise<InsertOneResult | null>} A promise that resolves to the insertion result if successful.
+ * @returns {Promise<InsertOneResult|null>} A promise that resolves to the insertion result if successful.
  */
 export const insertUser = async (user) => {
   if (!user) {
@@ -127,9 +131,4 @@ export const insertUser = async (user) => {
     });
     return null;
   }
-};
-
-export const findAllUsers = async (req, res) => {
-  const users = await database.getUserCollection().find().toArray();
-  res.json(users);
 };

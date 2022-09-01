@@ -7,17 +7,22 @@ import { fetchStatistics } from "./statistics.service.js";
 
 /**
  * Builds and displays the statistics view within the content container and loads all charts into their canvas.
+ * 
+ * @async
  */
-export const buildStatisticsView = async (options) => {
-  let { statistics } = options;
-  if (!statistics) {
-    showView("loading");
-
-    // fetchStatistics handles errors by redirecting so we can just return early.
-    statistics = await fetchStatistics();
-    if (!statistics) {
-      return;
+export const buildStatisticsView = async (options = {}) => {
+  const statistics = await (async () => {
+    if (options.statistics) {
+      return options.statistics;
     }
+
+    showView("loading");
+    return await fetchStatistics();
+  })();
+
+  // fetchStatistics handles redirection upon error so just return early here.
+  if (!statistics) {
+    return;
   }
 
   const { totalGames, wins, winStreak, bestWinStreak } = statistics;
@@ -83,8 +88,8 @@ const getWinDistributionHeader = () => {
 /**
  * Builds a flex container for win streak and best win streak with 50% width (2 stats per row).
  *
- * @param {*} winStreak The value of the user's current win streak.
- * @param {*} bestWinStreak The value of the user's best win streak.
+ * @param {Number} winStreak The value of the user's current win streak.
+ * @param {Number} bestWinStreak The value of the user's best win streak.
  * @returns {HTMLDivElement} The streak container element populated with textValues.
  */
 const buildStreakContainer = (winStreak, bestWinStreak) => {
@@ -127,9 +132,9 @@ const buildStreakContainer = (winStreak, bestWinStreak) => {
 /**
  * Builds a canvas div container for charts/graphs.
  *
- * @param {*} id The id to assign the canvas.
- * @param {*} width The width of the canvas parent container.
- * @param {*} height The height of the canvas parent container.
+ * @param {string} id The id to assign the canvas.
+ * @param {Number} width The width of the canvas parent container.
+ * @param {Number} height The height of the canvas parent container.
  * @returns {HTMLDivElement} The build chart container element with a blank canvas.
  */
 const buildChartContainer = (id, width, height) => {

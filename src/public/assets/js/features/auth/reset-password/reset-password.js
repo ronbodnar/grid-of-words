@@ -5,6 +5,8 @@ import { showView } from '../../view/view.service.js'
 
 /**
  * Handles the reset password for submission by validating inputs and awaiting {@link submitAuthForm} with a `successFn` callback.
+ * 
+ * @async
  */
 export const submitResetPasswordForm = async () => {
   const passwordResetToken = retrieveSession('passwordResetToken')

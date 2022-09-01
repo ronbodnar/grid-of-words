@@ -1,6 +1,13 @@
 import ValidationError from '../../../errors/ValidationError.js'
 import { validatePasswordResetToken } from './validate.token.service.js'
 
+/**
+ * Handles the validation of a password reset token.
+ * 
+ * Endpointer: /auth/validate-token
+ * 
+ * @async
+ */
 export const handleValidatePasswordResetToken = async (req, res, next) => {
   const { passwordResetToken } = req.body
   if (!passwordResetToken) {

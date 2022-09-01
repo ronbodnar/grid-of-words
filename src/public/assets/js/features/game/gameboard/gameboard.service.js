@@ -1,6 +1,6 @@
-import { getValidatedLetters } from '../../shared/utils/helpers.js'
-import { getAttemptLetters } from '../attempts/attempt.service.js'
-import { NO_MATCH, EXACT_MATCH, PARTIAL_MATCH } from '../../shared/utils/constants.js'
+import { getValidatedLetters } from '../../../shared/utils/helpers.js'
+import { getAttemptLetters } from '../attempt/attempt.service.js'
+import { NO_MATCH, EXACT_MATCH, PARTIAL_MATCH } from '../../../shared/utils/constants.js'
 
 /**
  * Moves the active class from the current row to the next row for new word attempts.
@@ -19,7 +19,7 @@ export const shiftActiveRow = () => {
  *
  * @param {boolean} hide - Whether to hide the squares or not.
  * @param {boolean} instant - Whether the hiding/showing of squares should be instant.
- * @return {Promise} The promise resolves when all squares are hidden/shown, plus an additional delay of 300 milliseconds.
+ * @returns {Promise} The promise resolves when all squares are hidden/shown, plus an additional delay of 300 milliseconds.
  */
 export const transformSquares = (hide, instant) => {
   const activeRow = document.querySelector('.word-row.active')

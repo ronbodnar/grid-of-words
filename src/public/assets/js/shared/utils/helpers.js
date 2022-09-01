@@ -5,7 +5,7 @@ import { EXACT_MATCH, PARTIAL_MATCH, NO_MATCH } from './constants.js'
  *
  * @param {string} guessWord - The word to compare against the known correct word.
  * @param {string} targetWord - The known word to compare against.
- * @return {list} - The in-order list of the guessWord letters placement validation.
+ * @returns {list} - The in-order list of the guessWord letters placement validation.
  */
 export const getValidatedLetters = (guessWord, targetWord) => {
   if (targetWord.length !== guessWord.length) {
@@ -47,7 +47,7 @@ export const getValidatedLetters = (guessWord, targetWord) => {
  *
  * @param {string} targetWord - The target word to compare against.
  * @param {object} attemptedWords - An array of attempted words to compare.
- * @return {object} - The states of each letter found.
+ * @returns {object} - The states of each letter found.
  */
 export const getLetterStates = (gameWord, attemptedWords) => {
   let letterMatchStates = []
@@ -80,7 +80,7 @@ export const getLetterStates = (gameWord, attemptedWords) => {
  *
  * @param {number} min - The minimum value for the random integer.
  * @param {number} max - The maximum value for the random integer.
- * @return {number} - The random numer.
+ * @returns {number} - The random numer.
  */
 export const getRandomInt = (min, max) => {
   return Math.floor(Math.random() * (max - min) + min)
@@ -90,7 +90,7 @@ export const getRandomInt = (min, max) => {
  * Converts the given string-containing-hyphens or spaces into camelCase.
  *
  * @param {string} str The string to be converted.
- * @returns The camelCase representation of the given string.
+ * @returns {string} The camelCase representation of the given string.
  */
 export const convertToCamelCase = (str) => {
   // TODO: this wont detect something already in camel case. It will actually ruin camelCase for string already in camelCase.

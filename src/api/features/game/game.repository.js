@@ -3,15 +3,12 @@ import database from "../../shared/database.js";
 import DatabaseError from "../../errors/DatabaseError.js";
 import { ObjectId } from "mongodb";
 
-// Thought about an upsert instead of separate functions, but I couldn't think of a reliable way to get the ID of the game.
-// It seems like using the _id as a filter is causing issues by setting a default value.
-// Anybody have any ideas?
-
 /**
  * Inserts a new game into the database with the specified id and word.
  *
+ * @async
  * @param {object} gameDoc - The game document to insert into the database.
- * @return {Promise<Game | null>} A promise that resolves with the inserted Game ID if successful.
+ * @returns {Promise<Game|null>} A promise that resolves with the inserted Game ID if successful.
  */
 export const insertGame = async (gameDoc) => {
   const cursor = await database.getGameCollection().insertOne(gameDoc);
@@ -26,8 +23,9 @@ export const insertGame = async (gameDoc) => {
 /**
  * Updates the game record within the database.
  *
+ * @async
  * @param {Game} game - The Game object to save to the database.
- * @returns {Promise<DatabaseError | boolean>} A promise that resolves truthy if successful.
+ * @returns {Promise<DatabaseError|boolean>} A promise that resolves truthy if successful.
  */
 export const updateGame = async (game) => {
   const filter = {
@@ -49,8 +47,9 @@ export const updateGame = async (game) => {
 /**
  * Retrieves a game from the database by its id.
  *
+ * @async
  * @param {string} gameId - The unique identifier for the game.
- * @return {Promise<Game | null>} - The game object or null if the game could not be found.
+ * @returns {Promise<Game|null>} - The game object or null if the game could not be found.
  */
 export const findGameById = async (gameId) => {
   if (!(gameId instanceof ObjectId)) {

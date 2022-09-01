@@ -1,11 +1,13 @@
 import { showView } from '../../view/view.service.js'
 import { showMessage } from '../../../shared/services/message.service.js'
 import { removeSession } from '../../../shared/services/storage.service.js'
-import { submitAuthForm } from '../authentication.service.js'
+import { getAuthenticatedUser, submitAuthForm } from '../authentication.service.js'
 import { logger } from '../../../main.js'
 
 /**
  * Handles submission of the change password form by validating inputs and awaiting {@link submitAuthForm}.
+ * 
+ * @async
  */
 export const submitChangePasswordForm = async () => {
   const currentPasswordInput = document.querySelector('#currentPassword')
@@ -36,9 +38,12 @@ export const submitChangePasswordForm = async () => {
     return
   }
 
+  const authenticatedUser = getAuthenticatedUser();
+
   const params = {
     currentPassword: currentPasswordInput.value,
-    newPassword: newPasswordInput.value
+    newPassword: newPasswordInput.value,
+    userId: authenticatedUser._id,
   }
 
   const successFn = (test) => {

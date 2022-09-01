@@ -6,6 +6,8 @@ import { submitAuthForm } from '../authentication.service.js'
 
 /**
  * Handles the login form submission by validating inputs and awaiting {@link submitAuthForm} with a `successFn` callback.
+ * 
+ * @async
  */
 export const submitLoginForm = async () => {
   const emailInput = document.querySelector('#email')

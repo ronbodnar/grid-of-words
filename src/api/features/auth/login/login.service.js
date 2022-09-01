@@ -6,9 +6,11 @@ import { generateJWT, hashPassword } from '../authentication.service.js'
 
 /**
  * Attempts to log in by authenticating the email/password combination and generates a JWT if successful.
+ * 
+ * @async
  * @param {string} email The email for the login request.
  * @param {string} password The password for the login request.
- * @returns {Promise<object | ValidationError | UnauthorizedError | InternalError>} A promise that resolves to an object containing a success status and message, the authenticated user, and the generated JWT, or an Error.
+ * @returns {Promise<object|ValidationError|UnauthorizedError|InternalError>} A promise that resolves to an object containing a success status and message, the authenticated user, and the generated JWT, or an Error.
  */
 export const loginUser = async (email, password) => {
   if (!email || !password) {
@@ -36,6 +38,14 @@ export const loginUser = async (email, password) => {
   }
 }
 
+/**
+ * Authenticates the email/password combination against the database.
+ * 
+ * @async
+ * @param {string} email The email for the login request.
+ * @param {string} password The password for the login request.
+ * @returns {Promise<>} A promise that resolves to the authenticated user or null if unsuccessful.
+ */
 const authenticate = async (email, password) => {
   const dbUser = await findUserBy('email', email)
   if (!dbUser) {

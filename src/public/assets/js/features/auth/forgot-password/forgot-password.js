@@ -4,6 +4,8 @@ import { submitAuthForm } from '../authentication.service.js'
 
 /**
  * Handles the submission of the forgot password form by validating inputs, invoking {@link submitAuthForm}, and displaying a message to the user.
+ *
+ * @async
  */
 export const submitForgotPasswordForm = async () => {
   const emailInput = document.querySelector('#email')

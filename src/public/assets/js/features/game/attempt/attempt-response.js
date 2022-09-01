@@ -1,20 +1,21 @@
-import { logger } from '../../main.js'
-import { setBlockKeyEvents } from '../../shared/services/event.service.js'
-import { showMessage } from '../../shared/services/message.service.js'
-import { removeSession } from '../../shared/services/storage.service.js'
+import { logger } from '../../../main.js'
+import { setBlockKeyEvents } from '../../../shared/services/event.service.js'
+import { showMessage } from '../../../shared/services/message.service.js'
+import { removeSession } from '../../../shared/services/storage.service.js'
 import {
   shiftActiveRow,
   transformSquares,
   updateCurrentAttemptSquares
 } from '../gameboard/gameboard.service.js'
 import { updateKeyboardKeys } from '../keyboard/keyboard.service.js'
-import { fetchStatistics } from '../statistics/statistics.service.js'
-import { showView } from '../view/view.service.js'
+import { fetchStatistics } from '../../statistics/statistics.service.js'
+import { showView } from '../../view/view.service.js'
 import { clearAttemptLetters, getAttemptLetters } from './attempt.service.js'
 
 /**
  * Processes the response based on the message content, then displays the message.
  *
+ * @async
  * @param {Game} game - The current game object.
  * @param {object} data - The response data from the server.
  */
