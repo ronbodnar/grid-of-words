@@ -11,11 +11,11 @@ import {
  * Changes the user's password after validating the current password and authentication token.
  *
  * @async
- * @param {Object} [options={}] - Options for changing the password.
- * @param {string} options.newPassword - The new password to set.
- * @param {string} options.currentPassword - The current password of the user.
- * @param {string} options.authToken - The authentication token for verifying the user.
- * @param {string} options.userId - The ID of the user requesting the password change.
+ * @param {Object} [optionList={}] - Options for changing the password.
+ * @param {string} optionList.newPassword - The new password to set.
+ * @param {string} optionList.currentPassword - The current password of the user.
+ * @param {string} optionList.authToken - The authentication token for verifying the user.
+ * @param {string} optionList.userId - The ID of the user requesting the password change.
  * @returns {Promise<Object|ValidationError|UnauthorizedError>} A success object or an error if validation fails.
  */
 export const changePassword = async (options = {}) => {

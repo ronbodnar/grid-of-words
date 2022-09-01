@@ -69,7 +69,6 @@ export const processAttemptResponse = async (game, data) => {
               statistics: statistics
             })
           } else {
-            // TODO: extra CTA to get users to log in/register?
             showView('home')
           }
         }, 5000)

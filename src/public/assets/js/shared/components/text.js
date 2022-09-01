@@ -2,12 +2,12 @@ import { handleClickEvent } from '../services/event.service.js'
 
 /**
  * Creates a paragraph text element with the given text and options.
- * @param {Object} [options={}] - Additional options to be passed.
- * @param {string} [options.type] The type of text element to create ("view-header", "subheader", "message", "submessage").
- * @param {string} [options.text=""] The text content to set for the element.
- * @param {boolean} [options.hidden=false] Whether the element should be hidden by default.
- * @param {boolean} [options.emitClickEvent=false] Whether the element should add an event listener for click events.
- * @param {Array} [options.classes=[]] An array of class names to be applied to the element.
+ * @param {Object} [optionList={}] - Additional options to be passed.
+ * @param {string} [optionList.type] The type of text element to create ("view-header", "subheader", "message", "submessage").
+ * @param {string} [optionList.text=""] The text content to set for the element.
+ * @param {boolean} [optionList.hidden=false] Whether the element should be hidden by default.
+ * @param {boolean} [optionList.emitClickEvent=false] Whether the element should add an event listener for click events.
+ * @param {Array} [optionList.classes=[]] An array of class names to be applied to the element.
  * @returns {HTMLParagraphElement|null} The generated paragraph element or null if a type is not provided.
  */
 export const createText = (options = {}) => {

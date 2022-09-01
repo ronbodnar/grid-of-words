@@ -36,7 +36,6 @@ const buildStepContainer = () => {
   ]
   steps.forEach((step, i) => {
     let stepElement = document.createElement('li')
-    // TODO: add to stylesheet
     stepElement.style.margin = '20px 0'
     stepElement.style.fontSize = '20px'
     if (i === steps.length - 1) {
