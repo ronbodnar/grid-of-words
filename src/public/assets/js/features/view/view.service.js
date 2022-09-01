@@ -1,15 +1,15 @@
-import { buildChangePasswordView } from '../auth/change-password/change-password.view.js'
-import { buildForgotPasswordView } from '../auth/forgot-password/forgot-password.view.js'
-import { buildLoginView } from '../auth/login/login.view.js'
-import { buildRegisterView } from '../auth/register/register.view.js'
-import { buildResetPasswordView } from '../auth/reset-password/reset-password.view.js'
-import { buildGameView } from '../game/game.view.js'
-import { buildHomeView } from '../home/home.view.js'
-import { buildHowToPlayView } from '../how-to-play/how-to-play.view.js'
-import { buildLoadingView } from '../loading/loading.view.js'
-import { buildOptionsView } from '../options/options.view.js'
-import { retrieveSession } from '../../shared/services/storage.service.js'
-import { buildStatisticsView } from '../statistics/statistics.view.js'
+import { buildChangePasswordView } from "../auth/change-password/change-password.view.js"
+import { buildForgotPasswordView } from "../auth/forgot-password/forgot-password.view.js"
+import { buildLoginView } from "../auth/login/login.view.js"
+import { buildRegisterView } from "../auth/register/register.view.js"
+import { buildResetPasswordView } from "../auth/reset-password/reset-password.view.js"
+import { buildGameView } from "../game/game.view.js"
+import { buildHomeView } from "../home/home.view.js"
+import { buildHowToPlayView } from "../how-to-play/how-to-play.view.js"
+import { buildLoadingView } from "../loading/loading.view.js"
+import { buildOptionsView } from "../options/options.view.js"
+import { retrieveSession } from "../../shared/services/storage.service.js"
+import { buildStatisticsView } from "../statistics/statistics.view.js"
 
 let viewHistory = []
 
@@ -23,7 +23,7 @@ const viewFunctions = {
     buildGameView({
       game: options.game,
       wordLength: options.wordLength,
-      maxAttempts: options.maxAttempts
+      maxAttempts: options.maxAttempts,
     })
     viewHistory = []
   },
@@ -38,13 +38,15 @@ const viewFunctions = {
   login: (options = {}) => buildLoginView(options.message),
   register: () => buildRegisterView(),
   resetPassword: () => {
-    const passwordResetToken = retrieveSession('passwordResetToken')
+    const passwordResetToken = retrieveSession("passwordResetToken")
     if (!passwordResetToken) {
-      buildForgotPasswordView("Unexpected error. Please click the link in your e-mail again or request a new link.")
-      return;
+      buildForgotPasswordView(
+        "Unexpected error. Please click the link in your e-mail again or request a new link."
+      )
+      return
     }
     buildResetPasswordView()
-  }
+  },
 }
 
 /**
@@ -54,7 +56,7 @@ const viewFunctions = {
  */
 export const showView = (name, options = {}) => {
   if (!name) {
-    showView('home')
+    showView("home")
     return
   }
 
@@ -62,9 +64,9 @@ export const showView = (name, options = {}) => {
 
   const currentView = getCurrentViewName()
   const addToHistory =
-    currentView !== 'loading' &&
-    currentView !== 'game' &&
-    currentView !== 'statistics' &&
+    currentView !== "loading" &&
+    currentView !== "game" &&
+    currentView !== "statistics" &&
     !hideFromHistory
 
   if (addToHistory) {
@@ -72,7 +74,7 @@ export const showView = (name, options = {}) => {
   }
 
   const viewFunction = viewFunctions[name]
-  if (viewFunction && typeof viewFunction === 'function') {
+  if (viewFunction && typeof viewFunction === "function") {
     viewFunction(options)
   } else {
     buildHomeView()
@@ -86,7 +88,7 @@ export const showView = (name, options = {}) => {
  * @returns {string} The name of the current view.
  */
 export const getCurrentViewName = () => {
-  const currentView = document.querySelector('.content')
+  const currentView = document.querySelector(".content")
   return currentView?.id
 }
 

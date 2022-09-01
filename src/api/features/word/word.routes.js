@@ -1,7 +1,7 @@
-import express from "express";
-import { handleGetWord, handleGetWordList } from "./word.controller.js";
+import express from "express"
+import { handleGetWord, handleGetWordList } from "./word.controller.js"
 
-export const router = express.Router();
+export const router = express.Router()
 
-router.route("/").get(handleGetWord);
-router.route("/list").get(handleGetWordList);
+router.route("/").get(handleGetWord)
+router.route("/list").get(handleGetWordList)

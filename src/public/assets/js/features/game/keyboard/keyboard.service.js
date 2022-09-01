@@ -1,6 +1,10 @@
-import { buildKeyElement } from './key.js'
-import { getLetterStates } from '../../../shared/utils/helpers.js'
-import { EXACT_MATCH, NO_MATCH, PARTIAL_MATCH } from '../../../shared/utils/constants.js'
+import { buildKeyElement } from "./key.js"
+import { getLetterStates } from "../../../shared/utils/helpers.js"
+import {
+  EXACT_MATCH,
+  NO_MATCH,
+  PARTIAL_MATCH,
+} from "../../../shared/utils/constants.js"
 
 let keyboardKeys = {}
 
@@ -10,20 +14,25 @@ let keyboardKeys = {}
  * @param {Game} game - The game to fetch letter match states for.
  */
 export const initializeKeyboardKeys = (game) => {
-  const letterStates = game ? getLetterStates(game.word, game.attempts) : undefined
+  const letterStates = game
+    ? getLetterStates(game.word, game.attempts)
+    : undefined
 
-  let enterKey = buildKeyElement('enter', false)
-  enterKey.classList.add('enter-key')
-  keyboardKeys['enter'] = enterKey
+  let enterKey = buildKeyElement("enter", false)
+  enterKey.classList.add("enter-key")
+  keyboardKeys["enter"] = enterKey
 
-  let deleteKey = buildKeyElement('delete', false)
-  deleteKey.classList.add('delete-key')
-  keyboardKeys['delete'] = deleteKey
+  let deleteKey = buildKeyElement("delete", false)
+  deleteKey.classList.add("delete-key")
+  keyboardKeys["delete"] = deleteKey
 
   // Create the keys for A-Z.
   for (let i = 97; i <= 122; i++) {
     const letter = String.fromCharCode(i)
-    keyboardKeys[letter] = buildKeyElement(letter, letterStates ? letterStates[letter] : undefined)
+    keyboardKeys[letter] = buildKeyElement(
+      letter,
+      letterStates ? letterStates[letter] : undefined
+    )
   }
 }
 
@@ -45,21 +54,24 @@ export const updateKeyboardKeys = (gameWord, attemptedWord) => {
 
     switch (letterMatchStates[letter]) {
       case EXACT_MATCH:
-        if (key.classList.contains('partial')) {
-          key.classList.remove('partial')
+        if (key.classList.contains("partial")) {
+          key.classList.remove("partial")
         }
-        key.classList.add('exact')
+        key.classList.add("exact")
         break
 
       case PARTIAL_MATCH:
-        if (!key.classList.contains('exact')) {
-          key.classList.add('partial')
+        if (!key.classList.contains("exact")) {
+          key.classList.add("partial")
         }
         break
 
       case NO_MATCH:
-        if (!key.classList.contains('exact') && !key.classList.contains('partial')) {
-          key.classList.add('incorrect')
+        if (
+          !key.classList.contains("exact") &&
+          !key.classList.contains("partial")
+        ) {
+          key.classList.add("incorrect")
         }
         break
     }
@@ -72,14 +84,14 @@ export const updateKeyboardKeys = (gameWord, attemptedWord) => {
  * @param {boolean} visible - Whether the overlay should be visible.
  */
 export const toggleKeyboardOverlay = (visible) => {
-  const overlay = document.querySelector('.keyboard-overlay')
+  const overlay = document.querySelector(".keyboard-overlay")
   if (!overlay) return
   if (visible != null && visible) {
-    overlay.classList.remove('hidden')
+    overlay.classList.remove("hidden")
   } else if (visible != null && !visible) {
-    overlay.classList.add('hidden')
+    overlay.classList.add("hidden")
   } else {
-    overlay.classList.toggle('hidden')
+    overlay.classList.toggle("hidden")
   }
 }
 

@@ -1,12 +1,13 @@
-import { Collection, MongoClient, ServerApiVersion } from "mongodb";
-import DatabaseError from "../errors/DatabaseError.js";
-import InternalError from "../errors/InternalError.js";
+import { Collection, MongoClient, ServerApiVersion } from "mongodb"
+import DatabaseError from "../errors/DatabaseError.js"
+import InternalError from "../errors/InternalError.js"
+import { DEFAULT_LANGUAGE } from "./constants.js"
 
-let client;
+let client
 
 /**
  * Asynchronously connects to the MongoDB server.
- * 
+ *
  * @async
  */
 const connect = async () => {
@@ -14,55 +15,59 @@ const connect = async () => {
     client = new MongoClient(process.env.MONGO_URI, {
       tlsCertificateKeyFile: process.env.MONGO_CERT_PATH,
       serverApi: ServerApiVersion.v1,
-    });
-    await client.connect();
+    })
+    await client.connect()
   } catch (error) {
     throw new DatabaseError("Couldn't connect to to MongoDB server", {
       connectionUrl: process.env.MONGO_URI,
       error: error,
-    });
+    })
   }
-};
+}
 
 /**
  * Obtains a collection with the specified name and database (or MONGO_DB_NAME if no db is specified).
- * 
+ *
  * @param {string} name The name of the collection
  * @param {string} database The name of the database storing the collection.
  * @returns {Collection} The MongoDB collection.
  */
 const getCollection = (name, database = process.env.MONGO_DB_NAME) => {
   if (!name) {
-    throw new InternalError("Collection name must be provided.");
+    throw new InternalError("Collection name must be provided.")
   }
   if (!client) {
-    throw new DatabaseError("Mongo client could not be found.");
+    throw new DatabaseError("Mongo client could not be found.")
   }
 
-  const db = client.db(database);
+  const db = client.db(database)
   if (!db) {
     throw new DatabaseError("Database could not be found.", {
       client: client,
       database: database,
-    });
+    })
   }
-  return db.collection(name);
-};
+  return db.collection(name)
+}
 
 /**
  * Gets the MongoDB "games" collection.
+ * @return {Promise<Collection>}
  */
-const getGameCollection = () => getCollection("games");
+const getGameCollection = () => getCollection("games")
 
 /**
- * Gets the MongoDB "words_enUS" collection.
+ * Gets the MongoDB word collection for the specified `language`.
+ * @return {Promise<Collection>}
  */
-const getWordCollection = () => getCollection("words_enUS");
+const getWordCollection = (language = DEFAULT_LANGUAGE) =>
+  getCollection(`words_${language}`)
 
 /**
  * Gets the MongoDB "users" collection.
+ * @return {Promise<Collection>}
  */
-const getUserCollection = () => getCollection("users");
+const getUserCollection = () => getCollection("users")
 
 export default {
   connect,
@@ -70,4 +75,4 @@ export default {
   getGameCollection,
   getWordCollection,
   getUserCollection,
-};
+}

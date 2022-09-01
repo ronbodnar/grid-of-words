@@ -1,4 +1,4 @@
-import { generateJWT } from "../features/auth/authentication.service.js";
+import { generateJWT } from "../features/auth/authentication.service.js"
 
 /**
  * Sets an HttpOnly cookie in the response header. The cookie is secure if NODE_ENV is production.
@@ -19,14 +19,14 @@ export const setCookie = (
     secure: process.env.NODE_ENV === "production",
     maxAge: maxAge,
     sameSite: "strict",
-  });
-};
+  })
+}
 
 /**
  * Adds the API key as an HTTPOnly cookie to the response object.
  * @param {Response} res The Express {@link Response} object.
  */
 export const setApiKeyCookie = (res) => {
-  const apiKeyToken = generateJWT(process.env.API_KEY, "30d");
-  setCookie(res, "apiKey", apiKeyToken);
-};
+  const apiKeyToken = generateJWT(process.env.API_KEY, "30d")
+  setCookie(res, "apiKey", apiKeyToken)
+}

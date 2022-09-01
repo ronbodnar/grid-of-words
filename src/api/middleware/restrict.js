@@ -1,16 +1,16 @@
-import UnauthorizedError from "../errors/UnauthorizedError.js";
-import { verifyJWT } from "../features/auth/authentication.service.js";
+import UnauthorizedError from "../errors/UnauthorizedError.js"
+import { verifyJWT } from "../features/auth/authentication.service.js"
 
 /**
  * Restricts an API endpoint to requests containing the API key in a cookie or query parameter.
  */
 export const restrict = (req, res, next) => {
-  const apiKeyCookie = req.cookies.apiKey;
-  const tokenPayloadData = verifyJWT(apiKeyCookie)?.data;
-  const apiKey = tokenPayloadData || req.query.API_KEY;
+  const apiKeyCookie = req.cookies.apiKey
+  const tokenPayloadData = verifyJWT(apiKeyCookie)?.data
+  const apiKey = tokenPayloadData || req.query.API_KEY
   if (!apiKey || apiKey !== process.env.API_KEY) {
-    return next(new UnauthorizedError("Invalid API key"));
+    return next(new UnauthorizedError("Invalid API key"))
   }
   // No auth issues, carry on.
-  next();
-};
+  next()
+}

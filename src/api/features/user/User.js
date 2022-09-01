@@ -1,31 +1,31 @@
-import UserStats from "./UserStats.js";
-import { generateSalt, hashPassword } from "../auth/authentication.service.js";
-import { updateUser, insertUser } from "./user.repository.js"; // eslint-disable-line no-unused-vars
-import InternalError from "../../errors/InternalError.js";
+import UserStats from "./UserStats.js"
+import { generateSalt, hashPassword } from "../auth/authentication.service.js"
+import { updateUser, insertUser } from "./user.repository.js" // eslint-disable-line no-unused-vars
+import InternalError from "../../errors/InternalError.js"
 
 class User {
   // Account Details
-  _id = undefined;
-  hash = undefined;
-  email = undefined;
-  username = undefined;
-  password = undefined;
-  lastGameState = undefined;
+  _id = undefined
+  hash = undefined
+  email = undefined
+  username = undefined
+  password = undefined
+  lastGameState = undefined
 
-  statistics = undefined;
-  passwordResetToken = undefined;
-  passwordResetTokenExpiration = undefined;
+  statistics = undefined
+  passwordResetToken = undefined
+  passwordResetTokenExpiration = undefined
 
   // These properties are written to all User documents by default.
   // Undefined and null values are ignored when updating documents.
-  enabled = true;
-  creationDate = new Date();
+  enabled = true
+  creationDate = new Date()
 
   // To be implemented eventually
-  lastConnectionIP = undefined;
-  lastConnectionTimestamp = undefined;
-  consecutiveDaysPlayed = undefined;
-  bestConsecutiveDaysPlayed = undefined;
+  lastConnectionIP = undefined
+  lastConnectionTimestamp = undefined
+  consecutiveDaysPlayed = undefined
+  bestConsecutiveDaysPlayed = undefined
 
   /**
    * Initializes a new instance of the class with the given `userData` object.
@@ -46,7 +46,7 @@ class User {
    */
   constructor(userData) {
     if (!userData || typeof userData !== "object") {
-      throw new InternalError("userData must be an object");
+      throw new InternalError("userData must be an object")
     }
 
     const {
@@ -60,71 +60,72 @@ class User {
       statistics,
       passwordResetToken,
       passwordResetTokenExpiration,
-    } = userData;
+    } = userData
 
     // Register service creates a new user with a password, nowhere else is it used to instantiate the user.
     if (password) {
-      const salt = generateSalt();
+      const salt = generateSalt()
 
-      this.email = email;
-      this.username = username;
-      this.hash = salt + hashPassword(password, salt);
-      return;
+      this.email = email
+      this.username = username
+      this.hash = salt + hashPassword(password, salt)
+      return
     }
 
     // Handling of a standard userData object
     if (!_id) {
-      throw new InternalError("User ID is required");
+      throw new InternalError("User ID is required")
     }
-    this._id = _id;
-    this.hash = hash;
-    this.username = username;
-    this.email = email;
-    this.enabled = enabled === true;
-    this.creationDate = new Date(creationDate);
-    this.statistics = (statistics && new UserStats(statistics)) || this.statistics;
-    this.passwordResetToken = passwordResetToken;
-    this.passwordResetTokenExpiration = passwordResetTokenExpiration;
+    this._id = _id
+    this.hash = hash
+    this.username = username
+    this.email = email
+    this.enabled = enabled === true
+    this.creationDate = new Date(creationDate)
+    this.statistics =
+      (statistics && new UserStats(statistics)) || this.statistics
+    this.passwordResetToken = passwordResetToken
+    this.passwordResetTokenExpiration = passwordResetTokenExpiration
   }
 
   /**
    * Invokes {@link updateUser} with this User instance and the `properties` object.
-   * 
+   *
    * @async
    * @param {Object} [properties={}] An object with properties to save to the user document.
    * @returns {Promise<User|null>} A promise that resolves when {@link updateUser} is resolved..
    */
   async save(properties) {
-    return updateUser(this, properties);
+    return updateUser(this, properties)
   }
 
   /**
    * Obtains the salt for the user.
-   * 
+   *
    * @returns {string} The salt for the hashed password.
    */
   getSalt() {
-    return this.hash.substring(0, 32);
+    return this.hash.substring(0, 32)
   }
 
   /**
    * Obtains the hashed password for the user.
-   * 
+   *
    * @returns {string} The hashed password
    */
   getHash() {
-    return this.hash.substring(32);
+    return this.hash.substring(32)
   }
 
   /**
    * Used to ignore undefined values to avoid unnecessary data in documents. See {@link insertUser}
-   * 
+   *
    * @returns {Object} A copy of the user object with undefined values removed.
    */
   getWithoutUndefined() {
     return Object.fromEntries(
       Object.entries(this).filter(([key, value]) => value !== undefined)
-    );
+    )
   }
 
   /**
@@ -139,8 +140,8 @@ class User {
       email: this.email,
       enabled: this.enabled,
       creationDate: this.creationDate.toISOString(),
-    };
+    }
   }
 }
 
-export default User;
+export default User

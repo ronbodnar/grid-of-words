@@ -1,5 +1,5 @@
-import { handleClickEvent } from '../services/event.service.js'
-import { convertToCamelCase } from '../utils/helpers.js'
+import { handleClickEvent } from "../services/event.service.js"
+import { convertToCamelCase } from "../utils/helpers.js"
 
 /**
  * Creates a button element with the specified text and options.
@@ -15,20 +15,20 @@ import { convertToCamelCase } from '../utils/helpers.js'
  */
 export const createButton = (text, options = {}) => {
   if (!text) {
-    throw new Error('Missing button text')
+    throw new Error("Missing button text")
   }
 
   const {
     id = convertToCamelCase(text),
-    type = 'button',
-    classes = ['button', 'fixed'],
+    type = "button",
+    classes = ["button", "fixed"],
     icon,
     loader,
-    eventArgs = {}
+    eventArgs = {},
   } = options
 
-  const button = document.createElement('button')
-  button.id = id + 'Button'
+  const button = document.createElement("button")
+  button.id = id + "Button"
   button.type = type
 
   // Add all of the classes to the button element.
@@ -40,10 +40,13 @@ export const createButton = (text, options = {}) => {
     : text
 
   if (loader) {
-    button.innerHTML += "<span class='button-loader hidden' id='submitButtonLoader'</span>"
+    button.innerHTML +=
+      "<span class='button-loader hidden' id='submitButtonLoader'</span>"
   }
 
-  button.addEventListener('click', (event) => handleClickEvent(event, eventArgs))
+  button.addEventListener("click", (event) =>
+    handleClickEvent(event, eventArgs)
+  )
 
   return button
 }

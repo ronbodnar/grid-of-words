@@ -1,7 +1,8 @@
-import DatabaseError from "../../errors/DatabaseError.js";
-import InternalError from "../../errors/InternalError.js";
-import NotFoundError from "../../errors/NotFoundError.js";
-import database from "../../shared/database.js";
+import DatabaseError from "../../errors/DatabaseError.js"
+import InternalError from "../../errors/InternalError.js"
+import NotFoundError from "../../errors/NotFoundError.js"
+import { DEFAULT_LANGUAGE } from "../../shared/constants.js"
+import database from "../../shared/database.js"
 
 /**
  * Selects a random word with the specified length from the database.
@@ -10,12 +11,12 @@ import database from "../../shared/database.js";
  * @param {number} length - The length of the word to be found.
  * @returns {Promise<string|InternalError|DatabaseError>} A promise that resolves to a random word of the specified length if successful.
  */
-export const findByLength = async (length) => {
+export const findWordByLength = async (length, language = DEFAULT_LANGUAGE) => {
   if (!length) {
-    throw new InternalError("Word length is required");
+    throw new InternalError("Word length is required")
   }
   try {
-    length = Number(length);
+    length = Number(length)
 
     const pipeline = [
       {
@@ -34,7 +35,10 @@ export const findByLength = async (length) => {
             {
               length: length,
               text: {
-                $regex: /^[a-zA-Z]+$/,
+                $regex:
+                  language === "english"
+                    ? /^[a-zA-Z]+$/
+                    : /^[a-zA-ZáéíóúñÁÉÍÓÚÑ]+$/,
               },
             },
           ],
@@ -53,31 +57,35 @@ export const findByLength = async (length) => {
           size: 1,
         },
       },
-    ];
-    const cursor = await database.getWordCollection().aggregate(pipeline);
+    ]
+    const cursor = await database
+      .getWordCollection(language)
+      .aggregate(pipeline)
     if (!(await cursor.hasNext())) {
-      return new DatabaseError(`No words found for length ${length}`);
+      return new DatabaseError(
+        `No ${language} words found for length ${length}`
+      )
     }
 
-    const cursorResult = await cursor.next();
+    const cursorResult = await cursor.next()
     if (!cursorResult) {
       return new NotFoundError(
         `Invalid randomWord of length ${length} from cursor`,
         {
           cursor: cursor,
         }
-      );
+      )
     }
-    return cursorResult.text.toLowerCase();
+    return cursorResult.text.toLowerCase()
   } catch (error) {
     return new DatabaseError(
       `Failed to retrieve random word of length ${length}`,
       {
         error: error,
       }
-    );
+    )
   }
-};
+}
 
 /**
  * Retrieves all words with the specified `length`.
@@ -86,12 +94,15 @@ export const findByLength = async (length) => {
  * @param {number} length - The length of words to retrieve.
  * @returns {Promise<Array>} An Array of words matching the length.
  */
-export const findAllByLength = async (length) => {
+export const findAllWordsByLength = async (
+  length,
+  language = DEFAULT_LANGUAGE
+) => {
   if (!length) {
-    throw new InternalError("Missing required length parameter");
+    throw new InternalError("Required parameters: length")
   }
   try {
-    length = Number(length);
+    length = Number(length)
 
     const pipeline = [
       {
@@ -110,7 +121,10 @@ export const findAllByLength = async (length) => {
             {
               length: length,
               text: {
-                $regex: /^[a-zA-Z]+$/,
+                $regex:
+                  language === "english"
+                    ? /^[a-zA-Z]+$/
+                    : /^[a-zA-ZáéíóúñÁÉÍÓÚÑ]+$/,
               },
             },
           ],
@@ -140,26 +154,28 @@ export const findAllByLength = async (length) => {
           },
         },
       },
-    ];
+    ]
 
-    const cursor = await database.getWordCollection().aggregate(pipeline);
+    const cursor = await database
+      .getWordCollection(language)
+      .aggregate(pipeline)
     if (!(await cursor.hasNext())) {
-      return new NotFoundError(`No words of length ${length} were found`);
+      return new NotFoundError(`No words of length ${length} were found`)
     }
 
-    const cursorResult = await cursor.next();
+    const cursorResult = await cursor.next()
     if (!cursorResult) {
       return new DatabaseError("Invalid cursorResult", {
         cursorResult: cursorResult,
-      });
+      })
     }
-    return cursorResult.words;
+    return cursorResult.words
   } catch (error) {
     return new DatabaseError(`Failed to obtain word list of length ${length}`, {
       error: error,
-    });
+    })
   }
-};
+}
 
 /**
  * Searches the database for the provided word and returns the result.
@@ -168,20 +184,20 @@ export const findAllByLength = async (length) => {
  * @param {string} word - The word to search for.
  * @returns {Promise<boolean>} A promise that resolves to true if the search was successful or false otherwise.
  */
-export const exists = async (word) => {
+export const exists = async (word, language = DEFAULT_LANGUAGE) => {
   if (!word) {
-    throw new InternalError("Missing required parameter: word");
+    throw new InternalError("Required parameters: language, word")
   }
   try {
-    const wordCollection = database.getWordCollection();
-    const result = await wordCollection.findOne({ text: word.toLowerCase() });
-    return result && result.text;
+    const wordCollection = database.getWordCollection(language)
+    const result = await wordCollection.findOne({ text: word.toLowerCase() })
+    return result && result.text
   } catch (error) {
     return new DatabaseError(
       `An error occurred while checking if "${word}" exists in the database`,
       {
         error: error,
       }
-    );
+    )
   }
-};
+}

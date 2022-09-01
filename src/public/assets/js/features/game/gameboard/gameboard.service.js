@@ -1,17 +1,21 @@
-import { getValidatedLetters } from '../../../shared/utils/helpers.js'
-import { getAttemptLetters } from '../attempt/attempt.service.js'
-import { NO_MATCH, EXACT_MATCH, PARTIAL_MATCH } from '../../../shared/utils/constants.js'
+import { getValidatedLetters } from "../../../shared/utils/helpers.js"
+import { getAttemptLetters } from "../attempt/attempt.service.js"
+import {
+  NO_MATCH,
+  EXACT_MATCH,
+  PARTIAL_MATCH,
+} from "../../../shared/utils/constants.js"
 
 /**
  * Moves the active class from the current row to the next row for new word attempts.
  */
 export const shiftActiveRow = () => {
-  const currentRow = document.querySelector('.word-row.active')
+  const currentRow = document.querySelector(".word-row.active")
   const nextRow = currentRow?.nextElementSibling
 
   // Swap the active class from the current to the next row.
-  currentRow?.classList?.remove('active')
-  nextRow?.classList?.add('active')
+  currentRow?.classList?.remove("active")
+  nextRow?.classList?.add("active")
 }
 
 /**
@@ -22,8 +26,8 @@ export const shiftActiveRow = () => {
  * @returns {Promise} The promise resolves when all squares are hidden/shown, plus an additional delay of 300 milliseconds.
  */
 export const transformSquares = (hide, instant) => {
-  const activeRow = document.querySelector('.word-row.active')
-  if (!activeRow) return Promise.reject(new Error('No active row found'))
+  const activeRow = document.querySelector(".word-row.active")
+  if (!activeRow) return Promise.reject(new Error("No active row found"))
 
   const squares = Array.from(activeRow.children)
   return new Promise((resolve) => {
@@ -33,7 +37,7 @@ export const transformSquares = (hide, instant) => {
         () => {
           const squareValue = square.children[0]
           if (squareValue) {
-            squareValue.style.opacity = hide ? '0' : '1'
+            squareValue.style.opacity = hide ? "0" : "1"
           }
           if (i === squares.length - 1) {
             // Resolve the Promise 300ms after the last square has processed.
@@ -56,18 +60,20 @@ export const fillNextSquare = (letter) => {
     return
   }
 
-  const activeRowSquares = document.querySelector('.word-row.active > .square:not(.full)')
+  const activeRowSquares = document.querySelector(
+    ".word-row.active > .square:not(.full)"
+  )
   if (activeRowSquares) {
-    activeRowSquares.classList.add('full')
+    activeRowSquares.classList.add("full")
 
     const nextAvailableSquare = activeRowSquares.children[0]
     nextAvailableSquare.textContent = letter.toUpperCase()
 
     // Peak animations right here
-    nextAvailableSquare.style.transition = '0.3s'
-    nextAvailableSquare.style.transform = 'scale(1.2)'
+    nextAvailableSquare.style.transition = "0.3s"
+    nextAvailableSquare.style.transform = "scale(1.2)"
     setTimeout(() => {
-      nextAvailableSquare.style.transform = 'scale(1)'
+      nextAvailableSquare.style.transform = "scale(1)"
     }, 200)
 
     getAttemptLetters().push(letter.toLowerCase())
@@ -78,22 +84,24 @@ export const fillNextSquare = (letter) => {
  * Pops the stack of letters in the attempt word and updates the square text content.
  */
 export const removeLastSquareValue = () => {
-  const activeRowSquares = document.querySelectorAll('.word-row.active > .square:is(.full)')
+  const activeRowSquares = document.querySelectorAll(
+    ".word-row.active > .square:is(.full)"
+  )
 
   if (getAttemptLetters().length > 0) {
     const lastSquare = activeRowSquares[getAttemptLetters().length - 1]
     if (!lastSquare) {
       console.error(
-        'Encountered a bug in the attempt where attemptLetters seems to be inconsistent.',
+        "Encountered a bug in the attempt where attemptLetters seems to be inconsistent.",
         {
           activeRowSquares: activeRowSquares,
-          attemptLetters: getAttemptLetters()
+          attemptLetters: getAttemptLetters(),
         }
       )
       return
     }
-    lastSquare.classList.remove('full')
-    lastSquare.children[0].textContent = ''
+    lastSquare.classList.remove("full")
+    lastSquare.children[0].textContent = ""
     getAttemptLetters().pop()
   }
 }
@@ -104,13 +112,16 @@ export const removeLastSquareValue = () => {
  * @param {string} word - The current word being guessed.
  */
 export const updateCurrentAttemptSquares = (word) => {
-  const validatedPositions = getValidatedLetters(getAttemptLetters().join(''), word)
+  const validatedPositions = getValidatedLetters(
+    getAttemptLetters().join(""),
+    word
+  )
   const squaresWithLetters = document.querySelectorAll(
-    '.word-row.active > .square:is(.full) > .square-value-container'
+    ".word-row.active > .square:is(.full) > .square-value-container"
   )
 
   if (validatedPositions.length !== squaresWithLetters.length) {
-    throw new Error('Invalid number of square elements detected')
+    throw new Error("Invalid number of square elements detected")
   }
 
   for (let i = 0; i < validatedPositions.length; i++) {
@@ -127,15 +138,15 @@ export const updateCurrentAttemptSquares = (word) => {
 export const updateSquareBackground = (square, match) => {
   switch (match) {
     case EXACT_MATCH:
-      square.style.backgroundColor = 'rgba(0, 163, 108, 0.7)'
+      square.style.backgroundColor = "rgba(0, 163, 108, 0.7)"
       break
 
     case PARTIAL_MATCH:
-      square.style.backgroundColor = 'rgba(255, 165, 0, 0.7)'
+      square.style.backgroundColor = "rgba(255, 165, 0, 0.7)"
       break
 
     case NO_MATCH:
-      square.style.backgroundColor = 'rgba(49, 56, 79, 0.7)'
+      square.style.backgroundColor = "rgba(49, 56, 79, 0.7)"
       break
   }
 }

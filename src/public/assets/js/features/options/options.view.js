@@ -1,30 +1,32 @@
-import { getRandomInt } from '../../shared/utils/helpers.js'
+import { getRandomInt } from "../../shared/utils/helpers.js"
 import {
   MINIMUM_WORD_LENGTH,
   MAXIMUM_WORD_LENGTH,
   MINIMUM_MAX_ATTEMPTS,
-  MAXIMUM_MAX_ATTEMPTS
-} from '../../shared/utils/constants.js'
-import { createButton } from '../../shared/components/button.js'
-import { buildView } from '../view/view.js'
-import { buildOptionSection } from './components/option-section.js'
-import OPTIONS from './enums/options.js'
+  MAXIMUM_MAX_ATTEMPTS,
+} from "../../shared/utils/constants.js"
+import { createButton } from "../../shared/components/button.js"
+import { buildView } from "../view/view.js"
+import { buildOptionSection } from "./components/option-section.js"
+import OPTIONS from "./enums/options.js"
+import { loadOptions } from "./options.service.js"
 
 /**
  * Builds and displays the options view.
  */
 export const buildOptionsView = () => {
-  buildView('options', {
+  buildView("options", {
     header: {
-      text: 'Game Options'
+      text: "Game Options",
     },
     message: {
       styles: {
         fontSize: "18px",
-      }
+      },
     },
-    additionalElements: [buildOptionsContainer(), buildButtonContainer()]
+    additionalElements: [buildOptionsContainer(), buildButtonContainer()],
   })
+  loadOptions()
 }
 
 /**
@@ -33,15 +35,13 @@ export const buildOptionsView = () => {
  * @returns {Element} The built options container.
  */
 const buildOptionsContainer = () => {
-  const optionsContainer = document.createElement('div')
-  optionsContainer.classList.add('options-container')
-
-  console.log(OPTIONS.length);
+  const optionsContainer = document.createElement("div")
+  optionsContainer.classList.add("options-container")
 
   Object.keys(OPTIONS).forEach((key) => {
-    const option = OPTIONS[key];
+    const option = OPTIONS[key]
     optionsContainer.appendChild(buildOptionSection(option))
-  });
+  })
 
   return optionsContainer
 }
@@ -52,20 +52,20 @@ const buildOptionsContainer = () => {
  * @returns {Element} The built button container.
  */
 const buildButtonContainer = () => {
-  const buttonContainer = document.createElement('div')
-  buttonContainer.classList.add('button-container')
+  const buttonContainer = document.createElement("div")
+  buttonContainer.classList.add("button-container")
 
-  const saveOptionsButton = createButton('Save Options', {
-    icon: 'save'
+  const saveOptionsButton = createButton("Save Options", {
+    icon: "save",
   })
 
-  const randomGameButton = createButton('Random Game', {
-    id: 'startGame',
-    icon: 'shuffle',
+  const randomGameButton = createButton("Random Game", {
+    id: "startGame",
+    icon: "shuffle",
     eventArgs: {
       wordLength: getRandomInt(MINIMUM_WORD_LENGTH, MAXIMUM_WORD_LENGTH),
-      maxAttempts: getRandomInt(MINIMUM_MAX_ATTEMPTS, MAXIMUM_MAX_ATTEMPTS)
-    }
+      maxAttempts: getRandomInt(MINIMUM_MAX_ATTEMPTS, MAXIMUM_MAX_ATTEMPTS),
+    },
   })
 
   buttonContainer.appendChild(saveOptionsButton)

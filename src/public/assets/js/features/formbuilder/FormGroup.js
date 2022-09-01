@@ -1,10 +1,9 @@
-import { convertToCamelCase } from "../../shared/utils/helpers.js";
+import { convertToCamelCase } from "../../shared/utils/helpers.js"
 
 /**
  * Represents a form group with various properties like text, type, id, etc.
  */
 export class FormGroup {
-  
   /**
    * Creates an instance of FormGroup.
    *
@@ -24,13 +23,13 @@ export class FormGroup {
     autoFocus = false,
     message
   ) {
-    this.text = text;
-    this.type = type;
-    this.id = id || convertToCamelCase(text);
-    this.required = required;
-    this.autoFocus = autoFocus;
-    this.message = message;
-    return this;
+    this.text = text
+    this.type = type
+    this.id = id || convertToCamelCase(text)
+    this.required = required
+    this.autoFocus = autoFocus
+    this.message = message
+    return this
   }
 
   /**
@@ -40,8 +39,8 @@ export class FormGroup {
    * @returns {FormGroup} The current FormGroup instance.
    */
   setText(text) {
-    this.text = text;
-    return this;
+    this.text = text
+    return this
   }
 
   /**
@@ -51,8 +50,8 @@ export class FormGroup {
    * @returns {FormGroup} The current FormGroup instance.
    */
   setId(id) {
-    this.id = id;
-    return this;
+    this.id = id
+    return this
   }
 
   /**
@@ -62,8 +61,8 @@ export class FormGroup {
    * @returns {FormGroup} The current FormGroup instance.
    */
   setType(type) {
-    this.type = type;
-    return this;
+    this.type = type
+    return this
   }
 
   /**
@@ -73,8 +72,8 @@ export class FormGroup {
    * @returns {FormGroup} The current FormGroup instance.
    */
   setRequired(required) {
-    this.required = required;
-    return this;
+    this.required = required
+    return this
   }
 
   /**
@@ -84,8 +83,8 @@ export class FormGroup {
    * @returns {FormGroup} The current FormGroup instance.
    */
   setAutoFocus(autoFocus) {
-    this.autoFocus = autoFocus;
-    return this;
+    this.autoFocus = autoFocus
+    return this
   }
 
   /**
@@ -95,7 +94,7 @@ export class FormGroup {
    * @returns {FormGroup} The current FormGroup instance.
    */
   setMessage(message) {
-    this.message = message;
-    return this;
+    this.message = message
+    return this
   }
 }

@@ -1,8 +1,8 @@
-import { convertToCamelCase } from '../../shared/utils/helpers.js'
+import { convertToCamelCase } from "../../shared/utils/helpers.js"
 
 /**
  * Creates an input element with the specified options.
- * 
+ *
  * @param {string} fieldName - The name of the field, used as the placeholder text and to generate the id.
  * @param {Object} [optionList] - Optional settings for the input element.
  * @param {string} [optionList.type='text'] - The type of the input element (e.g., 'text', 'password').
@@ -13,9 +13,9 @@ import { convertToCamelCase } from '../../shared/utils/helpers.js'
 export const createInput = (fieldName, options) => {
   options = options || {}
 
-  const input = document.createElement('input')
-  input.type = options.type || 'text'
-  input.placeholder = fieldName || ''
+  const input = document.createElement("input")
+  input.type = options.type || "text"
+  input.placeholder = fieldName || ""
   input.required = options.required || true
   input.id = options.id || convertToCamelCase(fieldName)
 

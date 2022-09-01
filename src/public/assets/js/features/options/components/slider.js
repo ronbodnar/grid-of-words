@@ -11,19 +11,19 @@
 export const buildSliderAndLabel = (id, options) => {
   const { minValue, maxValue, defaultValue } = options
 
-  const sliderValueLabel = document.createElement('label')
+  const sliderValueLabel = document.createElement("label")
   sliderValueLabel.id = `${id}SliderValue`
-  sliderValueLabel.classList.add('slider-value')
+  sliderValueLabel.classList.add("slider-value")
   sliderValueLabel.textContent = defaultValue
-  sliderValueLabel.style.marginBottom = '0'
+  sliderValueLabel.style.marginBottom = "0"
 
-  const sliderInput = document.createElement('input')
-  sliderInput.type = 'range'
+  const sliderInput = document.createElement("input")
+  sliderInput.type = "range"
   sliderInput.min = minValue
   sliderInput.max = maxValue
   sliderInput.value = defaultValue
   sliderInput.id = `${id}Slider`
-  sliderInput.addEventListener('input', (event) => {
+  sliderInput.addEventListener("input", (event) => {
     sliderValueLabel.innerHTML = event.target.value
   })
 

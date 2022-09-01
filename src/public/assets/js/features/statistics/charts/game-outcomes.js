@@ -1,10 +1,10 @@
-import '/assets/js/chart.umd.js'
-import '/assets/js/chartjs-plugin-datalabels.min.js'
+import "/assets/js/chart.umd.js"
+import "/assets/js/chartjs-plugin-datalabels.min.js"
 
 export const loadGameOutcomesChart = (userStatistics) => {
-  const gameOutcomeContext = document.getElementById('gameOutcomesChart')
+  const gameOutcomeContext = document.getElementById("gameOutcomesChart")
   return new Chart(gameOutcomeContext, {
-    type: 'doughnut',
+    type: "doughnut",
     data: getChartData(userStatistics),
     options: getChartOptions(),
     plugins: [
@@ -17,9 +17,9 @@ export const loadGameOutcomesChart = (userStatistics) => {
             originalFit.bind(chart.legend)()
             this.height += 20
           }
-        }
-      }
-    ]
+        },
+      },
+    ],
   })
 }
 
@@ -27,12 +27,12 @@ const getChartData = (userStatistics) => {
   const { totalGames, wins, losses, abandoned } = userStatistics
   const sumOfWins = Object.values(wins).reduce((sum, wins) => sum + wins)
 
-  let labels = ['Win', 'Loss', 'Abandon']
+  let labels = ["Win", "Loss", "Abandon"]
   let data = [sumOfWins + 20, losses + 20, abandoned + 20] // 20 added to each to manipulate the minimum slice size
   let backgroundColors = [
-    'rgba(0, 163, 108, 0.6)',
-    'rgba(227, 34, 39, 0.6)',
-    'rgba(49, 56, 79, 0.6)'
+    "rgba(0, 163, 108, 0.6)",
+    "rgba(227, 34, 39, 0.6)",
+    "rgba(49, 56, 79, 0.6)",
   ]
 
   if (losses === 0) {
@@ -58,15 +58,15 @@ const getChartData = (userStatistics) => {
         backgroundColor: backgroundColors,
         data: data,
         borderWidth: 3,
-        borderColor: '#0d1117',
+        borderColor: "#0d1117",
         datalabels: {
           labels: {
             percent: {
-              anchor: 'end',
-              align: 'middle',
-              color: 'rgba(220, 219, 218, 0.9)',
+              anchor: "end",
+              align: "middle",
+              color: "rgba(220, 219, 218, 0.9)",
               font: {
-                size: 14
+                size: 14,
               },
               formatter: (value, ctx) => {
                 // Remove the extra 20 that was added to manipulate minimum slice sizes.
@@ -75,66 +75,66 @@ const getChartData = (userStatistics) => {
                 const percent = (value / totalGames) * 100.0
                 if (percent <= 0 || percent > 100) return null
                 return ctx?.active ? `${percent.toFixed(2)}%` : null
-              }
+              },
             },
             value: {
               offset: 25,
-              anchor: 'end',
-              align: 'start',
+              anchor: "end",
+              align: "start",
               font: {
                 size: 16,
-                weight: 'bold'
+                weight: "bold",
               },
               formatter: (value, ctx) => {
                 value = value - 20
                 return value.toLocaleString()
-              }
-            }
-          }
-        }
-      }
-    ]
+              },
+            },
+          },
+        },
+      },
+    ],
   }
 }
 
 const getChartOptions = () => {
   return {
     hoverOffset: 3,
-    cutout: '25%',
-    rotation: '-30',
-    circumference: '360',
+    cutout: "25%",
+    rotation: "-30",
+    circumference: "360",
     plugins: {
       tooltip: {
-        enabled: false
+        enabled: false,
       },
       legend: {
         display: true,
-        position: 'top',
+        position: "top",
         labels: {
           boxWidth: 30,
-          color: 'rgb(244, 243, 242)'
-        }
+          color: "rgb(244, 243, 242)",
+        },
       },
       datalabels: {
-        color: 'rgb(244, 243, 242)',
+        color: "rgb(244, 243, 242)",
         font: {
-          size: 14
-        }
-      }
+          size: 14,
+        },
+      },
     },
     layout: {
       padding: {
         left: 5,
         right: 5,
-        bottom: 5
-      }
+        bottom: 5,
+      },
     },
     scales: {
       y: {
         ticks: {
-          display: false
-        }
-      }
-    }
+          display: false,
+        },
+      },
+    },
   }
 }

@@ -1,6 +1,6 @@
-import express from "express";
-import { handleGetSessionData } from "./session.controller.js";
+import express from "express"
+import { handleGetSessionData } from "./session.controller.js"
 
-export const router = express.Router();
+export const router = express.Router()
 
-router.route("/").get(handleGetSessionData);
+router.route("/").get(handleGetSessionData)

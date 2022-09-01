@@ -1,13 +1,16 @@
-import { setBlockKeyEvents } from '../../../shared/services/event.service.js'
-import { retrieveSession, storeSession } from '../../../shared/services/storage.service.js'
-import { showMessage } from '../../../shared/services/message.service.js'
-import { wordExists } from '../../../shared/services/api.service.js'
-import { Game } from '../Game.js'
-import { transformSquares } from '../gameboard/gameboard.service.js'
-import { toggleKeyboardOverlay } from '../keyboard/keyboard.service.js'
-import { fetchData } from '../../../shared/services/api.service.js'
-import { logger } from '../../../main.js'
-import { processAttemptResponse } from './attempt-response.js'
+import { setBlockKeyEvents } from "../../../shared/services/event.service.js"
+import {
+  retrieveSession,
+  storeSession,
+} from "../../../shared/services/storage.service.js"
+import { showMessage } from "../../../shared/services/message.service.js"
+import { wordExists } from "../../../shared/services/api.service.js"
+import { Game } from "../Game.js"
+import { transformSquares } from "../gameboard/gameboard.service.js"
+import { toggleKeyboardOverlay } from "../keyboard/keyboard.service.js"
+import { fetchData } from "../../../shared/services/api.service.js"
+import { logger } from "../../../main.js"
+import { processAttemptResponse } from "./attempt-response.js"
 
 let attemptLetters = []
 
@@ -20,11 +23,11 @@ let attemptLetters = []
 export const processAttempt = async (game) => {
   // Obtain the Game from session data instead of the param to avoid retrieving the game in various views.
   if (!game) {
-    const game = retrieveSession('game')
+    const game = retrieveSession("game")
     if (game) {
       processAttempt(game)
     } else {
-      throw new Error('No game found in the session')
+      throw new Error("No game found in the session")
     }
     return
   }
@@ -38,23 +41,32 @@ export const processAttempt = async (game) => {
   }
 
   // Clear the message content while processing the attempt, otherwise it may retain previous messages.
-  showMessage('')
+  showMessage("")
 
-  const attemptResponsePromise = fetchData(`/game/${game._id}/attempt`, 'POST', {
-    word: attemptLetters.join('')
-  })
+  const attemptResponsePromise = fetchData(
+    `/game/${game._id}/attempt`,
+    "POST",
+    {
+      word: attemptLetters.join(""),
+    }
+  )
 
   const transformSquaresPromise = transformSquares(true).then(() => {
     // Show the loading overlay in case the response hasn't been received from the server.
     toggleKeyboardOverlay(true)
   })
 
-  const [response] = await Promise.all([attemptResponsePromise, transformSquaresPromise])
+  const [response] = await Promise.all([
+    attemptResponsePromise,
+    transformSquaresPromise,
+  ])
 
   toggleKeyboardOverlay(false)
 
   if (!response?.payload || response.statusCode !== 200) {
-    showMessage('An error occurred while attempting the word. Please try again.')
+    showMessage(
+      "An error occurred while attempting the word. Please try again."
+    )
     setBlockKeyEvents(false)
     transformSquares(false, true)
     return
@@ -68,7 +80,7 @@ export const processAttempt = async (game) => {
     const localGame = new Game(game)
 
     // Add the most recent attempt to the local copy since remote copy will contain it.
-    localGame.attempts.push(attemptLetters.join(''))
+    localGame.attempts.push(attemptLetters.join(""))
 
     const attemptsMatch = Array.from(remoteGame.attempts).every((a) =>
       localGame.attempts.includes(a)
@@ -78,7 +90,8 @@ export const processAttempt = async (game) => {
 
     switch (true) {
       case localGame.attempts.length !== remoteGame.attempts.length: // attempt array size mismatch
-      case !attemptsMatch || remoteGame.attempts.length !== localGame.attempts.length: // array element content mismatch
+      case !attemptsMatch ||
+        remoteGame.attempts.length !== localGame.attempts.length: // array element content mismatch
       case localGame._id !== remoteGame._id: // game id mismatch
       case localGame.word !== remoteGame.word: // game word mismatch
         logger.error(
@@ -90,12 +103,12 @@ export const processAttempt = async (game) => {
         decreaseCounterToZero(reloadDelay, true)
 
         setTimeout(() => {
-          storeSession('game', gameData)
-          window.location.href = '/'
+          storeSession("game", gameData)
+          window.location.href = "/"
         }, reloadDelay * 1000)
         return
     }
-    storeSession('game', gameData)
+    storeSession("game", gameData)
   }
   await processAttemptResponse(game, response.payload)
 }
@@ -106,7 +119,7 @@ const decreaseCounterToZero = (counter, instant = false) => {
   }
   setTimeout(
     () => {
-      const counterElement = document.getElementById('mismatchCounter')
+      const counterElement = document.getElementById("mismatchCounter")
       counterElement.textContent = counter
       decreaseCounterToZero(counter - 1)
     },
@@ -123,20 +136,20 @@ const decreaseCounterToZero = (counter, instant = false) => {
  */
 export const validateAttempt = (game) => {
   const attemptLetters = getAttemptLetters()
-  const attemptWord = attemptLetters.join('')
+  const attemptWord = attemptLetters.join("")
 
   if (attemptLetters.length != game.word.length) {
-    showMessage('Not enough letters')
+    showMessage("Not enough letters")
     return false
   }
 
   if (game.attempts.includes(attemptWord)) {
-    showMessage('Word already tried')
+    showMessage("Word already tried")
     return false
   }
 
   if (!wordExists(attemptWord)) {
-    showMessage('Not in word list')
+    showMessage("Not in word list")
     return false
   }
   return true
