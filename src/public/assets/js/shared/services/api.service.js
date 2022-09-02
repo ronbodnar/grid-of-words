@@ -97,23 +97,30 @@ export const fetchData = async (
  * @param {number} maxLength - The maximum length of words to fetch. Defaults to MAXIMUM_WORD_LENGTH.
  * @returns {Promise<Array>} A promise that resolves to an array of words.
  */
-export const fetchWordList = async (length) => {
-  if (!length) {
-    throw new Error("Word length is required")
+export const fetchWordList = async (length, language) => {
+  if (!length || !language) {
+    throw new Error("Required parameters: length, language")
   }
-  // The word list is of form: { <length>: [...words], ... }
-  const localWordList = retrieveLocal("wordList") || {}
+  const storageKey = `wordList.${language}`
+  // The word list is of form: { <language>: { <length-1>: [...words], <length-2>: ... }, ... }
+  const localWordList = retrieveLocal(storageKey) || {}
   if (Object.hasOwn(localWordList, length)) {
     return
   }
   return fetchData(`word/list`, "GET", {
     length: length,
+    language: language,
   })
     .then((response) => {
-      localWordList[length] = response
-      storeLocal("wordList", localWordList)
+      const data = response.payload
+      if (!data) {
+        logger.error("No data received from word list endpoint.")
+        return
+      }
+      localWordList[length] = data
+      storeLocal(storageKey, localWordList)
       logger.info(
-        `Stored ${response.length} ${length} letter words in local storage.`
+        `Stored ${data.length} ${length} letter ${language} words in local storage.`
       )
     })
     .catch((error) => logger.error("Error fetching word list", error))
@@ -125,12 +132,12 @@ export const fetchWordList = async (length) => {
  * @param {string} word - The word to check.
  * @returns {boolean} True if the word exists in the word list, false otherwise.
  */
-export const wordExists = (word) => {
+export const wordExists = (word, language) => {
   const wordLen = word.length
-  const wordList = retrieveLocal("wordList")
+  const wordList = retrieveLocal(`wordList.${language}`)
   // We can fetch the word list in the background and safely pass validation off to the server.
   if (!wordList || !Object.hasOwn(wordList, wordLen)) {
-    fetchWordList(wordLen)
+    fetchWordList(wordLen, language)
     return true
   }
   return wordList[wordLen].includes(word)

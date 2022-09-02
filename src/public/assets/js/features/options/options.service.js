@@ -37,7 +37,13 @@ export const loadOptions = () => {
   let failedOptions = []
   Object.keys(OPTIONS).forEach((key) => {
     const option = OPTIONS[key]
+
+    // Find the preferred value for the option and return early if not found.
     const value = retrieveLocal(option.id)
+    if (!value) {
+      return
+    }
+
     const optionContainer = document.querySelector(`#${option.id}-container`)
     if (optionContainer) {
       const inputElement = optionContainer.firstChild

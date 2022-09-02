@@ -12,6 +12,7 @@ class Game {
   startTimestamp = new Date()
   endTimestamp = undefined
   ownerId = undefined
+  language = undefined
 
   /**
    * Constructs a new Game object from the given object's properties.
@@ -39,6 +40,7 @@ class Game {
     this.endTime = obj.endTimestamp || this.endTimestamp
     this.attempts = obj.attempts || this.attempts
     this.ownerId = obj.ownerId || this.ownerId
+    this.language = obj.language || this.language
   }
 
   /**

@@ -169,6 +169,7 @@ export const findAllWordsByLength = async (
         cursorResult: cursorResult,
       })
     }
+
     return cursorResult.words
   } catch (error) {
     return new DatabaseError(`Failed to obtain word list of length ${length}`, {

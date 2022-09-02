@@ -1,5 +1,6 @@
 import {
   removeSession,
+  retrieveLocal,
   retrieveSession,
   storeSession,
 } from "./shared/services/storage.service.js"
@@ -51,8 +52,9 @@ await (async () => {
     }
   }
 
+  const preferredLanguage = retrieveLocal("language")
   // Fetch the word list in the background if it doesn't exist.
-  fetchWordList(DEFAULT_WORD_LENGTH)
+  fetchWordList(DEFAULT_WORD_LENGTH, preferredLanguage || "english")
 })()
 
 // Ensure the session has been set before redirecting the user or they may not have API access.

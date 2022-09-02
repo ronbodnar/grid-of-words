@@ -102,7 +102,7 @@ const validateAttempt = async (word, game) => {
   }
 
   // Validate that the word exists in the word list
-  var validWord = await exists(word)
+  var validWord = await exists(word, game.language)
   if (!validWord) {
     return "NOT_IN_WORD_LIST"
   }

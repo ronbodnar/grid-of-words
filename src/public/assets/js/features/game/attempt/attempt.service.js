@@ -148,7 +148,7 @@ export const validateAttempt = (game) => {
     return false
   }
 
-  if (!wordExists(attemptWord)) {
+  if (!wordExists(attemptWord, game.language)) {
     showMessage("Not in word list")
     return false
   }
