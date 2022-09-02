@@ -14,7 +14,7 @@ import { showMessage } from "../../shared/services/message.service.js"
 import { fetchData } from "../../shared/services/api.service.js"
 import { logger } from "../../main.js"
 import { clearAttemptLetters } from "./attempt/attempt.service.js"
-import OPTIONS from "../options/enums/options.js"
+import OPTIONS from "../options/enums/Options.js"
 
 /**
  * Begins a new game by querying the API for a new game object, then swaps the container view to show the game container.

@@ -3,7 +3,7 @@ import {
   retrieveLocal,
   storeLocal,
 } from "../../shared/services/storage.service.js"
-import OPTIONS from "./enums/options.js"
+import OPTIONS from "./enums/Options.js"
 
 export const saveOptions = () => {
   let failedOptions = []

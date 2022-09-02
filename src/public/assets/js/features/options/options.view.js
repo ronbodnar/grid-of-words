@@ -8,7 +8,7 @@ import {
 import { createButton } from "../../shared/components/button.js"
 import { buildView } from "../view/view.js"
 import { buildOptionSection } from "./components/option-section.js"
-import OPTIONS from "./enums/options.js"
+import OPTIONS from "./enums/Options.js"
 import { loadOptions } from "./options.service.js"
 
 /**
