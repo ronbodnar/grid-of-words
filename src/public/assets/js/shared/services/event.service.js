@@ -7,7 +7,7 @@ import { processAttempt } from "../../features/game/attempt/attempt.service.js"
 import {
   getCurrentViewName,
   showView,
-  getViewHistory,
+  navigateBack,
 } from "../../features/view/view.service.js"
 import {
   changePassword,
@@ -28,12 +28,7 @@ const clickFunctions = {
   showRegister: () => showView("register"),
   showForgotPassword: () => showView("forgotPassword"),
   showChangePassword: () => showView("changePassword"),
-  back: () => {
-    const previousView = getViewHistory().pop()
-    showView(previousView, {
-      hideFromHistory: true,
-    })
-  },
+  back: () => navigateBack(),
 
   // Games
   startGame: (args) => startGame(args),

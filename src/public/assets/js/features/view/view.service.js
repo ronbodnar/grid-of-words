@@ -16,7 +16,7 @@ let viewHistory = []
 const viewFunctions = {
   // Main view functions
   home: (options = {}) => {
-    viewHistory = []
+    //viewHistory = []
     buildHomeView(options)
   },
   game: (options = {}) => {
@@ -25,7 +25,7 @@ const viewFunctions = {
       wordLength: options.wordLength,
       maxAttempts: options.maxAttempts,
     })
-    viewHistory = []
+    //viewHistory = []
   },
   howToPlay: () => buildHowToPlayView(),
   loading: () => buildLoadingView(),
@@ -50,14 +50,32 @@ const viewFunctions = {
 }
 
 /**
- * Clears the current content container's innerHTML and builds view containers.
+ * Clears the current content container's innerHTML and builds view containers. Additionally, updates window history using pushState to allow browser navigation.
  * @param {string} name - The name of the view container to build and display.
  * @param {object} options - A list of options that can be passed to views.
  */
 export const showView = (name, options = {}) => {
   if (!name) {
     showView("home")
+    window.history.pushState(
+      {
+        view: "home",
+      },
+      "",
+      ""
+    )
     return
+  }
+
+  console.log(`Showing view ${name} with options`, options)
+
+  const viewFunction = viewFunctions[name]
+  if (viewFunction && typeof viewFunction === "function") {
+    viewFunction(options)
+  } else {
+    buildHomeView()
+    //viewHistory = []
+    throw new Error(`View "${name}" does not have a mapped function`)
   }
 
   const { hideFromHistory = false } = options
@@ -70,17 +88,37 @@ export const showView = (name, options = {}) => {
     !hideFromHistory
 
   if (addToHistory) {
-    viewHistory.push(getCurrentViewName())
+    //viewHistory.push(currentView)
+    window.history.pushState(
+      {
+        view: currentView,
+        options: options,
+      },
+      "",
+      ""
+    )
   }
+}
 
-  const viewFunction = viewFunctions[name]
-  if (viewFunction && typeof viewFunction === "function") {
-    viewFunction(options)
-  } else {
-    buildHomeView()
-    viewHistory = []
-    throw new Error(`View "${name}" does not have a mapped function`)
+export const navigateBack = () => {
+  const { state } = window.history
+  if (!state || !state.view) {
+    //TODO: navigate home
+    throw new Error("No previous view to navigate back to")
   }
+  const { view, options = {} } = state
+  options.hideFromHistory = true
+
+  showView(view, options)
+  /*
+  if (getViewHistory().length < 1) {
+    return
+  }
+  const previousView = getViewHistory().pop()
+  showView(previousView, {
+    hideFromHistory: true,
+  })
+  */
 }
 
 /**
@@ -95,6 +133,6 @@ export const getCurrentViewName = () => {
 /**
  * @returns {Array} A stack of views that have been visited, for navigation.
  */
-export const getViewHistory = () => {
+/* export const getViewHistory = () => {
   return viewHistory
-}
+} */
