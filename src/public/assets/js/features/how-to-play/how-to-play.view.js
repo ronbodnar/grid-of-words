@@ -28,9 +28,9 @@ const buildStepContainer = () => {
   const steps = [
     "Select or type the letters of a 5<sup>*</sup> letter word, like <strong>great</strong> or <strong>place</strong>.",
     "Once you have entered a word, press enter to validate your attempt.",
-    "If the square is <span style='font-size: 20px; opacity: 0.3; font-weight: 800;'>dimmed</span>, the letter does not exist in the word.",
-    "If the square is <span style='font-size: 20px; color: rgba(255, 165, 0, 1); font-weight: 800;'>orange</span>, the letter is not in the correct position in the word.",
-    "If the square is <span style='font-size: 20px; color: rgba(0, 163, 108, 1); font-weight: 800;'>green</span>, the letter is in the correct position in the word.",
+    "If the square is <span class='square' style='padding: 5px 10px; font-size: 20px; background-color: rgba(49, 56, 79, 0.7)'>dark</span>, the letter does not exist in the word.",
+    "If the square is <span class='square' style='padding: 5px 10px; font-size: 20px; background-color: rgba(255, 165, 0, 0.7);'>orange</span>, the letter is not in the correct position in the word.",
+    "If the square is <span class='square' style='padding: 5px 10px; font-size: 20px; background-color: rgba(0, 163, 108, 0.7);'>green</span>, the letter is in the correct position in the word.",
     "Try to guess the correct word before your 6<sup>th</sup><sup>*</sup> attempt!",
     "<small style='font-size: 14px; font-weight: 500; font-style: italic; margin-left: 20px;'>* Default values. Both word length and maximum attempts can be modified in the game options.</small>",
   ]

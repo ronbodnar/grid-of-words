@@ -1,7 +1,10 @@
 import { logger } from "../../../main.js"
 import { setBlockKeyEvents } from "../../../shared/services/event.service.js"
 import { showMessage } from "../../../shared/services/message.service.js"
-import { removeSession } from "../../../shared/services/storage.service.js"
+import {
+  removeSession,
+  storeSession,
+} from "../../../shared/services/storage.service.js"
 import {
   shiftActiveRow,
   transformSquares,
@@ -59,6 +62,8 @@ export const processAttemptResponse = async (game, data) => {
         updateCurrentAttemptSquares(game.word)
         await transformSquares(false)
         clearAttemptLetters()
+
+        storeSession("showStatistics", true)
 
         // Pre-fetch the statistics to pass to the stats view and avoid redirecting to handle it below.
         const statistics = await fetchStatistics(false)

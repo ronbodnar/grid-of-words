@@ -34,7 +34,10 @@ export const handleGenerateNewGame = async (req, res, next) => {
     return next(newGame)
   }
 
-  setCookie(res, "game", newGame)
+  setCookie(res, {
+    name: "game",
+    value: newGame,
+  })
 
   return res.json(newGame)
 }

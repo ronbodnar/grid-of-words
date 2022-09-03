@@ -15,5 +15,9 @@ export const handleGetStatistics = async (req, res, next) => {
   }
 
   const statistics = await getStatistics(userId)
+  if (statistics instanceof Error) {
+    return next(statistics)
+  }
+
   return res.json(statistics)
 }

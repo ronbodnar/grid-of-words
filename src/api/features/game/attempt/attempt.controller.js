@@ -38,7 +38,10 @@ export const handleAddAttempt = async (req, res, next) => {
     if (isFinalAttempt) {
       res.clearCookie("game")
     } else {
-      setCookie(res, "game", gameData)
+      setCookie(res, {
+        name: "game",
+        value: gameData,
+      })
     }
   } else {
     logger.warn("Unexpected attemptResult response", attemptResult)

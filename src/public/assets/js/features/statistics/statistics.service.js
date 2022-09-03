@@ -25,16 +25,19 @@ export const fetchStatistics = async (redirect = true) => {
   const statisticsResult = await fetchData(
     `/users/${authenticatedUser._id}/statistics`
   )
-  if (!statisticsResult?.payload || statisticsResult.statusCode !== 200) {
+  const { payload, statusCode } = statisticsResult
+  if (!payload || statusCode !== 200) {
     if (redirect) {
       showView("home", {
         message: {
-          text: "Failed to load statistics. Please try again later.",
+          text:
+            payload?.message ||
+            "Failed to load statistics. Please try again later.",
           className: "error",
         },
       })
     }
     return null
   }
-  return statisticsResult.payload
+  return payload
 }

@@ -42,7 +42,10 @@ export const handleLoginUser = async (req, res, next) => {
   }
 
   if (loginResult.token) {
-    setCookie(res, "token", loginResult.token)
+    setCookie(res, {
+      name: "token",
+      value: loginResult.token,
+    })
   }
 
   // Hide the token from the response object

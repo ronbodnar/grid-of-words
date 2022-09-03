@@ -1,5 +1,6 @@
 import { createButton } from "../../shared/components/button.js"
 import { showMessage } from "../../shared/services/message.service.js"
+import { retrieveSession } from "../../shared/services/storage.service.js"
 import {
   getAuthenticatedUser,
   isAuthenticated,
@@ -66,7 +67,8 @@ const buildButtonContainer = () => {
     })
   )
 
-  if (isAuthenticated()) {
+  const showStatistics = retrieveSession("showStatistics")
+  if (isAuthenticated() && showStatistics) {
     buttonContainer.appendChild(
       createButton("Statistics", {
         icon: "bar-chart",

@@ -18,7 +18,7 @@ export const getStatistics = async (userId = "") => {
     return new NotFoundError(`User not found with id "${userId}"`)
   }
   if (!authenticatedUser?.statistics) {
-    return new NotFoundError("User does not have any statistics")
+    return new NotFoundError("You must play a game before loading statistics.")
   }
   return authenticatedUser.statistics
 }

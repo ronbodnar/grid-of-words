@@ -25,7 +25,9 @@ export const loadGameOutcomesChart = (userStatistics) => {
 
 const getChartData = (userStatistics) => {
   const { totalGames, wins, losses, abandoned } = userStatistics
-  const sumOfWins = Object.values(wins).reduce((sum, wins) => sum + wins)
+  const sumOfWins = !(wins.length > 0)
+    ? 0
+    : Object.values(wins).reduce((sum, wins) => sum + wins)
 
   let labels = ["Win", "Loss", "Abandon"]
   let data = [sumOfWins + 20, losses + 20, abandoned + 20] // 20 added to each to manipulate the minimum slice size

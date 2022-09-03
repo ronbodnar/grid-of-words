@@ -2,7 +2,9 @@ import "/assets/js/chart.umd.js"
 import "/assets/js/chartjs-plugin-datalabels.min.js"
 
 export const loadWinDistributionChart = (wins) => {
-  const sumOfWins = Object.values(wins).reduce((sum, w) => sum + w)
+  const sumOfWins = !(wins.length > 0)
+    ? 0
+    : Object.values(wins).reduce((sum, wins) => sum + wins)
   const winDistributionContext = document.getElementById("winDistributionChart")
   return new Chart(winDistributionContext, {
     type: "bar",

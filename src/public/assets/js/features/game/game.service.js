@@ -110,6 +110,7 @@ export const abandonGame = async () => {
     toggleKeyboardOverlay()
     return
   }
+  storeSession("showStatistics", true)
   removeSession("game")
   showView("home")
 

@@ -8,14 +8,18 @@ import { generateJWT } from "../features/auth/authentication.service.js"
  * @param {any} value The value of the cookie.
  * @param {number} [maxAge=(1000 * 60 * 60 * 24 * 30)] The max age to set for the cookie.
  */
-export const setCookie = (
-  res,
-  name,
-  value,
-  maxAge = 1000 * 60 * 60 * 24 * 30
-) => {
+export const setCookie = (res, options = {}) => {
+  const {
+    name,
+    value,
+    httpOnly = true,
+    maxAge = 1000 * 60 * 60 * 24 * 30, // 30 days
+  } = options
+  if (!name || value == null) {
+    throw new Error("Required cookie options: name, value")
+  }
   res.cookie(name, value, {
-    httpOnly: true,
+    httpOnly: httpOnly,
     secure: process.env.NODE_ENV === "production",
     maxAge: maxAge,
     sameSite: "strict",
@@ -28,5 +32,8 @@ export const setCookie = (
  */
 export const setApiKeyCookie = (res) => {
   const apiKeyToken = generateJWT(process.env.API_KEY, "30d")
-  setCookie(res, "apiKey", apiKeyToken)
+  setCookie(res, {
+    name: "apiKey",
+    value: apiKeyToken,
+  })
 }
