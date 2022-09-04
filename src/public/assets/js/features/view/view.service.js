@@ -10,6 +10,7 @@ import { buildLoadingView } from "../loading/loading.view.js"
 import { buildOptionsView } from "../options/options.view.js"
 import { retrieveSession } from "../../shared/services/storage.service.js"
 import { buildStatisticsView } from "../statistics/statistics.view.js"
+import { logger } from "../../main.js"
 
 let viewHistory = []
 
@@ -57,41 +58,25 @@ const viewFunctions = {
 export const showView = (name, options = {}) => {
   if (!name) {
     showView("home")
-    window.history.pushState(
-      {
-        view: "home",
-      },
-      "",
-      ""
-    )
     return
   }
-
-  console.log(`Showing view ${name} with options`, options)
 
   const viewFunction = viewFunctions[name]
   if (viewFunction && typeof viewFunction === "function") {
     viewFunction(options)
   } else {
     buildHomeView()
-    //viewHistory = []
-    throw new Error(`View "${name}" does not have a mapped function`)
+    logger.error(`View "${name}" does not have a mapped function`)
   }
 
   const { hideFromHistory = false } = options
 
-  const currentView = getCurrentViewName()
-  const addToHistory =
-    currentView !== "loading" &&
-    currentView !== "game" &&
-    currentView !== "statistics" &&
-    !hideFromHistory
+  const addToHistory = name !== "loading" && !hideFromHistory
 
   if (addToHistory) {
-    //viewHistory.push(currentView)
     window.history.pushState(
       {
-        view: currentView,
+        view: name,
         options: options,
       },
       "",
@@ -102,23 +87,28 @@ export const showView = (name, options = {}) => {
 
 export const navigateBack = () => {
   const { state } = window.history
+
+  // We're still in the app and have no previous view, meaning we are (hopefully) back to our initial load state.
   if (!state || !state.view) {
-    //TODO: navigate home
-    throw new Error("No previous view to navigate back to")
+    // No sense in rebuilding the home view.
+    if (getCurrentViewName() !== "home") {
+      showView("home", {
+        hideFromHistory: true,
+      })
+    }
+    return
   }
+
+  // We can't return to a game, so just force an extra back button click.
+  if (state?.view === "game") {
+    window.history.back()
+    return
+  }
+
   const { view, options = {} } = state
   options.hideFromHistory = true
 
   showView(view, options)
-  /*
-  if (getViewHistory().length < 1) {
-    return
-  }
-  const previousView = getViewHistory().pop()
-  showView(previousView, {
-    hideFromHistory: true,
-  })
-  */
 }
 
 /**
@@ -129,10 +119,3 @@ export const getCurrentViewName = () => {
   const currentView = document.querySelector(".content")
   return currentView?.id
 }
-
-/**
- * @returns {Array} A stack of views that have been visited, for navigation.
- */
-/* export const getViewHistory = () => {
-  return viewHistory
-} */

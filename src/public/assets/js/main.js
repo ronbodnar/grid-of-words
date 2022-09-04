@@ -4,8 +4,8 @@ import {
   retrieveSession,
   storeSession,
 } from "./shared/services/storage.service.js"
-import { addKeyListeners } from "./shared/services/event.service.js"
-import { navigateBack, showView } from "./features/view/view.service.js"
+import { addEventListeners } from "./shared/services/event.service.js"
+import { showView } from "./features/view/view.service.js"
 import { fetchData, fetchWordList } from "./shared/services/api.service.js"
 import { validateResetToken } from "./features/auth/authentication.service.js"
 import logger from "./shared/utils/logger.js"
@@ -15,12 +15,8 @@ import { DEFAULT_WORD_LENGTH } from "./shared/utils/constants.js"
 const loggerInstance = logger()
 export { loggerInstance as logger }
 
-// Initialize the listeners for keyboard events.
-addKeyListeners()
-
-window.onpopstate = (event) => {
-  navigateBack()
-}
+// Initialize the listeners for keyboard and history events.
+addEventListeners()
 
 // Show the loading view while we fetch session data from the server.
 showView("loading")
@@ -92,7 +88,9 @@ await (async () => {
   } else {
     const game = retrieveSession("game")
     if (!game) {
-      showView("home")
+      showView("home", {
+        hideFromHistory: true,
+      })
     }
   }
 })()
