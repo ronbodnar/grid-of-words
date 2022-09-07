@@ -71,7 +71,7 @@ export const submitAuthForm = async (url, params, successFn, failureFn) => {
  * @async
  */
 export const logout = async () => {
-  const logoutResponse = await fetchData("/auth/logout", "POST")
+  const logoutResponse = await fetchData("auth/logout", "POST")
 
   if (logoutResponse?.statusCode === 200) {
     removeSession("user")
@@ -103,7 +103,7 @@ export const logout = async () => {
  * @returns {Promise<any>} A promise that resolves with the API response.
  */
 export const validateResetToken = async (passwordResetToken) => {
-  return await fetchData("/auth/validate-token", "POST", {
+  return await fetchData("auth/validate-token", "POST", {
     passwordResetToken: passwordResetToken,
   })
 }

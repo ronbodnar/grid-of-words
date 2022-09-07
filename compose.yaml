@@ -1,16 +1,29 @@
-version: "0.5"
-
 services:
   app:
-    container_name: word-puzzle-game
     build:
       context: .
+      target: dev
       dockerfile: Dockerfile
-    environment:
-      NODE_ENV: development
-      MONGO_URI: ${MONGO_URI}
-    ports:
-      - "3000:3000"
+    env_file: "development.env"
     volumes:
-      - .:/app
-      - /app/node_modules
+    #  - word-puzzle-game-data:/
+    ports:
+      - 3000:3000
+    networks:
+      - word-puzzle-game-network
+
+  mongo:
+    image: mongo:6.0.18-rc0-jammy
+    ports:
+      - 27017:27017
+    volumes:
+    #  - word-puzzle-game-data:/
+    networks:
+      - word-puzzle-game-network
+
+volumes:
+  word-puzzle-game-data:
+
+network:
+  word-puzzle-game-network:
+    driver: bridge
