@@ -1,29 +1,42 @@
 services:
-  app:
+  word-puzzle-game:
     build:
       context: .
       target: dev
       dockerfile: Dockerfile
     env_file: "development.env"
-    volumes:
-    #  - word-puzzle-game-data:/
     ports:
       - 3000:3000
+    depends_on:
+      - word-puzzle-game-db
+      #word-puzzle-game-db:
+      #condition: service_healthy
+      #restart: true
     networks:
-      - word-puzzle-game-network
+      - home-main
 
-  mongo:
+  word-puzzle-game-db:
     image: mongo:6.0.18-rc0-jammy
-    ports:
-      - 27017:27017
+    #healthcheck:
+    #test: ["CMD-SHELL", "/scripts/healthcheck.sh"]
+    #interval: 10s
+    #timeout: 30s
+    #retries: 50
+    #start_period: 1s
+    env_file: "development.env"
     volumes:
-    #  - word-puzzle-game-data:/
+      - ./scripts/mongo-healthcheck.js:/scripts/count-words.js
+      - ./scripts/mongo-healthcheck.sh:/scripts/mongo-healthcheck.sh
+      - ./scripts/mongoimport-words.sh:/docker-entrypoint-initdb.d/mongoimport-words.sh
+      - ./data/words.txt:/data/words.txt
+      - word-puzzle-game-data:/data/db/
     networks:
-      - word-puzzle-game-network
+      - home-main
 
 volumes:
   word-puzzle-game-data:
+    name: "word-puzzle-game-data"
 
-network:
-  word-puzzle-game-network:
-    driver: bridge
+networks:
+  home-main:
+    external: true

@@ -6,16 +6,25 @@ import { DEFAULT_LANGUAGE } from "./constants.js"
 let client
 
 /**
- * Asynchronously connects to the MongoDB server.
+ * Asynchronously connects to the MongoDB container.
  *
  * @async
  */
 const connect = async () => {
   try {
-    client = new MongoClient(process.env.MONGO_URI, {
-      tlsCertificateKeyFile: process.env.MONGO_CERT_PATH,
-      serverApi: ServerApiVersion.v1,
-    })
+    const {
+      MONGO_CERT_PATH,
+      MONGO_INITDB_ROOT_USERNAME,
+      MONGO_INITDB_ROOT_PASSWORD,
+      MONGO_CONTAINER_SERVICE_NAME,
+    } = process.env
+    client = new MongoClient(
+      `mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@${MONGO_CONTAINER_SERVICE_NAME}`,
+      {
+        tlsCertificateKeyFile: MONGO_CERT_PATH,
+        serverApi: ServerApiVersion.v1,
+      }
+    )
     await client.connect()
   } catch (error) {
     throw new DatabaseError("Couldn't connect to to MongoDB server", {
