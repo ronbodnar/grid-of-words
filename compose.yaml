@@ -1,6 +1,7 @@
 services:
   # The main application (API services and front-end JavaScript)
   word-puzzle-game-app:
+    container_name: word-puzzle-game-app
     build:
       context: .
       target: dev
@@ -14,22 +15,24 @@ services:
     depends_on:
       word-puzzle-game-db:
         condition: service_healthy
-        restart: true
+
+    restart: always
 
     networks:
       - home-main
 
   # The mongo database service
   word-puzzle-game-db:
+    container_name: word-puzzle-game-db
     image: mongo:6.0.18-rc0-jammy
 
     healthcheck:
       test:
         ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
-      interval: 30s
-      timeout: 30s
+      interval: 10s
+      timeout: 15s
       retries: 5
-      start_period: 0s
+      start_period: 10s
 
     env_file: "development.env"
 
