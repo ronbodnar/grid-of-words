@@ -26,6 +26,9 @@ services:
     container_name: word-puzzle-game-db
     image: mongo:6.0.18-rc0-jammy
 
+    ports:
+      - 27017:27017
+
     healthcheck:
       test:
         ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
