@@ -1,3 +1,5 @@
+import { ENV } from "./constants.js"
+
 /**
  * Creates a logger with various logging levels and functions.
  *
@@ -24,6 +26,10 @@ const logger = () => {
     // temporarily disable logging for debug/trace
     if (level > LogLevel.INFO) {
       //return;
+    }
+    // Do not log in production environments.
+    if (ENV === "production") {
+      return
     }
     console.log(
       `[${Object.keys(LogLevel).find((key) => LogLevel[key] === level)}]`,

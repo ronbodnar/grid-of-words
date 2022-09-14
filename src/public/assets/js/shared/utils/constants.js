@@ -1,3 +1,4 @@
+export const ENV = "production"
 export const APP_NAME = "Word Puzzle Game"
 
 // Max attempt declarations

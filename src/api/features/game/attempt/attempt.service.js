@@ -6,6 +6,7 @@ import { findGameById } from "../game.repository.js"
 import { getAuthenticatedUser } from "../../auth/authentication.service.js"
 import { updateStats } from "../../user/statistics/statistics.service.js"
 import { exists } from "../../word/word.repository.js"
+import UnauthorizedError from "../../../errors/UnauthorizedError.js"
 
 /**
  * Adds an attempt to the Game's `attempt` Array if no validation errors occur.
@@ -26,6 +27,26 @@ export const addAttempt = async (word, gameId, authToken) => {
 
   const authenticatedUser = await getAuthenticatedUser(authToken)
 
+  console.log(authenticatedUser)
+  console.log(game)
+
+  if (authenticatedUser?._id) {
+    // Update the game's owner if there is no owner, but we are authenticated.
+    if (game.ownerId === undefined) {
+      game.ownerId = authenticatedUser._id
+    }
+
+    if (game.ownerId.toString() === authenticatedUser._id.toString()) {
+      return new UnauthorizedError("NOT_AUTHORIZED", {
+        status: "error",
+        message: "NOT_AUTHORIZED",
+        game: game,
+        authenticatedUser: authenticatedUser,
+      })
+    }
+  }
+
+  // Perform basic front-end authentication to avoid a server request if possible.
   const validationMessage = await validateAttempt(word, game)
   if (validationMessage.length > 0) {
     return new ValidationError(validationMessage, {

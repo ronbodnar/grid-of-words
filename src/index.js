@@ -21,7 +21,6 @@ const initialize = async () => {
   try {
     logger.info("Connecting to the database...")
     await db.connect()
-    logger.info("Connected to the database successfully.")
   } catch (error) {
     logger.error("Error connecting to the database on launch", {
       error: error,

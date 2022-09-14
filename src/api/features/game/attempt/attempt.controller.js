@@ -2,6 +2,7 @@ import logger from "../../../config/winston.config.js"
 import Game from "../Game.js"
 import NotFoundError from "../../../errors/NotFoundError.js"
 import ValidationError from "../../../errors/ValidationError.js"
+import UnauthorizedError from "../../../errors/UnauthorizedError.js"
 import { setCookie } from "../../../shared/helpers.js"
 import { addAttempt } from "./attempt.service.js"
 
@@ -24,7 +25,10 @@ export const handleAddAttempt = async (req, res, next) => {
   const attemptResult = await addAttempt(word, gameId, authToken)
   if (attemptResult instanceof Error) {
     // Clear cookies when the user is attempting an invalid game.
-    if (attemptResult instanceof NotFoundError) {
+    if (
+      attemptResult instanceof NotFoundError ||
+      attemptResult instanceof UnauthorizedError
+    ) {
       res.clearCookie("game")
     }
     return next(attemptResult)

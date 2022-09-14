@@ -34,6 +34,8 @@ export const processAttemptResponse = async (game, data) => {
 
   const { message, gameData } = data
 
+  console.log(data)
+
   if (message) {
     switch (message) {
       case "WRONG_WORD":
@@ -83,6 +85,18 @@ export const processAttemptResponse = async (game, data) => {
         showView("home", {
           message: {
             text: "The game could not be found. Please start a new game.",
+            hideDelay: 5000,
+            className: "error",
+          },
+        })
+        // Return early so the message is not overwritten.
+        return
+
+      case "NOT_AUTHORIZED":
+        removeSession("game")
+        showView("home", {
+          message: {
+            text: "You are not authorized to perform this action.",
             hideDelay: 5000,
             className: "error",
           },
