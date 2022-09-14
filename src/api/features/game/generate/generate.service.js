@@ -11,6 +11,7 @@ import ValidationError from "../../../errors/ValidationError.js"
 import { findWordByLength } from "../../word/word.repository.js"
 import { findGameById, insertGame } from "../game.repository.js"
 import logger from "../../../config/winston.config.js"
+import UnauthorizedError from "../../../errors/UnauthorizedError.js"
 
 /**
  * Generates a new Game object.
@@ -31,6 +32,10 @@ export const generateNewGame = async (
     return new ValidationError(
       "Required parameters: language, wordLength, maxAttempts"
     )
+  }
+
+  if (authenticatedUser === null) {
+    return new UnauthorizedError("User session expired. Please log in again.")
   }
 
   const validLanguage = ["english", "spanish"].includes(language)

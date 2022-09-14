@@ -7,6 +7,7 @@ import { setCookie } from "../../../shared/helpers.js"
 import NotFoundError from "../../../errors/NotFoundError.js"
 import { getAuthenticatedUser } from "../../auth/authentication.service.js"
 import { generateNewGame } from "./generate.service.js"
+import UnauthorizedError from "../../../errors/UnauthorizedError.js"
 
 /**
  * Generates a new game with optional wordLength and maxAttempts params and adds the game to the user's cookies if successful.
@@ -19,7 +20,9 @@ export const handleGenerateNewGame = async (req, res, next) => {
   const wordLength = parseInt(req.query.wordLength) || DEFAULT_WORD_LENGTH
   const maxAttempts = parseInt(req.query.maxAttempts) || DEFAULT_MAX_ATTEMPTS
   const language = req.query.language || DEFAULT_LANGUAGE
-  const authenticatedUser = await getAuthenticatedUser(req.cookies.token)
+  const authenticatedUser = req.cookies.token
+    ? await getAuthenticatedUser(req.cookies.token)
+    : undefined
 
   const newGame = await generateNewGame(
     language,
@@ -31,6 +34,9 @@ export const handleGenerateNewGame = async (req, res, next) => {
     return next(new NotFoundError("Failed to generate new game"))
   }
   if (newGame instanceof Error) {
+    if (newGame instanceof UnauthorizedError) {
+      res.clearCookie("token")
+    }
     return next(newGame)
   }
 

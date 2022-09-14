@@ -51,9 +51,16 @@ export const startGame = async (options = {}) => {
         params: params,
         fetchNewGameResponse: fetchNewGameResponse,
       })
+
+      // Remove the user session so the home view is updated before rendering.
+      if (fetchNewGameResponse?.statusCode === 401) {
+        removeSession("user")
+      }
       showView("home", {
         message: {
-          text: "An unknown error has occurred. Please try again.",
+          text:
+            fetchNewGameResponse?.payload?.message ||
+            "An unknown error has occurred. Please try again.",
           className: "error",
           hideDelay: 10000,
         },
