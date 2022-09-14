@@ -24,7 +24,7 @@ export const handleAddAttempt = async (req, res, next) => {
 
   const attemptResult = await addAttempt(word, gameId, authToken)
   if (attemptResult instanceof Error) {
-    // Clear cookies when the user is attempting an invalid game.
+    // Clear game from cookies when the user is attempting an invalid game.
     if (
       attemptResult instanceof NotFoundError ||
       attemptResult instanceof UnauthorizedError

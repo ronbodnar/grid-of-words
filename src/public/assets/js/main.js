@@ -52,12 +52,14 @@ await (async () => {
     }
   }
 
-  const preferredLanguage = retrieveLocal("language")
+  const preferredLanguage = retrieveLocal("language") || "english"
+
   // Fetch the word list in the background if it doesn't exist.
-  fetchWordList(DEFAULT_WORD_LENGTH, preferredLanguage || "english")
+  fetchWordList(DEFAULT_WORD_LENGTH, preferredLanguage)
 })()
 
 // Ensure the session has been set before redirecting the user or they may not have API access.
+// Routes the user to the home page or password reset page if a reset token parameter is provided.
 await (async () => {
   // Redirect to the password reset page if the passwordResetToken query parameter is set.
   const searchParams = new URLSearchParams(window.location.search)

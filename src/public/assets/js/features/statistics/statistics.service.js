@@ -8,7 +8,10 @@ import { showView } from "../view/view.service.js"
  * @async
  * @returns {Promise<any>} The statistics API response payload.
  */
-export const fetchStatistics = async (redirect = true) => {
+export const fetchStatistics = async (
+  showLoadingViewTimeout,
+  redirect = true
+) => {
   const authenticatedUser = getAuthenticatedUser()
   if (!authenticatedUser) {
     if (redirect) {
@@ -19,6 +22,7 @@ export const fetchStatistics = async (redirect = true) => {
         },
       })
     }
+    clearTimeout(showLoadingViewTimeout)
     return null
   }
 
@@ -37,7 +41,9 @@ export const fetchStatistics = async (redirect = true) => {
         },
       })
     }
+    clearTimeout(showLoadingViewTimeout)
     return null
   }
+  clearTimeout(showLoadingViewTimeout)
   return payload
 }

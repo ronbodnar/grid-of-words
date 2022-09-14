@@ -14,6 +14,7 @@ import { updateKeyboardKeys } from "../keyboard/keyboard.service.js"
 import { fetchStatistics } from "../../statistics/statistics.service.js"
 import { showView } from "../../view/view.service.js"
 import { clearAttemptLetters, getAttemptLetters } from "./attempt.service.js"
+import { END_GAME_GRACE_PERIOD } from "../../../shared/utils/constants.js"
 
 /**
  * Processes the response based on the message content, then displays the message.
@@ -33,8 +34,6 @@ export const processAttemptResponse = async (game, data) => {
   }
 
   const { message, gameData } = data
-
-  console.log(data)
 
   if (message) {
     switch (message) {
@@ -56,19 +55,19 @@ export const processAttemptResponse = async (game, data) => {
       case "WINNER":
       case "LOSER":
         removeSession("game")
+
+        updateCurrentAttemptSquares(game.word)
+        await transformSquares(false)
+        clearAttemptLetters()
+
         if (message === "LOSER") {
           responseMessage = gameData.word.toUpperCase()
         } else {
           responseMessage = message
         }
-        updateCurrentAttemptSquares(game.word)
-        await transformSquares(false)
-        clearAttemptLetters()
-
-        storeSession("showStatistics", true)
 
         // Pre-fetch the statistics to pass to the stats view and avoid redirecting to handle it below.
-        const statistics = await fetchStatistics(false)
+        const statistics = await fetchStatistics(null, false)
         setTimeout(() => {
           setBlockKeyEvents(false)
           if (statistics) {
@@ -78,7 +77,7 @@ export const processAttemptResponse = async (game, data) => {
           } else {
             showView("home")
           }
-        }, 5000)
+        }, END_GAME_GRACE_PERIOD)
         break
 
       case "GAME_NOT_FOUND":

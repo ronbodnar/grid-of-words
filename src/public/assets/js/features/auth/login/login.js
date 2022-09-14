@@ -40,7 +40,6 @@ export const submitLoginForm = async () => {
 
   const successFn = (response) => {
     if (response?.user) {
-      storeSession("showStatistics", response.user.statistics ? true : false)
       storeSession("user", response.user)
       showView("home", {
         message: {

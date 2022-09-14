@@ -21,3 +21,4 @@ export const USERNAME_REGEX = /^[a-zA-Z0-9 _-]{3,16}$/
 export const EMAIL_REGEX = /^[a-zA-Z0-9._+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
 export const HIDE_MESSAGE_DELAY = 3000 // Delay in milliseconds
+export const END_GAME_GRACE_PERIOD = 3500 // Delay in milliseconds

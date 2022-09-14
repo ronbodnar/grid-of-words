@@ -67,8 +67,7 @@ const buildButtonContainer = () => {
     })
   )
 
-  const showStatistics = retrieveSession("showStatistics")
-  if (isAuthenticated() && showStatistics) {
+  if (isAuthenticated()) {
     buttonContainer.appendChild(
       createButton("Statistics", {
         icon: "bar-chart",

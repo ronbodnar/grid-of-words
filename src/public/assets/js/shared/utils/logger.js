@@ -27,10 +27,12 @@ const logger = () => {
     if (level > LogLevel.INFO) {
       //return;
     }
+
     // Do not log in production environments.
     if (ENV === "production") {
       return
     }
+
     console.log(
       `[${Object.keys(LogLevel).find((key) => LogLevel[key] === level)}]`,
       message,

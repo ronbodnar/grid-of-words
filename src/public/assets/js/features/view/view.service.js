@@ -12,8 +12,6 @@ import { retrieveSession } from "../../shared/services/storage.service.js"
 import { buildStatisticsView } from "../statistics/statistics.view.js"
 import { logger } from "../../main.js"
 
-let viewHistory = []
-
 const viewFunctions = {
   // Main view functions
   home: (options = {}) => {
@@ -77,7 +75,9 @@ export const showView = (name, options = {}) => {
     window.history.pushState(
       {
         view: name,
-        options: options,
+        //options: options,
+        //if options are saved to the state history, messages that were sent with the previous view will be shown
+        //when the user uses the back/forward buttons.
       },
       "",
       ""
