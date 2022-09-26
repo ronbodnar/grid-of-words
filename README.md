@@ -1,6 +1,6 @@
-# Grid of Words 🧩
+# Grid of Words
 
-**Grid of Words** is a dynamic Node.js and JavaScript implementation inspired by Wordle. Enjoy a
+**Grid of Words** is a dynamic web application built with Node.js and JavaScript and inspired by Wordle. Enjoy a
 customizable word puzzle experience with options for word length, number of attempts for a win, and choice of dictionary language.
 
 ### [Play the Demo](https://games.ronbodnar.com)
@@ -17,22 +17,15 @@ customizable word puzzle experience with options for word length, number of atte
 
 ## Features
 
-- **Single-Page Application**: Enjoy a seamless user experience with this modern SPA built entirely
-  with JavaScript
-- **Game Options**: Challenge yourself with word lengths from 4 to 8 characters, 3 to 8 attempts per game, and English or Spanish dictionary words
-- **Secure Authentication**: Protect user sessions with HttpOnly cookies and JWTs to ensure secure
-  identity verification
-- **Password Reset**: Implement password resets with industry-standard practices and short-lived
-  tokens
-- **Database Integration**: Seamlessly load data into a MySQL database for robust management and
-  querying
-- **Extensive Word List**: Access over 400,000 words from the Oxford English Dictionary for a rich
-  and varied gameplay experience
-- **Error Logging**: Track and troubleshoot issues with comprehensive error logging using
-  [Winston](https://github.com/winstonjs/winston)
-- **Environment Configuration**: Manage secrets and configurations securely with a `.env` file
-- **Cross-Platform Compatibility**: Designed to work smoothly across different operating systems
-  with minimal setup
+- **Single-Page Application (SPA)**: Built entirely with JavaScript, this SPA provides a seamless user experience, enabling dynamic interactions without page reloads.
+- **Customizable Game Options**: Users can easily configure game settings, allowing word lengths from 4 to 8 characters and attempts ranging from 3 to 8. Supports English and Spanish dictionaries for broader accessibility.
+- **Secure Authentication**: User sessions are protected using JWTs stored securely in HttpOnly cookies, ensuring robust identity verification.
+- **Password Reset Functionality**: Implemented password resets following industry-standard practices, utilizing short-lived tokens for enhanced security.
+- **Database Integration**: Data is managed seamlessly with MongoDB, offering robust querying capabilities and efficient data handling.
+- **Extensive Word List**: Access to over 400,000 words from the Oxford English Dictionary enriches the game's vocabulary and enhances the user experience.
+- **Error Logging**: Comprehensive error tracking and troubleshooting are facilitated through Winston, helping maintain application reliability.
+- **Environment Configuration**: Secure management of secrets and configurations through a .env file makes it easy to customize settings for different environments.
+- **Cross-Platform Compatibility**: Designed for smooth operation across various operating systems, minimizing setup requirements for developers.
 
 ## Technology Stack
 
@@ -133,13 +126,17 @@ To run Grid of Words using Docker, follow these steps:
 
    Build the Docker images for development or production:
 
-   ~ docker-compose build ~
+   ```
+   docker-compose build
+   ```
 
 2. **Start the Services**
 
    Start the services defined in the `docker-compose.yml` file:
 
-   ~ docker-compose up ~
+   ```
+   docker-compose up
+   ```
 
 3. **Access the Application**
 
@@ -150,7 +147,9 @@ To run Grid of Words using Docker, follow these steps:
 
    To stop the running services, use:
 
-   ~ docker-compose down ~
+   ```
+   docker-compose down
+   ```
 
 For more details on Docker setup and usage, refer to the
 [Docker documentation](https://docs.docker.com/).
