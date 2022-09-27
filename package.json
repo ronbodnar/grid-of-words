@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "test": "node --test",
+    "test": "vitest",
     "dev": "nodemon --env-file=development.env src/index.js",
     "prod": "node --env-file=production.env src/index.js"
   },
@@ -37,6 +37,7 @@
     "@eslint/js": "^9.9.0",
     "eslint": "^9.9.0",
     "globals": "^15.9.0",
-    "nodemon": "^3.1.4"
+    "nodemon": "^3.1.4",
+    "vitest": "^2.1.1"
   }
 }
