@@ -34,7 +34,7 @@ const initialize = async () => {
   const server = productionMode
     ? createProductionServer()
     : createDevelopmentServer()
-  //startServer(server)
+  startServer(server)
 }
 
 /**
@@ -69,7 +69,7 @@ const createProductionServer = () => {
     logger.error("Error creating HTTPS server with SSL certificate", {
       error: error,
     })
-    //process.exit(1)
+    process.exit(1)
   }
 }
 
