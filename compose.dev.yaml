@@ -1,0 +1,58 @@
+services:
+  # The main application (API services and front-end JavaScript)
+  word-puzzle-game-app:
+    container_name: word-puzzle-game-app
+    build:
+      context: .
+      target: dev
+      dockerfile: Dockerfile
+
+    env_file: "development.env"
+
+    ports:
+      - 3000:3000
+
+    depends_on:
+      word-puzzle-game-db:
+        condition: service_healthy
+
+    restart: always
+
+    networks:
+      - home-main
+
+  # The mongo database service
+  word-puzzle-game-db:
+    container_name: word-puzzle-game-db
+    image: mongo:6.0.18-rc0-jammy
+
+    ports:
+      - 27017:27017
+
+    healthcheck:
+      test:
+        ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 15s
+      retries: 5
+      start_period: 10s
+
+    env_file: "development.env"
+
+    volumes:
+      - ./scripts/mongoimport-words.sh:/docker-entrypoint-initdb.d/mongoimport-words.sh
+      - ./data/words_english.txt:/data/words_english.txt
+      - ./data/words_spanish.txt:/data/words_spanish.txt
+      - word-puzzle-game-data:/data/db/
+
+    networks:
+      - home-main
+
+volumes:
+  word-puzzle-game-data:
+    name: "word-puzzle-game-data"
+
+# Uses the default home network (must be created first).
+networks:
+  home-main:
+    external: true
