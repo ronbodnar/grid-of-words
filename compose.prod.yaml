@@ -1,19 +1,19 @@
 services:
   # The main application (API services and front-end JavaScript)
-  word-puzzle-game-app:
-    container_name: word-puzzle-game-app
+  grid-of-words-app:
+    container_name: grid-of-words-app
     build:
       context: .
-      target: dev
+      target: prod
       dockerfile: Dockerfile
 
-    env_file: "development.env"
+    env_file: "production.env"
 
     ports:
       - 3000:3000
 
     depends_on:
-      word-puzzle-game-db:
+      grid-of-words-db:
         condition: service_healthy
 
     restart: always
@@ -22,8 +22,8 @@ services:
       - home-main
 
   # The mongo database service
-  word-puzzle-game-db:
-    container_name: word-puzzle-game-db
+  grid-of-words-db:
+    container_name: grid-of-words-db
     image: mongo:6.0.18-rc0-jammy
 
     ports:
@@ -32,25 +32,25 @@ services:
     healthcheck:
       test:
         ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
-      interval: 10s
+      interval: 1m
       timeout: 15s
-      retries: 5
+      retries: 2
       start_period: 10s
 
-    env_file: "development.env"
+    env_file: "production.env"
 
     volumes:
       - ./scripts/mongoimport-words.sh:/docker-entrypoint-initdb.d/mongoimport-words.sh
       - ./data/words_english.txt:/data/words_english.txt
       - ./data/words_spanish.txt:/data/words_spanish.txt
-      - word-puzzle-game-data:/data/db/
+      - grid-of-words-data:/data/db/
 
     networks:
       - home-main
 
 volumes:
-  word-puzzle-game-data:
-    name: "word-puzzle-game-data"
+  grid-of-words-data:
+    name: "grid-of-words-data"
 
 # Uses the default home network (must be created first).
 networks:

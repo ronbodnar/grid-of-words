@@ -1,5 +1,5 @@
 {
-  "name": "word-puzzle-game",
+  "name": "grid-of-words",
   "version": "1.0.0",
   "description": "My implementation of Wordle / Lingo in NodeJS and JavaScript with configuration for game modes.",
   "main": "src/index.js",
@@ -11,21 +11,21 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/ronbodnar/word-puzzle-game.git"
+    "url": "git+ssh://git@github.com/ronbodnar/grid-of-words.git"
   },
   "author": "Ron Bodnar",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ronbodnar/word-puzzle-game/issues"
+    "url": "https://github.com/ronbodnar/grid-of-words/issues"
   },
-  "homepage": "https://github.com/ronbodnar/word-puzzle-game#readme",
+  "homepage": "https://github.com/ronbodnar/grid-of-words#readme",
   "dependencies": {
     "async": "^3.2.5",
-    "body-parser": "^1.20.2",
+    "body-parser": "^1.20.3",
     "chart.js": "^4.4.4",
     "chartjs-plugin-datalabels": "^2.2.0",
     "cookie-parser": "^1.4.6",
-    "express": "^4.19.2",
+    "express": "^4.21.0",
     "express-rate-limit": "^7.4.0",
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
