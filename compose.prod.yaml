@@ -18,6 +18,9 @@ services:
 
     restart: always
 
+    volumes:
+      - ./data/certbot_etc:/etc/letsencrypt
+
     networks:
       - home-main
 
