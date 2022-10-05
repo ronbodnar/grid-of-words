@@ -3,7 +3,7 @@
 **Grid of Words** is a dynamic web application built with Node.js and JavaScript and inspired by Wordle. Enjoy a
 customizable word puzzle experience with options for word length, number of attempts for a win, and choice of dictionary language.
 
-### [Play the Demo](https://games.ronbodnar.com)
+### [Play the Demo](https://ronbodnar.com/grid-of-words)
 
 ## Table of Contents
 

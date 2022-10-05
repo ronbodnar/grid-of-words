@@ -1,5 +1,5 @@
 export const ENV = "production"
-export const APP_NAME = "Word Puzzle Game"
+export const APP_NAME = "Grid of Words"
 
 // Max attempt declarations
 export const DEFAULT_MAX_ATTEMPTS = 6
