@@ -33,7 +33,7 @@ export const submitForgotPasswordForm = async () => {
   }
 
   // Don't await because the user doesn't need to know we found the email address (or not).
-  submitAuthForm("/auth/forgot-password", params)
+  submitAuthForm("./auth/forgot-password", params)
 
   showMessage(
     "If the email matches an account, a password reset link will be sent with next steps.",

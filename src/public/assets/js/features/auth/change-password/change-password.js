@@ -60,5 +60,5 @@ export const submitChangePasswordForm = async () => {
     })
   }
 
-  await submitAuthForm("/auth/change-password", params, successFn)
+  await submitAuthForm("./auth/change-password", params, successFn)
 }

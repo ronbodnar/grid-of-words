@@ -56,5 +56,5 @@ export const submitLoginForm = async () => {
     }
   }
 
-  await submitAuthForm("/auth/login", params, successFn)
+  await submitAuthForm("./auth/login", params, successFn)
 }

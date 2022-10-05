@@ -55,5 +55,5 @@ export const submitResetPasswordForm = async () => {
     })
   }
 
-  await submitAuthForm("/auth/reset-password", params, successFn)
+  await submitAuthForm("./auth/reset-password", params, successFn)
 }
