@@ -5,17 +5,17 @@ import { afterEach, assert, describe, expect, it, vi } from "vitest"
 
 const mockToken = generateJWT(
   {
-    _id: "fake-id",
+    _id: "mock-id",
   },
   "1d",
   "fakesecret"
 )
 
 const mockUser = new User({
-  _id: "fake-id",
+  _id: "mock-id",
   username: "test",
   password: "password1",
-  email: "test@email.us",
+  email: "test@example.com",
 })
 
 // Mock the required import modules for creating a password
@@ -26,7 +26,7 @@ vi.mock("../authentication.service.js", async (importOriginal) => {
     verifyJWT: async (token) => {
       if (!token) return null
       return {
-        data: { _id: "fake-id" },
+        data: { _id: "mock-id" },
       }
     },
   }
@@ -55,7 +55,7 @@ vi.mock("../../user/user.repository.js", async (importOriginal) => {
 })
 
 // Start running tests
-describe("change password flow", () => {
+describe("changePassword", () => {
   afterEach(() => {
     vi.restoreAllMocks()
   })
@@ -108,7 +108,7 @@ describe("change password flow", () => {
       newPassword: "password1",
       currentPassword: "password",
       authToken: mockToken,
-      userId: "fake-id",
+      userId: "mock-id",
     })
     expect(response?.message).toEqual(
       "The current password you provided is not correct."
@@ -120,7 +120,7 @@ describe("change password flow", () => {
       newPassword: "password2",
       currentPassword: "password1",
       authToken: mockToken,
-      userId: "fake-id",
+      userId: "mock-id",
     })
     expect(response?.message).toEqual("Password changed successfully.")
   })
