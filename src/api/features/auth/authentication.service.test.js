@@ -20,8 +20,7 @@ vi.mock("../user/user.repository.js")
 describe("Authentication Service", () => {
   describe("generateSalt", () => {
     it("should generate a random salt with default bytes", () => {
-      const mockSalt = "random_salt"
-      // Create a buffer that converts to the desired hex string
+      const mockSalt = "72616e646f6d5f73616c74" // Hex representation of 'random_salt'
       const buffer = Buffer.from(mockSalt, "hex")
       crypto.randomBytes.mockReturnValueOnce(buffer)
 
@@ -31,7 +30,7 @@ describe("Authentication Service", () => {
     })
 
     it("should generate a random salt with specified bytes", () => {
-      const mockSalt = "custom_salt"
+      const mockSalt = "637573746f6d5f73616c74" // Hex representation of 'custom_salt'
       const buffer = Buffer.from(mockSalt, "hex")
       crypto.randomBytes.mockReturnValueOnce(buffer)
 
@@ -67,7 +66,7 @@ describe("Authentication Service", () => {
 
   describe("generateJWT", () => {
     it("should throw an error if no payload is provided", () => {
-      expect(() => generateJWT()).toThrow(InternalError)
+      expect(generateJWT()).toBeInstanceOf(InternalError)
     })
 
     it("should return a valid JWT", () => {
