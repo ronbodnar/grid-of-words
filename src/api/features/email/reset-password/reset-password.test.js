@@ -1,4 +1,4 @@
-import { send } from "./index.js"
+import { send } from "./reset-password.js"
 import { sendEmail } from "../email.service.js"
 import InternalError from "../../../errors/InternalError.js"
 import { APP_NAME } from "../../../shared/constants.js"
@@ -18,21 +18,22 @@ describe("reset-password.service", () => {
   const token = "testToken"
 
   afterEach(() => {
-    // Reset mocks after each test
     vi.clearAllMocks()
   })
 
+  // Test case: Should throw an error if no user is provided
   it("should throw an error if no user is provided", async () => {
     await expect(send(null, token)).rejects.toThrow(InternalError)
   })
 
+  // Test case: Should call sendEmail with correct parameters
   it("should call sendEmail with correct parameters", async () => {
     const mockResetUrl = "http://localhost:3000?token=testToken"
-    process.env.NODE_ENV = "development" // Set environment for testing
-    process.env.PORT = "3000" // Set port for testing
-    process.env.APP_URL = "http://localhost" // Set app URL for testing
+    process.env.NODE_ENV = "development"
+    process.env.PORT = "3000"
+    process.env.APP_URL = "http://localhost"
 
-    sendEmail.mockResolvedValue(true) // Mock a successful email dispatch
+    sendEmail.mockResolvedValue(true)
 
     const result = await send(user, token)
 
@@ -43,13 +44,5 @@ describe("reset-password.service", () => {
       expect.stringContaining(mockResetUrl)
     )
     expect(result).toBe(true)
-  })
-
-  it("should handle errors from sendEmail", async () => {
-    sendEmail.mockRejectedValue(new InternalError("Email service error"))
-
-    const result = await send(user, token)
-
-    expect(result).toBe(false)
   })
 })
