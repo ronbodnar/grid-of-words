@@ -1,5 +1,5 @@
 import ValidationError from "../../../errors/ValidationError.js"
-import { validatePasswordResetToken } from "./validate.token.service.js"
+import { validatePasswordResetToken } from "./validate-token.service.js"
 
 /**
  * Handles the validation of a password reset token.
