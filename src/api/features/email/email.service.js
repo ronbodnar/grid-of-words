@@ -1,6 +1,6 @@
 import logger from "../../config/winston.config.js"
 import transporter from "../../config/email.config.js"
-import { send as sendPasswordResetEmail } from "./reset-password/index.js"
+import { send as sendPasswordResetEmail } from "./reset-password/reset-password.js"
 
 /**
  * Uses Nodemailer to send an email with the default transporter settings.
