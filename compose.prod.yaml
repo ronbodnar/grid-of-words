@@ -40,6 +40,8 @@ services:
       retries: 2
       start_period: 10s
 
+    restart: always
+
     env_file: "production.env"
 
     volumes:
