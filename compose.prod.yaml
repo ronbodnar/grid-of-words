@@ -19,7 +19,7 @@ services:
     restart: always
 
     volumes:
-      - ./data/certbot_etc:/etc/letsencrypt
+      - certbot_etc:/etc/letsencrypt
 
     networks:
       - home-main
@@ -56,6 +56,8 @@ services:
 volumes:
   grid-of-words-data:
     name: "grid-of-words-data"
+  certbot_etc:
+    name: "certbot_etc"
 
 # Uses the default home network (must be created first).
 networks:
