@@ -25,9 +25,14 @@ RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=bind,source=package-lock.json,target=package-lock.json \
     npm ci --omit=dev
 
-# Create logs directory and set permissions
-RUN mkdir -p /app/logs && chmod -R 777 /app/logs
-
-USER node
 COPY . .
+
+# Create logs directory and set permissions
+#RUN mkdir -p /app/logs && chmod -R 777 /app/logs
+#RUN chown -R node:node /app
+#RUN mkdir /etc/letsencrypt && chown -R node:node /etc/letsencrypt
+#USER node
+#RUN chmod +x scripts/fix-permissions.sh
+#ENTRYPOINT ["scripts/fix-permissions.sh"]
+
 CMD ["npm", "run", "prod"]
