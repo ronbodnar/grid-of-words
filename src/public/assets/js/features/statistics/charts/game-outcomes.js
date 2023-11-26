@@ -1,5 +1,4 @@
-import "../../../chart.umd.js"
-import "../../../chartjs-plugin-datalabels.min.js"
+const { Chart, ChartDataLabels } = window
 
 export const loadGameOutcomesChart = (userStatistics) => {
   const gameOutcomeContext = document.getElementById("gameOutcomesChart")
@@ -25,9 +24,7 @@ export const loadGameOutcomesChart = (userStatistics) => {
 
 const getChartData = (userStatistics) => {
   const { totalGames, wins, losses, abandoned } = userStatistics
-  const sumOfWins = !(wins.length > 0)
-    ? 0
-    : Object.values(wins).reduce((sum, wins) => sum + wins)
+  const sumOfWins = Object.values(wins).reduce((sum, wins) => sum + wins)
 
   let labels = ["Win", "Loss", "Abandon"]
   let data = [sumOfWins + 20, losses + 20, abandoned + 20] // 20 added to each to manipulate the minimum slice size
@@ -87,7 +84,7 @@ const getChartData = (userStatistics) => {
                 size: 16,
                 weight: "bold",
               },
-              formatter: (value, ctx) => {
+              formatter: (value) => {
                 value = value - 20
                 return value.toLocaleString()
               },

@@ -1,7 +1,7 @@
 {
   "name": "grid-of-words",
   "version": "1.0.0",
-  "description": "My implementation of Wordle / Lingo in NodeJS and JavaScript with configuration for game modes.",
+  "description": "My implementation of Wordle / Lingo in NodeJS and JavaScript, with configuration for game modes.",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
