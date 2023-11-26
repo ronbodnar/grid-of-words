@@ -85,7 +85,6 @@ export const fillNextSquare = (letter) => {
 export const updateActiveSquareHighlight = () => {
   const row = document.querySelector(".word-row.active")
   if (!row) {
-    console.log("No row found to highlight")
     return
   }
 
@@ -99,8 +98,6 @@ export const updateActiveSquareHighlight = () => {
   )
 
   if (firstEmpty) firstEmpty.classList.add("first-empty")
-
-  console.log("updated active square highlight", firstEmpty)
 }
 
 /**
