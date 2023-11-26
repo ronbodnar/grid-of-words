@@ -23,10 +23,12 @@ const OPTIONS = Object.freeze({
   }),
 
   // Select / Dropdowns
-  LANGUAGE: new Option("Language", OPTION_TYPE.SELECT, {
+
+  // Languages aren't fully supported yet.
+  /*   LANGUAGE: new Option("Language", OPTION_TYPE.SELECT, {
     optionList: ["English", "Spanish"],
     defaultValue: "english",
-  }),
+  }), */
 })
 
 export default OPTIONS
