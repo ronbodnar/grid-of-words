@@ -1,9 +1,7 @@
 const { Chart, ChartDataLabels } = window
 
 export const loadWinDistributionChart = (wins) => {
-  const sumOfWins = !(wins.length > 0)
-    ? 0
-    : Object.values(wins).reduce((sum, wins) => sum + wins)
+  const sumOfWins = Object.values(wins).reduce((sum, wins) => sum + wins)
   const winDistributionContext = document.getElementById("winDistributionChart")
   return new Chart(winDistributionContext, {
     type: "bar",
