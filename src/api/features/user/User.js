@@ -124,7 +124,8 @@ class User {
    */
   getWithoutUndefined() {
     return Object.fromEntries(
-      Object.entries(this).filter(([key, value]) => value !== undefined)
+      // eslint-disable-next-line no-unused-vars
+      Object.entries(this).filter(([_key, value]) => value !== undefined)
     )
   }
 

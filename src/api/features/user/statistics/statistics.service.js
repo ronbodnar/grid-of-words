@@ -1,7 +1,6 @@
 import InternalError from "../../../errors/InternalError.js"
 import NotFoundError from "../../../errors/NotFoundError.js"
 import GameState from "../../game/GameState.js"
-import User from "../User.js"
 import UserStats from "../UserStats.js"
 import { findUserBy } from "../user.repository.js"
 

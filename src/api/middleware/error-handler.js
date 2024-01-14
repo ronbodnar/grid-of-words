@@ -12,13 +12,7 @@ const errorHandler = (err, req, res, next) => {
 
   err = err || defaultError
 
-  const {
-    name,
-    data,
-    message = defaultError.message,
-    statusCode = 500,
-    stack,
-  } = err
+  const { name, data, message = defaultError.message, stack } = err
 
   const loggerData = {
     name: name,

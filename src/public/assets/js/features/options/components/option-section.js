@@ -33,16 +33,18 @@ export const buildOptionSection = (option) => {
   typeContainer.style.justifyContent = isSelect ? "start" : "end"
 
   switch (type) {
-    case OPTION_TYPE.SELECT:
+    case OPTION_TYPE.SELECT: {
       const selectElement = buildSelect(id, typeOptions)
       typeContainer.appendChild(selectElement)
       break
+    }
 
-    case OPTION_TYPE.SLIDER:
+    case OPTION_TYPE.SLIDER: {
       const [slider, input] = buildSliderAndLabel(id, typeOptions)
       typeContainer.appendChild(slider)
       typeContainer.appendChild(input)
       break
+    }
   }
 
   container.appendChild(header)

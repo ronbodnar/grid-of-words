@@ -71,7 +71,8 @@ export const updateUser = async (user, properties) => {
     ([key, value]) => Object.hasOwn(user, key) && key !== "_id" && value != null
   )
   const undefinedProperties = Object.entries(properties).filter(
-    ([key, value]) => value == null
+    // eslint-disable-next-line no-unused-vars
+    ([_key, value]) => value == null
   )
 
   const filter = {
