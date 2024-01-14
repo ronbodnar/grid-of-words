@@ -1,7 +1,4 @@
 #!/bin/sh
-
-# This file is mounted to the /docker-entrypoint-initdb.d/ directory and ran
-# automatically when the mongo container creates a new database volume.
 until mongosh --eval "db.adminCommand('ping')" > /dev/null 2>&1; do
   echo "Waiting for MongoDB container to start..."
   sleep 5
