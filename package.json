@@ -1,0 +1,25 @@
+{
+  "name": "wordle-plus",
+  "version": "1.0.0",
+  "description": "A modified version of the game Wordle with configuration for game modes.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/ronbodnar/wordle-plus.git"
+  },
+  "author": "Ron Bodnar",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ronbodnar/wordle-plus/issues"
+  },
+  "homepage": "https://github.com/ronbodnar/wordle-plus#readme",
+  "dependencies": {
+    "async": "^3.2.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2"
+  }
+}
