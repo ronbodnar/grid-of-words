@@ -1,6 +1,7 @@
 import path from "node:path";
 import express from "express";
 import routes from "../routes/index.js";
+import eventEmitter from "./event.config.js";
 
 const app = express();
 
@@ -14,6 +15,9 @@ app.set('view engine', 'ejs');
 
 // Set the views parent directory
 app.set('views', path.join(__dirname, "..", "views"));
+
+// Add the event emitter
+app.set('event emitter', eventEmitter);
 
 // Assign routes
 app.use('/', routes);
