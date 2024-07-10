@@ -1,1 +1,6 @@
+# Ignore the node modules data folder
 node_modules/*
+
+# Ignore the sensitive environment variables
+production.env
+development.env
