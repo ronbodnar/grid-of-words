@@ -8,10 +8,10 @@ import * as database from "../services/database.service.js";
  * @return {Word} word - An instance of the Word.
  */
 async function getRandomWord(length) {
-  var sql = `SELECT BIN_TO_UUID(uuid) AS uuid, word FROM words WHERE CHAR_LENGTH(word) = ? ORDER BY RAND() LIMIT 1`;
+  var sql = `SELECT * FROM words WHERE CHAR_LENGTH(word) = ? ORDER BY RAND() LIMIT 1`;
   const data = await database.query(sql, [length]);
   if (data == null) return null;
-  const word = new Word(data[0][0].uuid, data[0][0].word);
+  const word = new Word(data[0][0].id, data[0][0].word);
   return word;
 }
 

@@ -3,7 +3,7 @@ import * as wordRepository from "../repository/word.repository.js";
 import * as attemptRepository from "../repository/attempt.repository.js";
 
 /*
- * Endpoint: GET /game/{uuid}/attempts
+ * Endpoint: GET /game/{id}/attempts
  *
  * Retrieves a list of attempts made for a Game.
  */
@@ -19,16 +19,16 @@ async function getAttempts(req, res) {
 }
 
 /*
- * Endpoint: POST /game/{uuid}/attempt
+ * Endpoint: POST /game/{id}/attempts
  *
  * Attempts to solve the word puzzle.
  */
 
 // This shouldn't all be in here
 async function attempt(req, res) {
-  const word = req.query.word;
+  const word = req.body.word;
   const gameId = req.params.id;
-  const hideWord = req.query.hideWord; // for playing via API calls
+  const hideWord = req.query.hideWord != null && req.query.hideWord === "true";
   if (word === undefined || gameId === undefined) {
     return res.json({
       type: "error",

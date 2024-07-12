@@ -13,6 +13,11 @@ async function addAttempt(id, word) {
   return true;
 }
 
+/*
+ * Retrieves the attempts for a given game from the game_attempts table.
+ *
+ * @param {string} id - The id of the game to retrieve attempts for.
+ */
 async function getAttempts(id) {
   const sql = `SELECT *, BIN_TO_UUID(game_id) AS game_id FROM game_attempts WHERE game_id = UUID_TO_BIN(?)`;
   const response = await database.query(sql, [id]);

@@ -1,3 +1,4 @@
+import { DEFAULT_WORD_LENGTH } from "../constants.js";
 import * as wordRepository from "../repository/word.repository.js";
 
 /*
@@ -6,7 +7,7 @@ import * as wordRepository from "../repository/word.repository.js";
  * Select a random word from the word table in the database.
  */
 async function getRandomWord(req, res) {
-  const length = req.query.wordLength || 5;
+  const length = req.query.wordLength || DEFAULT_WORD_LENGTH;
   if (!(3 < length < 7)) {
     // ensure length is between 3 and 7 if present
     return res.end();

@@ -4,7 +4,7 @@ import { DEFAULT_MAX_ATTEMPTS } from "../constants.js";
  * A representation of a Game.
  */
 export class Game {
-  uuid = undefined;
+  id = undefined;
   word = undefined;
   state = undefined;
   startTime = undefined;
@@ -23,7 +23,7 @@ export class Game {
   }
 
   fromJson(json) {
-    this.uuid = json.id;
+    this.id = json.id;
     this.word = json.word;
     this.state = json.state;
     this.timed = json.timed;
