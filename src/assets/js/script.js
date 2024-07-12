@@ -4,7 +4,8 @@ const startGameListener = async () => {
         wordLength: 5
     });
     try {
-        var response = await fetch(`/game/new?${params.toString()}`, {
+        //var response = await fetch(`/game/new?${params.toString()}`, {
+        var response = await fetch(`/game/?${params.toString()}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
