@@ -1,11 +1,10 @@
 const startGameListener = async () => {
     console.log('Quick game clicked');
     var params = new URLSearchParams({
-        wordLength: 5
+        wordLength: 5,
     });
     try {
-        //var response = await fetch(`/game/new?${params.toString()}`, {
-        var response = await fetch(`/game/?${params.toString()}`, {
+        var response = await fetch(`/game/new?${params.toString()}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

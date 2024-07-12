@@ -1,4 +1,4 @@
-import express from 'express';
+import express from "express";
 
 import * as wordController from "../controllers/word.controller.js";
 

@@ -1,5 +1,6 @@
 import { Game } from "../models/Game.class.js";
 import * as database from "../services/database.service.js";
+import * as attemptRepository from "./attempt.repository.js";
 
 /*
  * Inserts a new game into the database with the specified id and word.
@@ -15,22 +16,20 @@ async function create(id, word) {
 }
 
 /*
- * Inserts a new attempt into the game_attempts table.
+ * Updates the game record within the database.
  *
- * @param {string} id - The id of the game to make an attempt on.
- * @param {string} word - The word that the user guessed.
+ * @param {Game} game - The game to update.
+ * @param {boolean} updateEndTime - Whether or not to set the endTime in the query.
  */
-async function addAttempt(id, word) {
-  const sql = `INSERT INTO game_attempts (game_id, attempted_word) VALUES (UUID_TO_BIN(?), ?)`;
-  const response = await database.query(sql, [id, word]);
-  if (response == null || response.affectedRows === 0) return false;
-  return true;
-}
+async function save(game, updateEndTime = false) {
+  var sql = `UPDATE games SET state = ?`;
+  if (updateEndTime) sql += `, endTime = ?`;
+  sql += `WHERE id = UUID_TO_BIN(?)`;
 
-async function getAttempts(id) {
-  const sql = `SELECT *, BIN_TO_UUID(game_id) AS game_id FROM game_attempts WHERE game_id = UUID_TO_BIN(?)`;
-  const response = await database.query(sql, [id]);
-  return response[0];
+  var values = updateEndTime
+    ? [game.state, game.endTime, game.uuid]
+    : [game.state, game.uuid];
+  await database.query(sql, values);
 }
 
 /*
@@ -45,7 +44,7 @@ async function get(id, includeAttempts = true) {
   try {
     var game = new Game().fromJson(response[0][0]);
     if (includeAttempts) {
-      var attempts = await getAttempts(game.uuid);
+      var attempts = await attemptRepository.getAttempts(game.uuid);
       if (attempts != null)
         game.attempts = attempts.map((attempt) => attempt.attempted_word);
     }
@@ -57,4 +56,4 @@ async function get(id, includeAttempts = true) {
   }
 }
 
-export { get, create, addAttempt, getAttempts };
+export { get, save, create };
