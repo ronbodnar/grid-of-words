@@ -2,7 +2,7 @@ export class User {
 
     id = undefined;
     username = undefined;
-    password = undefined;
+    hash = undefined;
     salt = undefined;
     email = undefined;
     enabled = undefined;

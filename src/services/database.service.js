@@ -35,4 +35,4 @@ const query = async (sql, values = []) => {
     });
 };
 
-export { query };
+export default query;

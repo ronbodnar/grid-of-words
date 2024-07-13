@@ -1,6 +1,6 @@
 import { Game } from "../models/Game.class.js";
-import * as database from "../services/database.service.js";
-import * as attemptRepository from "./attempt.repository.js";
+import query from "../services/database.service.js";
+import { getAttemptsForGameId as getAttemptsByGameId } from "./attempt.repository.js";
 
 /*
  * Inserts a new game into the database with the specified id and word.
@@ -9,10 +9,10 @@ import * as attemptRepository from "./attempt.repository.js";
  * @param {string} word - The word to be guessed.
  * @return {Game | null} - The new game object or null if the game could not be created.
  */
-async function create(id, word, maxAttempts, timed) {
+async function insertGame(id, word, maxAttempts, timed) {
   const sql = `INSERT INTO games (id, word, max_attempts, timed) VALUES(UUID_TO_BIN(?), ?, ?, ?)`;
-  const response = await database.query(sql, [id, word, maxAttempts, timed]);
-  return response !== null ? get(id) : null;
+  const response = await query(sql, [id, word, maxAttempts, timed]);
+  return response !== null ? getGameById(id) : null;
 }
 
 /*
@@ -21,7 +21,7 @@ async function create(id, word, maxAttempts, timed) {
  * @param {Game} game - The game to update.
  * @param {boolean} updateEndTime - Whether or not to set the endTime in the query.
  */
-async function save(game, updateEndTime = false) {
+async function saveGame(game, updateEndTime = false) {
   var sql = `UPDATE games SET state = ?`;
   if (updateEndTime) sql += `, endTime = ?`;
   sql += `WHERE id = UUID_TO_BIN(?)`;
@@ -29,7 +29,7 @@ async function save(game, updateEndTime = false) {
   var values = updateEndTime
     ? [game.state, game.endTime, game.id]
     : [game.state, game.id];
-  await database.query(sql, values);
+  await query(sql, values);
 }
 
 /*
@@ -38,13 +38,14 @@ async function save(game, updateEndTime = false) {
  * @param {string} id - The unique identifier for the game.
  * @return {Game | null} - The game object or null if the game could not be found.
  */
-async function get(id, includeAttempts = true) {
+async function getGameById(id, includeAttempts = true) {
   const sql = `SELECT *, BIN_TO_UUID(id) AS id FROM games WHERE id = UUID_TO_BIN(?)`;
-  const response = await database.query(sql, [id]);
+  const response = await query(sql, [id]);
   try {
     var game = new Game().fromJson(response[0][0]);
+    if (game === null) return null;
     if (includeAttempts) {
-      var attempts = await attemptRepository.getAttempts(game.id);
+      var attempts = await getAttemptsByGameId(game.id);
       if (attempts != null)
         game.attempts = attempts.map((attempt) => attempt.attempted_word);
     }
@@ -56,4 +57,4 @@ async function get(id, includeAttempts = true) {
   }
 }
 
-export { get, save, create };
+export { getGameById, saveGame, insertGame };
