@@ -9,10 +9,11 @@ import { getWordOfLength } from "../repository/word.repository.js";
 async function getWord(req, res) {
   const length = req.query.wordLength || DEFAULT_WORD_LENGTH;
   if (!(MINIMUM_WORD_LENGTH < length < MAXIMUM_WORD_LENGTH)) {
-    return res.end();
+    res.end();
+    return;
   }
   const randomWord = await getWordOfLength(length);
-  return res.json(randomWord);
+  res.json(randomWord);
 }
 
 export { getWord };

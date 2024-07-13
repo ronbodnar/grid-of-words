@@ -12,8 +12,8 @@ const __dirname = import.meta.dirname;
 app.use(
   cookieSession({
     name: "session",
-    keys: ["secret", "keys"],
-    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    secret: "cookie secret",
+    maxAge: 5000//24 * 60 * 60 * 1000, // 24 hours
   })
 );
 
@@ -31,5 +31,11 @@ app.set("views", path.join(__dirname, "..", "views"));
 
 // Assign routes starting with the root path
 app.use("/", routes);
+
+app.use("*", function(req, res, next) {
+  // TODO: 404
+  console.log(req.url);
+  res.end();
+});
 
 export default app;
