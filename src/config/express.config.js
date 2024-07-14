@@ -13,7 +13,7 @@ app.use(
   cookieSession({
     name: "session",
     secret: "cookie secret",
-    maxAge: 5000//24 * 60 * 60 * 1000, // 24 hours
+    maxAge: 50000//24 * 60 * 60 * 1000, // 24 hours
   })
 );
 
@@ -34,7 +34,7 @@ app.use("/", routes);
 
 app.use("*", function(req, res, next) {
   // TODO: 404
-  console.log(req.url);
+  console.log("Request received at:", req.url);
   res.end();
 });
 

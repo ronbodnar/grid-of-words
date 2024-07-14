@@ -24,7 +24,7 @@ async function insertGame(id, word, maxAttempts, timed) {
 async function saveGame(game, updateEndTime = false) {
   var sql = `UPDATE games SET state = ?`;
   if (updateEndTime) sql += `, endTime = ?`;
-  sql += `WHERE id = UUID_TO_BIN(?)`;
+  sql += ` WHERE id = UUID_TO_BIN(?)`;
 
   var values = updateEndTime
     ? [game.state, game.endTime, game.id]

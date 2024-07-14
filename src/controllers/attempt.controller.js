@@ -1,5 +1,6 @@
 import { getAttemptsForGameId, insertAttempt } from "../repository/attempt.repository.js";
 import { wordExists } from "../repository/word.repository.js";
+import { saveGame, getGameById } from "../repository/game.repository.js";
 
 /*
  * Endpoint: GET /game/{id}/attempts
@@ -89,6 +90,7 @@ async function addAttempt(req, res) {
 
   // Update some game info
   if (finalAttempt || correctWord) {
+    req.session.gameId = undefined; // also clear the session variable
     game.state = correctWord ? "WIN" : "LOSS";
     game.endTime = new Date();
   }
