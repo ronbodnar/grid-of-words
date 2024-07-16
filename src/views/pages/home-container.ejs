@@ -1,0 +1,62 @@
+<div
+  class="content <%- (game === undefined ? '' : ' hidden') %>"
+  id="home-container"
+>
+  <div class="header" style="width: 100%">Ron's Word Game</div>
+  <div class="stats-container">
+    <div
+      class="stats-row"
+      style="
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 1em;
+      "
+    >
+      <div class="stat-value" id="total-games-played">0</div>
+      <div class="stat-label">Games Played</div>
+    </div>
+    <div
+      class="stats-row"
+      style="
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 1em;
+      "
+    >
+      <div class="stat-value" id="total-games-played">0.00%</div>
+      <div class="stat-label">Win Rate</div>
+    </div>
+    <div class="stats-row-1">
+      <div class="stat-value" id="wins">0</div>
+      <div class="stat-label">Wins</div>
+    </div>
+    <div class="stats-row-1">
+      <div class="stat-value" id="misses">0</div>
+      <div class="stat-label">Misses</div>
+    </div>
+    <div class="stats-row-1">
+      <div class="stat-value" id="forfeited">0</div>
+      <div class="stat-label">Forfeited</div>
+    </div>
+    <div class="stats-row" style="margin: 1em 0; text-align: center">
+      <div class="stat-label" style="width: 100%; font-size: 1.25rem">
+        Attempt Win Distribution
+      </div>
+    </div>
+    <% for (var i = 1; i < 7; i++) { %>
+    <div class="stats-row-1" style="margin-bottom: 1em">
+      <div class="stat-value" id="attempt-wins-<%- i %>">0.00%</div>
+      <div class="stat-label">
+        <%- i %><sup><%- suffixes[i - 1] ? suffixes[i - 1] : "th" %></sup>
+      </div>
+    </div>
+    <% } %>
+  </div>
+  <div class="button-container">
+    <button class="button" type="button" disabled>How to Play</button>
+    <button class="button" type="button" id="quickGame">Start Game</button>
+    <button class="button" type="button" disabled>Options</button>
+  </div>
+</div>

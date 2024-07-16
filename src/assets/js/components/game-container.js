@@ -1,10 +1,11 @@
-import { generatedBoard } from "./board/board.js";
+import { getGameBoard } from "./board/gameboard.js";
+import { getOnScreenKeyboard } from "./keyboard/on-screen-keyboard.js";
 
 /*
  * Renders the game container based on the provided game.
  * @param {Game} game - The game to render.
  */
-function renderGameContainer(game) {
+function buildGameContainer(game) {
   console.log('Rendering Game Container for game: ', game);
   if (game == null) return;
 
@@ -17,11 +18,13 @@ function renderGameContainer(game) {
   const message = document.createElement("div");
   message.classList.add("message");
 
-  const board = generatedBoard(game);
+  const board = getGameBoard(game);
+  const keyboard = getOnScreenKeyboard(game);
 
   // Add the components to the game container
   container.appendChild(message);
   container.appendChild(board);
+  container.appendChild(keyboard);
 }
 
-export { renderGameContainer };
+export { buildGameContainer };

@@ -1,14 +1,17 @@
 <%- include('../partials/header.ejs') %>
 
-<div class="container<%- (game === undefined ? '' : ' hidden') %>" id="home-container">
-  <div class="header" style="width: 100%">Wordle+</div>
-  <div class="button-container">
-    <button class="button" type="button" disabled>How to Play</button>
-    <button class="button" type="button" id="quickGame">Start Game</button>
-    <button class="button" type="button" disabled>Options</button>
-  </div>
+<!-- Loading Container -->
+<div class="content hidden" id="loading-container">
+  <span class="loader"></span>
 </div>
 
-<div class="container<%- (game === undefined ? ' hidden' : '') %>" id="game-container"></div>
+<!-- Home Container -->
+<%- include('./home-container.ejs') %>
+
+<!-- Game Container -->
+<div
+  class="content <%- (game === undefined ? ' hidden' : '') %>"
+  id="game-container"
+></div>
 
 <%- include('../partials/footer.ejs') %>

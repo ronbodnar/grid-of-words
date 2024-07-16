@@ -2,6 +2,13 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-size: 24px;
+}
+
+@media screen and (max-width: 768px) {
+  * {
+    font-size: 16px;
+  }
 }
 
 body {
@@ -14,31 +21,84 @@ body {
 
 .hidden {
   display: none !important;
+  transition: visibility 0s 2s, opacity 2s linear;
+  opacity: 0;
 }
 
 .message {
+  position: absolute;
+  top: 100px;
   font-size: 2em;
   color: #f4f3f2;
-  min-height: 50px;
+  height: 75px;
   width: 50%;
   margin: 0 auto;
 }
 
 .container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
   width: 100%;
   height: 100%;
+  margin: 0 auto;
+}
+
+@media screen and (min-width: 768px) {
+  .container {
+    width: 50%;
+  }
+}
+
+.content {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+  transition: all 0.3s ease-in-out;
 }
 
 #game-container {
-  justify-content: start;
+  width: 100%;
+}
+
+.stats-container {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  padding: 1em;
+  margin: 1em;
+  border: 1px solid rgba(244, 243, 242, 0.4);
+}
+
+.stats-row {
+  width: 100%;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stats-row-1 {
+  width: 33%;
+  display: flex;
   flex-direction: column;
-  padding-top: 5em;
-  transition: all 0.3s ease-in-out;
+}
+
+.stat-label {
+  font-size: 1.1rem;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+}
+
+.button-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
 }
 
 .button {
@@ -49,6 +109,7 @@ body {
   padding: 1em;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
+  font-size: 1.2em;
 }
 
 .button:disabled {
@@ -65,31 +126,158 @@ body {
 }
 
 .board {
-  border: 1px solid rgba(244, 243, 242, 0.2);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 2em;
 }
 
 .square {
-  position: relative;
-  width: 75px;
-  height: 75px;
+  width: 150px;
+  height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: transparent;
   border: 1px solid rgba(244, 243, 242, 0.2);
 }
 
+@media screen and (min-width: 1024px) {
+  .square {
+    width: 75px;
+    height: 75px;
+  }
+}
+
+@media screen and (max-height: 600px) {
+  .square {
+    width: 50px;
+    height: 50px;
+  }
+}
+
 .square-value {
-  width: 100%;
-  height: 100%;
-  margin: 0 auto;
-  text-align: center;
-  font-size: 3em;
+  font-size: 2em;
   font-weight: bold;
   color: rgba(0, 163, 108, 0.6);
   color: rgba(244, 243, 242, 0.6);
-  line-height: 1.5em;
 }
 
 .word-row {
-  display: flex;
-  justify-content: space-between;
   width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 0.5em;
+  margin: 0 auto;
+  margin-bottom: 0.5em;
+}
+
+.keyboard {
+  justify-self: end;
+}
+
+.keyboard-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.keyboard-row:not(:last-child) {
+  margin-bottom: 10px;
+}
+
+.keyboard-key {
+  font-size: 56px;
+  padding: 0.25em;
+  width: 80px;
+  background-color: rgb(41, 53, 72);
+  border-radius: 5px;
+  color: #f4f3f2;
+  border: 1px solid rgba(244, 243, 242, 0.1);
+  cursor: pointer;
+}
+
+.keyboard-key:hover {
+  box-shadow: inset 0px 1px 8px 0px rgba(244, 243, 242, 0.4);
+}
+
+.keyboard-key.incorrect {
+  opacity: 0.4;
+  border: none;
+  box-shadow: inset 0px 1px 8px 0px #0d1117;
+}
+
+.keyboard-key.pressed {
+  background-color: #3a3a3a;
+}
+
+.enter-key,
+.delete-key {
+  width: 150px;
+  font-size: 48px;
+  line-height: 1.5em;
+}
+
+@media screen and (min-width: 1024px) {
+  .keyboard-key {
+    font-size: 34px;
+    width: 45px;
+  }
+
+  .enter-key,
+  .delete-key {
+    width: 75px;
+    font-size: 24px;
+  }
+}
+
+/*
+ * From https://cssloaders.github.io/
+ */
+.loader {
+  position: relative;
+  width: 100px;
+  height: 16px;
+}
+.loader:before,
+.loader:after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 32px 0 #fff;
+  left: 0;
+  top: 0;
+  animation: ballMoveX 0.7s linear infinite;
+}
+.loader:after {
+  box-shadow: none;
+  transform-origin: 40px 0;
+  transform: rotate(-153deg);
+  background: rgba(0, 163, 108, 0.6);
+  animation: rotateLoader 0.7s linear infinite;
+  animation-delay: 0.05s;
+}
+
+@keyframes rotateLoader {
+  0%,
+  10% {
+    transform: rotate(-153deg);
+  }
+  90%,
+  100% {
+    transform: rotate(0deg);
+  }
+}
+@keyframes ballMoveX {
+  0%,
+  10% {
+    transform: translateX(0);
+  }
+  90%,
+  100% {
+    transform: translateX(32px);
+  }
 }

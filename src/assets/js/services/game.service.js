@@ -6,6 +6,9 @@ import { showContainerView } from "../utils/helpers.js";
  */
 const startGame = async () => {
   console.log("Starting game...");
+
+  // Show the loading view
+  showContainerView("loading");
   var params = new URLSearchParams({
     timed: false,
     wordLength: 5,

@@ -24,6 +24,7 @@ router.get("/", async function (req, res) {
   res.render("pages/index", {
     title: "Wordle+",
     game: game,
+    suffixes: ["st", "nd", "rd"]
   });
 });
 

@@ -1,11 +1,11 @@
 import { generatedRow } from "./row.js";
 
 /*
- * Generates the grid board to house the character squares.
+ * Generates the grid board to house the letter squares.
  * @param {Game} game - The game for building the grid board.
  * @returns {HTMLDivElement} - The board div element with all children.
  */
-function generatedBoard(game) {
+function getGameBoard(game) {
   if (!game) return null;
 
   // Create the board element
@@ -58,4 +58,4 @@ function shiftActiveRow() {
   console.log(nextRow);
 }
 
-export { generatedBoard, shiftActiveRow };
+export { getGameBoard, shiftActiveRow };
