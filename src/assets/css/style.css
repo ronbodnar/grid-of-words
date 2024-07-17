@@ -1,18 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-size: 24px;
+  font-family: 'Nunito', sans-serif;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-device-width: 768px) {
   * {
     font-size: 16px;
   }
 }
 
 body {
-  margin: 1em;
+  margin: 0.25em;
   width: calc(100dvw - 2em);
   height: calc(100dvh - 2em);
   background-color: #0d1117;
@@ -26,9 +29,10 @@ body {
 }
 
 .message {
-  position: absolute;
-  top: 100px;
-  font-size: 2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
   color: #f4f3f2;
   height: 75px;
   width: 50%;
@@ -38,24 +42,26 @@ body {
 .container {
   width: 100%;
   height: 100%;
-  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
 }
 
-@media screen and (min-width: 768px) {
+.container > * {
+  flex-shrink: 0;
+  width: 100%;
+}
+
+@media screen and (min-device-width: 1366px) {
   .container {
     width: 50%;
+    margin: 0 auto;
   }
 }
 
 .content {
-  width: 100%;
-  height: 100%;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
+  flex: 0 0 auto;
   text-align: center;
   transition: all 0.3s ease-in-out;
 }
@@ -67,38 +73,64 @@ body {
 .stats-container {
   display: flex;
   flex-wrap: wrap;
-  margin: 0 auto;
   padding: 1em;
   margin: 1em;
   border: 1px solid rgba(244, 243, 242, 0.4);
 }
 
+@media screen and (min-device-width: 768px) {
+  .stats-container {
+    width: 50%;
+    margin: 1em auto;
+  }
+}
+
 .stats-row {
   width: 100%;
-
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 5px;
+}
+
+.stats-row-50 {
+  width: 50%;
+  flex-direction: column;
+  margin-bottom: 5px;
 }
 
 .stats-row-1 {
   width: 33%;
   display: flex;
   flex-direction: column;
+  margin-bottom: 5px;
 }
 
 .stat-label {
-  font-size: 1.1rem;
+  font-size: 18px;
+}
+
+.stat-label-fw {
+  width: 100%;
+  font-size: 20px;
+  font-weight: 600;
+  margin: 1.5em 0 0.5em 0;
 }
 
 .stat-value {
-  font-size: 1.5rem;
+  font-size: 20px;
+}
+
+sup {
+  font-size: 14px;
 }
 
 .button-container {
   width: 100%;
-  display: flex;
-  justify-content: space-evenly;
+}
+
+.button-container > :first-child {
+  margin-right: 50px;
 }
 
 .button {
@@ -106,10 +138,19 @@ body {
   border-radius: 8px;
   background-color: rgba(0, 163, 108, 0.4);
   color: #f4f3f2;
-  padding: 1em;
+  padding: 0.5em 0.75em;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
-  font-size: 1.2em;
+  font-size: 20px;
+}
+
+.button.forfeit {
+  border: 1px solid rgb(136, 8, 8);
+  background-color: rgba(136, 8, 8, 0.7);
+}
+
+.button.fixed {
+  width: 150px;
 }
 
 .button:disabled {
@@ -122,14 +163,12 @@ body {
 }
 
 .header {
-  font-size: 2em;
+  font-size: 32px;
 }
 
 .board {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin-bottom: 2em;
+  flex: 0 0 auto;
+  margin-bottom: 30px;
 }
 
 .square {
@@ -142,25 +181,19 @@ body {
   border: 1px solid rgba(244, 243, 242, 0.2);
 }
 
-@media screen and (min-width: 1024px) {
+@media screen and (min-device-width: 768px) {
   .square {
-    width: 75px;
-    height: 75px;
-  }
-}
-
-@media screen and (max-height: 600px) {
-  .square {
-    width: 50px;
-    height: 50px;
+    width: 65px;
+    height: 65px;
   }
 }
 
 .square-value {
-  font-size: 2em;
+  font-size: 36px;
   font-weight: bold;
   color: rgba(0, 163, 108, 0.6);
   color: rgba(244, 243, 242, 0.6);
+  user-select: none;
 }
 
 .word-row {
@@ -170,6 +203,17 @@ body {
   gap: 0.5em;
   margin: 0 auto;
   margin-bottom: 0.5em;
+}
+
+@media screen and (min-device-width: 768px) {
+  .word-row {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 0.25em;
+    margin: 0 auto;
+    margin-bottom: 0.25em;
+  }
 }
 
 .keyboard {
@@ -195,6 +239,7 @@ body {
   color: #f4f3f2;
   border: 1px solid rgba(244, 243, 242, 0.1);
   cursor: pointer;
+  user-select: none;
 }
 
 .keyboard-key:hover {
@@ -204,7 +249,7 @@ body {
 .keyboard-key.incorrect {
   opacity: 0.4;
   border: none;
-  box-shadow: inset 0px 1px 8px 0px #0d1117;
+  box-shadow: inset 0px 1px 3px 0px #0d1117;
 }
 
 .keyboard-key.pressed {
@@ -218,16 +263,32 @@ body {
   line-height: 1.5em;
 }
 
-@media screen and (min-width: 1024px) {
+@media screen and (min-device-width: 768px) {
   .keyboard-key {
-    font-size: 34px;
-    width: 45px;
+    font-size: 24px;
+    width: 40px;
   }
 
-  .enter-key,
-  .delete-key {
+  .enter-key {
     width: 75px;
-    font-size: 24px;
+    font-size: 20px;
+    line-height: 1.6em;
+  }
+
+  .delete-key {
+    width: 60px;
+  }
+
+  .delete-key > span {
+    font-size: 30px;
+  }
+
+  .keyboard-row {
+    gap: 5px;
+  }
+
+  .keyboard-row:not(:last-child) {
+    margin-bottom: 5px;
   }
 }
 

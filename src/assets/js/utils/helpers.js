@@ -27,30 +27,38 @@ function getValidatedLetters(guessWord, gameWord) {
   return results;
 }
 
-function showContainerView(name, game = undefined) {
-  const currentView = document.querySelector(
-    '[id$="-container"]:not(.hidden)'
-  );
-  currentView.classList.add("hidden");
+function showContainerView(name, options) {
+  console.log("Name", name);
+  
+  // Build the game container if necessary before switching the container view
+  if (name === "game") {
+    if (options.game) {
+      buildGameContainer({
+        game: options.game,
+      });
+    } else if (
+      options.wordLength != null &&
+      options.maxAttempts != null &&
+      options.timed != null
+    ) {
+      buildGameContainer({
+        wordLength: options.wordLength,
+        maxAttempts: options.maxAttempts,
+        timed: options.timed,
+      });
+    }
+  }
+
+  const currentView = document.querySelector('[id$="-container"]:not(.hidden)');
+  if (currentView) currentView.classList.add("hidden");
 
   const newView = document.querySelector(`#${name}-container`);
   newView.classList.remove("hidden");
-  
-  if (name === "game") {
-    if (game) {
-      buildGameContainer(game);
-    } else {
-      console.error("no game found");
-      // TODO: error handling
-    }
-  }
 }
 
 function getCurrentViewName() {
-  const currentView = document.querySelector(
-    '[id$="-container"]:not(.hidden)'
-  );
-  return currentView.id.split('-')[0];
+  const currentView = document.querySelector('[id$="-container"]:not(.hidden)');
+  return currentView.id.split("-")[0];
 }
 
 export { getValidatedLetters, showContainerView, getCurrentViewName };

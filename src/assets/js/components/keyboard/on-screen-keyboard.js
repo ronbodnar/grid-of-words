@@ -1,4 +1,4 @@
-import { getIncorrectLetters, getKeyboardKey, initializeKeyboardKeys } from "./key.js";
+import { getKeyboardKey, initializeKeyboardKeys } from "./key.js";
 
 /*
  * Gets the rendered keyboard element.
@@ -31,4 +31,27 @@ const getOnScreenKeyboard = (game) => {
   return keyboard;
 };
 
-export { getOnScreenKeyboard };
+
+
+/*
+ * Finds a list of letters that are not included in the correct word of the game.
+ * Is this the best you can do?
+ * @param {Game} game - The game to search attempts for.
+ */
+const getIncorrectLetters = (word, attemptedWords) => {
+  var incorrectLetters = [];
+  console.log(attemptedWords);
+  for (var i = 0; i < attemptedWords.length; i++) {
+    var attempt = attemptedWords[i];
+    for (var j = 0; j < attempt.length; j++) {
+      if (!word.includes(attempt.at(j))) {
+        if (!incorrectLetters.includes(attempt.at(j))) {
+          incorrectLetters.push(attempt.at(j));
+        }
+      }
+    }
+  }
+  return incorrectLetters;
+};
+
+export { getOnScreenKeyboard, getIncorrectLetters };

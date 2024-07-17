@@ -11,7 +11,7 @@
 <!-- Game Container -->
 <div
   class="content <%- (game === undefined ? ' hidden' : '') %>"
-  id="game-container"
+  id="game-container" data-game-id="<%- (game === undefined ? '' : game.id) %>"
 ></div>
 
 <%- include('../partials/footer.ejs') %>
