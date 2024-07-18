@@ -1,5 +1,5 @@
 import { remove, retrieve, store } from "./storage.service.js";
-import { showContainerView } from "../utils/helpers.js";
+import { showView } from "../utils/helpers.js";
 import { DEFAULT_WORD_LENGTH } from "../constants.js";
 
 /*
@@ -9,7 +9,7 @@ const startGame = async (options) => {
   console.log("Starting game...");
 
   // Show the loading view
-  showContainerView("game", {
+  showView("game", {
     wordLength: options.wordLength || DEFAULT_WORD_LENGTH,
     maxAttempts: options.maxAttempts || DEFAULT_MAX_ATTEMPTS,
     timed: options.timed || false,
@@ -42,7 +42,7 @@ const forfeitGame = () => {
   const game = retrieve('game');
   console.log("Forfeiting game...", game);
   remove('game');
-  showContainerView("home");
+  showView("home");
 }
 
 const fetchNewGame = async (params) => {

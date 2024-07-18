@@ -1,4 +1,6 @@
-import { buildGameContainer } from "../views/game.js";
+import { buildGameView } from "../views/game.view.js";
+import { buildHomeView } from "../views/home.view.js";
+import { buildHowToPlayView } from "../views/how-to-play.view.js";
 
 /*
  * Compares two words of assumed equal length to see which guessWord letter positions match, are invalid, or don't exist in the gameWord.
@@ -27,33 +29,28 @@ function getValidatedLetters(guessWord, gameWord) {
   return results;
 }
 
-function showContainerView(name, options) {
-  console.log("Name", name);
-  
-  // Build the game container if necessary before switching the container view
-  if (name === "game") {
-    if (options.game) {
-      buildGameContainer({
+function showView(name, options) {
+  console.log("Showing view", name);
+
+  switch (name) {
+    case "game":
+      buildGameView({
         game: options.game,
-      });
-    } else if (
-      options.wordLength != null &&
-      options.maxAttempts != null &&
-      options.timed != null
-    ) {
-      buildGameContainer({
         wordLength: options.wordLength,
         maxAttempts: options.maxAttempts,
         timed: options.timed,
       });
-    }
+      break;
+
+    case "how-to-play":
+      console.log("hey");
+      buildHowToPlayView();
+      break;
+
+    default:
+      buildHomeView();
+      break;
   }
-
-  const currentView = document.querySelector('[id$="-container"]:not(.hidden)');
-  if (currentView) currentView.classList.add("hidden");
-
-  const newView = document.querySelector(`#${name}-container`);
-  newView.classList.remove("hidden");
 }
 
 function getCurrentViewName() {
@@ -61,4 +58,4 @@ function getCurrentViewName() {
   return currentView.id.split("-")[0];
 }
 
-export { getValidatedLetters, showContainerView, getCurrentViewName };
+export { getValidatedLetters, showView, getCurrentViewName };

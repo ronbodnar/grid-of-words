@@ -11,20 +11,14 @@ function buildGameContainer(options) {
     console.error("No options present");
     return;
   }
-  
-  //if (game == null) return;
 
-  const container = document.querySelector("#game-container");
-  if (!container) return;
+  console.log("options", options.game);
 
-  // Clear the game container's content
-  container.innerHTML = "";
+  const contentContainer = document.querySelector(".content");
+  contentContainer.id = "game";
 
   const message = document.createElement("div");
   message.classList.add("message");
-
-
-  console.log("options", options.game);
 
   var board = undefined;
   if (options.game) {
@@ -37,18 +31,21 @@ function buildGameContainer(options) {
 
   const keyboard = getOnScreenKeyboard(options.game);
 
-  var test = document.createElement("div");
-  test.innerHTML = "<button class=\"button forfeit\" type=\"button\" id=\"forfeit-game\">Forfeit</button>";
-  test.addEventListener("click", () => {
-    console.log("Game clicked");
+  var forfeitButton = document.createElement("button");
+  forfeitButton.classList.add("button", "fixed", "forfeit");
+  forfeitButton.id = "forfeit-game";
+  forfeitButton.type = "button";
+  forfeitButton.textContent = "Forfeit";
+  forfeitButton.addEventListener("click", () => {
     forfeitGame();
   });
 
+  contentContainer.innerHTML = '';
   // Add the components to the game container
-  container.appendChild(test);
-  container.appendChild(message);
-  container.appendChild(board);
-  container.appendChild(keyboard);
+  contentContainer.appendChild(forfeitButton);
+  contentContainer.appendChild(message);
+  contentContainer.appendChild(board);
+  contentContainer.appendChild(keyboard);
 }
 
-export { buildGameContainer };
+export { buildGameContainer as buildGameView };
