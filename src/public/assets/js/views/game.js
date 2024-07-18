@@ -1,5 +1,5 @@
-import { getGameBoard } from "./board/gameboard.js";
-import { getOnScreenKeyboard } from "./keyboard/on-screen-keyboard.js";
+import { getGameBoard } from "../components/board/gameboard.js";
+import { getOnScreenKeyboard } from "../components/keyboard/on-screen-keyboard.js";
 import { forfeitGame } from "../services/game.service.js";
 
 /*

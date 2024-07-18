@@ -1,4 +1,4 @@
-import { buildGameContainer } from "../components/game-container.js";
+import { buildGameContainer } from "../views/game.js";
 
 /*
  * Compares two words of assumed equal length to see which guessWord letter positions match, are invalid, or don't exist in the gameWord.
