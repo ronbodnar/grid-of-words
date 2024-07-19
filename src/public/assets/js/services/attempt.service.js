@@ -3,7 +3,7 @@ import { setBlockKeyEvents } from "../event-listeners.js";
 import { remove, store } from "./storage.service.js";
 import { updateCurrentAttemptSquares } from "../components/board/square.js";
 import { showView } from "../utils/helpers.js";
-import { updateKeyboardKeys } from "../components/keyboard/key.js";
+import { updateKeyboardKeys } from "../components/keyboard/on-screen-keyboard.js";
 
 var attemptLetters = [];
 
@@ -22,14 +22,16 @@ const attempt = async (game) => {
   // Handle responses from the server
   if (data.message) {
     switch (data.message) {
+      // Edge cases
       case "NO_WORD_OR_NO_ID":
       case "GAME_NOT_FOUND":
       case "ATTEMPTS_EXCEEDED":
-      case "DUPLICATE_ATTEMPT":
-      case "NOT_IN_WORD_LIST":
       case "WORD_LENGTH_MISMATCH":
       case "ADD_ATTEMPT_REPOSITORY_ERROR":
-        // Edge cases
+
+      // Only ones that are handled as of now
+      case "NOT_IN_WORD_LIST":
+      case "DUPLICATE_ATTEMPT":
         message =
           data.message.at(0).toUpperCase() +
           data.message.slice(1).toLowerCase().replaceAll("_", " ");
@@ -116,6 +118,7 @@ const updateMessageDiv = (message) => {
   var messageDiv = document.querySelector(".message");
   if (messageDiv && message) messageDiv.textContent = message;
 
+  // Clear the previous message timeout to restart the hide delay
   if (messageTimeout)
     clearTimeout(messageTimeout);
   

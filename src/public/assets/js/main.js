@@ -6,27 +6,24 @@ import { fetchGameData } from "./services/game.service.js";
 // Initialize the listeners for key and button events.
 initializeEventListeners();
 
-// If the server has an existing session, the attribute will be populated.
-var serverSessionGameId = document.querySelector("#initial-data");
-console.log(serverSessionGameId);
+// Check local storage for game data and (soon) user data.
+// If nothing is found, show the loading view and fetch any data from the server.
+// If a game is found, load the game view.
+// If a game is not found, show the home view.
 
-// The server provided us a game session
-if (serverSessionGameId && serverSessionGameId.length > 0) {
-  showView("loading");
-  fetchGameData(serverSessionGameId).then((gameData) => {
-    store("game", gameData);
-    showView("game", {
-      game: gameData,
-    });
+const cachedGame = retrieve("game");
+if (cachedGame) {
+  showView("game", {
+    game: cachedGame.data,
   });
 } else {
-  // There is a game in local storage
-  var game = retrieve("game");
-  if (game != null) {
-    showView("loading");
-    showView("game", {
-      game: game.data,
-    });
+  showView("loading");
+
+  const serverData = await fetch("/session");
+  const sessionData = await serverData.json();
+
+  if (sessionData && Object.keys(sessionData).length > 0) {
+    console.log("Received session data: ", sessionData);
   } else {
     showView("home");
   }

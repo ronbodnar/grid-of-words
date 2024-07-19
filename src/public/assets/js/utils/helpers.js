@@ -1,31 +1,51 @@
 import { buildGameView } from "../views/game.view.js";
 import { buildHomeView } from "../views/home.view.js";
 import { buildHowToPlayView } from "../views/how-to-play.view.js";
+import { buildLoadingView } from "../views/loading.view.js";
 
 /*
  * Compares two words of assumed equal length to see which guessWord letter positions match, are invalid, or don't exist in the gameWord.
  * @param {string} guessWord - The word to compare against the known correct word.
- * @param {string} gameWord - The known word to compare against.
- * @return {list} - The in-order list of guessWord letters and their placement validation.
+ * @param {string} targetWord - The known word to compare against.
+ * @return {list} - The in-order list of the guessWord letters placement validation.
  */
-function getValidatedLetters(guessWord, gameWord) {
-  if (!guessWord || !gameWord) return null;
-  if (guessWord.length != gameWord.length) return null;
-
-  /*
-   * Pretty simple really...
-   * Just see if the first letter of the words is a match, if so push true meaning the word is CORRECTLY placed
-   * If not, check to see if the gameWord contains the nth letter of the guessWord, if so push false, meaning.. you guessed it
-   * .. the letter is in the word, but not in the right position.
-   * If no conditions are met, the letter is not in the gameWord.
-   */
-  // TODO: duplicate invalid letter edge case
-  var results = [];
-  for (var i = 0; i < guessWord.length; i++) {
-    if (gameWord.at(i) === guessWord.at(i)) results.push(true);
-    else if (gameWord.includes(guessWord.at(i))) results.push(false);
-    else results.push(undefined);
+function getValidatedLetters(guessWord, targetWord) {
+  if (targetWord.length !== guessWord.length) {
+    console.error("Words must be of the same length");
+    return null;
   }
+
+  const length = targetWord.length;
+  const results = new Array(length).fill(3);
+  const targetCount = {};
+  const usedCount = {};
+
+  // Populate targetCount with the frequency of each character in targetWord
+  for (let i = 0; i < length; i++) {
+    const char = targetWord[i];
+    targetCount[char] = (targetCount[char] || 0) + 1;
+  }
+
+  // Perform a pass for all correctly positioned letters
+  for (let i = 0; i < length; i++) {
+    if (guessWord[i] === targetWord[i]) {
+      results[i] = 1;
+      targetCount[guessWord[i]]--;
+    }
+  }
+
+  // Perform a pass for all incorrectly positioned letters
+  for (let i = 0; i < length; i++) {
+    if (results[i] === 1) continue;
+
+    const char = guessWord[i];
+
+    if (targetCount[char] > (usedCount[char] || 0)) {
+      results[i] = 2;
+      usedCount[char] = (usedCount[char] || 0) + 1;
+    }
+  }
+
   return results;
 }
 
@@ -43,8 +63,11 @@ function showView(name, options) {
       break;
 
     case "how-to-play":
-      console.log("hey");
       buildHowToPlayView();
+      break;
+
+    case "loading":
+      buildLoadingView();
       break;
 
     default:
