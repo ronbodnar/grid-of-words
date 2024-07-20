@@ -19,6 +19,8 @@
 body {
   background-color: #0d1117;
   color: #f4f3f2;
+  width: 100dvw;
+  height: 100dvh;
 }
 
 strong {
@@ -222,11 +224,21 @@ h1 {
 .square {
   width: 150px;
   height: 150px;
+  border: 1px solid rgba(244, 243, 242, 0.2);
+}
+
+.square:hover .square-value {
+  opacity: 0;
+}
+
+.square-value-container {
+  width: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: transparent;
-  border: 1px solid rgba(244, 243, 242, 0.2);
+  transition: 1s;
 }
 
 @media screen and (min-device-width: 768px) {
@@ -248,6 +260,7 @@ h1 {
   font-weight: bold;
   color: rgba(0, 163, 108, 0.6);
   color: rgba(244, 243, 242, 0.6);
+  transition: 1s;
 }
 
 @media screen and (min-device-width: 768px) and (max-device-height: 768px) {

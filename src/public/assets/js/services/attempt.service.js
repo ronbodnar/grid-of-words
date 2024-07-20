@@ -8,19 +8,26 @@ import { getLoader } from "../components/loader.js";
 
 var attemptLetters = [];
 
+const hideSquares = (hide) => {
+  const activeRow = document.querySelector(".word-row.active");
+  const children = Array.from(activeRow?.children);
+  return new Promise((resolve) => {
+    for (let i = 0; i < children.length; i++) {
+      setTimeout(() => {
+        children[i].children[0].style.opacity = hide ? "0" : "1";
+        if (i === children.length - 1) {
+          setTimeout(() => resolve(true), 1000);
+        }
+      }, i * 300);
+    }
+  });
+};
+
 /*
  * Attempts to solve the puzzle by querying the API and updating the game container accordingly.
  */
 const attempt = async (game) => {
-  const activeRow = document.querySelector('.word-row.active');
-  const children = Array.from(activeRow?.children);
-  children.forEach(child => {
-    if (child.classList.contains("hidden")) {
-      child.classList.remove("hidden");
-    } else {
-      child.classList.add("hidden");
-    }
-  });
+  //var response = await getAttemptResponse(game);
 
   var data = await getAttemptResponse(game);
 
@@ -51,20 +58,27 @@ const attempt = async (game) => {
         // Block key events
         setBlockKeyEvents(true);
 
+        
+        await hideSquares(true);
+
         // Display the letter position validations
         updateCurrentAttemptSquares(game.word);
+
+        await hideSquares(false);
+
         updateKeyboardKeys(game.word, attemptLetters);
 
         // Move active squares down
         shiftActiveRow();
         attemptLetters = [];
-        message = "Wrong word";
+        message = "";
 
         setBlockKeyEvents(false);
         break;
 
       case "WINNER":
       case "LOSER":
+        await hideSquares(true);
         remove("game");
 
         if (data.message === "LOSER") {
@@ -77,10 +91,11 @@ const attempt = async (game) => {
         setBlockKeyEvents(true);
         updateCurrentAttemptSquares(game.word);
         setBlockKeyEvents(false);
+        await hideSquares(false);
         attemptLetters = [];
 
         setTimeout(() => {
-          showView('home');
+          showView("home");
         }, 5000);
 
         // Display stats and change container view
@@ -88,14 +103,13 @@ const attempt = async (game) => {
     }
   }
 
-
-  children.forEach(child => {
+  /*children.forEach(child => {
     if (child.classList.contains("hidden")) {
       child.classList.remove("hidden");
     } else {
       child.classList.add("hidden");
     }
-  });
+  });*/
 
   console.log("Attempt response: ", data);
   console.log("Message:", message);
@@ -133,18 +147,19 @@ const getAttemptLetters = () => {
 var messageTimeout = undefined;
 
 const updateMessageDiv = (message) => {
+  if (message.length < 1) return;
+
   // Update the message div with the response message
   var messageDiv = document.querySelector(".message");
   if (messageDiv && message) messageDiv.textContent = message;
 
   // Clear the previous message timeout to restart the hide delay
-  if (messageTimeout)
-    clearTimeout(messageTimeout);
-  
+  if (messageTimeout) clearTimeout(messageTimeout);
+
   // Add the timeout to hide the message after 5 seconds.
   messageTimeout = setTimeout(() => {
     messageDiv.textContent = "";
   }, 5000);
-}
+};
 
 export { attempt, getAttemptLetters };

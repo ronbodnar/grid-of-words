@@ -6,14 +6,19 @@ import { getAttemptLetters } from "../../services/attempt.service.js";
  * @param {boolean} active - Whether the letter is "typeable" or part of the current attempt's row.
  */
 function generatedSquare() {
-  var square = document.createElement("div");
+  const square = document.createElement("div");
   square.classList.add("square");
 
   // Add the value within the square
-  var value = document.createElement("span");
+  const valueContainer = document.createElement("div");
+  valueContainer.classList.add("square-value-container");
+
+  const value = document.createElement("span");
   value.classList.add("square-value");
 
-  square.appendChild(value);
+  valueContainer.appendChild(value);
+  
+  square.appendChild(valueContainer);
 
   return square;
 }
@@ -28,7 +33,7 @@ function updateCurrentAttemptSquares(word) {
     word
   );
   console.log("Validated Positions: ", validatedPositions);
-  var fullSquares = document.querySelectorAll(".word-row.active > .square:is(.full)");
+  const fullSquares = document.querySelectorAll(".word-row.active > .square:is(.full) > .square-value-container");
 
   if (validatedPositions.length !== fullSquares.length) {
     console.error(
@@ -37,7 +42,7 @@ function updateCurrentAttemptSquares(word) {
     return;
   }
 
-  for (var i = 0; i < validatedPositions.length; i++) {
+  for (let i = 0; i < validatedPositions.length; i++) {
     updateSquareBackground(fullSquares[i], validatedPositions[i]);
   }
 }
@@ -58,7 +63,7 @@ function updateSquareBackground(square, valid) {
     //square.children[0].style.color = "#0d1117";
   } else if (valid === 3) {
     // Letter is not in the word
-    square.style.opacity = 0.5;
+    //square.style.opacity = 0.5;
   }
 }
 
@@ -70,19 +75,24 @@ function fillNextSquare(key) {
   }
 
   // Find all available squares
-  var squares = document.querySelectorAll(".word-row.active > .square:not(.full)");
+  const squares = document.querySelectorAll(".word-row.active > .square:not(.full)");
 
   // Ensure there's a square available, update the square properties, and add it to our stack of letters.
   if (squares[0]) {
     squares[0].classList.add("full");
     squares[0].children[0].textContent = key.toUpperCase();
+    squares[0].children[0].style.transition = "0.3s";
+    squares[0].children[0].style.transform = "scale(1.2)";
+    setTimeout(() => {
+      squares[0].children[0].style.transform = "scale(1)";
+    }, 200);
     getAttemptLetters().push(key);
   }
 }
 
 function removeLastSquareValue() {
   // Find all full squares (active is set by the server)
-  var squares = document.querySelectorAll(".word-row.active > .square:is(.full)");
+  const squares = document.querySelectorAll(".word-row.active > .square:is(.full)");
 
   // If there are letters, adjust the square properties and pop the letter off the stack of letters.
   if (getAttemptLetters().length > 0) {
