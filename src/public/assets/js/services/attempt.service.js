@@ -4,7 +4,6 @@ import { remove, store } from "./storage.service.js";
 import { updateCurrentAttemptSquares } from "../components/board/square.js";
 import { showView } from "../utils/helpers.js";
 import { updateKeyboardKeys } from "../components/keyboard/on-screen-keyboard.js";
-import { getLoader } from "../components/loader.js";
 
 var attemptLetters = [];
 
@@ -28,6 +27,12 @@ const hideSquares = (hide) => {
  */
 const attempt = async (game) => {
   //var response = await getAttemptResponse(game);
+
+  const valid = validateAttempt(game);
+  console.log("Valid? ", (valid ? "yes" : "no"));
+  if (!valid) {
+    return;
+  }
 
   var data = await getAttemptResponse(game);
 
@@ -117,6 +122,15 @@ const attempt = async (game) => {
   updateMessageDiv(message);
 };
 
+const validateAttempt = (game) => {
+  const attemptLetters = getAttemptLetters();
+  if (attemptLetters.length != game.word.length) {
+    updateMessageDiv("Add More CHARS!!!!.");
+    return false;
+  }
+  return true;
+}
+
 /*
  * Posts the attempt to the API and waits for the response.
  * @param {Game} game - The current game object.
@@ -159,7 +173,7 @@ const updateMessageDiv = (message) => {
   // Add the timeout to hide the message after 5 seconds.
   messageTimeout = setTimeout(() => {
     messageDiv.textContent = "";
-  }, 5000);
+  }, 2500);
 };
 
 export { attempt, getAttemptLetters };

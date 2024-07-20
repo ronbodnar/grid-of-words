@@ -55,9 +55,7 @@ const addKeyListeners = () => {
       }
       const game = retrieve("game")?.data;
       if (game) {
-        var lengthMatches = getAttemptLetters().length === game.word.length;
-        console.log(getAttemptLetters().length, game.word.length);
-        if (lengthMatches) attempt(game);
+        attempt(game);
       } else {
         console.error("No game found");
       }
