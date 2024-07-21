@@ -1,4 +1,4 @@
-import { shiftActiveRow } from "../components/board/gameboard.js";
+import { shiftActiveRow, transformSquares } from "../components/board/gameboard.js";
 import { setBlockKeyEvents } from "../event-listeners.js";
 import { remove, retrieve, store } from "./storage.service.js";
 import { updateCurrentAttemptSquares } from "../components/board/square.js";
@@ -9,58 +9,50 @@ import { wordExists } from "./word.service.js";
 
 var attemptLetters = [];
 
-const hideSquares = (hide) => {
-  const activeRow = document.querySelector(".word-row.active");
-  const children = Array.from(activeRow?.children);
-  return new Promise((resolve) => {
-    for (let i = 0; i < children.length; i++) {
-      setTimeout(() => {
-        children[i].children[0].style.opacity = hide ? "0" : "1";
-        if (i === children.length - 1) {
-          resolve(true);
-        }
-      }, (i === 0 ? i : i * 300));
-    }
-  });
-};
-
 /*
  * Attempts to solve the puzzle by querying the API and updating the game container accordingly.
  */
 const attempt = async (game) => {
-  // Check to see if there's any validation errors we can handle on the client side before making a request to the server.
-  const valid = validateAttempt(game);
-  console.log("Valid? ", (valid ? "yes" : "no"));
-  if (!valid) {
-    return;
-  }
-  
   // Block key events
   setBlockKeyEvents(true);
 
-  // The hiding squares promise, we are going to immediate fetch the data so we don't want to perform this synchronously (it's awaited later)
-  const hidingSquares = hideSquares(true).then(() => {
-    console.log("done here");
-  })
+  // Check to see if there's any validation errors we can handle on the client side before making a request to the server.
+  const valid = validateAttempt(game);
+  if (!valid) {
+    setBlockKeyEvents(false);
+    return;
+  }
 
+  // The hiding squares promise, we are going to immediate fetch the data so we don't want to perform this synchronously (it's awaited later)
+  const hidingSquares = transformSquares(true).then(() => {
+    console.log("done here");
+  });
+
+  // Fetch the attempt response from the server
   var data = await getAttemptResponse(game);
+  console.log("Attempt response: ", data);
 
   // Wait for squares to hide before continuing
   await hidingSquares;
-  
+
+  // Update gamedata local storage
   if (data.gameData) {
     store("game", data.gameData);
     if (data.gameData.word !== game.word) {
-      console.error("Modified word detected")
+      console.error("Modified word detected");
     }
   }
 
-  // Update the localStorage game
+  // Update the game data in the local storage.
   if (data && data.gameData) store("game", data.gameData);
 
+  // Process the response from the server.
+  await processServerResponse(game, data);
+};
+
+const processServerResponse = async (game, data) => {
   var message = "Error";
 
-  // Handle responses from the server
   if (data.message) {
     switch (data.message) {
       // Edge cases
@@ -85,7 +77,7 @@ const attempt = async (game) => {
 
         updateKeyboardKeys(game.word, attemptLetters);
 
-        await hideSquares(false);
+        await transformSquares(false);
 
         // Move active squares down
         shiftActiveRow();
@@ -105,30 +97,17 @@ const attempt = async (game) => {
         }
 
         updateCurrentAttemptSquares(game.word);
-        
-        await hideSquares(false);
+
+        await transformSquares(false);
         attemptLetters = [];
 
         setTimeout(() => {
           setBlockKeyEvents(false);
           showView("home");
         }, 3500);
-
-        // Display stats and change container view
         break;
     }
   }
-
-  /*children.forEach(child => {
-    if (child.classList.contains("hidden")) {
-      child.classList.remove("hidden");
-    } else {
-      child.classList.add("hidden");
-    }
-  });*/
-
-  console.log("Attempt response: ", data);
-  console.log("Message:", message);
 
   showMessage(message);
 };
@@ -136,7 +115,7 @@ const attempt = async (game) => {
 const validateAttempt = (game) => {
   // Check to see if the attempt has enough letters
   const attemptLetters = getAttemptLetters();
-  const attemptWord = attemptLetters.join('');
+  const attemptWord = attemptLetters.join("");
   if (attemptLetters.length != game.word.length) {
     showMessage("Not enough letters");
     return false;
@@ -149,16 +128,17 @@ const validateAttempt = (game) => {
 
   const wordList = retrieve("wordList")?.data;
   if (!wordList) {
-    // re-fetch word list synchronously? pass to server for validation while synchronously fetching the word list?
+    // re-fetch word list synchronously? pass to server for validation while asynchronously fetching the word list?
   } else {
     console.log("WORD LIST:", wordList);
+    console.log("Attempted Word:", attemptWord);
     if (!wordExists(attemptWord)) {
       showMessage("Not in word list");
       return false;
     }
   }
   return true;
-}
+};
 
 /*
  * Posts the attempt to the API and waits for the response.

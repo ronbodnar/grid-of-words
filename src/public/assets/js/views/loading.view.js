@@ -1,6 +1,9 @@
 import { getLoader } from "../components/loader.js";
 
-const buildLoadingView = () => {
+/*
+ * Builds and displays the loading view.
+ */
+export const buildLoadingView = () => {
     const contentContainer = document.querySelector('.content');
     contentContainer.id = 'loading';
 
@@ -14,5 +17,3 @@ const buildLoadingView = () => {
     contentContainer.appendChild(loadingMessage);
     contentContainer.appendChild(loadingAnimation);
 }
-
-export { buildLoadingView };

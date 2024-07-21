@@ -39,20 +39,20 @@ const startGame = async (options) => {
 };
 
 const forfeitGame = () => {
-  const game = retrieve('game');
+  //TODO: server communication
+  const game = retrieve("game");
   console.log("Forfeiting game...", game);
-  remove('game');
+  remove("game");
   showView("home");
-}
+};
 
 const fetchNewGame = async (params) => {
-  var response = await fetch(`/game/new?${params.toString()}`, {
+  return fetch(`/game/new?${params.toString()}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
-  });
-  return await response.json();
+  }).then((response) => response.json());
 };
 
 const fetchGameData = async (id) => {

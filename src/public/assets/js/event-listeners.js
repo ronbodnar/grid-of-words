@@ -1,10 +1,10 @@
 import {
   fillNextSquare,
   removeLastSquareValue,
-} from "./components/board/square.js";
-import { forfeitGame, startGame } from "./services/game.service.js";
+} from "./components/board/gameboard.js";
+import { startGame } from "./services/game.service.js";
 import { retrieve } from "./services/storage.service.js";
-import { attempt, getAttemptLetters } from "./services/attempt.service.js";
+import { attempt } from "./services/attempt.service.js";
 import { getCurrentViewName } from "./utils/helpers.js";
 import { DEFAULT_MAX_ATTEMPTS, DEFAULT_WORD_LENGTH } from "./constants.js";
 
@@ -82,7 +82,7 @@ const addKeyListeners = () => {
 /*
  * Initialize the event listeners
  */
-const initialize = () => {
+export const initialize = () => {
   addKeyListeners();
   addButtonListeners();
 };
@@ -91,12 +91,10 @@ const initialize = () => {
  * Enable or disable the blocking of key events during animations.
  * @param {boolean} block - True to block key events, false to allow them.
  */
-const setBlockKeyEvents = (block) => {
+export const setBlockKeyEvents = (block) => {
   blockKeyEvents = block;
 };
 
-const shouldBlockKeyEvents = () => {
+export const shouldBlockKeyEvents = () => {
   return blockKeyEvents;
 };
-
-export { initialize, setBlockKeyEvents, shouldBlockKeyEvents };

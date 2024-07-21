@@ -2,7 +2,10 @@ import { showView } from "../utils/helpers.js";
 import { startGame } from "../services/game.service.js";
 import { DEFAULT_WORD_LENGTH, DEFAULT_MAX_ATTEMPTS } from "../constants.js";
 
-const buildHowToPlayView = () => {
+/*
+ * Builds and displays the how-to-play view.
+ */
+export const buildHowToPlayView = () => {
   const steps = [
     "Select or type the letters of a 5<sup>*</sup> letter word, like <strong>great</strong> or <strong>place</strong>.",
     "Once you have entered a word, press enter to validate your attempt.",
@@ -35,7 +38,6 @@ const buildHowToPlayView = () => {
     let step = document.createElement("li");
     step.style.margin = "20px 0"
     step.style.fontSize = "20px";
-    console.log(steps[i]);
     if (i === steps.length - 1)
       step.innerHTML = `${steps[i]}`;
     else
@@ -51,7 +53,7 @@ const buildHowToPlayView = () => {
   const howToPlayButton = document.createElement("button");
   howToPlayButton.classList.add("button", "fixed");
   howToPlayButton.type = "button";
-  howToPlayButton.innerHTML = "<span class='material-symbols-outlined' style='font-size: 24px; vertical-align: -6px'>arrow_back</span> Back";
+  howToPlayButton.innerHTML = "<img src='/assets/material-icons/keyboard-backspace.svg' style='vertical-align: -6px'/> Back";
   howToPlayButton.addEventListener("click", () => {
     showView('home');
   });
@@ -77,5 +79,3 @@ const buildHowToPlayView = () => {
   contentContainer.appendChild(stepElement);
   contentContainer.appendChild(buttonContainer);
 };
-
-export { buildHowToPlayView };

@@ -1,6 +1,5 @@
 import { generatedSquare, updateSquareBackground } from "./square.js";
 import { getValidatedLetters } from "../../utils/helpers.js";
-import { getLoader } from "../loader.js";
 
 /*
  * Generates a row of squares of the word length for the game.
@@ -8,16 +7,11 @@ import { getLoader } from "../loader.js";
  * @param {index} index - The row's index on the board.
  * @returns {HTMLDivElement} - The generated row with all squares.
  */
-function generatedRow(index, cols, game) {
+export const generatedRow = (index, cols, game) => {
   const active = index === (game?.attempts?.length || 0);
   const row = document.createElement("div");
   row.classList.add("word-row");
   if (active) row.classList.add("active");
-
-  const loader = getLoader();
-  loader.classList.add("hidden");
-
-  row.appendChild(loader);
 
   // Add squares equal to the length of the word in the row
   for (var j = 0; j < cols; j++) {
@@ -39,5 +33,3 @@ function generatedRow(index, cols, game) {
 
   return row;
 }
-
-export { generatedRow };
