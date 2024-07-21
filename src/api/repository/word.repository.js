@@ -21,7 +21,7 @@ async function getWordsByLengthRange(minLength, maxLength) {
   if (data == null) return;
   console.log(data);
 
-  return data;
+  return data[0];
 }
 
 /*
