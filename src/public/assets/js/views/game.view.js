@@ -47,11 +47,10 @@ export const buildGameView = (options) => {
   forfeitButton.style.textAlign = "start";
   forfeitButton.style.width = "auto";
   forfeitButton.type = "button";
-  forfeitButton.innerHTML =
-    "Forfeit";
-  forfeitButton.addEventListener("click", () => {
+  forfeitButton.innerHTML = "Forfeit";
+  forfeitButton.addEventListener("click", async () => {
     if (window.confirm("Are you sure you want to forfeit the game?"))
-      forfeitGame();
+      await forfeitGame();
   });
   buttonContainer.appendChild(forfeitButton);
 
@@ -63,4 +62,4 @@ export const buildGameView = (options) => {
   contentContainer.appendChild(message);
   contentContainer.appendChild(board);
   contentContainer.appendChild(keyboard);
-}
+};

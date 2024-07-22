@@ -9,11 +9,11 @@ import { getAttemptsForGameId as getAttemptsByGameId } from "./attempt.repositor
  * @param {string} word - The word to be guessed.
  * @return {Game | null} - The new game object or null if the game could not be created.
  */
-async function insertGame(id, word, maxAttempts, timed) {
+export const insertGame = async (id, word, maxAttempts, timed) => {
   const sql = `INSERT INTO games (id, word, max_attempts, timed) VALUES(UUID_TO_BIN(?), ?, ?, ?)`;
   const response = await query(sql, [id, word, maxAttempts, timed]);
-  return response !== null ? getGameById(id) : null;
-}
+  return response !== null ? await getGameById(id) : null;
+};
 
 /*
  * Updates the game record within the database.
@@ -21,7 +21,7 @@ async function insertGame(id, word, maxAttempts, timed) {
  * @param {Game} game - The game to update.
  * @param {boolean} updateEndTime - Whether or not to set the endTime in the query.
  */
-async function saveGame(game, updateEndTime = false) {
+export const saveGame = async (game, updateEndTime = false) => {
   var sql = `UPDATE games SET state = ?`;
   if (updateEndTime) sql += `, endTime = ?`;
   sql += ` WHERE id = UUID_TO_BIN(?)`;
@@ -30,7 +30,7 @@ async function saveGame(game, updateEndTime = false) {
     ? [game.state, game.endTime, game.id]
     : [game.state, game.id];
   await query(sql, values);
-}
+};
 
 /*
  * Retrieves a game from the database by its id.
@@ -38,7 +38,7 @@ async function saveGame(game, updateEndTime = false) {
  * @param {string} id - The unique identifier for the game.
  * @return {Game | null} - The game object or null if the game could not be found.
  */
-async function getGameById(id, includeAttempts = true) {
+export const getGameById = async (id, includeAttempts = true) => {
   const sql = `SELECT *, BIN_TO_UUID(id) AS id FROM games WHERE id = UUID_TO_BIN(?)`;
   const response = await query(sql, [id]);
   try {
@@ -51,10 +51,8 @@ async function getGameById(id, includeAttempts = true) {
     }
     return game;
   } catch (error) {
-    // can be ignored, because it'll only fail if no result is found (maybe)
+    // can be ignored, because it'll only fail if no result and no attempts are found (maybe)
     console.error(error);
     return null;
   }
-}
-
-export { getGameById, saveGame, insertGame };
+};

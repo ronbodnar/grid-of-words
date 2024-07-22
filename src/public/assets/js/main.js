@@ -28,7 +28,9 @@ if (cachedGame) {
   if (sessionData && Object.keys(sessionData).length > 0) {
     console.log("Received session data: ", sessionData);
     // This should only occur if the user clears local storage on exit or if forfeit is used.
-    showView("home");
+    showView("game", {
+      game: sessionData.game
+    })
   } else {
     showView("home");
   }

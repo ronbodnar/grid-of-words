@@ -8,7 +8,6 @@ import { attempt } from "./services/attempt.service.js";
 import { getCurrentViewName } from "./utils/helpers.js";
 import { DEFAULT_MAX_ATTEMPTS, DEFAULT_WORD_LENGTH } from "./constants.js";
 
-var isKeyPressed = false;
 var blockKeyEvents = false;
 
 /*
@@ -34,7 +33,7 @@ const addButtonListeners = () => {
 const addKeyListeners = () => {
   // Keypress only listens for keys that emit a value
   document.addEventListener("keypress", function (event) {
-    if (blockKeyEvents || isKeyPressed) return;
+    if (blockKeyEvents) return;
 
     const key = event.key;
 
@@ -67,15 +66,11 @@ const addKeyListeners = () => {
 
   // Keydown is for non-value keys as well
   document.addEventListener("keydown", function (event) {
-    if (blockKeyEvents || isKeyPressed) return;
+    if (blockKeyEvents) return;
 
     const key = event.key;
 
     if (key === "Delete" || key === "Backspace") removeLastSquareValue(key);
-  });
-
-  document.addEventListener("keyup", function (event) {
-    isKeyPressed = false;
   });
 };
 

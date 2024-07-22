@@ -2,9 +2,8 @@ import express from "express";
 
 import { getWord, getWordList } from "../controllers/word.controller.js";
 
-const router = express.Router();
+export const router = express.Router();
 
+// Set up /word routes.
 router.route("/").get(getWord);
 router.route("/list").get(getWordList);
-
-export default router;

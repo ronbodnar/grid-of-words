@@ -1,9 +1,10 @@
 import express from "express";
 
-import { getGame, generateGame } from "../controllers/game.controller.js";
+import { getGame, generateGame, forfeitGame, } from "../controllers/game.controller.js";
 
-const router = express.Router();
+export const router = express.Router();
+
+// Set up /game routes.
 router.route("/new").get(generateGame);
 router.route("/:id").get(getGame);
-
-export default router;
+router.route("/:id/forfeit").post(forfeitGame);

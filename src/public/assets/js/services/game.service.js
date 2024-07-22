@@ -38,12 +38,20 @@ const startGame = async (options) => {
   }
 };
 
-const forfeitGame = () => {
-  //TODO: server communication
-  const game = retrieve("game");
+const forfeitGame = async () => {
+  const game = retrieve("game").data;
   console.log("Forfeiting game...", game);
-  remove("game");
-  showView("home");
+  return fetch(`/game/${game.id}/forfeit`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+  .then((response) => response.json())
+  .then((response) => {
+    remove("game");
+    showView("home");
+  });
 };
 
 const fetchNewGame = async (params) => {

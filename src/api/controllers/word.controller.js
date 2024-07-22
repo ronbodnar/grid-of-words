@@ -6,7 +6,7 @@ import { getWordOfLength, getWordsByLengthRange } from "../repository/word.repos
  *
  * Select a random word from the word table in the database.
  */
-async function getWord(req, res) {
+export const getWord = async (req, res) => {
   const length = req.query.wordLength || DEFAULT_WORD_LENGTH;
   if (!(MINIMUM_WORD_LENGTH < length < MAXIMUM_WORD_LENGTH)) {
     res.end({ message: "Invalid word length." });
@@ -15,8 +15,13 @@ async function getWord(req, res) {
   const randomWord = await getWordOfLength(length);
   return res.json(randomWord);
 }
-
-async function getWordList(req, res) {
+/*
+ * Endpoint: /word/list
+ *
+ * Retrieves the list of words between a min-max value range.
+ * @return {Array} A list of words within the min-max range.
+ */
+export const getWordList = async (req, res) => {
   const minLength = req.query.minLength || MINIMUM_WORD_LENGTH;
   const maxLength = req.query.maxLength || MAXIMUM_WORD_LENGTH;
   if (MINIMUM_WORD_LENGTH > minLength || MAXIMUM_WORD_LENGTH < maxLength || minLength > maxLength) {
@@ -26,5 +31,3 @@ async function getWordList(req, res) {
   const wordList = await getWordsByLengthRange(minLength, maxLength);
   return res.json(wordList);
 }
-
-export { getWord, getWordList };
