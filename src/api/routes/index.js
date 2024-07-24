@@ -30,5 +30,5 @@ router.get("/session", async function (req, res) {
     res.json({
       game: game,
     });
-  }, 1500);
+  }, 500);
 });

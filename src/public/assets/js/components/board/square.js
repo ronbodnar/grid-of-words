@@ -1,6 +1,6 @@
 import { getValidatedLetters } from "../../utils/helpers.js";
 import { getAttemptLetters } from "../../services/attempt.service.js";
-import { EXACT_MATCH, PARTIAL_MATCH } from "../../constants.js";
+import { NO_MATCH, EXACT_MATCH, PARTIAL_MATCH } from "../../constants.js";
 
 /*
  * The individual square that houses a single letter in the word grid.
@@ -63,6 +63,10 @@ export const updateSquareBackground = (square, match) => {
 
     case PARTIAL_MATCH:
       square.style.backgroundColor = "rgba(255, 165, 0, 0.9)";
+      break;
+
+    case NO_MATCH:
+      square.style.color = "rgba(244, 243, 242, 0.6)";
       break;
   }
 };

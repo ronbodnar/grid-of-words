@@ -19,7 +19,12 @@ export const insertAttempt = async (id, word) => {
  * @param {string} id - The id of the game to retrieve attempts for.
  */
 export const getAttemptsForGameId = async (id) => {
-  const sql = `SELECT *, BIN_TO_UUID(game_id) AS game_id FROM game_attempts WHERE game_id = UUID_TO_BIN(?)`;
-  const response = await query(sql, [id]);
-  return response[0];
+  try {
+    const sql = `SELECT *, BIN_TO_UUID(game_id) AS game_id FROM game_attempts WHERE game_id = UUID_TO_BIN(?)`;
+    const response = await query(sql, [id]);
+    return response[0];
+  } catch (err) {
+    console.error("Error executing query:");
+    console.error(err);
+  }
 };

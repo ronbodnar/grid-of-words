@@ -4,7 +4,6 @@ export class Game {
     attempts = [];
     maxAttempts;
     state;
-    timed;
     startTime;
     endTime;
 }

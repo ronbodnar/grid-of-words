@@ -7,10 +7,14 @@ import query from "../services/database.service.js";
  * @return {Word} word - An instance of the Word.
  */
 export const getWordOfLength = async (length) => {
-  var sql = `SELECT * FROM words WHERE CHAR_LENGTH(word) = ? ORDER BY RAND() LIMIT 1`;
-  const data = await query(sql, [length]);
-  if (data == null) return null;
-  return data[0][0].word;
+  try {
+    var sql = `SELECT * FROM words WHERE CHAR_LENGTH(word) = ? ORDER BY RAND() LIMIT 1`;
+    const data = await query(sql, [length]);
+    if (data == null) return null;
+    return data[0][0].word;
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 /*
@@ -21,12 +25,16 @@ export const getWordOfLength = async (length) => {
  * @return {Array} The list of words matching the length range.
  */
 export const getWordsByLengthRange = async (minLength, maxLength) => {
-  var sql = `SELECT word, LENGTH(word) AS length FROM words HAVING length >= ? AND length <= ?`;
-  const data = await query(sql, [minLength, maxLength]);
-  if (data == null) return;
-  console.log(data);
+  try {
+    var sql = `SELECT word, LENGTH(word) AS length FROM words HAVING length >= ? AND length <= ?`;
+    const data = await query(sql, [minLength, maxLength]);
+    if (data == null) return;
+    console.log(data);
 
-  return data[0];
+    return data[0];
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 /*
@@ -36,9 +44,9 @@ export const getWordsByLengthRange = async (minLength, maxLength) => {
  * @return {boolean}
  */
 export const wordExists = async (word) => {
-  var sql = `SELECT COUNT(*) AS count FROM words WHERE word = ?`;
-  const response = await query(sql, [word]);
   try {
+    var sql = `SELECT COUNT(*) AS count FROM words WHERE word = ?`;
+    const response = await query(sql, [word]);
     return response[0][0].count > 0;
   } catch (error) {
     // this should only error when there are no results
