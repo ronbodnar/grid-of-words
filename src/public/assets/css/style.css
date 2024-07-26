@@ -404,11 +404,6 @@ sup {
   border-radius: 5px;
 }
 
-@media screen and (min-device-width: 768px) {
-  .keyboard {
-  }
-}
-
 .keyboard-row {
   display: flex;
   justify-content: center;

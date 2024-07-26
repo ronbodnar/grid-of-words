@@ -1,3 +1,4 @@
+import { logger } from "../../index.js";
 import query from "../services/database.service.js";
 
 /*
@@ -10,10 +11,14 @@ export const getWordOfLength = async (length) => {
   try {
     var sql = `SELECT * FROM words WHERE CHAR_LENGTH(word) = ? ORDER BY RAND() LIMIT 1`;
     const data = await query(sql, [length]);
-    if (data == null) return null;
+    if (data == null || data[0][0] == null) return null;
     return data[0][0].word;
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    logger.error("Unexpected error getting random word", {
+      error: error,
+      length: length
+    });
+    return null;
   }
 };
 
@@ -27,13 +32,18 @@ export const getWordOfLength = async (length) => {
 export const getWordsByLengthRange = async (minLength, maxLength) => {
   try {
     var sql = `SELECT word, LENGTH(word) AS length FROM words HAVING length >= ? AND length <= ?`;
+    
+    // Try to obtain the word list for the specified range.
     const data = await query(sql, [minLength, maxLength]);
-    if (data == null) return;
-    console.log(data);
+    if (!data || !data[0]) return null;
 
     return data[0];
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    logger.error("Could not retrieve word list from database", {
+      error: error,
+      min: minLength,
+      max: maxLength
+    });
   }
 };
 
@@ -50,7 +60,10 @@ export const wordExists = async (word) => {
     return response[0][0].count > 0;
   } catch (error) {
     // this should only error when there are no results
-    console.error(error);
+    logger.info("Error validating word existence", {
+      error: error,
+      word: word
+    });
     return false;
   }
 };

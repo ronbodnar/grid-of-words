@@ -1,5 +1,5 @@
 import { retrieve } from "../../services/storage.service.js";
-import { shouldBlockKeyEvents } from "../../event-listeners.js";
+import { isBlockKeyEvents } from "../../event-listeners.js";
 import { attempt } from "../../services/attempt.service.js";
 import { fillNextSquare, removeLastSquareValue } from "../board/gameboard.js";
 import { EXACT_MATCH, PARTIAL_MATCH, NO_MATCH } from "../../constants.js";
@@ -12,7 +12,8 @@ import { EXACT_MATCH, PARTIAL_MATCH, NO_MATCH } from "../../constants.js";
  */
 export const buildKeyElement = (letter, className) => {
   var key = document.createElement("div");
-  if (letter !== "delete") // Delete has a background that is set in the stylesheet
+  if (letter !== "delete")
+    // Delete has a background that is set in the stylesheet
     key.textContent = letter.at(0).toUpperCase() + letter.substring(1);
   key.classList.add("keyboard-key");
   switch (className) {
@@ -29,7 +30,7 @@ export const buildKeyElement = (letter, className) => {
       break;
   }
   key.addEventListener("click", () => {
-    if (shouldBlockKeyEvents()) return;
+    if (isBlockKeyEvents()) return;
 
     if (letter === "delete") {
       removeLastSquareValue();

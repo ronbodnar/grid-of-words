@@ -4,14 +4,15 @@ import bodyParser from "body-parser";
 import { router as routes } from "../routes/index.js";
 import cookieSession from "cookie-session";
 import { __dirname } from "../constants.js";
+import { logger } from "../../index.js";
 
 export const app = express();
 
 // Set up the cookie session middleware.
 app.use(
   cookieSession({
-    name: "session",
-    secret: "cookie secret",
+    name: process.env.COOKIE_NAME,
+    secret: process.env.COOKIE_SECRET,
     maxAge: 50000//24 * 60 * 60 * 1000, // 24 hours
   })
 );
@@ -27,6 +28,6 @@ app.use("/", routes);
 
 app.use("*", function(req, res, next) {
   // TODO: 404
-  console.log("Request received at:", req.url);
+  logger.log("Request received at:", req.url);
   res.end();
 });
