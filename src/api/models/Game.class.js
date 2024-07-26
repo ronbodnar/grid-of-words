@@ -1,3 +1,4 @@
+import { logger } from "../../index.js";
 import { DEFAULT_MAX_ATTEMPTS } from "../constants.js";
 import { saveGame } from "../repository/game.repository.js";
 
@@ -22,7 +23,6 @@ export class Game {
   }
 
   fromJson(json) {
-    console.log(json);
     if (json === undefined) return this;
     this.id = json.id;
     this.word = json.word;
@@ -35,6 +35,6 @@ export class Game {
   }
 
   save() {
-    saveGame(this);
+    return saveGame(this);
   }
 }

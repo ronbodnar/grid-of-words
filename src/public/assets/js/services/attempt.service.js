@@ -1,11 +1,18 @@
-import { shiftActiveRow, transformSquares } from "../components/board/gameboard.js";
+import {
+  shiftActiveRow,
+  transformSquares,
+} from "../components/board/gameboard.js";
 import { setBlockKeyEvents } from "../event-listeners.js";
 import { remove, retrieve, store } from "./storage.service.js";
 import { updateCurrentAttemptSquares } from "../components/board/square.js";
 import { showView } from "../utils/helpers.js";
-import { updateKeyboardKeys } from "../components/keyboard/on-screen-keyboard.js";
+import {
+  toggleKeyboardOverlay,
+  updateKeyboardKeys,
+} from "../components/keyboard/on-screen-keyboard.js";
 import { showMessage } from "./message.service.js";
 import { wordExists } from "./word.service.js";
+import { Game } from "../models/Game.class.js";
 
 var attemptLetters = [];
 
@@ -23,35 +30,78 @@ const attempt = async (game) => {
     return;
   }
 
-  // The hiding squares promise, we are going to immediate fetch the data so we don't want to perform this synchronously (it's awaited later)
-  const hidingSquares = transformSquares(true).then(() => {
-    console.log("done here");
-  });
-
   // Fetch the attempt response from the server
-  var data = await getAttemptResponse(game);
-  console.log("Attempt response: ", data);
+  const attemptResponsePromise = getAttemptResponse(game)
 
   // Wait for squares to hide before continuing
-  await hidingSquares;
+  const transformSquaresPromise = transformSquares(true).then(() => {
+    // Show the loading overlay in case the response hasn't been received from the server.
+    toggleKeyboardOverlay(true);
+  });
 
-  // Update gamedata local storage
-  if (data.gameData) {
-    store("game", data.gameData);
-    if (data.gameData.word !== game.word) {
-      console.error("Modified word detected");
+  // Wait for both promises to complete
+  const [response] = await Promise.all([
+    attemptResponsePromise,
+    transformSquaresPromise,
+  ]);
+
+  // Handling of other responses without gameData
+  console.log("Attempt response: ", response);
+
+  // Hide the keyboard overlay
+  toggleKeyboardOverlay(false);
+
+  // Check to see if the game data we have is aligned with the server, if not, refresh the page.
+  if (response.gameData) {
+    const remoteGame = new Game(response.gameData);
+    if (remoteGame.attempts.length > 1) // If there is zero or one attempt (duplicate word), don't pop it.
+      remoteGame.attempts.pop(); // Remove the current attempt that we just made for comparison.
+
+    // If there are property mismatches, we need to refresh to force-update with the good data.
+    console.log(game);
+    console.log(remoteGame);
+    
+    if (!game.equals(remoteGame)) {
+      //store("game", response.gameData);
+      //window.location.href = "/";
+      console.log("Game Mismatch", game, remoteGame);
+      return;
     }
+
+    // Update the local version of the game.
+    //store("game", response.gameData);
   }
 
-  // Update the game data in the local storage.
-  if (data && data.gameData) store("game", data.gameData);
-
   // Process the response from the server.
-  await processServerResponse(game, data);
+  await processServerResponse(game, response);
+};
+
+/*
+ * Posts the attempt to the API and waits for the response.
+ * @param {Game} game - The current game object.
+ * @return {json} - The JSON response from the API.
+ */
+const getAttemptResponse = async (game) => {
+  return fetch(`/game/${game.id}/attempts`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      word: attemptLetters.join(""),
+    }),
+  })
+    .then((response) => response.json())
+    .catch((error) => console.error(error));
 };
 
 const processServerResponse = async (game, data) => {
   var message = "Error";
+
+  if (!data) {
+    showMessage("No response from server");
+    return;
+  }
 
   if (data.message) {
     switch (data.message) {
@@ -126,7 +176,7 @@ const validateAttempt = (game) => {
     return false;
   }
 
-  const wordList = retrieve("wordList")?.data;
+  const wordList = retrieve("wordList");
   if (!wordList) {
     // re-fetch word list synchronously? pass to server for validation while asynchronously fetching the word list?
   } else {
@@ -138,26 +188,6 @@ const validateAttempt = (game) => {
     }
   }
   return true;
-};
-
-/*
- * Posts the attempt to the API and waits for the response.
- * @param {Game} game - The current game object.
- * @return {json} - The JSON response from the API.
- */
-const getAttemptResponse = async (game) => {
-  const response = await fetch(`/game/${game.id}/attempts`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      gameId: game.id,
-      word: attemptLetters.join(""),
-    }),
-  });
-
-  return await response.json();
 };
 
 /*

@@ -1,3 +1,5 @@
+import { Game } from "../models/Game.class.js";
+
 /*
  * Adds the specified key/value pair to the local storage with an expiration timestamp.
  * @param {string} key - The key to store.
@@ -33,7 +35,12 @@ const remove = (key) => {
  */
 const retrieve = (key) => {
   if (!isValid(key)) return undefined;
-  return JSON.parse(window.localStorage.getItem(key));
+  const value = JSON.parse(window.localStorage.getItem(key));
+
+  if (key === 'game')
+    return new Game(value.data);
+
+  return value.data;
 };
 
 /*
