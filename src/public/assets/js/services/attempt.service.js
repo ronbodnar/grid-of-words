@@ -31,7 +31,7 @@ const attempt = async (game) => {
   }
 
   // Fetch the attempt response from the server
-  const attemptResponsePromise = getAttemptResponse(game)
+  const attemptResponsePromise = getAttemptResponse(game);
 
   // Wait for squares to hide before continuing
   const transformSquaresPromise = transformSquares(true).then(() => {
@@ -53,23 +53,23 @@ const attempt = async (game) => {
 
   // Check to see if the game data we have is aligned with the server, if not, refresh the page.
   if (response.gameData) {
+    // Create a copy of the current game with the new attempt.
+    const gameCopy = new Game(game);
+    gameCopy.attempts.push(attemptLetters.join(""));
+
+    // Instantiate the remote game with the response data.
     const remoteGame = new Game(response.gameData);
-    if (remoteGame.attempts.length > 1) // If there is zero or one attempt (duplicate word), don't pop it.
-      remoteGame.attempts.pop(); // Remove the current attempt that we just made for comparison.
 
     // If there are property mismatches, we need to refresh to force-update with the good data.
-    console.log(game);
-    console.log(remoteGame);
-    
-    if (!game.equals(remoteGame)) {
+    /* if (!equals(gameCopy, remoteGame)) {
       //store("game", response.gameData);
       //window.location.href = "/";
       console.log("Game Mismatch", game, remoteGame);
       return;
-    }
+    } */
 
     // Update the local version of the game.
-    //store("game", response.gameData);
+    store("game", response.gameData);
   }
 
   // Process the response from the server.
@@ -86,13 +86,14 @@ const getAttemptResponse = async (game) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: "Bearer v5Pd3vUK9iYjRxCa1H5VsBe9L18xs8UW", // :)
     },
     body: JSON.stringify({
       word: attemptLetters.join(""),
     }),
   })
     .then((response) => response.json())
-    .catch((error) => console.error(error));
+    .catch((error) => console.error("Attempt Reponse failed: ", error));
 };
 
 const processServerResponse = async (game, data) => {
@@ -125,9 +126,9 @@ const processServerResponse = async (game, data) => {
         // Display the letter position validations
         updateCurrentAttemptSquares(game.word);
 
-        updateKeyboardKeys(game.word, attemptLetters);
-
         await transformSquares(false);
+
+        updateKeyboardKeys(game.word, attemptLetters);
 
         // Move active squares down
         shiftActiveRow();

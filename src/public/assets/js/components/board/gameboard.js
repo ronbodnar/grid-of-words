@@ -59,11 +59,11 @@ export const transformSquares = (hide) => {
             squareValue.style.opacity = hide ? "0" : "1";
           }
           if (i === squares.length - 1) {
-            // Resolve the Promise 500ms after the last square has processed.
-            setTimeout(() => resolve(true), 500);
+            // Resolve the Promise 300ms after the last square has processed.
+            setTimeout(() => resolve(true), 300);
           }
         },
-        hide ? 0 : (delay += 500)
+        hide ? 0 : (delay += 400)
       );
     });
   });

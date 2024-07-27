@@ -61,11 +61,11 @@ export const addAttempt = async (req, res) => {
   if (validationError.length > 0) {
     logger.info("Attempt invalid:", {
       error: validationError,
-      gameData: game
-  });
+      gameData: game,
+    });
     return res.json({
       message: validationError,
-      gameData: game
+      gameData: game,
     });
   }
 
@@ -110,7 +110,7 @@ const validateAttempt = async (word, game) => {
   switch (true) {
     case game == null:
       return "GAME_NOT_FOUND";
-    case game.attempts.length + 1 >= game.maxAttempts:
+    case game.attempts.length >= game.maxAttempts:
       return "ATTEMPTS_EXCEEDED";
     case game.attempts.includes(word):
       return "DUPLICATE_ATTEMPT";

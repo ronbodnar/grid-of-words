@@ -30,7 +30,7 @@ export const generateGame = async (req, res) => {
   }
 
   // Ensure maxAttempts is valid.
-  if (!(MINIMUM_MAX_ATTEMPTS < maxAttempts || maxAttempts > MAXIMUM_MAX_ATTEMPTS)) {
+  if (!(MINIMUM_MAX_ATTEMPTS < maxAttempts < MAXIMUM_MAX_ATTEMPTS)) {
     return res.json({
       message: "INVALID MAX ATTEMPTS"
     })
