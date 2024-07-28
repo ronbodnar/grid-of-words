@@ -1,9 +1,7 @@
-import { showView } from "../utils/helpers.js";
-import { startGame } from "../services/game.service.js";
-import { DEFAULT_WORD_LENGTH, DEFAULT_MAX_ATTEMPTS } from "../constants.js";
+import { clickBackButton, clickStartGameButton } from "../services/event.service.js";
 
-/*
- * Builds and displays the how-to-play view.
+/**
+ * Builds and displays the how-to-play view within the content container.
  */
 export const buildHowToPlayView = () => {
   const steps = [
@@ -52,22 +50,14 @@ export const buildHowToPlayView = () => {
   backButton.type = "button";
   backButton.innerHTML =
     "<img src='/assets/material-icons/keyboard-backspace.svg' style='vertical-align: -6px'/> Back";
-  backButton.addEventListener("click", () => {
-    showView("home");
-  });
+  backButton.addEventListener("click", clickBackButton);
 
   const startGameButton = document.createElement("button");
   startGameButton.classList.add("button", "fixed");
   startGameButton.type = "button";
   startGameButton.innerHTML =
     "<img src='/assets/material-icons/play-arrow.svg' style='vertical-align: -6px'> Start Game";
-  startGameButton.addEventListener("click", () => {
-    startGame({
-      wordLength: DEFAULT_WORD_LENGTH,
-      maxAttempts: DEFAULT_MAX_ATTEMPTS,
-      language: "enUS",
-    });
-  });
+  startGameButton.addEventListener("click", clickStartGameButton);
 
   buttonContainer.appendChild(backButton);
   buttonContainer.appendChild(startGameButton);

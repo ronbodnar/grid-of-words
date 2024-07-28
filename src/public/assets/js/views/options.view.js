@@ -1,5 +1,4 @@
-import { showView, getRandomInt } from "../utils/helpers.js";
-import { startGame } from "../services/game.service.js";
+import { getRandomInt } from "../utils/helpers.js";
 import {
   DEFAULT_WORD_LENGTH,
   MINIMUM_WORD_LENGTH,
@@ -8,8 +7,9 @@ import {
   MINIMUM_MAX_ATTEMPTS,
   MAXIMUM_MAX_ATTEMPTS,
 } from "../constants.js";
+import { clickBackButton, clickStartGameButton } from "../services/event.service.js";
 
-/*
+/**
  * Builds and displays the options view.
  */
 export const buildOptionsView = () => {
@@ -28,9 +28,7 @@ export const buildOptionsView = () => {
   backButton.type = "button";
   backButton.innerHTML =
     "<img src='/assets/material-icons/keyboard-backspace.svg' style='vertical-align: -6px'/> Back";
-  backButton.addEventListener("click", () => {
-    showView("home");
-  });
+  backButton.addEventListener("click", clickBackButton);
 
   const startGameButton = document.createElement("button");
   startGameButton.classList.add("button", "fixed");
@@ -39,11 +37,7 @@ export const buildOptionsView = () => {
   startGameButton.addEventListener("click", () => {
     const wordLength = document.querySelector("#wordLengthSlider")?.value;
     const maxAttempts = document.querySelector("#maxAttemptsSlider")?.value;
-    startGame({
-      wordLength: wordLength,
-      maxAttempts: maxAttempts,
-      language: "enUS",
-    });
+    clickStartGameButton(null, wordLength, maxAttempts);
   });
 
   const randomGameButton = document.createElement("button");
@@ -51,11 +45,9 @@ export const buildOptionsView = () => {
   randomGameButton.type = "button";
   randomGameButton.innerHTML = "<img src='/assets/material-icons/play-circle.svg' style='vertical-align: -6px'> Random Game";
   randomGameButton.addEventListener("click", () => {
-    startGame({
-      wordLength: getRandomInt(MINIMUM_WORD_LENGTH, MAXIMUM_WORD_LENGTH),
-      maxAttempts: getRandomInt(MINIMUM_MAX_ATTEMPTS, MAXIMUM_MAX_ATTEMPTS),
-      language: "enUS",
-    });
+    const wordLength = getRandomInt(MINIMUM_WORD_LENGTH, MAXIMUM_WORD_LENGTH);
+    const maxAttempts = getRandomInt(MINIMUM_MAX_ATTEMPTS, MAXIMUM_MAX_ATTEMPTS);
+    clickStartGameButton(null, wordLength, maxAttempts);
   });
 
   buttonContainer.appendChild(backButton);
@@ -98,6 +90,16 @@ export const buildOptionsView = () => {
   contentContainer.appendChild(buttonContainer);
 };
 
+/**
+ * Builds a slider section with a title, slider input, and a display of the current value.
+ *
+ * @param {string} id - The unique identifier for the slider elements.
+ * @param {string} title - The title to display above the slider.
+ * @param {number} minValue - The minimum value for the slider.
+ * @param {number} maxValue - The maximum value for the slider.
+ * @param {number} defaultValue - The default value for the slider.
+ * @returns {HTMLDivElement} The container element containing the slider section.
+ */
 const buildSliderSection = (id, title, minValue, maxValue, defaultValue) => {
   const container = document.createElement("div");
   container.classList.add("option-row");
@@ -141,6 +143,14 @@ const buildSliderSection = (id, title, minValue, maxValue, defaultValue) => {
   return container;
 };
 
+/**
+ * Builds a checkbox section with a title and a checkbox input.
+ *
+ * @param {string} id - The unique identifier for the checkbox elements.
+ * @param {string} title - The title to display next to the checkbox.
+ * @param {boolean} selected - The initial selected state of the checkbox.
+ * @returns {HTMLDivElement} The container element containing the checkbox section.
+ */
 const buildCheckboxSection = (id, title, selected) => {
   const container = document.createElement("div");
   container.classList.add("option-row-checkbox");

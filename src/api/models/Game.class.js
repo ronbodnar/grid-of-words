@@ -1,4 +1,3 @@
-import { logger } from "../../index.js";
 import { DEFAULT_MAX_ATTEMPTS } from "../constants.js";
 import { saveGame } from "../repository/game.repository.js";
 

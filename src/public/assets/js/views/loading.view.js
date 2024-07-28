@@ -1,7 +1,7 @@
-import { getLoader } from "../components/loader.js";
+import { buildLoadingElement } from "../components/loading.js";
 
-/*
- * Builds and displays the loading view.
+/**
+ * Builds and displays a loading view within the content container.
  */
 export const buildLoadingView = () => {
   const contentContainer = document.querySelector(".content");
@@ -11,7 +11,7 @@ export const buildLoadingView = () => {
   loadingMessage.textContent = "We'll be with you shortly";
   loadingMessage.style.marginBottom = "20px";
 
-  const loadingAnimation = getLoader();
+  const loadingAnimation = buildLoadingElement();
   loadingAnimation.classList.add("loading-animation");
 
   contentContainer.innerHTML = "";

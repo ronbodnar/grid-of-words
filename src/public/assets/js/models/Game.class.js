@@ -16,7 +16,12 @@ export class Game {
     this.maxAttempts = json.maxAttempts;
     this.startTime = new Date(json.startTimestamp);
     this.endTime = (json.endTimestamp ? new Date() : undefined);
-    this.attempts = (json.attempts ? [...json.attempts] : []); // create a copy of the attempts array
+
+    /*
+     * The attempts array needs to be made a deep copy instead of a reference.
+     * This is because we update the attempts array during validation but the original values are needed.
+     */
+    this.attempts = (json.attempts ? JSON.parse(JSON.stringify(json.attempts)) : []);
     return this;
   }
 }

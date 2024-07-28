@@ -21,18 +21,18 @@ router.get("/session", checkBearer, async function (req, res) {
   if (req.session.gameId) {
     game = await getGameById(req.session.gameId);
     if (!game) {
+      res.end();
       return;
     }
     // Dont return session games that were ended/forfeited (they should be cleared, but check anyways).
     if (game?.state !== "STARTED") {
+      res.end();
       return;
     }
   }
 
-  // Timeout is for testing purposes with the loading screen.
-  setTimeout(() => {
-    res.json({
-      game: game,
-    });
-  }, 500);
+  // The session data to be returned.
+  res.json({
+    game: game,
+  });
 });

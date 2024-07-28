@@ -1,4 +1,4 @@
-import { logger } from "../../index.js";
+import logger from "../config/winston.config.js";
 import query from "../services/database.service.js";
 
 /*
@@ -9,9 +9,16 @@ import query from "../services/database.service.js";
  */
 export const getWordOfLength = async (length) => {
   try {
+    // Set up the SQL query string.
     var sql = `SELECT * FROM words WHERE CHAR_LENGTH(word) = ? ORDER BY RAND() LIMIT 1`;
+
+    // Execute the query and retrieve the response.
     const data = await query(sql, [length]);
+
+    // If the data is missing, return null.
     if (data == null || data[0][0] == null) return null;
+
+    // Return only the word.
     return data[0][0].word;
   } catch (error) {
     logger.error("Unexpected error getting random word", {
@@ -31,12 +38,16 @@ export const getWordOfLength = async (length) => {
  */
 export const getWordsByLengthRange = async (minLength, maxLength) => {
   try {
+    // Set up the SQL query string.
     var sql = `SELECT word, LENGTH(word) AS length FROM words HAVING length >= ? AND length <= ?`;
     
-    // Try to obtain the word list for the specified range.
+    // Execute the query and retrieve the response.
     const data = await query(sql, [minLength, maxLength]);
+
+    // If the data is missing, return null.
     if (!data || !data[0]) return null;
 
+    // Return the list of words.
     return data[0];
   } catch (error) {
     logger.error("Could not retrieve word list from database", {
@@ -55,8 +66,13 @@ export const getWordsByLengthRange = async (minLength, maxLength) => {
  */
 export const wordExists = async (word) => {
   try {
+    // Set up the SQL query string.
     var sql = `SELECT COUNT(*) AS count FROM words WHERE word = ?`;
+
+    // Execute the query and retrieve the response.
     const response = await query(sql, [word]);
+
+    // If the count is greater than 0, the word exists in the database.
     return response[0][0].count > 0;
   } catch (error) {
     // this should only error when there are no results

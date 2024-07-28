@@ -1,10 +1,7 @@
-import { showView } from "../utils/helpers.js";
-import { getLoader } from "../components/loader.js";
-import { startGame } from "../services/game.service.js";
-import { DEFAULT_WORD_LENGTH, DEFAULT_MAX_ATTEMPTS } from "../constants.js";
+import { clickHowToPlayButton, clickOptionsButton, clickStartGameButton } from "../services/event.service.js";
 
-/*
- * Renders the home container view.
+/**
+ * Builds the home container view within the content container.
  */
 export const buildHomeView = () => {
   const contentContainer = document.querySelector(".content");
@@ -12,7 +9,7 @@ export const buildHomeView = () => {
 
   const header = document.createElement("h1");
   header.classList.add("view-header");
-  header.textContent = "Word Game";
+  header.textContent = "Word Puzzle Game";
 
   const message = document.createElement("p");
   message.classList.add("message");
@@ -26,13 +23,10 @@ export const buildHomeView = () => {
   contentContainer.appendChild(buttonContainer);
 };
 
-export const updateHomeMessage = (message) => {
-  const messageElement = document.querySelector(".message");
-  if (message) {
-    messageElement.textContent = message;
-  }
-};
 
+/**
+ * Builds the button container and creates the buttons for display.
+ */
 const buildButtonContainer = () => {
   const buttonContainer = document.createElement("div");
   buttonContainer.classList.add("button-container");
@@ -40,32 +34,19 @@ const buildButtonContainer = () => {
   const howToPlayButton = document.createElement("button");
   howToPlayButton.classList.add("button", "fixed");
   howToPlayButton.type = "button";
-  howToPlayButton.innerHTML =
-    "<img src='/assets/material-icons/help.svg' style='vertical-align: -6px'> How to Play";
-  howToPlayButton.addEventListener("click", () => {
-    showView("how-to-play");
-  });
+  howToPlayButton.innerHTML = "<img src='/assets/material-icons/help.svg' style='vertical-align: -6px'> How to Play";
+  howToPlayButton.addEventListener("click", clickHowToPlayButton);
 
   const optionsButton = document.createElement("button");
   optionsButton.classList.add("button", "fixed");
-  optionsButton.innerHTML =
-    "<img src='/assets/material-icons/tune.svg' style='vertical-align: -6px'> Options";
-  optionsButton.addEventListener("click", () => {
-    showView("options");
-  });
+  optionsButton.innerHTML = "<img src='/assets/material-icons/tune.svg' style='vertical-align: -6px'> Options";
+  optionsButton.addEventListener("click", clickOptionsButton);
 
   const startGameButton = document.createElement("button");
   startGameButton.classList.add("button", "fixed");
   startGameButton.type = "button";
-  startGameButton.innerHTML =
-    "<img src='/assets/material-icons/play-arrow.svg' style='vertical-align: -6px'> Start Game";
-  startGameButton.addEventListener("click", () => {
-    startGame({
-      wordLength: DEFAULT_WORD_LENGTH,
-      maxAttempts: DEFAULT_MAX_ATTEMPTS,
-      language: "enUS",
-    });
-  });
+  startGameButton.innerHTML = "<img src='/assets/material-icons/play-arrow.svg' style='vertical-align: -6px'> Start Game";
+  startGameButton.addEventListener("click", clickStartGameButton);
 
   buttonContainer.appendChild(howToPlayButton);
   buttonContainer.appendChild(startGameButton);

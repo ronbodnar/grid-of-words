@@ -1,7 +1,8 @@
-import { generatedSquare, updateSquareBackground } from "./square.js";
+import { generatedSquare } from "./square.js";
+import { updateSquareBackground } from "../../services/gameboard.service.js";
 import { getValidatedLetters } from "../../utils/helpers.js";
 
-/*
+/**
  * Generates a row of squares of the word length for the game.
  * @param {Game} game - The game to generate the row for.
  * @param {index} index - The row's index on the board.
@@ -11,7 +12,11 @@ export const generatedRow = (index, cols, game) => {
   const active = index === (game?.attempts?.length || 0);
   const row = document.createElement("div");
   row.classList.add("word-row");
-  if (active) row.classList.add("active");
+
+  // Add the active class to the row if the index matches the number of attempts in the game.
+  if (active) {
+    row.classList.add("active");
+  }
 
   // Add squares equal to the length of the word in the row
   for (var j = 0; j < cols; j++) {
@@ -21,6 +26,7 @@ export const generatedRow = (index, cols, game) => {
     if (game && index < game.attempts.length) {
       square.children[0].textContent = game.attempts[index].at(j).toUpperCase();
 
+      // Get the validated letter positions to update the square backgrounds.
       const validatedPositions = getValidatedLetters(
         game.attempts[index],
         game.word
@@ -30,6 +36,5 @@ export const generatedRow = (index, cols, game) => {
 
     row.appendChild(square);
   }
-
   return row;
-}
+};
