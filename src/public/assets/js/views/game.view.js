@@ -1,5 +1,5 @@
-import { buildGameBoard } from "../components/board/gameboard.js";
-import { buildOnScreenKeyboard } from "../components/keyboard/on-screen-keyboard.js";
+import { buildGameBoardElement } from "../components/board/gameboard.js";
+import { buildOnScreenKeyboardElement } from "../components/keyboard/on-screen-keyboard.js";
 import { clickForfeitGameButton } from "../services/event.service.js";
 
 /**
@@ -16,10 +16,29 @@ export const buildGameView = (options) => {
   const contentContainer = document.querySelector(".content");
   contentContainer.id = "game";
 
-  let board;
+  const gameboard = getGameBoardElement(options);
+  const keyboard = buildOnScreenKeyboardElement(options.game);
+  const buttonContainer = buildButtonContainer();
+
+  // Clear the existing content from the content container
+  contentContainer.innerHTML = "";
+
+  // Add the components to the game container
+  contentContainer.appendChild(buttonContainer);
+  contentContainer.appendChild(gameboard);
+  contentContainer.appendChild(keyboard);
+};
+
+/**
+ * Builds the game board component based on the given options.
+ *
+ * @param {Array} options
+ * @returns {Element} The built gameboard component.
+ */
+const getGameBoardElement = (options) => {
   if (options.game) {
     console.info("Rendering Game Container for game: ", options.game);
-    board = buildGameBoard(
+    return buildGameBoardElement(
       options.game.maxAttempts,
       options.game.word.length,
       options.game
@@ -28,11 +47,16 @@ export const buildGameView = (options) => {
     console.info(
       `Rendering Game Container with grid ${options.maxAttempts} x ${options.wordLength}`
     );
-    board = buildGameBoard(options.maxAttempts, options.wordLength);
+    return buildGameBoardElement(options.maxAttempts, options.wordLength);
   }
+};
 
-  const keyboard = buildOnScreenKeyboard(options.game);
-
+/**
+ * Builds the button container.
+ *
+ * @returns {Element} The built button container element.
+ */
+const buildButtonContainer = () => {
   const buttonContainer = document.createElement("div");
   buttonContainer.style.display = "flex";
   buttonContainer.style.justifyContent = "start";
@@ -47,13 +71,8 @@ export const buildGameView = (options) => {
   forfeitButton.type = "button";
   forfeitButton.innerHTML = "Forfeit";
   forfeitButton.addEventListener("click", clickForfeitGameButton);
+
   buttonContainer.appendChild(forfeitButton);
 
-  // Clear the existing content from the content container
-  contentContainer.innerHTML = "";
-
-  // Add the components to the game container
-  contentContainer.appendChild(buttonContainer);
-  contentContainer.appendChild(board);
-  contentContainer.appendChild(keyboard);
+  return buttonContainer;
 };

@@ -39,7 +39,7 @@ export const transformSquares = (hide) => {
             setTimeout(() => resolve(true), 300);
           }
         },
-        hide ? 0 : (delay += 400)
+        hide ? 0 : (delay += 300)
       );
     });
   });

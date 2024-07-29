@@ -12,7 +12,7 @@ import {
 import {
   toggleKeyboardOverlay,
   updateKeyboardKeys,
-} from "../components/keyboard/on-screen-keyboard.js";
+} from "./keyboard.service.js";
 
 // The list of letters that the user has entered for the current attempt.
 let attemptLetters = [];

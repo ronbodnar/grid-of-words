@@ -1,11 +1,11 @@
-import { generatedRow } from "./row.js";
+import { buildWordRowElement } from "./row.js";
 
 /**
  * Generates the grid board to house the letter squares.
  * @param {Game} game - The game for building the grid board.
  * @returns {HTMLDivElement} - The board div element with all children.
  */
-export const buildGameBoard = (rows, cols, game) => {
+export const buildGameBoardElement = (rows, cols, game) => {
   const board = document.createElement("div");
   board.classList.add("board");
 
@@ -16,7 +16,7 @@ export const buildGameBoard = (rows, cols, game) => {
 
   // Iteratively add rows equal to the number of max attempts
   for (var i = 0; i < rows; i++) {
-    const row = generatedRow(i, cols, game);
+    const row = buildWordRowElement(i, cols, game);
     board.appendChild(row);
   }
 
