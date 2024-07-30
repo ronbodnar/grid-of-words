@@ -3,20 +3,24 @@ import express from "express";
 import { router as wordRoutes } from "./word.route.js";
 import { router as gameRoutes } from "./game.route.js";
 import { router as attemptRoutes } from "./attempt.route.js";
+import { router as authenticationRoutes } from "./authentication.route.js";
 import { __dirname } from "../constants.js";
 import { getGameById } from "../repository/game.repository.js";
-import { checkBearer } from "../middleware/bearer-auth.js";
+import { checkAuthentication } from "../middleware/authentication.js";
 
 export const router = express.Router();
 
 // Add the word routes to the router.
-router.use("/word", checkBearer, wordRoutes);
+router.use("/word", checkAuthentication, wordRoutes);
 
 // Add the game and attempt/guess routes to the router.
-router.use("/game", checkBearer, gameRoutes, attemptRoutes);
+router.use("/game", gameRoutes, attemptRoutes);
+
+// Add the authentication routes to the router.
+router.use("/auth", authenticationRoutes)
 
 // Serve any session data for the user in the initial GET request.
-router.get("/session", checkBearer, async function (req, res) {
+router.get("/session", async function (req, res) {
   let game = undefined;
   if (req.session.gameId) {
     game = await getGameById(req.session.gameId);

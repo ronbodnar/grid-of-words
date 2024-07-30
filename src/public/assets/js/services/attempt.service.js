@@ -225,6 +225,7 @@ export const validateAttempt = (game) => {
   const attemptLetters = getAttemptLetters();
   const attemptWord = attemptLetters.join("");
 
+  console.log(`Validating attempt of "${attemptWord}" for game `, game);
   // Validate word length
   if (attemptLetters.length != game.word.length) {
     showMessage("Not enough letters");

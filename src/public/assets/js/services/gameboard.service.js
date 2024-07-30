@@ -85,7 +85,7 @@ export const removeLastSquareValue = () => {
 
   // If there are letters, adjust the square properties and pop the attemptLetter stack.
   if (getAttemptLetters().length > 0) {
-    const lastSquare = squares[getAttemptLetters().length - 1];
+    const lastSquare = squares[getAttemptLetters().length  - 1];
     lastSquare.classList.remove("full");
     lastSquare.children[0].textContent = "";
     getAttemptLetters().pop();

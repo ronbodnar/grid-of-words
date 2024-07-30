@@ -2,6 +2,7 @@ import path from "node:path";
 import express from "express";
 import bodyParser from "body-parser";
 import rateLimit from "express-rate-limit";
+import session from "express-session";
 import cookieSession from "cookie-session";
 import { router as routes } from "../routes/index.js";
 import { __dirname } from "../constants.js";
@@ -17,6 +18,14 @@ app.use(
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
   })
 );
+
+// Set up the session middleware.
+app.use(session({
+  resave: false, // don't save unmodified sessions
+  saveUninitialized: false, // don't create empty sessions
+  name: process.env.SESSION_NAME,
+  secret: process.env.SESSION_SECRET,
+}));
  
 // Limit requests to 1 per second.
 app.use(
