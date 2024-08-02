@@ -44,6 +44,22 @@ strong {
   margin: 0 auto;
 }
 
+.submessage {
+  font-size: 16px;
+  margin-top: 20px;
+}
+
+.submessage > a {
+  font-size: 16px;
+  color: rgba(0, 163, 108, 0.6);
+  cursor: pointer;
+  transition: 0.3s all ease-in-out;
+}
+
+.submessage > a:hover {
+  opacity: 0.6;
+}
+
 .view-header {
   font-size: 36px;
   margin-bottom: 25px;
@@ -61,15 +77,11 @@ strong {
 }
 
 .content {
+  width: 100%;
   min-width: 100%;
   min-height: 100%;
 
   padding: 1em;
-
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap; 
-  justify-content: center;
 
   text-align: center;
 }
@@ -146,6 +158,17 @@ strong {
   }
 }
 
+.flex-center {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+/* .flex-center > * {
+  flex: 1;
+} */
+
 @media screen and (min-width: 768px) {
   .options-container {
     width: 50%;
@@ -155,17 +178,7 @@ strong {
 }
 
 .option-row {
-  display: flex;
-  justify-content: center;
-  width: 100%;
   text-align: start;
-}
-
-.option-row-checkbox {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 50px;
 }
 
 .option-row > * {
@@ -176,49 +189,13 @@ strong {
   margin-bottom: 20px;
 }
 
+.option-row-checkbox {
+  gap: 50px;
+}
+
 .slider-value {
   font-size: 18px;
   margin-left: 15px;
-}
-
-.stats-row {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 5px;
-}
-
-.stats-row-50 {
-  width: 50%;
-  flex-direction: column;
-  margin-bottom: 5px;
-}
-
-.stats-row-1 {
-  width: 33%;
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 5px;
-}
-
-.stat-label {
-  font-size: 18px;
-}
-
-.stat-label-fw {
-  width: 100%;
-  font-size: 20px;
-  font-weight: 600;
-  margin: 1.5em 0 0.5em 0;
-}
-
-.stat-value {
-  font-size: 20px;
-}
-
-sup {
-  font-size: 14px;
 }
 
 .button-container {
@@ -320,9 +297,6 @@ sup {
 .square-value-container {
   width: 100%;
   height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   background-color: transparent;
   transition: 0.75s;
 }
@@ -366,8 +340,6 @@ sup {
 .word-row {
   position: relative;
   width: 100%;
-  display: flex;
-  justify-content: center;
   gap: 5px;
   margin: 0 auto;
 }
@@ -379,8 +351,6 @@ sup {
 @media screen and (min-width: 768px) {
   .word-row {
     width: 100%;
-    display: flex;
-    justify-content: center;
     gap: 3px;
     margin: 0 auto;
   }
@@ -404,9 +374,6 @@ sup {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
   border-radius: 5px;
 }
 
@@ -546,6 +513,20 @@ sup {
   text-align: start;
   flex-direction: column;
   align-items: center;
+}
+
+.login-form {
+  width: 50%;
+  margin: 0 auto;
+}
+
+.login-form > * {
+  flex: 1;
+  width: 100%;
+}
+
+.login-form > *:not(:last-child) {
+  margin-bottom: 10px;
 }
 
 /*

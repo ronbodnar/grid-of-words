@@ -6,6 +6,7 @@ import { forfeitGame, startGame } from "./game.service.js";
 import { processAttempt } from "./attempt.service.js";
 import { getCurrentViewName, showView } from "../utils/helpers.js";
 import { DEFAULT_MAX_ATTEMPTS, DEFAULT_WORD_LENGTH } from "../constants.js";
+import { authenticate } from "./authentication.service.js";
 
 // When we are performing certain tasks, we don't want to accept user input and block it conditionally.
 let blockKeyEvents = false;
@@ -107,6 +108,32 @@ export const clickOptionsButton = () => {
 export const clickHowToPlayButton = () => {
   showView("how-to-play");
 };
+
+/**
+ * Tries to authenticate with the server using the input username and password.
+ */
+export const clickLoginButton = () => {
+  const username = document.querySelector("#username");
+  const password = document.querySelector("#password");
+  authenticate(username?.value, password?.value);
+};
+
+/**
+ * TODO: handle logic for registration
+ */
+export const clickRegisterButton = () => {
+  console.log("Register clicked");
+};
+
+export const clickLoginMessage = (event) => {
+  const targetId = event.target.id;
+  if (!targetId) return;
+
+  if (targetId === "loginButton") {
+    showView("login");
+  }
+  console.log(event);
+}
 
 /**
  * Enable or disable the blocking of key events during animations.

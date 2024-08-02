@@ -35,7 +35,7 @@ export const buildOnScreenKeyboardElement = (game) => {
 
   // Set up the loading overlay for the keyboard
   const overlay = document.createElement("div");
-  overlay.classList.add("keyboard-overlay", "hidden");
+  overlay.classList.add("flex-center", "keyboard-overlay", "hidden");
 
   const loading = buildLoadingElement();
   loading.classList.add("keyboard-loading");

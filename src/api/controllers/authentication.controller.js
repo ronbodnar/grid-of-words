@@ -1,28 +1,39 @@
-import logger from "../config/winston.config.js";
-import { authenticate } from "../services/authentication.service.js";
+import { authenticate, generateSession } from "../services/authentication.service.js";
 
-export const loginUser = (req, res) => {
-    const username = req.body.username;
-    const password = req.body.password;
+export const loginUser = async (req, res) => {
+  // What about when a user is already logged in?
 
-    if (!username || !password) {
-        return res.json({
-            status: "error",
-            error: "Username and password are required."
-        });
-    }
+  const username = req.body.username;
+  const password = req.body.password;
 
-    const validAuth = authenticate(username, password);
-
-    logger.info("Login request received", {
-        username: username,
-        password: password,
-        valid: validAuth,
+  if (!username || !password) {
+    return res.status(400).json({
+      status: "error",
+      error: "Username and password are required.",
     });
-}
+  }
 
-export const logoutUser = (req, res) => {
-}
+  const authenticatedUser = await authenticate(username, password);
 
-export const registerUser = (req, res) => {
-}
+  if (!authenticatedUser) {
+    return res.status(401).json({
+      error: "Invalid username or password.",
+    });
+  }
+
+  return generateSession(req, res, authenticatedUser);
+};
+
+export const whoisUser = (req, res) => {
+  if (req.session.user) {
+    res.json({
+      user: req.session.user,
+    });
+  } else {
+    res.status(401).end();
+  }
+};
+
+export const logoutUser = (req, res) => {};
+
+export const registerUser = (req, res) => {};
