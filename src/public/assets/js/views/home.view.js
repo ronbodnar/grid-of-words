@@ -1,4 +1,6 @@
+import { getAuthenticatedUser, isAuthenticated } from "../services/authentication.service.js";
 import { clickHowToPlayButton, clickLoginMessage, clickOptionsButton, clickStartGameButton } from "../services/event.service.js";
+import { remove } from "../services/storage.service.js";
 
 /**
  * Builds the home container view within the content container.
@@ -52,8 +54,17 @@ const buildButtonContainer = () => {
 
   const loginMessage = document.createElement("p");
   loginMessage.classList.add("submessage");
-  loginMessage.innerHTML = 'Want to save your progress? <a id="registerButton">Register</a> or <a id="loginButton">Log In</a>';
+  loginMessage.innerHTML = 'Want to save your progress?<br /><a id="registerButton">Register</a> or <a id="loginButton">Log In</a>';
   loginMessage.addEventListener("click", clickLoginMessage);
+
+  if (isAuthenticated()) {
+    loginMessage.innerHTML = `Welcome back, ${getAuthenticatedUser().username}! <a id="logoutButton">Log Out</a>`;
+    loginMessage.addEventListener("click", () => {
+      // TODO: server session destruction
+      remove("user");
+      window.location.reload();
+    });
+  }
 
   buttonContainer.appendChild(howToPlayButton);
   buttonContainer.appendChild(startGameButton);

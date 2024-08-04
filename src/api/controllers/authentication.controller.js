@@ -9,7 +9,7 @@ export const loginUser = async (req, res) => {
   if (!username || !password) {
     return res.status(400).json({
       status: "error",
-      error: "Username and password are required.",
+      error: "Username and password are required",
     });
   }
 
@@ -17,7 +17,7 @@ export const loginUser = async (req, res) => {
 
   if (!authenticatedUser) {
     return res.status(401).json({
-      error: "Invalid username or password.",
+      error: "Invalid username or password",
     });
   }
 

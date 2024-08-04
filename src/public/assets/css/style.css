@@ -39,9 +39,16 @@ strong {
   justify-content: center;
   font-size: 24px;
   color: #f4f3f2;
+  white-space: pre;
   height: 50px;
   width: 50%;
   margin: 0 auto;
+}
+
+@media screen and (max-width: 768px) {
+  .message {
+    width: 100%;
+  }
 }
 
 .submessage {
@@ -58,6 +65,12 @@ strong {
 
 .submessage > a:hover {
   opacity: 0.6;
+}
+
+.form-message {
+  font-size: 16px;
+  font-weight: 700;
+  color: rgba(227, 34, 39, 1);
 }
 
 .view-header {
@@ -114,6 +127,10 @@ strong {
   flex-direction: column;
 }
 
+.content#login {
+  flex-direction: column;
+}
+
 @media screen and (max-width: 768px) {
   .content#home {
     flex-direction: column;
@@ -165,15 +182,11 @@ strong {
   justify-content: center;
 }
 
-/* .flex-center > * {
-  flex: 1;
-} */
-
 @media screen and (min-width: 768px) {
   .options-container {
-    width: 50%;
+    width: 60%;
     margin: 1em auto;
-    padding: 50px;
+    padding: 20px;
   }
 }
 
@@ -221,15 +234,21 @@ strong {
 }
 
 .button {
-  border: 1px solid rgba(0, 163, 108, 0.4);
+  border: 1px solid rgba(0, 163, 108, 0.6);
   border-radius: 25px;
-  background-color: rgba(0, 163, 108, 0.4);
+  background-color: rgba(0, 163, 108, 0.6);
   color: #f4f3f2;
   padding: 0.5em 0.75em;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
   font-size: 20px;
   box-shadow: 7.4px 14.9px 14.9px hsl(0deg 0% 0% / 0.27);
+}
+
+.button.secondary {
+  border: 1px solid rgba(244, 243, 242, 0.8);
+  background-color: transparent;
+  color: rgba(244, 243, 242, 0.8);
 }
 
 .button.forfeit {
@@ -242,7 +261,7 @@ strong {
 }
 
 .button.fixed {
-  width: 80%
+  width: 80%;
 }
 
 @media screen and (min-width: 768px) {
@@ -433,7 +452,7 @@ strong {
 
 .delete-key {
   width: 60px;
-  background-image: url('/assets/material-icons/backspace.svg');
+  background-image: url("/assets/material-icons/backspace.svg");
   background-repeat: no-repeat;
   background-position: center center;
   background-size: 50%;
@@ -515,23 +534,93 @@ strong {
   align-items: center;
 }
 
-.login-form {
-  width: 50%;
-  margin: 0 auto;
+.form {
+  position: relative;
 }
 
-.login-form > * {
-  flex: 1;
+@media screen and (min-width: 768px) {
+  .form {
+    width: 50%;
+    margin: 0 auto;
+    flex-direction: column;
+  }
+
+  .form > label {
+    text-align: start;
+  }
+
+  .form > * {
+    flex: 1;
+    width: 100%;
+  }
+}
+
+.form > *:not(:nth-last-child(-n + 2)):not(.back-button) {
+  margin-bottom: 30px;
+}
+
+.back-button {
+  top: -100px;
+  left: -100px;
+
+  position: absolute;
+  margin-bottom: 0;
+
+  text-align: start;
+  font-size: 20px;
+
+  cursor: pointer;
+
+  transition: 0.3s all ease-in-out;
+}
+
+.back-button:hover {
+  opacity: 0.6;
+}
+
+
+@media screen and (min-width: 768px) {
+}
+
+input {
+  padding: 0.25em;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  transition: 0.75s;
   width: 100%;
+  height: 60px;
+  font-size: 20px;
 }
 
-.login-form > *:not(:last-child) {
-  margin-bottom: 10px;
+label {
+  font-size: 20px;
+  font-weight: 800;
 }
 
 /*
  * From https://cssloaders.github.io/
  */
+ .button-loader {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  vertical-align: -4px;
+  margin-left: 10px;
+  display: inline-block;
+  border-top: 3px solid #FFF;
+  border-right: 3px solid transparent;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+} 
+
 .loader {
   position: relative;
   width: 100px;

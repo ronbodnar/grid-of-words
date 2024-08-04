@@ -10,7 +10,7 @@ let messageTimeout = undefined;
  *
  * @param {String} message - The message to show.
  */
-export const showMessage = (message) => {
+export const showMessage = (message, hide = true) => {
   if (message.length < 1) return;
 
   // Update the message div with the response message
@@ -20,8 +20,10 @@ export const showMessage = (message) => {
   // Clear the previous message timeout to restart the hide delay
   if (messageTimeout) clearTimeout(messageTimeout);
 
-  // Set the message timeout to clear after the delay.
-  messageTimeout = setTimeout(() => {
-    messageDiv.textContent = "";
-  }, HIDE_MESSAGE_DELAY);
+  // Set the message timeout to clear after the delay if hide is true.
+  if (hide) {
+    messageTimeout = setTimeout(() => {
+      messageDiv.textContent = "";
+    }, HIDE_MESSAGE_DELAY);
+  }
 };

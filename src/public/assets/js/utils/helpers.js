@@ -5,6 +5,7 @@ import { buildHowToPlayView } from "../views/how-to-play.view.js";
 import { buildLoadingView } from "../views/loading.view.js";
 import { buildLoginView } from "../views/login.view.js";
 import { buildOptionsView } from "../views/options.view.js";
+import { buildRegisterView } from "../views/register.view.js";
 
 /**
  * Compares two words of assumed equal length to see which guessWord letter positions match, are invalid, or don't exist in the gameWord.
@@ -115,6 +116,10 @@ export const showView = (name, options) => {
 
     case "login":
       buildLoginView();
+      break;
+
+    case "register":
+      buildRegisterView();
       break;
 
     default:

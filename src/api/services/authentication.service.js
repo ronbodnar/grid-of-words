@@ -17,7 +17,7 @@ export const authenticate = async (user, pass) => {
 };
 
 export const generateSession = (req, res, authenticatedUser) => {
-  req.session.regenerate(function (err) {
+  return req.session.regenerate(function (err) {
     if (err) {
       logger.error("Error regenerating session", {
         error: err,
@@ -35,7 +35,7 @@ export const generateSession = (req, res, authenticatedUser) => {
       request: req,
     });
     return res.json({
-      message: "User logged in successfully.",
+      message: "User logged in successfully",
       user: authenticatedUser,
     });
   });
