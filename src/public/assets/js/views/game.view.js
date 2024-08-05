@@ -18,13 +18,17 @@ export const buildGameView = (options) => {
 
   const gameboard = getGameBoardElement(options);
   const keyboard = buildOnScreenKeyboardElement(options.game);
-  const buttonContainer = buildButtonContainer();
+
+  const forfeitButton = document.createElement("div");
+  forfeitButton.classList.add("back-button", "forfeit");
+  forfeitButton.innerHTML = "<img src='/assets/material-icons/block.svg' style='vertical-align: -4px;' width='18px' height='18px'> Forfeit Game";
+  forfeitButton.addEventListener("click", clickForfeitGameButton);
 
   // Clear the existing content from the content container
   contentContainer.innerHTML = "";
 
   // Add the components to the game container
-  contentContainer.appendChild(buttonContainer);
+  contentContainer.appendChild(forfeitButton);
   contentContainer.appendChild(gameboard);
   contentContainer.appendChild(keyboard);
 };
