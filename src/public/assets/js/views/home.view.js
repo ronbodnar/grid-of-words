@@ -16,6 +16,7 @@ export const buildHomeView = () => {
   const message = document.createElement("p");
   message.classList.add("message");
   message.textContent = "";
+  message.style.fontSize = "18px";
 
   const buttonContainer = buildButtonContainer();
 
@@ -35,6 +36,12 @@ const buildButtonContainer = () => {
   const buttonContainer = document.createElement("div");
   buttonContainer.classList.add("button-container");
 
+  const startGameButton = document.createElement("button");
+  startGameButton.classList.add("button", "fixed");
+  startGameButton.type = "button";
+  startGameButton.innerHTML = "<img src='/assets/material-icons/play-arrow.svg' style='vertical-align: -6px'> Start Game";
+  startGameButton.addEventListener("click", clickStartGameButton);
+
   const howToPlayButton = document.createElement("button");
   howToPlayButton.classList.add("button", "fixed");
   howToPlayButton.type = "button";
@@ -45,12 +52,6 @@ const buildButtonContainer = () => {
   optionsButton.classList.add("button", "fixed");
   optionsButton.innerHTML = "<img src='/assets/material-icons/tune.svg' style='vertical-align: -6px'> Options";
   optionsButton.addEventListener("click", clickOptionsButton);
-
-  const startGameButton = document.createElement("button");
-  startGameButton.classList.add("button", "fixed");
-  startGameButton.type = "button";
-  startGameButton.innerHTML = "<img src='/assets/material-icons/play-arrow.svg' style='vertical-align: -6px'> Start Game";
-  startGameButton.addEventListener("click", clickStartGameButton);
 
   const loginMessage = document.createElement("p");
   loginMessage.classList.add("submessage");
@@ -66,18 +67,10 @@ const buildButtonContainer = () => {
     });
   }
 
-  buttonContainer.appendChild(howToPlayButton);
   buttonContainer.appendChild(startGameButton);
+  buttonContainer.appendChild(howToPlayButton);
   buttonContainer.appendChild(optionsButton);
   buttonContainer.appendChild(loginMessage);
 
   return buttonContainer;
 };
-
-const register = () => {
-  console.log("Registering...");
-}
-
-const login = () => {
-  console.log("Logging in...");
-}

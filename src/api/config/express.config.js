@@ -1,6 +1,7 @@
 import path from "node:path";
 import express from "express";
 import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
 import session from "express-session";
 import { router as routes } from "../routes/index.js";
@@ -31,6 +32,9 @@ app.use(
 
 // Parse application/json content in the request body.
 app.use(bodyParser.json());
+
+// Parse cookies in the request body
+app.use(cookieParser());
 
 // Load the static assets from the assets folder
 app.use(express.static(path.join(__dirname, "..", "public")));

@@ -1,4 +1,4 @@
-import { findById, findByUsername } from "../repository/user.repository.js";
+import { findByEmail, findById } from "../repository/user.repository.js";
 
 export const getById = async (id) => {
     if (!id) return null;
@@ -8,10 +8,10 @@ export const getById = async (id) => {
     return user;
 }
 
-export const getByUsername = async (username) => {
-    if (!username) return null;
+export const getByEmail = async (email) => {
+    if (!email) return null;
 
-    const user = await findByUsername(username);
+    const user = await findByEmail(email);
 
     return user;
 }
