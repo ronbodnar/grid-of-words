@@ -1,6 +1,6 @@
 import { showView } from "../utils/helpers.js";
 import { showMessage } from "./message.service.js";
-import { store, retrieve } from "./storage.service.js";
+import { storeSession, retrieveSession, removeSession } from "./storage.service.js";
 
 export const authenticate = async (email, password) => {
   const loginButton = document.querySelector("#loginButton");
@@ -37,7 +37,7 @@ export const authenticate = async (email, password) => {
   }
 
   if (data.user) {
-    store("user", data.user);
+    storeSession("user", data.user);
     showView("home");
   }
 
@@ -83,17 +83,28 @@ export const register = async (email, username, password) => {
   }
 };
 
+export const logoutUser = async () => {
+  const response = await fetch(`/auth/logout/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  const data = await response.text();
+
+  removeSession("user");
+  removeSession("game");
+
+  console.log("Logout response", data);
+}
+
 export const isAuthenticated = () => {
-  const user = retrieve("user");
-  console.log(user);
-  if (user) {
-    return true;
-  }
-  //TODO: check with server async
-  return false;
+  const user = retrieveSession("user");
+  return user ? true : false;
 };
 
 export const getAuthenticatedUser = () => {
-  const user = retrieve("user");
+  const user = retrieveSession("user");
   return user;
 };

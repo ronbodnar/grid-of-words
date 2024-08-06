@@ -104,17 +104,14 @@ export const showView = (name, options) => {
     return;
   }
 
-  // Do not add to history when current view is "loading" or when options.ignoreAddToHistory is true.
+  // Do not add to history when current view is "loading" or when options.hideFromHistory is true.
   if (getCurrentViewName() !== "loading") {
-    if (
-      !options?.ignoreAddToHistory ||
-      options?.ignoreAddToHistoryoptions?.ignoreAddToHistory === false
-    ) {
+    if (!options?.hideFromHistory) {
       viewHistory.push(getCurrentViewName());
     }
   }
 
-  console.log("View history after showView: ", viewHistory);
+  //console.log("View history after showView: ", viewHistory);
   switch (name) {
     case "game":
       buildGameView({

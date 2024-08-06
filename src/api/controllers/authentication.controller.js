@@ -36,7 +36,6 @@ export const loginUser = async (req, res) => {
     });
   }
 
-
   // Hide the hash and salt from output (temporarily)
   //TODO: this is not a great solution
   delete authenticatedUser.hash;
@@ -97,8 +96,8 @@ export const registerUser = async (req, res) => {
     addJWTCookie(res, user);
     return res.json({
       status: "success",
-      message: "Registration successful"
-    })
+      message: "Registration successful",
+    });
   } else {
     return res.status(500).json({
       status: "error",
@@ -107,14 +106,12 @@ export const registerUser = async (req, res) => {
   }
 };
 
-export const whoisUser = (req, res) => {
-  if (req.cookies.token) {
-    res.json({
-      user: '',
-    });
-  } else {
-    res.status(401).end();
-  }
+export const logoutUser = (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    path: "/",
+  });
+  res.json({ status: "success", message: "Goodbye" });
 };
-
-export const logoutUser = (req, res) => {};

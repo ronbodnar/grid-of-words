@@ -40,17 +40,19 @@ export const getWordOfLength = async (length) => {
  */
 export const getWordsByLengthRange = async (minLength, maxLength) => {
   try {
-    // Set up the SQL query string.
-    var sql = `SELECT text, LENGTH(text) AS length FROM words HAVING length >= ? AND length <= ?`;
+    // Set up the SQL query string (can't use prepared statements for the REGEXP, but we clean minLength and maxLength in the controller.
+    var sql = `SELECT text, LENGTH(text) AS length FROM words WHERE text REGEXP '^[A-Za-z]{${minLength},${maxLength}}$'`;
     
     // Execute the query and retrieve the response.
-    const data = await query(sql, [minLength, maxLength]);
+    const data = await query(sql);
 
     // If the data is missing, return null.
     if (!data || !data[0]) return null;
 
-    // Return the list of words.
-    return data[0];
+    // Map just the text property from the object
+    const words = data[0].map((word) => word.text);
+
+    return words;
   } catch (error) {
     logger.error("Could not retrieve word list from database", {
       error: error,

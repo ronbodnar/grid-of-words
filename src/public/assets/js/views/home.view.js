@@ -1,6 +1,6 @@
 import { getAuthenticatedUser, isAuthenticated } from "../services/authentication.service.js";
 import { clickHowToPlayButton, clickLoginMessage, clickOptionsButton, clickStartGameButton } from "../services/event.service.js";
-import { remove } from "../services/storage.service.js";
+import { removeSession } from "../services/storage.service.js";
 
 /**
  * Builds the home container view within the content container.
@@ -60,11 +60,6 @@ const buildButtonContainer = () => {
 
   if (isAuthenticated()) {
     loginMessage.innerHTML = `Welcome back, ${getAuthenticatedUser().username}! <a id="logoutButton">Log Out</a>`;
-    loginMessage.addEventListener("click", () => {
-      // TODO: server session destruction
-      remove("user");
-      window.location.reload();
-    });
   }
 
   buttonContainer.appendChild(startGameButton);

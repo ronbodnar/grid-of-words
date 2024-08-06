@@ -1,4 +1,4 @@
-import { remove, retrieve, store } from "./storage.service.js";
+import { removeSession, retrieveSession, storeSession } from "./storage.service.js";
 import { showView } from "../utils/helpers.js";
 import { DEFAULT_WORD_LENGTH } from "../constants.js";
 import { toggleKeyboardOverlay } from "./keyboard.service.js";
@@ -61,7 +61,7 @@ export const startGame = async (options) => {
     });
 
     // Add the game to localStorage
-    store("game", gameData);
+    storeSession("game", gameData);
 
     console.log("Created Game Response", gameData);
   } catch (error) {
@@ -71,7 +71,7 @@ export const startGame = async (options) => {
 };
 
 export const forfeitGame = async () => {
-  const game = retrieve("game");
+  const game = retrieveSession("game");
 
   console.log("Forfeiting game...", game);
 
@@ -87,7 +87,7 @@ export const forfeitGame = async () => {
   })
     .then((response) => response.json())
     .then(() => {
-      remove("game");
+      removeSession("game");
       showView("home");
       return null;
     });
