@@ -10,12 +10,15 @@ let messageTimeout = undefined;
  *
  * @param {String} message - The message to show.
  */
-export const showMessage = (message, hide = true) => {
+export const showMessage = (message, hide = true, hideDelay = HIDE_MESSAGE_DELAY) => {
   if (message.length < 1) return;
+
+  console.log("Showing message with delay:", hideDelay, message);
 
   // Update the message div with the response message
   var messageDiv = document.querySelector(".message");
   if (messageDiv && message) {
+    console.log("Message div not found", message);
     messageDiv.classList.remove("hidden");
     messageDiv.innerHTML = message;
   }
@@ -27,6 +30,6 @@ export const showMessage = (message, hide = true) => {
   if (hide) {
     messageTimeout = setTimeout(() => {
       messageDiv.textContent = "";
-    }, HIDE_MESSAGE_DELAY);
+    }, hideDelay);
   }
 };

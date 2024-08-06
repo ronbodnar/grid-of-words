@@ -44,7 +44,7 @@ app.use("/", routes);
 
 app.use("*", function (req, res) {
   logger.info(`Request received at: ${req.url}`, {
-    session: req.session
+    cookies: req.cookies
   });
 });
 

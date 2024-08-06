@@ -3,8 +3,9 @@ import {
   clickLoginButton,
   clickLoginMessage,
 } from "../../services/event.service.js";
+import { showMessage } from "../../services/message.service.js";
 
-export const buildLoginView = () => {
+export const buildLoginView = (success) => {
   const contentContainer = document.querySelector(".content");
   contentContainer.id = "login";
 
@@ -18,15 +19,29 @@ export const buildLoginView = () => {
   header.classList.add("view-header");
   header.textContent = "Account Login";
 
-  const loginForm = buildForm();
+  const loginForm = buildForm(success);
 
   contentContainer.innerHTML = "";
   contentContainer.appendChild(backButton);
   contentContainer.appendChild(header);
   contentContainer.appendChild(loginForm);
+  
+  // Show the registration message for 10 secs and update its class list to show green text.
+  if (success === true) {
+    const messageDiv = document.querySelector(".message");
+    if (messageDiv) {
+      messageDiv.classList.add("success");
+      // Remove the success class after 11 seconds (1 second buffer so it doesn't change while it's showing).
+      setTimeout(() => {
+        messageDiv.classList.remove("success");
+      }, 11000);
+    }
+
+    showMessage("Registration successful. Please log in.", true, 10000);
+  }
 };
 
-const buildForm = () => {
+const buildForm = (success) => {
   const form = document.createElement("form");
   form.classList.add("form");
   form.onsubmit = () => {

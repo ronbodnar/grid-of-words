@@ -140,7 +140,7 @@ export const showView = (name, options) => {
       break;
 
     case "login":
-      buildLoginView();
+      buildLoginView((options?.success || undefined));
       break;
 
     case "register":
