@@ -1,6 +1,10 @@
 import { showView } from "../utils/helpers.js";
 import { showMessage } from "./message.service.js";
-import { storeSession, retrieveSession, removeSession } from "./storage.service.js";
+import {
+  storeSession,
+  retrieveSession,
+  removeSession,
+} from "./storage.service.js";
 
 export const authenticate = async (email, password) => {
   const loginButton = document.querySelector("#loginButton");
@@ -22,18 +26,21 @@ export const authenticate = async (email, password) => {
       email: email,
       password: password,
     }),
-  }).catch((err) => console.log(err));
+  }).catch((err) => {
+    console.error(err);
+    return undefined;
+  });
 
-  const data = await response.json();
+  const data = !response ? undefined :  await response.json();
 
-  if (data.status === "success") {
-  } else {
-    const message = data.message || "An error has occurred";
+  if (!data || data.status === "error") {
+    const message = data?.message || "An error has occurred";
     showMessage(message, false);
     if (loginButton) {
       loginButton.disabled = false;
     }
     loginButtonLoader?.classList.add("hidden");
+  } else if (data.success) {
   }
 
   if (data.user) {
@@ -91,13 +98,20 @@ export const logoutUser = async () => {
     },
   });
 
-  const data = await response.text();
+  const data = await response.json();
 
-  removeSession("user");
-  removeSession("game");
+  if (data && data.status) {
+    removeSession("user");
+    removeSession("game");
+    showView("home");
+    showMessage((data.message || "You have been successfully logged out."), true);
+    //window.location.reload(); // Force refresh to clear session data (can this be avoided?)
+  } else {
+    console.log("Error logging out");
+  }
 
   console.log("Logout response", data);
-}
+};
 
 export const isAuthenticated = () => {
   const user = retrieveSession("user");

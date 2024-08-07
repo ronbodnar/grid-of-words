@@ -10,7 +10,7 @@ import query from "../services/database.service.js";
 export const getWordOfLength = async (length) => {
   try {
     // Set up the SQL query string.
-    var sql = `SELECT * FROM words WHERE CHAR_LENGTH(text) = ? ORDER BY RAND() LIMIT 1`;
+    var sql = `SELECT text FROM words WHERE CHAR_LENGTH(text) = ? ORDER BY RAND() LIMIT 1`;
 
     // Execute the query and retrieve the response.
     const data = await query(sql, [length]);
@@ -41,7 +41,7 @@ export const getWordOfLength = async (length) => {
 export const getWordsByLengthRange = async (minLength, maxLength) => {
   try {
     // Set up the SQL query string (can't use prepared statements for the REGEXP, but we clean minLength and maxLength in the controller.
-    var sql = `SELECT text, LENGTH(text) AS length FROM words WHERE text REGEXP '^[A-Za-z]{${minLength},${maxLength}}$'`;
+    var sql = `SELECT text FROM words WHERE text REGEXP '^[A-Za-z]{${minLength},${maxLength}}$'`;
     
     // Execute the query and retrieve the response.
     const data = await query(sql);
@@ -71,13 +71,15 @@ export const getWordsByLengthRange = async (minLength, maxLength) => {
 export const wordExists = async (word) => {
   try {
     // Set up the SQL query string.
-    var sql = `SELECT COUNT(*) AS count FROM words WHERE text = ?`;
+    var sql = `SELECT * FROM words WHERE text = ? LIMIT 1`;
 
     // Execute the query and retrieve the response.
     const response = await query(sql, [word]);
 
-    // If the count is greater than 0, the word exists in the database.
-    return response[0][0].count > 0;
+    console.log("Response", response[0][0]);
+
+    // If no word is found from the query, this will be undefined, otherwise itll return the row data.
+    return response[0][0] !== undefined;
   } catch (error) {
     // this should only error when there are no results
     logger.info("Error validating word existence", {

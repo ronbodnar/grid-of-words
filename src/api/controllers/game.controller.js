@@ -12,71 +12,94 @@ import {
 } from "../constants.js";
 import { isUUID } from "../helpers.js";
 import logger from "../config/winston.config.js";
+import { getAuthenticatedUser } from "../services/authentication.service.js";
 
-/*
- * Endpoint: GET /game/new
- *
+/**
  * Generate a new game and get a random word with the provided length.
+ * 
+ * Endpoint: GET /game/new
  */
 export const generateGame = async (req, res) => {
   const wordLength = req.query.wordLength || DEFAULT_WORD_LENGTH;
   const maxAttempts = req.query.maxAttempts || DEFAULT_MAX_ATTEMPTS;
 
-  // Ensure wordLength is valid.
-  if (!(MINIMUM_WORD_LENGTH <= wordLength && wordLength <= MAXIMUM_WORD_LENGTH)) {
-    return res.json({
+  // Ensure wordLength within the allowed range.
+  // Respond with a 400 Bad Request if the value is out of bounds.
+  if (
+    !(MINIMUM_WORD_LENGTH <= wordLength && wordLength <= MAXIMUM_WORD_LENGTH)
+  ) {
+    return res.status(400).json({
       status: "error",
       message: "INVALID WORD LENGTH",
     });
   }
 
-  // Ensure maxAttempts is valid.
-  if (!(MINIMUM_MAX_ATTEMPTS <= maxAttempts && maxAttempts <= MAXIMUM_MAX_ATTEMPTS)) {
-    return res.json({
+  // Ensure maxAttempts is within the allowed range.
+  // Respond with a 400 Bad Request if the value is out of bounds.
+  if (
+    !(
+      MINIMUM_MAX_ATTEMPTS <= maxAttempts && maxAttempts <= MAXIMUM_MAX_ATTEMPTS
+    )
+  ) {
+    return res.status(400).json({
       status: "error",
-      message: "INVALID MAX ATTEMPTS"
-    })
-  }
-
-  // Generate the UUID and selet a random word of wordLength length.
-  const uuid = uuidv4();
-  const word = await getWordOfLength(wordLength);
-  if (!word) {
-    // We failed to generate a random word. Now what?
-    logger.error("Failed to fetch a word for new Game entry");
-    return res.json({ 
-      status: "error",
-      message: "Game creation failed: could not obtain a random word"
+      message: "INVALID MAX ATTEMPTS",
     });
   }
 
-  // Log the game creation event.
+  // Generate a v4 UUID for the new game.
+  const uuid = uuidv4();
+
+  // Select a random word of the provided length.
+  // Respond with a 500 Internal Server Error if no word was found.
+  const word = await getWordOfLength(wordLength);
+  if (!word) {
+    logger.error("Failed to fetch a word for new Game entry");
+    return res.status(500).json({
+      status: "error",
+      message: "Game creation failed: could not obtain a random word",
+    });
+  }
+
+  // Get the optional authenticated user who requested the new game.
+  const authenticatedUser = getAuthenticatedUser(req);
+
+  // Extract the user id from the authenticatedUser object or null if the user is not authenticated.
+  const userId = authenticatedUser?.id ? authenticatedUser.id : null;
+
+  // Insert a new game with the uuid, word, maxAttempts, and userId into the database.
+  // Respond with a 500 Internal Server Error if the insertion fails.
+  const createdGame = await insertGame(uuid, word, maxAttempts, userId);
+  if (createdGame == null) {
+    return res.status(500).json({
+      status: "error",
+      message: "Game creation failed: could not insert game into database",
+    });
+  }
+
+  // Save the created game as a cookie in the user's browser with a 30 day expiration.
+  res.cookie("game", createdGame, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 60 * 60 * 24 * 30,
+    sameSite: "strict",
+  });
+
   logger.info("Generated a new Game", {
     uuid: uuid,
     word: word,
     wordLength: wordLength,
-    maxAttempts: maxAttempts
+    maxAttempts: maxAttempts,
+    owner: authenticatedUser,
   });
-
-  // Create a new Game entry in the database with a generated UUID.
-  const createdGame = await insertGame(uuid, word, maxAttempts);
-  if (createdGame == null) {
-    return res.json({
-      status: "error",
-      message: "Game creation failed: could not insert game into database"
-    });
-  }
-
-  // Set the gameId session.
-  req.cookies.gameId = createdGame.id;
 
   res.json(createdGame);
 };
 
-/*
- * Endpoint: GET /game/{id}
- *
+/**
  * Retrieves a game object from the database.
+ * 
+ * Endpoint: GET /game/{id}
  */
 export const getGame = async (req, res) => {
   const gameId = req.params.id;
@@ -93,19 +116,20 @@ export const getGame = async (req, res) => {
   if (!isUUID(gameId)) {
     return res.json({
       status: "error",
-      message: "INVALID GAME ID FORMAT"
-    })
+      message: "INVALID GAME ID FORMAT",
+    });
   }
 
-  // Synchronously retrieve the game object from the database.
+  // Wait for the game object to be available from the database.
   const game = await getGameById(gameId);
+
   res.json(game);
 };
 
-/*
- * Endpoint: POST /game/{id}/forfeit
- *
+/**
  * Forfeits the specified game and clears the game session.
+ * 
+ * Endpoint: POST /game/{id}/forfeit
  */
 export const forfeitGame = async (req, res) => {
   const gameId = req.params.id;
@@ -122,8 +146,8 @@ export const forfeitGame = async (req, res) => {
   if (!isUUID(gameId)) {
     return res.json({
       status: "error",
-      message: "INVALID GAME ID FORMAT"
-    })
+      message: "INVALID GAME ID FORMAT",
+    });
   }
 
   // Clear the game session.

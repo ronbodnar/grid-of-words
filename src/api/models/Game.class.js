@@ -12,6 +12,7 @@ export class Game {
   endTime = undefined;
   attempts = undefined;
   maxAttempts = undefined;
+  ownerId = undefined;
 
   constructor(maxAttempts = DEFAULT_MAX_ATTEMPTS) {
     this.state = "STARTED";
@@ -26,10 +27,11 @@ export class Game {
     this.id = json.id;
     this.word = json.word;
     this.state = json.state;
-    this.maxAttempts = json.max_attempts;
-    this.startTime = new Date(json.start_timestamp);
-    if (json.end_timestamp != null) this.endTime = new Date();
+    this.maxAttempts = json.maxAttempts;
+    this.startTime = new Date(json.startTimestamp);
+    if (json.endTimestamp != null) this.endTime = new Date();
     if (json.attempts != null) this.attempts = json.attempts;
+    this.ownerId = json.ownerId
     return this;
   }
 
