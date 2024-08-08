@@ -2,16 +2,19 @@ import { fillNextSquare, removeLastSquareValue } from "./gameboard.service.js";
 import { forfeitGame, startGame } from "./game.service.js";
 import { processAttempt } from "./attempt.service.js";
 import { getCurrentViewName, showView, viewHistory } from "../utils/helpers.js";
-import { DEFAULT_MAX_ATTEMPTS, DEFAULT_WORD_LENGTH } from "../constants.js";
+import { DEFAULT_MAX_ATTEMPTS, DEFAULT_WORD_LENGTH, EMAIL_REGEX, USERNAME_REGEX } from "../constants.js";
 import {
   authenticate,
+  changePassword,
   logoutUser,
   register,
 } from "./authentication.service.js";
 import { showMessage } from "./message.service.js";
 
+//TODO: this has too many functions that belong in other modules.
+
 // When we are performing certain tasks, we don't want to accept user input and block it conditionally.
-let blockKeyEvents = false;
+var blockKeyEvents = false;
 
 /**
  * Add event listeners for global key press events.
@@ -19,7 +22,10 @@ let blockKeyEvents = false;
 export const addKeyListeners = () => {
   // Keypress only listens for keys that emit a value
   document.addEventListener("keypress", function (event) {
-    if (blockKeyEvents) return;
+    if (blockKeyEvents) {
+      console.log("Key events are blocked.");
+      return;
+    }
 
     const key = event.key;
 
@@ -37,7 +43,10 @@ export const addKeyListeners = () => {
 
   // Keydown is for non-value keys as well
   document.addEventListener("keydown", function (event) {
-    if (blockKeyEvents) return;
+    if (blockKeyEvents) {
+      console.log("Key events are blocked.");
+      return;
+    }
 
     const key = event.key;
 
@@ -52,7 +61,10 @@ export const addKeyListeners = () => {
  */
 export const clickKeyboardKey = (letter) => {
   console.log(letter);
-  if (isBlockKeyEvents()) return;
+  if (blockKeyEvents) {
+    console.log("Key events are blocked.");
+    return;
+  }
 
   if (letter === "delete") {
     removeLastSquareValue();
@@ -121,11 +133,13 @@ export const clickHowToPlayButton = () => {
 export const clickLoginButton = () => {
   const email = document.querySelector("#email")?.value;
   const password = document.querySelector("#password")?.value;
-  const emailRegex = /^[a-zA-Z0-9._+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   // Make sure the email doesn't have any invalid characters
-  if (!emailRegex.test(email)) {
-    showMessage("Invalid e-mail address format.", false);
+  if (!EMAIL_REGEX.test(email)) {
+    showMessage("Invalid e-mail address format.", {
+      className: "error",
+      hide: false,
+    });
     return;
   }
 
@@ -147,25 +161,31 @@ export const clickRegisterButton = () => {
     !confirmPasswordInput ||
     !usernameInput
   ) {
-    showMessage("Please check all form values and try again.", false);
+    showMessage("Please check all form values and try again.", {
+      className: "error",
+      hide: false,
+    });
     return;
   }
 
-  const usernameRegex = /^[a-zA-Z0-9 _-]{3,16}$/;
-  const emailRegex = /^[a-zA-Z0-9._+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-  if (!emailRegex.test(emailInput.value)) {
-    showMessage("Email is not a valid email address.", false);
+  if (!EMAIL_REGEX.test(emailInput.value)) {
+    showMessage("Email is not a valid email address.", {
+      className: "error",
+      hide: false,
+    });
     emailInput.classList.add("error");
     return;
   } else {
     emailInput.classList.remove("error");
   }
 
-  if (!usernameRegex.test(usernameInput.value)) {
+  if (!USERNAME_REGEX.test(usernameInput.value)) {
     showMessage(
       "Username must be 3-16 characters long.\r\nA-z, numbers, hyphen, underscore, spaces only.",
-      false
+      {
+        className: "error",
+        hide: false,
+      }
     );
     usernameInput.classList.add("error");
     return;
@@ -174,7 +194,10 @@ export const clickRegisterButton = () => {
   }
 
   if (passwordInput.value !== confirmPasswordInput.value) {
-    showMessage("Passwords do not match.", false);
+    showMessage("Passwords do not match.", {
+      className: "error",
+      hide: false,
+    });
     passwordInput.classList.add("error");
     confirmPasswordInput.classList.add("error");
     return;
@@ -185,6 +208,85 @@ export const clickRegisterButton = () => {
 
   register(emailInput.value, usernameInput.value, passwordInput.value);
 };
+
+export const clickChangePasswordButton = () => {
+  const submitButton = document.querySelector("button[type='submit']");
+  const submitLoader = document.querySelector("#submitFormLoader");
+
+  const currentPasswordInput = document.querySelector("#currentPassword");
+  const newPasswordInput = document.querySelector("#newPassword");
+  const confirmNewPasswordInput = document.querySelector("#confirmNewPassword");
+
+  if (!currentPasswordInput || !newPasswordInput || !confirmNewPasswordInput) {
+    console.error(
+      "Missing input element(s)",
+      currentPasswordInput,
+      newPasswordInput,
+      confirmNewPasswordInput
+    );
+    return;
+  }
+
+  submitButton?.setAttribute("disabled", "disabled");
+  submitLoader?.classList.remove("hidden");
+
+  const currentPassword = currentPasswordInput.value;
+  const newPassword = newPasswordInput.value;
+  const confirmNewPassword = confirmNewPasswordInput.value;
+
+  if (newPassword !== confirmNewPassword) {
+    showMessage("New passwords do not match.", {
+      className: "error",
+      hide: false,
+    });
+    submitLoader?.classList.add("hidden");
+    submitButton?.removeAttribute("disabled");
+    return;
+  }
+
+  submitLoader?.classList.add("hidden");
+
+  // Obtain the change password response from the API.
+  // Re-enable the form and display an error if no response is found or if we received an error status.
+  changePassword(currentPassword, newPassword).then((response) => {
+    console.log("changePasswordResponse", response);
+    if (!response || response.status === "error") {
+      submitButton?.removeAttribute("disabled");
+      showMessage((response.message || "An error has occurred. Please try again."), {
+        className: "error",
+        hide: false,
+      });
+    } else if (response.status === "success") {
+      showView("login", {
+        message: "Your password has been updated successfully.\r\nPlease log in with your new password."
+      })
+    }
+  });
+};
+
+export const clickForgotPasswordButton = () => {
+  const emailInput = document.querySelector("#email");
+  if (!emailInput) {
+    console.error("Missing email input element");
+    return;
+  }
+
+  if (!EMAIL_REGEX.test(emailInput.value)) {
+    showMessage("Email is not a valid email address.", {
+      className: "error",
+      hide: false,
+    });
+    return;
+  }
+
+  showMessage("If the email address entered belongs to your account, you will receive an email link to reset your password.");
+
+  console.log(emailInput.value);
+
+  // Verify email address
+
+  // Inform they will receive an email
+}
 
 export const clickLoginMessage = async (event) => {
   const targetId = event.target.id;
@@ -198,6 +300,8 @@ export const clickLoginMessage = async (event) => {
   } else if (targetId === "registerButton") {
     showView("register");
   } else if (targetId === "forgotPasswordButton") {
+    showView("forgot-password");
+  } else if (targetId === "changePassword") {
     showView("change-password");
   } else {
     console.log("Unknown event target:", targetId);

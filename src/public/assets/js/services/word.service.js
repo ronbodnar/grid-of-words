@@ -12,9 +12,10 @@ export const fetchWordList = async (
   minLength = MINIMUM_WORD_LENGTH,
   maxLength = MAXIMUM_WORD_LENGTH
 ) => {
-  return fetch(`word/list?minLength=${minLength}&maxLength=${maxLength}`, {
-    headers: {
-      Authorization: "Bearer v5Pd3vUK9iYjRxCa1H5VsBe9L18xs8UW", // :)
+  return fetch(`word/list`, {
+    params: {
+      minLength: minLength,
+      maxLength: maxLength,
     },
   })
     .then((response) => response.json())
@@ -29,6 +30,6 @@ export const fetchWordList = async (
  */
 export const wordExists = (word) => {
   const wordList = retrieveLocal("wordList");
-  if (!wordList) return true;
-  return true;//Array.of(wordList).includes(word);
+  if (!wordList || !Array.isArray(wordList)) return true;
+  return wordList.includes(word);
 };

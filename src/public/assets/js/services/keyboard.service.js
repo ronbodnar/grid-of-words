@@ -28,7 +28,7 @@ export const initializeKeyboardKeys = (game) => {
   // Create the keys for A-Z and add them to the keyboardKeys object.
   for (let i = 97; i <= 122; i++) {
     const letter = String.fromCharCode(i);
-    keyboardKeys[letter] = buildKeyElement(letter, letterStates);
+    keyboardKeys[letter] = buildKeyElement(letter, letterStates ? letterStates[letter] : undefined);
   }
 };
 

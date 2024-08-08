@@ -1,6 +1,7 @@
 import {
   removeSession,
   retrieveLocal,
+  retrieveSession,
   storeLocal,
   storeSession,
 } from "./services/storage.service.js";
@@ -36,7 +37,14 @@ if (sessionData?.game) {
   removeSession("game");
 }
 
-showView("home");
+const game = retrieveSession("game");
+if (game) { 
+  showView("game", {
+    game: game,
+  });
+} else {
+  showView("home");
+}
 
 // Ensure the user has the word list in the local storage, if not, asynchronously fetch and store the word list.
 const wordList = retrieveLocal("wordList");

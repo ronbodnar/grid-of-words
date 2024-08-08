@@ -1,6 +1,6 @@
 import {
   clickBackButton,
-  clickLoginButton,
+  clickChangePasswordButton,
 } from "../../services/event.service.js";
 
 export const buildChangePasswordView = () => {
@@ -19,7 +19,7 @@ export const buildChangePasswordView = () => {
 
   const submessage = document.createElement("div");
   submessage.classList.add("submessage");
-  submessage.textContent = "Enter a new password for your account.";
+  submessage.textContent = "Enter your current password and a new password for your account.";
 
   const form = buildForm();
 
@@ -34,7 +34,7 @@ const buildForm = () => {
   const form = document.createElement("form");
   form.classList.add("form");
   form.onsubmit = () => {
-    clickLoginButton();
+    clickChangePasswordButton();
     return false;
   }; // prevent submission
   form.style.marginTop = "25px";
@@ -63,20 +63,20 @@ const buildForm = () => {
   passwordInput.id = "newPassword";
 
   const confirmPasswordLabel = document.createElement("label");
-  confirmPasswordLabel.htmlFor = "confirmPassword";
-  confirmPasswordLabel.textContent = "Confirm Password";
+  confirmPasswordLabel.htmlFor = "confirmNewPassword";
+  confirmPasswordLabel.textContent = "Confirm New Password";
 
   const confirmPasswordInput = document.createElement("input");
   confirmPasswordInput.type = "password";
   confirmPasswordInput.placeholder = "Confirm your new password";
   confirmPasswordInput.required = true;
-  confirmPasswordInput.id = "confirmPassword";
+  confirmPasswordInput.id = "confirmNewPassword";
 
   const submitButton = document.createElement("button");
   submitButton.classList.add("button");
   submitButton.type = "submit";
   submitButton.innerHTML =
-    "Change Password <span class='button-loader hidden' id='sendPasswordResetButtonLoader'</span>";
+    "Change Password <span class='button-loader hidden' id='submitButtonLoader'</span>";
   submitButton.style.width = "60%";
   submitButton.style.cursor = "pointer";
   submitButton.style.marginTop = "10px";

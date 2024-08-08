@@ -12,8 +12,8 @@ export const authenticate = async (email, password) => {
     loginButton.disabled = true;
   }
 
-  const loginButtonLoader = document.querySelector("#loginButtonLoader");
-  loginButtonLoader?.classList.remove("hidden");
+  const submitButtonLoader = document.querySelector("#submitButtonLoader");
+  submitButtonLoader?.classList.remove("hidden");
 
   console.log("Trying to authenticate", email, password);
 
@@ -28,18 +28,21 @@ export const authenticate = async (email, password) => {
     }),
   }).catch((err) => {
     console.error(err);
-    return undefined;
+    return null;
   });
 
-  const data = !response ? undefined :  await response.json();
+  const data = !response ? undefined : await response.json();
 
   if (!data || data.status === "error") {
     const message = data?.message || "An error has occurred";
-    showMessage(message, false);
+    showMessage(message, {
+      hide: false,
+      className: "error",
+    });
     if (loginButton) {
       loginButton.disabled = false;
     }
-    loginButtonLoader?.classList.add("hidden");
+    submitButtonLoader?.classList.add("hidden");
   } else if (data.success) {
   }
 
@@ -55,8 +58,8 @@ export const register = async (email, username, password) => {
   const registerButton = document.querySelector("#registerButton");
   if (registerButton) registerButton.disabled = true;
 
-  const registerButtonLoader = document.querySelector("#registerButtonLoader");
-  registerButtonLoader?.classList.remove("hidden");
+  const submitButtonLoader = document.querySelector("#submitButtonLoader");
+  submitButtonLoader?.classList.remove("hidden");
 
   console.log("Trying to register", email, username, password);
 
@@ -70,9 +73,12 @@ export const register = async (email, username, password) => {
       username: username,
       password: password,
     }),
-  }).catch((err) => console.log(err));
+  }).catch((err) => {
+    console.log(err);
+    return null;
+  });
 
-  const data = await response.json();
+  const data = !response ? undefined : await response.json();
 
   console.log("registration response", data);
 
@@ -82,11 +88,14 @@ export const register = async (email, username, password) => {
     });
   } else {
     const message = data.message || "An error has occurred";
-    showMessage(message, false);
+    showMessage(message, {
+      className: "error",
+      hide: false,
+    });
     if (registerButton) {
       registerButton.disabled = false;
     }
-    registerButtonLoader?.classList.add("hidden");
+    submitButtonLoader?.classList.add("hidden");
   }
 };
 
@@ -96,21 +105,52 @@ export const logoutUser = async () => {
     headers: {
       "Content-Type": "application/json",
     },
+  }).catch((err) => {
+    console.error(err);
+    return null;
   });
 
-  const data = await response.json();
+  const data = !response ? undefined : await response.json();
 
   if (data && data.status) {
     removeSession("user");
     removeSession("game");
     showView("home");
-    showMessage((data.message || "You have been successfully logged out."), true);
+    showMessage(data.message || "You have been successfully logged out.");
     //window.location.reload(); // Force refresh to clear session data (can this be avoided?)
   } else {
     console.log("Error logging out");
   }
-
   console.log("Logout response", data);
+};
+
+export const changePassword = async (currentPassword, newPassword) => {
+  const submitButtonLoader = document.querySelector("#submitButtonLoader");
+  const changePasswordButton = document.querySelector("#submitButton");
+
+  if (changePasswordButton) changePasswordButton.disabled = true;
+  submitButtonLoader?.classList.remove("hidden");
+
+  const response = await fetch(`/auth/change-password/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      currentPassword: currentPassword,
+      newPassword: newPassword,
+    }),
+  }).catch((err) => {
+    console.log(err);
+    return null;
+  });
+
+  const data = !response ? undefined : await response.json();
+
+  submitButtonLoader?.classList.add("hidden");
+  if (changePasswordButton) changePasswordButton.disabled = false;
+
+  return data;
 };
 
 export const isAuthenticated = () => {

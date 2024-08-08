@@ -51,6 +51,14 @@ strong {
   }
 }
 
+.message.success {
+  color: rgba(0, 163, 108, 0.9);
+}
+
+.message.error {
+  color: rgba(227, 34, 39, 0.9);
+}
+
 .submessage {
   font-size: 16px;
   margin-top: 20px;
@@ -77,10 +85,6 @@ strong {
   font-weight: 700;
   color: rgba(227, 34, 39, 0.9);
   margin: 15px 0;
-}
-
-.form-message.success {
-  color: rgba(0, 163, 108, 0.9);
 }
 
 .form-link {
@@ -196,8 +200,9 @@ strong {
 
 .flex-center {
   display: flex;
-  flex-wrap: wrap;
+  /* flex-wrap: wrap; */
   align-items: center;
+  flex-direction: column;
   justify-content: center;
 }
 

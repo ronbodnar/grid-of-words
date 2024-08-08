@@ -84,14 +84,14 @@ export const getLetterStates = (gameWord, attemptedWords) => {
     }
   }
 
-  // If there are no matched letters, return undefined instead of the letterMatchStates.
+  // If there are no matched letters, return null instead of the letterMatchStates.
   return Object.keys(letterMatchStates).length > 0
     ? letterMatchStates
-    : undefined;
+    : null;
 };
 
 // The stack of views so that the back button can return the user to where they were (does not keep previous states).
-export let viewHistory = [];
+export var viewHistory = [];
 
 /**
  * Clears the current content container's innerHTML and builds view containers.
@@ -99,6 +99,7 @@ export let viewHistory = [];
  * @param {object} options - A list of options that can be passed to views.
  */
 export const showView = (name, options) => {
+  // If loading view timeout is in effect, add a timeout for the new view
   if (!name || name === "") {
     console.error("No view name provided");
     return;
@@ -137,7 +138,7 @@ export const showView = (name, options) => {
       break;
 
     case "login":
-      buildLoginView((options?.success || undefined));
+      buildLoginView((options?.message || undefined));
       break;
 
     case "register":

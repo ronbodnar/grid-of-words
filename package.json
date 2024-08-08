@@ -1,5 +1,5 @@
 {
-  "name": "wordle-plus",
+  "name": "word-puzzle-game",
   "version": "1.0.0",
   "description": "My implementation of Wordle / Lingo in NodeJS and JavaScript with configuration for game modes.",
   "main": "src/index.js",
@@ -11,23 +11,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/ronbodnar/wordle-plus.git"
+    "url": "git+ssh://git@github.com/ronbodnar/word-puzzle-game.git"
   },
   "author": "Ron Bodnar",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ronbodnar/wordle-plus/issues"
+    "url": "https://github.com/ronbodnar/word-puzzle-game/issues"
   },
-  "homepage": "https://github.com/ronbodnar/wordle-plus#readme",
+  "homepage": "https://github.com/ronbodnar/word-puzzle-game#readme",
   "dependencies": {
     "async": "^3.2.5",
     "body-parser": "^1.20.2",
     "cookie-parser": "^1.4.6",
-    "cookie-session": "^2.1.0",
     "express": "^4.19.2",
     "express-rate-limit": "^7.4.0",
-    "express-session": "^1.18.0",
-    "express-validation": "^4.1.1",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.10.2",
     "uuid": "^10.0.0",

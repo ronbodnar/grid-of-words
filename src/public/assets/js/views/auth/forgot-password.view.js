@@ -1,6 +1,6 @@
 import {
   clickBackButton,
-  clickLoginButton,
+  clickForgotPasswordButton,
 } from "../../services/event.service.js";
 
 export const buildForgotPasswordView = () => {
@@ -35,7 +35,7 @@ const buildForm = () => {
   const form = document.createElement("form");
   form.classList.add("form");
   form.onsubmit = () => {
-    clickLoginButton();
+    clickForgotPasswordButton();
     return false;
   }; // prevent submission
   form.style.marginTop = "25px";
@@ -49,7 +49,7 @@ const buildForm = () => {
   emailLabel.textContent = "Email";
 
   const emailInput = document.createElement("input");
-  emailInput.type = "text";
+  emailInput.type = "email";
   emailInput.placeholder = "Email";
   emailInput.required = true;
   emailInput.id = "email";
@@ -58,7 +58,7 @@ const buildForm = () => {
   submitButton.classList.add("button");
   submitButton.type = "submit";
   submitButton.innerHTML =
-    "Send Email <span class='button-loader hidden' id='sendPasswordResetButtonLoader'</span>";
+    "Send Email <span class='button-loader hidden' id='submitButtonLoader'</span>";
   submitButton.style.width = "60%";
   submitButton.style.cursor = "pointer";
   submitButton.style.marginTop = "10px";

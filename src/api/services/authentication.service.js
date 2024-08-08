@@ -2,31 +2,32 @@ import crypto from "node:crypto";
 import jwt from "jsonwebtoken";
 import { getByEmail } from "./user.service.js";
 import logger from "../config/winston.config.js";
+import { User } from "../models/User.class.js";
 
-export const authenticate = async (email, pass) => {
+export const authenticate = async (email, password) => {
   const dbUser = await getByEmail(email);
-  if (dbUser === undefined) {
+  if (!dbUser) {
     return false;
   }
 
-  const salt = dbUser.hash.substring(0, 32);
-  const userHash = dbUser.hash.substring(32);
+  const salt = dbUser.getSalt();
+  const userHash = dbUser.getHash();
 
   // Hash the password with the user's salt (first 16 bytes/32 hex chars are the salt)
-  const hashedPass = hashPassword(pass, salt);
+  const hashedPassword = hashPassword(password, salt);
 
   logger.debug("Authentication Request received", {
     dbUserHashValue: dbUser.hash,
     salt: salt,
     userHash: userHash,
-    hashedPass: hashedPass,
+    hashedPass: hashedPassword,
   });
 
-  // Compare the hashed password with the stored password (remove the salt from the start of the hash)
-  if (hashedPass === userHash) {
+  // We 
+  if (hashedPassword === userHash) {
     return dbUser;
   } else {
-    return undefined;
+    return null;
   }
 };
 
@@ -34,7 +35,7 @@ export const setTokenCookie = (res, payload) => {
   // Make sure we received a payload.
   if (!payload) {
     console.error("No payload provided to setTokenCookie");
-    return undefined;
+    return null;
   }
 
   // Generate the JWT from the payload.
@@ -53,7 +54,7 @@ export const setTokenCookie = (res, payload) => {
   res.cookie("token", jwt, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    maxAge: 60 * 60 * 24 * 15, // 15 days
+    maxAge: 1000 * 60 * 60 * 24 * 15, // 15 days
     sameSite: "strict",
   });
   return jwt;
@@ -67,7 +68,7 @@ export const setApiKeyCookie = (res) => {
   res.cookie("apiKey", apiKey, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    maxAge: 60 * 60 * 24 * 30, // 30 days
+    maxAge: 1000 * 60 * 60 * 24 * 60, // 15 days
     sameSite: "strict",
   });
 };
@@ -106,9 +107,15 @@ export const hashPassword = (password, salt, algorithm = "sha256") => {
  * @returns {string} The generated token.
  */
 export const generateToken = (payload, expiresIn = "15d") => {
+  if (!payload) {
+    logger.error("No payload provided to generateToken", {
+      payload: payload
+    })
+    return;
+  }
   // Remove the hash property from the user object so it doesn't get included in the payload.
-  if (payload.user?.hash) {
-    delete payload.user.hash;
+  if (payload.data?.hash) {
+    delete payload.data.hash;
   }
 
   // Sign the payload with the JWT_SECRET and set the expiration time to 15 days.
@@ -156,12 +163,14 @@ export const getAuthenticatedUser = (req) => {
 
   // Decode token to get the payload.
   const decodedPayload = verifyToken(req.cookies.token);
-
+  
   // Validate the presence of a user object within the token's payload.
-  if (!decodedPayload?.data?.user) {
+  if (!decodedPayload?.data) {
     return null;
   }
 
+  const user = new User().fromJSON(decodedPayload.data);
+
   // Return the user object from the decoded payload.
-  return decodedPayload.user;
+  return user;
 };

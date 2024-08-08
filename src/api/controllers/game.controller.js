@@ -10,7 +10,7 @@ import {
   MAXIMUM_WORD_LENGTH,
   MINIMUM_WORD_LENGTH,
 } from "../constants.js";
-import { isUUID } from "../helpers.js";
+import { isUUID, setCookie } from "../helpers.js";
 import logger from "../config/winston.config.js";
 import { getAuthenticatedUser } from "../services/authentication.service.js";
 
@@ -77,13 +77,8 @@ export const generateGame = async (req, res) => {
     });
   }
 
-  // Save the created game as a cookie in the user's browser with a 30 day expiration.
-  res.cookie("game", createdGame, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    maxAge: 60 * 60 * 24 * 30,
-    sameSite: "strict",
-  });
+  // Save the created game as a cookie in the user's browser.
+  setCookie(res, "game", createdGame);
 
   logger.info("Generated a new Game", {
     uuid: uuid,
@@ -150,8 +145,8 @@ export const forfeitGame = async (req, res) => {
     });
   }
 
-  // Clear the game session.
-  req.cookies.gameId = undefined;
+  // Clear the game session from cookies.
+  res.clearCookie("game");
 
   // Update the game's state to FORFEIT and update the record in the repository.
   const game = await getGameById(gameId);

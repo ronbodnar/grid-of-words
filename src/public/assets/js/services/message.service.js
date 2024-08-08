@@ -9,27 +9,33 @@ let messageTimeout = undefined;
  * Update the message container in the current view (home or game) and sets a timeout to hide after a delay.
  *
  * @param {String} message - The message to show.
+ * @param {object} options - Key/value pairs for optional parameters.
  */
-export const showMessage = (message, hide = true, hideDelay = HIDE_MESSAGE_DELAY) => {
+export const showMessage = (message, options = {}) => {
   if (message.length < 1) return;
 
-  console.log("Showing message with delay:", hideDelay, message);
+  console.log(`Showing message "${message}" with ${(options.hideDelay ? options.hideDelay + 'ms' : 'no')} delay`);
 
   // Update the message div with the response message
   var messageDiv = document.querySelector(".message");
   if (messageDiv && message) {
-    console.log("Message div not found", message);
     messageDiv.classList.remove("hidden");
+    if (options.className) {
+      messageDiv.classList.add(options.className);
+    }
     messageDiv.innerHTML = message;
+  } else {
+    console.log(`Message div not found for message "${message}"`);
   }
 
   // Clear the previous message timeout to restart the hide delay
   if (messageTimeout) clearTimeout(messageTimeout);
 
   // Set the message timeout to clear after the delay if hide is true.
-  if (hide) {
+  if (options.hide && options.hide === true) {
     messageTimeout = setTimeout(() => {
       messageDiv.textContent = "";
-    }, hideDelay);
+      messageDiv.classList.remove(options.className);
+    }, (options.hideDelay || HIDE_MESSAGE_DELAY));
   }
 };
