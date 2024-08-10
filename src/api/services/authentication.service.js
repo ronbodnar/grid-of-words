@@ -78,8 +78,9 @@ export const setApiKeyCookie = (res) => {
  *
  * @returns {string} A randomly generated salt as a hexadecimal string.
  */
-export const generateSalt = () => {
-  const salt = crypto.randomBytes(16).toString("hex");
+export const generateSalt = (bytes) => {
+  bytes = bytes || 16;
+  const salt = crypto.randomBytes(bytes).toString("hex");
   return salt;
 };
 

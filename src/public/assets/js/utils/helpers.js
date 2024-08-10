@@ -9,6 +9,7 @@ import { buildOptionsView } from "../views/options.view.js";
 import { buildRegisterView } from "../views/auth/register.view.js";
 import { buildResetPasswordView } from "../views/auth/reset-password.view.js";
 import { buildChangePasswordView } from "../views/auth/change-password.view.js";
+import { retrieveSession } from "../services/storage.service.js";
 
 /**
  * Compares two words of assumed equal length to see which guessWord letter positions match, are invalid, or don't exist in the gameWord.
@@ -150,6 +151,12 @@ export const showView = (name, options) => {
       break;
 
     case "reset-password":
+      const passwordResetToken = retrieveSession("passwordResetToken");
+      if (!passwordResetToken) {
+        console.error("No reset token provided");
+        //TODO: the user experience
+        return;
+      }
       buildResetPasswordView();
       break;
 

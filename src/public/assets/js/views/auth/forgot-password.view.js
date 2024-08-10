@@ -20,7 +20,7 @@ export const buildForgotPasswordView = () => {
   const submessage = document.createElement("div");
   submessage.classList.add("submessage");
   submessage.textContent =
-    "Enter your email address and if it exists, you'll receive a password reset link.";
+    "Enter your email address to receive a password reset link.";
 
   const form = buildForm();
 
