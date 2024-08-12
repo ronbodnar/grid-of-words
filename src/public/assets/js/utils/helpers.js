@@ -86,9 +86,7 @@ export const getLetterStates = (gameWord, attemptedWords) => {
   }
 
   // If there are no matched letters, return null instead of the letterMatchStates.
-  return Object.keys(letterMatchStates).length > 0
-    ? letterMatchStates
-    : null;
+  return Object.keys(letterMatchStates).length > 0 ? letterMatchStates : null;
 };
 
 // The stack of views so that the back button can return the user to where they were (does not keep previous states).
@@ -99,21 +97,23 @@ export var viewHistory = [];
  * @param {string} name - The name of the view container to build and display.
  * @param {object} options - A list of options that can be passed to views.
  */
+// TODO: Lets convert this into a ViewManager later on.
 export const showView = (name, options) => {
-  // If loading view timeout is in effect, add a timeout for the new view
+  // If no name is provided we will just show the home view.
   if (!name || name === "") {
-    console.error("No view name provided");
+    showView("home");
     return;
   }
 
-  // Do not add to history when current view is "loading" or when options.hideFromHistory is true.
-  if (getCurrentViewName() !== "loading") {
-    if (!options?.hideFromHistory) {
-      viewHistory.push(getCurrentViewName());
-    }
+  // Do not add to history when current view is "loading" or "game", or when options.hideFromHistory is true.
+  if (
+    getCurrentViewName() !== "loading" &&
+    getCurrentViewName() !== "game" &&
+    !options?.hideFromHistory
+  ) {
+    viewHistory.push(getCurrentViewName());
   }
 
-  //console.log("View history after showView: ", viewHistory);
   switch (name) {
     case "game":
       buildGameView({
@@ -122,7 +122,7 @@ export const showView = (name, options) => {
         maxAttempts: options.maxAttempts,
       });
 
-      // Reset the view history.
+      // Reset the view history
       viewHistory = [];
       break;
 
@@ -139,7 +139,7 @@ export const showView = (name, options) => {
       break;
 
     case "login":
-      buildLoginView((options?.message || undefined));
+      buildLoginView(options?.message || undefined);
       break;
 
     case "register":
@@ -147,7 +147,7 @@ export const showView = (name, options) => {
       break;
 
     case "forgot-password":
-      buildForgotPasswordView();
+      buildForgotPasswordView(options?.message || undefined);
       break;
 
     case "reset-password":
@@ -166,6 +166,9 @@ export const showView = (name, options) => {
 
     default:
       buildHomeView();
+
+      // Reset the view history
+      viewHistory = [];
       break;
   }
 };

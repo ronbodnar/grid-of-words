@@ -64,9 +64,6 @@ export const processAttempt = async (game) => {
     transformSquaresPromise,
   ]);
 
-  // Handling of other responses without gameData.
-  console.log("Attempt response: ", response);
-
   // Hide the keyboard overlay
   toggleKeyboardOverlay(false);
 
@@ -92,12 +89,12 @@ export const processAttempt = async (game) => {
         case localGame.id !== remoteGame.id: // game id mismatch
         case localGame.word !== remoteGame.word: // game word mismatch
           console.error(
-            "There is a game data mismatch, reloading the game in 3 seconds..."
+            "There is a game data mismatch, reloading the game in 10 seconds..."
           );
           setTimeout(() => {
             storeSession("game", response.gameData);
             window.location.href = "/";
-          }, 3000);
+          }, 10000);
           return;
       }
 
@@ -139,7 +136,9 @@ const processServerResponse = async (game, data) => {
   var message = "Error";
 
   if (!data) {
-    showMessage("No response from server");
+    showMessage("No response from server", {
+      className: "error"
+    });
     return;
   }
 
@@ -236,8 +235,7 @@ const processServerResponse = async (game, data) => {
 export const validateAttempt = (game) => {
   const attemptLetters = getAttemptLetters();
   const attemptWord = attemptLetters.join("");
-
-  console.log(`Validating attempt of "${attemptWord}" for game `, game);
+  
   // Validate word length
   if (attemptLetters.length != game.word.length) {
     showMessage("Not enough letters");

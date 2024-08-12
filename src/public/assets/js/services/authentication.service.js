@@ -172,6 +172,51 @@ export const forgotPasswordResponse = async (email) => {
   return data;
 }
 
+export const resetPasswordResponse = async (token, newPassword) => {
+  const response = await fetch(`/auth/reset-password/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      passwordResetToken: token,
+      newPassword: newPassword,
+    }),
+  }).catch((err) => {
+    console.log(err);
+    return null;
+  });
+
+  const data = await response.json().catch((err) => {
+    console.error("Error parsing json response", err);
+    return null;
+  });
+
+  return data;
+}
+
+export const validateResetToken = async (passwordResetToken) => {
+  const response = await fetch(`/auth/validate/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      passwordResetToken: passwordResetToken,
+    }),
+  }).catch((err) => {
+    console.log(err);
+    return null;
+  });
+
+  const data = await response.json().catch((err) => {
+    console.error("Error parsing json response", err);
+    return null;
+  });
+
+  return data;
+}
+
 export const isAuthenticated = () => {
   const user = retrieveSession("user");
   return user ? true : false;

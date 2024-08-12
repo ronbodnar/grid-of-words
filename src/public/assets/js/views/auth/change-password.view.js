@@ -78,7 +78,6 @@ const buildForm = () => {
   submitButton.innerHTML =
     "Change Password <span class='button-loader hidden' id='submitButtonLoader'</span>";
   submitButton.style.width = "60%";
-  submitButton.style.cursor = "pointer";
   submitButton.style.marginTop = "10px";
 
   form.appendChild(currentPasswordLabel);

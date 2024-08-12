@@ -4,10 +4,10 @@ import { sendEmail } from "./email.service.js";
 
 export const sendResetPasswordEmail = async (user, token) => {
   const port =
-    process.env.PORT === "80" || process.env.port === "443"
+    process.env.NODE_ENV === "production"
       ? ""
       : ":" + process.env.PORT;
-  const resetUrl = process.env.HOSTNAME + port + "?token=" + token;
+  const resetUrl = process.env.HOST + port + "?token=" + token;
   const text =
     `Dear ${user.username},\n\n` +
     `We received a request to reset your password for your ${APP_NAME} account. If you didn't make this request, please ignore this email.\n\n` +

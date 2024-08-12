@@ -26,17 +26,11 @@ export const buildLoginView = (message) => {
   contentContainer.appendChild(header);
   contentContainer.appendChild(loginForm);
   
-  // Show the registration message for 10 secs and update its class list to show green text.
   if (message && message.length > 0) {
-    const messageDiv = document.querySelector(".message");
-    if (messageDiv) {
-      messageDiv.classList.add("success");
-    }
-
     const options = {
       hide: true,
       hideDelay: 10000,
-      class: "success",
+      className: "success",
     };
 
     showMessage(message, options);
@@ -89,7 +83,6 @@ const buildForm = () => {
   submitButton.innerHTML =
     "Log In <span class='button-loader hidden' id='submitButtonLoader'</span>";
   submitButton.style.width = "60%";
-  submitButton.style.cursor = "pointer";
   submitButton.style.marginTop = "10px";
 
   const registerMessage = document.createElement("p");

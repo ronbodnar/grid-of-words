@@ -1,7 +1,6 @@
 import {
   clickBackButton,
-  clickChangePasswordButton,
-  clickLoginButton,
+  clickResetPasswordButton,
 } from "../../services/event.service.js";
 
 export const buildResetPasswordView = () => {
@@ -36,7 +35,7 @@ const buildForm = () => {
   form.classList.add("form");
   form.style.marginTop = "25px";
   form.onsubmit = () => {
-    //clickResetPasswordButton();
+    clickResetPasswordButton();
     return false;
   };
 
@@ -44,32 +43,31 @@ const buildForm = () => {
   messageDiv.classList.add("message", "form-message", "hidden");
 
   const passwordLabel = document.createElement("label");
-  passwordLabel.htmlFor = "password";
+  passwordLabel.htmlFor = "newPassword";
   passwordLabel.textContent = "New Password";
 
   const passwordInput = document.createElement("input");
   passwordInput.type = "password";
   passwordInput.placeholder = "Enter your new password";
   passwordInput.required = true;
-  passwordInput.id = "password";
+  passwordInput.id = "newPassword";
 
   const confirmPasswordLabel = document.createElement("label");
-  confirmPasswordLabel.htmlFor = "password";
+  confirmPasswordLabel.htmlFor = "confirmNewPassword";
   confirmPasswordLabel.textContent = "Confirm Password";
 
   const confirmPasswordInput = document.createElement("input");
   confirmPasswordInput.type = "password";
   confirmPasswordInput.placeholder = "Confirm your new password";
   confirmPasswordInput.required = true;
-  confirmPasswordInput.id = "confirmPassword";
+  confirmPasswordInput.id = "confirmNewPassword";
 
   const submitButton = document.createElement("button");
   submitButton.classList.add("button");
   submitButton.type = "submit";
   submitButton.innerHTML =
-    "Change Password <span class='button-loader hidden' id='submitButtonLoader'</span>";
+    "Update Password <span class='button-loader hidden' id='submitButtonLoader'</span>";
   submitButton.style.width = "60%";
-  submitButton.style.cursor = "pointer";
   submitButton.style.marginTop = "10px";
 
   form.appendChild(passwordLabel);

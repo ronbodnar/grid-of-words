@@ -4,7 +4,7 @@ import fs from "node:fs";
 import app from "./api/config/express.config.js";
 import logger from "./api/config/winston.config.js";
 
-const hostname = process.env.HOSTNAME;
+const host = process.env.HOST;
 const port = process.env.PORT;
 let server;
 
@@ -23,6 +23,6 @@ if (process.env.NODE_ENV === "production") {
 // Start the express server
 server.listen(port, () => {
   logger.info(
-    `Server "${process.env.NODE_ENV}" running at http://${hostname}:${port}/`
+    `Server "${process.env.NODE_ENV}" running at http://${host}:${port}/`
   );
 });
