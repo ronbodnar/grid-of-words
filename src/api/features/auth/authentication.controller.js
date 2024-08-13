@@ -1,15 +1,18 @@
-import { EMAIL_REGEX, USERNAME_REGEX } from "../../constants.js";
+import { EMAIL_REGEX, USERNAME_REGEX } from "../../utils/constants.js";
 import logger from "../../config/winston.config.js";
 import { userRepository } from "../user/index.js";
 import { authService } from "./index.js";
 import { User } from "../user/index.js";
 import { sendPasswordResetEmail } from "../../services/reset-password.service.js";
+import { ValidationError } from "../../errors/ValidationError.js";
+import { UnauthorizedError } from "../../errors/UnauthorizedError.js";
+import { InternalError } from "../../errors/InternalError.js";
 /**
  * Performs authentication for the email and password combination provided in the request.
  *
  * Endpoint: /auth/login
  */
-export const loginUser = async (req, res) => {
+export const loginUser = async (req, res, next) => {
   // TODO: What about when a user is already logged in?
 
   // Extract email and password from the request body.
@@ -17,31 +20,26 @@ export const loginUser = async (req, res) => {
   const password = req.body.password;
 
   // Validate that the email and password are provided in the request.
+  // Pass the error handler a ValidationError if the email or password are missing.
   if (!email || !password) {
-    return res.status(400).json({
-      status: "error",
-      message: "Email and password are required.",
-    });
+    return next(new ValidationError("Email and password are required."));
   }
 
   // Attempt to authenticate the user with the provided email and password.
-  // Respond with a 401 Unauthorized status if the authentication fails.
+  // Pass the error handler an Unauthorized error if the authentication fails.
   const authenticatedUser = await authService.authenticate(email, password);
   if (!authenticatedUser) {
-    return res.status(401).json({
-      status: "error",
-      message: "Invalid email or password.",
-    });
+    return next(new UnauthorizedError("Invalid email or password."));
   }
 
   // Generate a JWT and set it in the cookie response.
-  // Respond with a 500 Internal Server Error if the token generation fails.
+  // Pass the error handler an InternalError if the token generation fails.
   const generatedToken = authService.setTokenCookie(res, authenticatedUser);
   if (!generatedToken) {
-    return res.status(500).json({
-      status: "error",
-      message: "Error adding JWT to cookies.",
-    });
+    return next(new InternalError("Adding token to cookies failed.", {
+      email: email,
+      authenticatedUser: authenticatedUser
+    }));
   }
 
   // Remove sensitive information from the token.
@@ -68,37 +66,24 @@ export const registerUser = async (req, res) => {
 
   // Ensure the username format is valid.
   if (!USERNAME_REGEX.test(username)) {
-    return res.status(400).json({
-      status: "error",
-      message:
-        "Username must be 3-16 characters long.\r\nA-z, numbers, hyphen, underscore, spaces only.",
-    });
+    return next(new ValidationError("Username must be 3-16 characters long.\r\nNo symbols other than - and _ allowed."));
   }
 
   // Ensure the e-mail format is valid.
   if (!EMAIL_REGEX.test(email)) {
-    return res.status(400).json({
-      status: "error",
-      message: "Email is not a valid email address.",
-    });
+    return next(new ValidationError("Email address is not valid."));
   }
 
   // Ensure the password is at least 8 characters long.
   if (password.length < 8) {
-    return res.status(400).json({
-      status: "error",
-      message: "Password must be at least 8 characters long.",
-    });
+    return next(new ValidationError("Password must be at least 8 characters long."));
   }
 
   // Try to find an existing user with the same email.
   const dbUser = await userRepository.findBy("email", email);
   if (dbUser) {
     // This is a potential security risk for bigger apps (exposing who uses the app)
-    return res.status(409).json({
-      status: "error",
-      message: "Email already in use.",
-    });
+    return next(new ValidationError("Email address is already registered."));
   }
 
   const user = new User(email, username, password);
@@ -110,10 +95,9 @@ export const registerUser = async (req, res) => {
       message: "Registration successful.",
     });
   } else {
-    return res.status(500).json({
-      status: "error",
-      message: "Failed to save user.",
-    });
+    return next(new InternalError("Failed to insert new user into the database.", {
+      user: user
+    }))
   }
 };
 
@@ -129,45 +113,31 @@ export const changePassword = async (req, res) => {
 
   // Validate that the required parameters are provided.
   if (!newPassword || !currentPassword) {
-    return res.status(400).json({
-      status: "error",
-      message: "Current and new passwords are required.",
-    });
+    return next(new ValidationError("Current and new passwords must be provided."));
   }
 
   // Validate that the new password does not match the current password.
   if (newPassword === currentPassword) {
-    return res.status(400).json({
-      status: "error",
-      message: "New password cannot be the same as the current password.",
-    });
+    return next(new ValidationError("New password cannot be the same as the current password."));
   }
 
   // Validate that the new password meets the complexity requirements.
   if (newPassword.length < 8) {
-    return res.status(400).json({
-      status: "error",
-      message: "New password must be at least 8 characters long.",
-    });
+    return next(new ValidationError("New password must be at least 8 characters long."));
   }
 
   // Grab the user that the token is claiming to be authenticate.
   // Respond with a 401 Unauthorized error if no auth user was found.
   const claimUser = authService.getAuthenticatedUser(req);
   if (!claimUser) {
-    return res.status(401).json({
-      status: "error",
-      message: "User is not authenticated.",
-    });
+    return next(new UnauthorizedError("User is not authenticated."));
   }
 
   // Look up the user in the database to get current information.
   const authenticatedUser = await userRepository.findBy("id", claimUser.getUUID());
   if (!authenticatedUser) {
-    return res.status(401).json({
-      status: "error",
-      message: "Please log out and back in to change your password.",
-    });
+    // Should it should show the login view?
+    return next(new UnauthorizedError("Please log out and back in to change your password."));
   }
 
   // Grab the salt and hashed passsword of the user.
@@ -179,10 +149,7 @@ export const changePassword = async (req, res) => {
 
   // Passwords aren't a match, so we respond with a 401 Unauthorized error.
   if (actualPasswordHash !== providedPasswordHash) {
-    return res.status(401).json({
-      status: "error",
-      message: "Current password is not correct.",
-    });
+    return next(new UnauthorizedError("The current password you provided is not correct."));
   }
 
   // Hash the new password with a new salt and then prepend with hash with the salt.
@@ -205,12 +172,9 @@ export const changePassword = async (req, res) => {
 export const forgotPassword = async (req, res) => {
   const email = req.body.email || "";
 
-  // Validate the email address and respond with a 400 Bad Request error if it's not valid.
+  // Validate the email address and throw a ValidationError if it's not valid.
   if (!EMAIL_REGEX.test(email)) {
-    return res.status(400).json({
-      status: "error",
-      message: "Invalid email address format.",
-    });
+    return next(new ValidationError("The email address is not a valid email format."));
   }
 
   // Attempt to retrieve a user with the specified email.
@@ -266,18 +230,12 @@ export const resetPassword = async (req, res) => {
   // Verify we have all the required body parameters.
   if (!newPassword || !passwordResetToken) {
     console.log("missing params");
-    return res.status(400).json({
-      status: "error",
-      message: "Missing required fields",
-    });
+    return next(new ValidationError("Missing required fields."));
   }
 
   // Password complexity requires 8 characters.
   if (newPassword.length < 8) {
-    return res.status(400).json({
-      status: "error",
-      message: "New password must be at least 8 characters long.",
-    });
+    return next(new ValidationError("New password must be at least 8 characters long."));
   }
 
   // Look up the reset token in the database.
@@ -286,10 +244,7 @@ export const resetPassword = async (req, res) => {
     passwordResetToken
   );
   if (!authenticatedUser) {
-    return res.status(401).json({
-      status: "error",
-      message: "The password reset token is invalid.",
-    });
+    return next(new UnauthorizedError("The password reset token is invalid."));
   }
 
   // Hash the new password with a new salt and then prepend with hash with the salt.
@@ -320,10 +275,7 @@ export const validatePasswordResetToken = async (req, res) => {
   const passwordResetToken = req.body.passwordResetToken;
 
   if (!passwordResetToken) {
-    return res.status(400).json({
-      status: "error",
-      message: "Missing password reset token.",
-    });
+    return next(new ValidationError("Missing password reset token."));
   }
 
   // Look up the reset token in the database.
@@ -332,11 +284,7 @@ export const validatePasswordResetToken = async (req, res) => {
     passwordResetToken
   );
   if (!authenticatedUser) {
-    return res.status(401).json({
-      status: "error",
-      message:
-        "The password reset token is invalid. Please request a new token.",
-    });
+    return next(new UnauthorizedError("The password reset token is invalid. Please request a new token."));
   }
 
   // Verify the current time is greater than the expiration of the password reset token.
@@ -345,11 +293,7 @@ export const validatePasswordResetToken = async (req, res) => {
     authenticatedUser.passwordResetTokenExpiration
   );
   if (Date.now() >= tokenExpiration) {
-    return res.status(401).json({
-      status: "error",
-      message:
-        "The password reset token has expired. Please request a new token.",
-    });
+    return next(new UnauthorizedError("The password reset token has expired. Please request a new token."));
   }
 
   return res.json({
@@ -386,5 +330,9 @@ export const getSession = (req, res) => {
   }
 
   // Respond with the session data in JSON format.
-  res.json(sessionData);
+  if (sessionData.length > 0)
+    res.json(sessionData);
+  else
+    res.end();
+  //res.json(sessionData.length > 0 ? sessionData : []);
 };

@@ -2,7 +2,7 @@ import {
   DEFAULT_WORD_LENGTH,
   MAXIMUM_WORD_LENGTH,
   MINIMUM_WORD_LENGTH,
-} from "../../constants.js";
+} from "../../utils/constants.js";
 import {
   getWordOfLength,
   getWordsByLengthRange,

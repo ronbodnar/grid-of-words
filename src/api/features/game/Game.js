@@ -1,4 +1,4 @@
-import { DEFAULT_MAX_ATTEMPTS } from "../../constants.js";
+import { DEFAULT_MAX_ATTEMPTS } from "../../utils/constants.js";
 import { saveGame } from "./game.repository.js";
 
 /*
