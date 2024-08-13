@@ -1,5 +1,5 @@
-import logger from "../config/winston.config.js";
-import query from "../services/database.service.js";
+import logger from "../../config/winston.config.js";
+import query from "../../services/database.service.js";
 
 /*
  * Inserts a new attempt into the game_attempts table.
@@ -16,12 +16,12 @@ export const insertAttempt = async (id, word) => {
 
   // If the insertion failed, log the error and return false.
   if (!response || response.affectedRows === 0) {
-    logger.error('Could not insert attempt into game_attempts table', {
+    logger.error("Could not insert attempt into game_attempts table", {
       id: id,
       word: word,
       response: response,
-      sql: sql
-    })
+      sql: sql,
+    });
     return false;
   }
   return true;
@@ -44,7 +44,7 @@ export const getAttemptsForGameId = async (id) => {
   } catch (err) {
     logger.error("Could not otain attempts for game", {
       id: id,
-      error: err
-  });
+      error: err,
+    });
   }
 };

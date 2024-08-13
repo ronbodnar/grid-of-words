@@ -2,11 +2,11 @@ import {
   DEFAULT_WORD_LENGTH,
   MAXIMUM_WORD_LENGTH,
   MINIMUM_WORD_LENGTH,
-} from "../constants.js";
+} from "../../constants.js";
 import {
   getWordOfLength,
   getWordsByLengthRange,
-} from "../repository/word.repository.js";
+} from "./word.repository.js";
 
 /**
  * Select a random word from the word table in the database.

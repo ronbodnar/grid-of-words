@@ -1,12 +1,13 @@
 import {
   getAttemptsForGameId,
   insertAttempt,
-} from "../repository/attempt.repository.js";
-import { wordExists } from "../repository/word.repository.js";
-import { getGameById } from "../repository/game.repository.js";
-import { isUUID, setCookie } from "../helpers.js";
-import logger from "../config/winston.config.js";
-import { getAuthenticatedUser } from "../services/authentication.service.js";
+} from "./attempt.repository.js";
+
+import logger from "../../config/winston.config.js";
+import { isUUID, setCookie } from "../../utils/helpers.js";
+import { gameRepository } from "../game/index.js";
+import { wordRepository } from "../word/index.js";
+import { authService } from "../auth/index.js";
 
 /**
  * Retrieves a list of attempts made for a Game.
@@ -61,7 +62,7 @@ export const addAttempt = async (req, res) => {
   }
 
   // Synchronously retrieve the game object and ensure it was found.
-  const game = await getGameById(gameId);
+  const game = await gameRepository.getGameById(gameId);
   if (!game) {
     return res.status(400).json({
       status: "error",
@@ -84,7 +85,7 @@ export const addAttempt = async (req, res) => {
       reqHeaders: req.headers,
       reqBody: req.body,
       reqCookies: req.cookies,
-      authenticatedUser: getAuthenticatedUser(req),
+      authenticatedUser: authService.getAuthenticatedUser(req),
     });
     return res.status(400).json({
       status: "error",
@@ -106,7 +107,7 @@ export const addAttempt = async (req, res) => {
       reqHeaders: req.headers,
       reqBody: req.body,
       reqCookies: req.cookies,
-      authenticatedUser: getAuthenticatedUser(req),
+      authenticatedUser: authService.getAuthenticatedUser(req),
     });
     return res.status(500).json({
       status: "error",
@@ -122,7 +123,7 @@ export const addAttempt = async (req, res) => {
       reqBody: req.body,
       reqCookies: req.cookies,
       game: game,
-      authenticatedUser: getAuthenticatedUser(req),
+      authenticatedUser: authService.getAuthenticatedUser(req),
     });
     return res.status(500).json({
       status: "error",
@@ -172,7 +173,7 @@ const validateAttempt = async (word, game) => {
   }
 
   // Validate that the word exists in the word list
-  var validWord = await wordExists(word);
+  var validWord = await wordRepository.wordExists(word);
   if (!validWord) {
     return "NOT_IN_WORD_LIST";
   }

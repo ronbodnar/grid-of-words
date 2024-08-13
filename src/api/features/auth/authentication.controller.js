@@ -1,18 +1,9 @@
-import { EMAIL_REGEX, USERNAME_REGEX } from "../constants.js";
-import logger from "../config/winston.config.js";
-import { User } from "../models/User.class.js";
-import { findBy, insertUser } from "../repository/user.repository.js";
-import {
-  setTokenCookie,
-  authenticate,
-  verifyToken,
-  setApiKeyCookie,
-  getAuthenticatedUser,
-  hashPassword,
-  generateSalt,
-} from "../services/authentication.service.js";
-import { sendResetPasswordEmail } from "../services/reset-password.service.js";
-
+import { EMAIL_REGEX, USERNAME_REGEX } from "../../constants.js";
+import logger from "../../config/winston.config.js";
+import { userRepository } from "../user/index.js";
+import { authService } from "./index.js";
+import { User } from "../user/index.js";
+import { sendPasswordResetEmail } from "../../services/reset-password.service.js";
 /**
  * Performs authentication for the email and password combination provided in the request.
  *
@@ -35,7 +26,7 @@ export const loginUser = async (req, res) => {
 
   // Attempt to authenticate the user with the provided email and password.
   // Respond with a 401 Unauthorized status if the authentication fails.
-  const authenticatedUser = await authenticate(email, password);
+  const authenticatedUser = await authService.authenticate(email, password);
   if (!authenticatedUser) {
     return res.status(401).json({
       status: "error",
@@ -45,7 +36,7 @@ export const loginUser = async (req, res) => {
 
   // Generate a JWT and set it in the cookie response.
   // Respond with a 500 Internal Server Error if the token generation fails.
-  const generatedToken = setTokenCookie(res, authenticatedUser);
+  const generatedToken = authService.setTokenCookie(res, authenticatedUser);
   if (!generatedToken) {
     return res.status(500).json({
       status: "error",
@@ -101,7 +92,7 @@ export const registerUser = async (req, res) => {
   }
 
   // Try to find an existing user with the same email.
-  const dbUser = await findBy("email", email);
+  const dbUser = await userRepository.findBy("email", email);
   if (dbUser) {
     // This is a potential security risk for bigger apps (exposing who uses the app)
     return res.status(409).json({
@@ -113,7 +104,7 @@ export const registerUser = async (req, res) => {
   const user = new User(email, username, password);
 
   // Try to save the user in the database.
-  if (await insertUser(user)) {
+  if (await userRepository.insertUser(user)) {
     return res.json({
       status: "success",
       message: "Registration successful.",
@@ -162,7 +153,7 @@ export const changePassword = async (req, res) => {
 
   // Grab the user that the token is claiming to be authenticate.
   // Respond with a 401 Unauthorized error if no auth user was found.
-  const claimUser = getAuthenticatedUser(req);
+  const claimUser = authService.getAuthenticatedUser(req);
   if (!claimUser) {
     return res.status(401).json({
       status: "error",
@@ -171,7 +162,7 @@ export const changePassword = async (req, res) => {
   }
 
   // Look up the user in the database to get current information.
-  const authenticatedUser = await findBy("id", claimUser.getUUID());
+  const authenticatedUser = await userRepository.findBy("id", claimUser.getUUID());
   if (!authenticatedUser) {
     return res.status(401).json({
       status: "error",
@@ -184,7 +175,7 @@ export const changePassword = async (req, res) => {
   const actualPasswordHash = authenticatedUser.getHash();
 
   // Hash the provided current password with the user's salt (first 16 bytes/32 hex chars of user hash are the salt)
-  const providedPasswordHash = hashPassword(currentPassword, salt);
+  const providedPasswordHash = authService.hashPassword(currentPassword, salt);
 
   // Passwords aren't a match, so we respond with a 401 Unauthorized error.
   if (actualPasswordHash !== providedPasswordHash) {
@@ -195,8 +186,8 @@ export const changePassword = async (req, res) => {
   }
 
   // Hash the new password with a new salt and then prepend with hash with the salt.
-  const newSalt = generateSalt();
-  const newPasswordHash = newSalt + hashPassword(newPassword, newSalt);
+  const newSalt = authService.generateSalt();
+  const newPasswordHash = newSalt + authService.hashPassword(newPassword, newSalt);
 
   // Update the user's hashed password and save it in the database.
   authenticatedUser.hash = newPasswordHash;
@@ -224,13 +215,13 @@ export const forgotPassword = async (req, res) => {
 
   // Attempt to retrieve a user with the specified email.
   // If no user is found, end the request (obscuring the results).
-  const dbUser = await findBy("email", email);
+  const dbUser = await userRepository.findBy("email", email);
   if (!dbUser) {
     return res.end();
   }
 
   // Generate a random 32-byte hex string.
-  const token = generateSalt(32);
+  const token = authService.generateSalt(32);
 
   dbUser.passwordResetToken = token;
   dbUser.passwordResetTokenExpiration = new Date(Date.now() + 1000 * 60 * 60); // 1 hour expiration.
@@ -252,7 +243,7 @@ export const forgotPassword = async (req, res) => {
 
   // Send a password reset email to the user containing a link to reset their password.
   // If the email sending fails, respond with a 500 Internal Server Error and log the error.
-  const sendEmailResponse = await sendResetPasswordEmail(dbUser, token);
+  const sendEmailResponse = await sendPasswordResetEmail(dbUser, token);
   if (!sendEmailResponse) {
     logger.error("Failed to send password reset email", {
       email: email,
@@ -290,7 +281,7 @@ export const resetPassword = async (req, res) => {
   }
 
   // Look up the reset token in the database.
-  const authenticatedUser = await findBy(
+  const authenticatedUser = await userRepository.findBy(
     "passwordResetToken",
     passwordResetToken
   );
@@ -302,8 +293,8 @@ export const resetPassword = async (req, res) => {
   }
 
   // Hash the new password with a new salt and then prepend with hash with the salt.
-  const newSalt = generateSalt();
-  const newPasswordHash = newSalt + hashPassword(newPassword, newSalt);
+  const newSalt = authService.generateSalt();
+  const newPasswordHash = newSalt + authService.hashPassword(newPassword, newSalt);
 
   // Update the user's hashed password and invalidate the passwordResetToken, then save the user with those values.
   authenticatedUser.hash = newPasswordHash;
@@ -336,7 +327,7 @@ export const validatePasswordResetToken = async (req, res) => {
   }
 
   // Look up the reset token in the database.
-  const authenticatedUser = await findBy(
+  const authenticatedUser = await userRepository.findBy(
     "passwordResetToken",
     passwordResetToken
   );
@@ -373,7 +364,7 @@ export const validatePasswordResetToken = async (req, res) => {
 export const getSession = (req, res) => {
   // If no API Key is present in the request, provide it to the user as an HttpOnly cookie.
   if (!req.cookies?.apiKey) {
-    setApiKeyCookie(res);
+    authService.setApiKeyCookie(res);
   }
 
   // The model to house session data like user and game information.
@@ -381,7 +372,7 @@ export const getSession = (req, res) => {
 
   // Verify the token cookie from the request if present.
   if (req.cookies?.token) {
-    const payload = verifyToken(req.cookies.token);
+    const payload = authService.verifyToken(req.cookies.token);
 
     // The payload has data containing our user object.
     if (payload?.data) {

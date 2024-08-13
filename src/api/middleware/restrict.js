@@ -1,4 +1,4 @@
-import { verifyToken } from "../services/authentication.service.js";
+import { verifyToken } from "../features/auth/authentication.service.js";
 
 /**
  * Restricts an API endpoint to requests containing the API key in a cookie or query parameter.
@@ -14,10 +14,7 @@ export const restrict = (req, res, next) => {
 
   // No key was found or the key provided doesn't match.
   if (!apiKey || apiKey !== process.env.API_KEY) {
-    return res.status(401).json({
-      status: "error",
-      message: "Invalid credentials.",
-    })
+    throw new Error("Unauthorized");
   }
 
   // No auth issues, carry on.

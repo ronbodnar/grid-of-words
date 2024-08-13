@@ -1,7 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
-
-import { getWordOfLength } from "../repository/word.repository.js";
-import { getGameById, insertGame } from "../repository/game.repository.js";
+import logger from "../../config/winston.config.js";
+import { getGameById, insertGame } from "./game.repository.js";
 import {
   DEFAULT_MAX_ATTEMPTS,
   MAXIMUM_MAX_ATTEMPTS,
@@ -9,14 +8,14 @@ import {
   DEFAULT_WORD_LENGTH,
   MAXIMUM_WORD_LENGTH,
   MINIMUM_WORD_LENGTH,
-} from "../constants.js";
-import { isUUID, setCookie } from "../helpers.js";
-import logger from "../config/winston.config.js";
-import { getAuthenticatedUser } from "../services/authentication.service.js";
+} from "../../constants.js";
+import { isUUID, setCookie } from "../../utils/helpers.js";
+import { wordRepository } from "../word/index.js";
+import { authService } from "../auth/index.js";
 
 /**
  * Generate a new game and get a random word with the provided length.
- * 
+ *
  * Endpoint: GET /game/new
  */
 export const generateGame = async (req, res) => {
@@ -52,7 +51,7 @@ export const generateGame = async (req, res) => {
 
   // Select a random word of the provided length.
   // Respond with a 500 Internal Server Error if no word was found.
-  const word = await getWordOfLength(wordLength);
+  const word = await wordRepository.getWordOfLength(wordLength);
   if (!word) {
     logger.error("Failed to fetch a word for new Game entry");
     return res.status(500).json({
@@ -62,7 +61,7 @@ export const generateGame = async (req, res) => {
   }
 
   // Get the optional authenticated user who requested the new game.
-  const authenticatedUser = getAuthenticatedUser(req);
+  const authenticatedUser = authService.getAuthenticatedUser(req);
 
   // Extract the user id from the authenticatedUser object or null if the user is not authenticated.
   const userId = authenticatedUser?.id ? authenticatedUser.id : null;
@@ -93,7 +92,7 @@ export const generateGame = async (req, res) => {
 
 /**
  * Retrieves a game object from the database.
- * 
+ *
  * Endpoint: GET /game/{id}
  */
 export const getGame = async (req, res) => {
@@ -123,7 +122,7 @@ export const getGame = async (req, res) => {
 
 /**
  * Forfeits the specified game and clears the game session.
- * 
+ *
  * Endpoint: POST /game/{id}/forfeit
  */
 export const forfeitGame = async (req, res) => {
@@ -156,7 +155,7 @@ export const forfeitGame = async (req, res) => {
       message: "GAME NOT FOUND",
     });
   }
-  
+
   game.state = "FORFEIT";
   game.save();
 

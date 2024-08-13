@@ -1,13 +1,10 @@
-import logger from "../config/winston.config.js";
 import { APP_NAME } from "../constants.js";
 import { sendEmail } from "./email.service.js";
 
-export const sendResetPasswordEmail = async (user, token) => {
+export const sendPasswordResetEmail = async (user, token) => {
   const port =
-    process.env.NODE_ENV === "production"
-      ? ""
-      : ":" + process.env.PORT;
-  const resetUrl = process.env.HOST + port + "?token=" + token;
+    process.env.NODE_ENV === "production" ? "" : ":" + process.env.PORT;
+  const resetUrl = process.env.APP_URL + port + "?token=" + token;
   const text =
     `Dear ${user.username},\n\n` +
     `We received a request to reset your password for your ${APP_NAME} account. If you didn't make this request, please ignore this email.\n\n` +
