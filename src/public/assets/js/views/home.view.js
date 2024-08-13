@@ -1,6 +1,9 @@
-import { getAuthenticatedUser, isAuthenticated } from "../services/authentication.service.js";
-import { clickHowToPlayButton, clickLoginMessage, clickOptionsButton, clickStartGameButton } from "../services/event.service.js";
-import { removeSession } from "../services/storage.service.js";
+import { createButton } from "../components/button.js";
+import {
+  getAuthenticatedUser,
+  isAuthenticated,
+} from "../features/auth/authentication.service.js";
+import { handleClickEvent } from "../services/event.service.js";
 
 /**
  * Builds the home container view within the content container.
@@ -14,9 +17,24 @@ export const buildHomeView = () => {
   header.textContent = "Word Puzzle Game";
 
   const message = document.createElement("p");
-  message.classList.add("message");
+  message.classList.add("message", "hidden");
   message.textContent = "";
   message.style.fontSize = "18px";
+
+  const loginMessage = document.createElement("p");
+  loginMessage.classList.add("submessage");
+  loginMessage.innerHTML =
+    'Want to save your progress?<br /><a id="showLogin">Log In</a> or <a id="showRegister">Register</a>';
+
+  // Replace the message content with options for authenticated users.
+  if (isAuthenticated()) {
+    loginMessage.innerHTML = `Welcome back, ${
+      getAuthenticatedUser().username
+    }!<br /><a id="showChangePassword">Change Password</a> or <a id="logout">Log Out</a>`;
+  }
+
+  // Add the custom click event handler.
+  loginMessage.addEventListener("click", handleClickEvent);
 
   const buttonContainer = buildButtonContainer();
 
@@ -24,48 +42,33 @@ export const buildHomeView = () => {
   contentContainer.appendChild(header);
   contentContainer.appendChild(message);
   contentContainer.appendChild(buttonContainer);
+  contentContainer.appendChild(loginMessage);
 };
-
 
 /**
  * Builds the button container and creates the buttons for display.
- * 
+ *
  * @returns {Element} The button container element.
  */
 const buildButtonContainer = () => {
   const buttonContainer = document.createElement("div");
   buttonContainer.classList.add("button-container");
 
-  const startGameButton = document.createElement("button");
-  startGameButton.classList.add("button", "fixed");
-  startGameButton.type = "button";
-  startGameButton.innerHTML = "<img src='/assets/material-icons/play-arrow.svg' style='vertical-align: -6px'> Start Game";
-  startGameButton.addEventListener("click", clickStartGameButton);
+  const startGameButton = createButton("Start Game", "startGame", {
+    icon: "play-arrow",
+  });
 
-  const howToPlayButton = document.createElement("button");
-  howToPlayButton.classList.add("button", "fixed");
-  howToPlayButton.type = "button";
-  howToPlayButton.innerHTML = "<img src='/assets/material-icons/help.svg' style='vertical-align: -6px'> How to Play";
-  howToPlayButton.addEventListener("click", clickHowToPlayButton);
+  const howToPlayButton = createButton("How To Play", "howToPlay", {
+    icon: "help",
+  });
 
-  const optionsButton = document.createElement("button");
-  optionsButton.classList.add("button", "fixed");
-  optionsButton.innerHTML = "<img src='/assets/material-icons/tune.svg' style='vertical-align: -6px'> Options";
-  optionsButton.addEventListener("click", clickOptionsButton);
-
-  const loginMessage = document.createElement("p");
-  loginMessage.classList.add("submessage");
-  loginMessage.innerHTML = 'Want to save your progress?<br /><a id="loginButton">Log In</a> or <a id="registerButton">Register</a>';
-  loginMessage.addEventListener("click", clickLoginMessage);
-
-  if (isAuthenticated()) {
-    loginMessage.innerHTML = `Welcome back, ${getAuthenticatedUser().username}!<br /><a id="changePassword">Change Password</a> or <a id="logoutButton">Log Out</a>`;
-  }
+  const optionsButton = createButton("Options", "options", {
+    icon: "tune",
+  });
 
   buttonContainer.appendChild(startGameButton);
   buttonContainer.appendChild(howToPlayButton);
   buttonContainer.appendChild(optionsButton);
-  buttonContainer.appendChild(loginMessage);
 
   return buttonContainer;
 };

@@ -19,7 +19,7 @@ import { InternalError } from "../../errors/InternalError.js";
  *
  * Endpoint: GET /game/new
  */
-export const generateGame = async (req, res) => {
+export const generateGame = async (req, res, next) => {
   const wordLength = req.query.wordLength || DEFAULT_WORD_LENGTH;
   const maxAttempts = req.query.maxAttempts || DEFAULT_MAX_ATTEMPTS;
 
@@ -132,7 +132,7 @@ export const getGame = async (req, res) => {
  *
  * Endpoint: POST /game/{id}/forfeit
  */
-export const forfeitGame = async (req, res) => {
+export const forfeitGame = async (req, res, next) => {
   const gameId = req.params.id;
 
   // Ensure there is a valid gameId.

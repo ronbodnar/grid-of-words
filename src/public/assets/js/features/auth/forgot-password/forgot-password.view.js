@@ -1,18 +1,14 @@
-import {
-  clickBackButton,
-  clickForgotPasswordButton,
-} from "../../services/event.service.js";
-import { showMessage } from "../../services/message.service.js";
+import { createButton } from "../../../components/button.js";
+import { showMessage } from "../../../services/message.service.js";
 
 export const buildForgotPasswordView = (message) => {
   const contentContainer = document.querySelector(".content");
   contentContainer.id = "forgot-password";
 
-  const backButton = document.createElement("div");
-  backButton.classList.add("back-button");
-  backButton.innerHTML =
-    "<img src='/assets/material-icons/keyboard-backspace.svg' style='vertical-align: -6px;'> Back";
-  backButton.addEventListener("click", clickBackButton);
+  const backButton = createButton("Back", "back", {
+    icon: "keyboard-backspace",
+    classes: ["back-button"]
+  });
 
   const header = document.createElement("h1");
   header.classList.add("view-header");
@@ -45,9 +41,8 @@ const buildForm = () => {
   const form = document.createElement("form");
   form.classList.add("form");
   form.onsubmit = () => {
-    clickForgotPasswordButton();
     return false;
-  }; // prevent submission
+  };
   form.style.marginTop = "25px";
 
   const messageDiv = document.createElement("div");
@@ -64,11 +59,10 @@ const buildForm = () => {
   emailInput.required = true;
   emailInput.id = "email";
 
-  const submitButton = document.createElement("button");
-  submitButton.classList.add("button");
-  submitButton.type = "submit";
-  submitButton.innerHTML =
-    "Send Email <span class='button-loader hidden' id='submitButtonLoader'</span>";
+  const submitButton = createButton("Send Email", "forgotPassword", {
+    loader: true,
+    type: "submit"
+  });
   submitButton.style.width = "60%";
   submitButton.style.marginTop = "10px";
 

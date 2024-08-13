@@ -1,43 +1,33 @@
-import {
-  clickBackButton,
-  clickChangePasswordButton,
-} from "../../services/event.service.js";
+import { createButton } from "../../../components/button.js";
 
 export const buildChangePasswordView = () => {
   const contentContainer = document.querySelector(".content");
   contentContainer.id = "change-password";
 
-  const backButton = document.createElement("div");
-  backButton.classList.add("back-button");
-  backButton.innerHTML =
-    "<img src='/assets/material-icons/keyboard-backspace.svg' style='vertical-align: -6px;'> Back";
-  backButton.addEventListener("click", clickBackButton);
+  const backButton = createButton("Back", "back", {
+    icon: "keyboard-backspace",
+    classes: ["back-button"]
+  });
 
   const header = document.createElement("h1");
   header.classList.add("view-header");
   header.textContent = "Change Password";
-
-  const submessage = document.createElement("div");
-  submessage.classList.add("submessage");
-  submessage.textContent = "Enter your current password and a new password for your account.";
 
   const form = buildForm();
 
   contentContainer.innerHTML = "";
   contentContainer.appendChild(backButton);
   contentContainer.appendChild(header);
-  //contentContainer.appendChild(submessage);
   contentContainer.appendChild(form);
 };
 
 const buildForm = () => {
   const form = document.createElement("form");
   form.classList.add("form");
-  form.onsubmit = () => {
-    clickChangePasswordButton();
-    return false;
-  }; // prevent submission
   form.style.marginTop = "25px";
+  form.onsubmit = () => {
+    return false;
+  };
 
   const messageDiv = document.createElement("div");
   messageDiv.classList.add("message", "form-message", "hidden");
@@ -72,12 +62,9 @@ const buildForm = () => {
   confirmPasswordInput.required = true;
   confirmPasswordInput.id = "confirmNewPassword";
 
-  const submitButton = document.createElement("button");
-  submitButton.classList.add("button");
-  submitButton.type = "submit";
-  submitButton.innerHTML =
-    "Change Password <span class='button-loader hidden' id='submitButtonLoader'</span>";
-  submitButton.style.width = "60%";
+  const submitButton = createButton("Change Password", "changePassword", {
+    loader: true,
+  });
   submitButton.style.marginTop = "10px";
 
   form.appendChild(currentPasswordLabel);

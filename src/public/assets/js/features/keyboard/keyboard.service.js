@@ -1,6 +1,6 @@
-import { buildKeyElement } from "../components/keyboard/key.js";
-import { getLetterStates } from "../utils/helpers.js";
-import { EXACT_MATCH, NO_MATCH, PARTIAL_MATCH } from "../constants.js";
+import { buildKeyElement } from "./key.js";
+import { getLetterStates } from "../../utils/helpers.js";
+import { EXACT_MATCH, NO_MATCH, PARTIAL_MATCH } from "../../utils/constants.js";
 
 let keyboardKeys = {};
 

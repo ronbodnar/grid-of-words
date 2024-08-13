@@ -1,4 +1,4 @@
-import { EXACT_MATCH, PARTIAL_MATCH, NO_MATCH } from "../../constants.js";
+import { EXACT_MATCH, PARTIAL_MATCH, NO_MATCH } from "../../utils/constants.js";
 import { clickKeyboardKey } from "../../services/event.service.js";
 
 /**

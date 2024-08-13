@@ -1,4 +1,4 @@
-import { MAXIMUM_WORD_LENGTH, MINIMUM_WORD_LENGTH } from "../constants.js";
+import { MAXIMUM_WORD_LENGTH, MINIMUM_WORD_LENGTH } from "../utils/constants.js";
 import { retrieveLocal } from "./storage.service.js";
 
 /**

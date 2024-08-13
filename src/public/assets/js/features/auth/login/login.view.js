@@ -1,19 +1,15 @@
-import {
-  clickBackButton,
-  clickLoginButton,
-  clickLoginMessage,
-} from "../../services/event.service.js";
-import { showMessage } from "../../services/message.service.js";
+import { createButton } from "../../../components/button.js";
+import { handleClickEvent } from "../../../services/event.service.js";
+import { showMessage } from "../../../services/message.service.js";
 
 export const buildLoginView = (message) => {
   const contentContainer = document.querySelector(".content");
   contentContainer.id = "login";
 
-  const backButton = document.createElement("div");
-  backButton.classList.add("back-button");
-  backButton.innerHTML =
-    "<img src='/assets/material-icons/keyboard-backspace.svg' style='vertical-align: -6px;'> Back";
-  backButton.addEventListener("click", clickBackButton);
+  const backButton = createButton("Back", "back", {
+    icon: "keyboard-backspace",
+    classes: ["back-button"]
+  });
 
   const header = document.createElement("h1");
   header.classList.add("view-header");
@@ -25,7 +21,7 @@ export const buildLoginView = (message) => {
   contentContainer.appendChild(backButton);
   contentContainer.appendChild(header);
   contentContainer.appendChild(loginForm);
-  
+
   if (message && message.length > 0) {
     const options = {
       hide: true,
@@ -41,9 +37,8 @@ const buildForm = () => {
   const form = document.createElement("form");
   form.classList.add("form");
   form.onsubmit = () => {
-    clickLoginButton();
     return false;
-  }; // prevent submission
+  };
 
   const messageDiv = document.createElement("div");
   messageDiv.classList.add("message", "form-message");
@@ -73,23 +68,21 @@ const buildForm = () => {
   forgotPasswordMessage.style.textAlign = "start";
   forgotPasswordMessage.classList.add("submessage");
   forgotPasswordMessage.innerHTML =
-    "<a class='form-link' id='forgotPasswordButton'>Forgot password?</a>";
-  forgotPasswordMessage.addEventListener("click", clickLoginMessage);
+    "<a class='form-link' id='showForgotPassword'>Forgot password?</a>";
+  forgotPasswordMessage.addEventListener("click", handleClickEvent);
   forgotPasswordMessage.style.marginTop = "0";
 
-  const submitButton = document.createElement("button");
-  submitButton.classList.add("button");
-  submitButton.type = "submit";
-  submitButton.innerHTML =
-    "Log In <span class='button-loader hidden' id='submitButtonLoader'</span>";
-  submitButton.style.width = "60%";
+  const submitButton = createButton("Log In", "login", {
+    loader: true,
+    type: "submit"
+  });
   submitButton.style.marginTop = "10px";
 
   const registerMessage = document.createElement("p");
   registerMessage.classList.add("submessage");
   registerMessage.innerHTML =
-    "<a class='form-link' id='registerButton'>Don't have an account?</a>";
-  registerMessage.addEventListener("click", clickLoginMessage);
+    "<a class='form-link' id='showRegister'>Don't have an account?</a>";
+  registerMessage.addEventListener("click", handleClickEvent);
 
   form.appendChild(messageDiv);
   form.appendChild(emailLabel);

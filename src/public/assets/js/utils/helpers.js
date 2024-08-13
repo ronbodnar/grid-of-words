@@ -1,15 +1,4 @@
-import { EXACT_MATCH, PARTIAL_MATCH, NO_MATCH } from "../constants.js";
-import { buildForgotPasswordView } from "../views/auth/forgot-password.view.js";
-import { buildGameView } from "../views/game.view.js";
-import { buildHomeView } from "../views/home.view.js";
-import { buildHowToPlayView } from "../views/how-to-play.view.js";
-import { buildLoadingView } from "../views/loading.view.js";
-import { buildLoginView } from "../views/auth/login.view.js";
-import { buildOptionsView } from "../views/options.view.js";
-import { buildRegisterView } from "../views/auth/register.view.js";
-import { buildResetPasswordView } from "../views/auth/reset-password.view.js";
-import { buildChangePasswordView } from "../views/auth/change-password.view.js";
-import { retrieveSession } from "../services/storage.service.js";
+import { EXACT_MATCH, PARTIAL_MATCH, NO_MATCH } from "./constants.js";
 
 /**
  * Compares two words of assumed equal length to see which guessWord letter positions match, are invalid, or don't exist in the gameWord.
@@ -89,99 +78,6 @@ export const getLetterStates = (gameWord, attemptedWords) => {
   return Object.keys(letterMatchStates).length > 0 ? letterMatchStates : null;
 };
 
-// The stack of views so that the back button can return the user to where they were (does not keep previous states).
-export var viewHistory = [];
-
-/**
- * Clears the current content container's innerHTML and builds view containers.
- * @param {string} name - The name of the view container to build and display.
- * @param {object} options - A list of options that can be passed to views.
- */
-// TODO: Lets convert this into a ViewManager later on.
-export const showView = (name, options) => {
-  // If no name is provided we will just show the home view.
-  if (!name || name === "") {
-    showView("home");
-    return;
-  }
-
-  // Do not add to history when current view is "loading" or "game", or when options.hideFromHistory is true.
-  if (
-    getCurrentViewName() !== "loading" &&
-    getCurrentViewName() !== "game" &&
-    !options?.hideFromHistory
-  ) {
-    viewHistory.push(getCurrentViewName());
-  }
-
-  switch (name) {
-    case "game":
-      buildGameView({
-        game: options.game,
-        wordLength: options.wordLength,
-        maxAttempts: options.maxAttempts,
-      });
-
-      // Reset the view history
-      viewHistory = [];
-      break;
-
-    case "how-to-play":
-      buildHowToPlayView();
-      break;
-
-    case "loading":
-      buildLoadingView();
-      break;
-
-    case "options":
-      buildOptionsView();
-      break;
-
-    case "login":
-      buildLoginView(options?.message || undefined);
-      break;
-
-    case "register":
-      buildRegisterView();
-      break;
-
-    case "forgot-password":
-      buildForgotPasswordView(options?.message || undefined);
-      break;
-
-    case "reset-password":
-      const passwordResetToken = retrieveSession("passwordResetToken");
-      if (!passwordResetToken) {
-        console.error("No reset token provided");
-        //TODO: the user experience
-        return;
-      }
-      buildResetPasswordView();
-      break;
-
-    case "change-password":
-      buildChangePasswordView();
-      break;
-
-    default:
-      buildHomeView();
-
-      // Reset the view history
-      viewHistory = [];
-      break;
-  }
-};
-
-/**
- * Retrieves the current view from the id tag of the main content container.
- * @return {string} - The name of the current view.
- */
-export const getCurrentViewName = () => {
-  const currentView = document.querySelector(".content");
-  return currentView?.id;
-};
-
 /**
  * Gets a random integer between the specified min and max range.
  * @param {number} min - The minimum value for the random integer.
@@ -190,4 +86,64 @@ export const getCurrentViewName = () => {
  */
 export const getRandomInt = (min, max) => {
   return Math.floor(Math.random() * (max - min) + min);
+};
+
+/**
+ * Fetches and parses data using the fetch API and injects the statusCode into the response JSON object.
+ *
+ * @param {*} url The URL to fetch data from.
+ * @param {*} params An object of key/values to pass in the query (GET) or body (POST, PUT, etc) parameters.
+ * @param {*} method The request method to use with the fetch request.
+ * @returns {Promise<any>} A promise that resolves when the data has been made available.
+ */
+export const fetchData = async (url, method, params) => {
+  const allowedMethods = ["GET", "POST", "PUT", "PATCH", "DELETE"];
+
+  method = method || "GET";
+  params = params || {};
+
+  // Verify that the method is allowed.
+  if (!allowedMethods.includes(method)) {
+    console.error(
+      `Invalid method: ${method}. Only ${allowedMethods.join(
+        ", "
+      )} are allowed.`
+    );
+    return null;
+  }
+
+  // Wait for the fetch API to respond with the data from the url.
+  const fetchResponse = await fetch(url, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: method,
+
+    // Body will only be populated with data if the request method isn't GET.
+    body: method !== "GET" ? JSON.stringify(params) : undefined,
+
+    // Params will only be populated with data if the request method is GET.
+    params: method === "GET" ? JSON.stringify(params) : undefined,
+  }).catch((err) => {
+    console.error(
+      `Could not fetch data from ${url} with params ${JSON.stringify(
+        params
+      )}: ${err}`
+    );
+    return null;
+  });
+
+  const data = !fetchResponse
+    ? undefined
+    : await fetchResponse.json().catch((err) => {
+        console.error(`Error parsing JSON response from ${url}: ${err}`);
+        return null;
+      });
+
+  // Add a 200 status code to responses that are successful but have no status code.
+  if (fetchResponse && Object.keys(data).length > 0) {
+    data.statusCode = fetchResponse.status;
+  }
+
+  return data;
 };
