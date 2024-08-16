@@ -1,4 +1,6 @@
 import { createButton } from "../../../components/button.js";
+import { FormGroup } from "../../../components/form/FormGroup.js";
+import { buildForm } from "../../../components/form/form.js";
 import { handleClickEvent } from "../../../services/event.service.js";
 import { showMessage } from "../../../services/message.service.js";
 
@@ -8,19 +10,38 @@ export const buildLoginView = (message) => {
 
   const backButton = createButton("Back", "back", {
     icon: "keyboard-backspace",
-    classes: ["back-button"]
+    classes: ["back-button"],
   });
 
   const header = document.createElement("h1");
   header.classList.add("view-header");
   header.textContent = "Account Login";
 
-  const loginForm = buildForm();
+  const formFields = [
+    new FormGroup("Username").setAutoFocus(true),
+    new FormGroup("Password")
+      .setType("password")
+      .setMessage(
+        "<a class='form-link' id='showForgotPassword'>Forgot password?</a>"
+      ),
+  ];
+
+  const formButtons = [createButton("Login")];
+
+  const formOptions = {
+    hasMessage: true,
+    hasSubmessage: true,
+    submessage:
+      "<a class='form-link' id='showRegister'>Don't have an account?</a>",
+  };
+
+  contentContainer.appendChild(buildForm(formFields, formButtons, formOptions));
 
   contentContainer.innerHTML = "";
   contentContainer.appendChild(backButton);
   contentContainer.appendChild(header);
-  contentContainer.appendChild(loginForm);
+  contentContainer.appendChild(buildForm(formFields, formButtons, formOptions));
+  //contentContainer.appendChild(buildFormz());
 
   if (message && message.length > 0) {
     const options = {
@@ -74,7 +95,7 @@ const buildForm = () => {
 
   const submitButton = createButton("Log In", "login", {
     loader: true,
-    type: "submit"
+    type: "submit",
   });
   submitButton.style.marginTop = "10px";
 
