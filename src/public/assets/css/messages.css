@@ -1,0 +1,69 @@
+.message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #f4f3f2;
+  height: 30px;
+  width: 100%;
+  margin: 0 auto;
+  font-size: 16px;
+  font-weight: 700;
+  margin: 15px 0;
+}
+
+@media screen and (min-width: 768px) {
+  .message {
+    height: 50px;
+  }
+}
+
+.message.success {
+  color: rgba(0, 163, 108, 0.9);
+}
+
+.message.error {
+  color: rgba(227, 34, 39, 0.9);
+}
+
+.subheader,
+.submessage {
+  font-size: 16px;
+  margin: 10px 0;
+}
+
+.submessage > a {
+  font-size: 16px;
+  color: rgba(0, 163, 108, 0.6);
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  color: #f4f3f2 !important;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-decoration-color: rgba(0, 163, 108, 0.9);
+  text-underline-offset: 4px;
+}
+
+.submessage > a:hover {
+  opacity: 0.6;
+}
+
+.form-link {
+  color: #f4f3f2 !important;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-decoration-color: rgba(0, 163, 108, 0.9);
+  text-underline-offset: 4px;
+}
+
+.view-header {
+  font-size: 36px;
+  margin-bottom: 0;
+}
+
+@media screen and (min-width: 768px) {
+  .view-header {
+    font-size: 32px;
+    margin-bottom: 0px;
+  }
+}

@@ -1,0 +1,147 @@
+.keyboard {
+  justify-self: end;
+  position: relative;
+  padding: 0.25em;
+}
+
+.keyboard-overlay {
+  z-index: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 5px;
+}
+
+.keyboard-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  gap: 3px;
+}
+
+.keyboard-row:not(:last-child) {
+  margin-bottom: 10px;
+  margin-bottom: 3px;
+}
+
+.keyboard-key {
+  font-size: 18px;
+  padding: 0.25em;
+  width: 35px;
+  background-color: rgb(41, 53, 72);
+  border-radius: 5px;
+  color: #f4f3f2;
+  border: 1px solid rgba(244, 243, 242, 0.1);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: 0.75s;
+}
+
+.keyboard-key:hover {
+  box-shadow: inset 0px 1px 8px 0px rgba(244, 243, 242, 0.4);
+}
+
+.keyboard-key.incorrect {
+  opacity: 0.4;
+  border: none;
+  box-shadow: inset 0px 1px 3px 0px #0d1117;
+}
+
+.keyboard-key.exact {
+  opacity: 1;
+  border: none;
+  background-color: rgba(0, 163, 108, 0.9);
+}
+
+.keyboard-key.partial {
+  opacity: 1;
+  border: none;
+  background-color: rgba(255, 165, 0, 0.9);
+}
+
+.enter-key {
+  width: 90px;
+  font-size: 48px;
+  font-size: 18px;
+  line-height: 1.5em;
+}
+
+.delete-key {
+  width: 60px;
+  background-image: url("/assets/material-icons/backspace.svg");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 50%;
+}
+
+.delete-key > span {
+  font-size: 50px;
+  font-size: 18px;
+  line-height: 1.5em;
+}
+
+@media screen and (min-width: 400px) {
+  .keyboard-key {
+    font-size: 24px;
+  }
+
+  .delete-key > span {
+    font-size: 24px;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .keyboard-key {
+    font-size: 24px;
+    width: 40px;
+    line-height: 1.25em;
+  }
+
+  .enter-key {
+    width: 75px;
+    font-size: 20px;
+    line-height: 1.6em;
+  }
+
+  .delete-key {
+    padding: 0;
+    width: 60px;
+  }
+
+  .delete-key > span {
+    font-size: 28px;
+  }
+
+  .keyboard-row {
+    gap: 5px;
+  }
+
+  .keyboard-row:not(:last-child) {
+    margin-bottom: 5px;
+  }
+}
+
+@media screen and (min-width: 768px) and (max-height: 768px) {
+  .keyboard-key {
+    font-size: 16px;
+    width: 28px;
+  }
+
+  .enter-key {
+    width: 60px;
+    font-size: 16px;
+    line-height: 1.5em;
+  }
+
+  .delete-key {
+    width: 40px;
+    padding: 0;
+  }
+
+  .delete-key > span {
+    font-size: 20px;
+  }
+}

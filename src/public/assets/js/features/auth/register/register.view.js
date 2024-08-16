@@ -1,99 +1,34 @@
-import { createButton } from "../../../components/button.js";
-import { handleClickEvent } from "../../../services/event.service.js";
+import { createButton } from "../../../shared/components/button.js";
+import { FormGroup } from "../../form/FormGroup.js";
+import { buildForm } from "../../form/form.js";
+import { buildView } from "../../view/view.js";
 
+/**
+ * Generates all components for the registration view (form, headers, nav) and adds them to the content container.
+ */
 export const buildRegisterView = () => {
-  const contentContainer = document.querySelector(".content");
-  contentContainer.id = "register";
-
-  const backButton = createButton("Back", "back", {
-    icon: "keyboard-backspace",
-    classes: ["back-button"]
-  });
-
-  const header = document.createElement("h1");
-  header.classList.add("view-header");
-  header.textContent = "Register Account";
-
-  const registrationForm = buildForm();
-
-  contentContainer.innerHTML = "";
-  contentContainer.appendChild(backButton);
-  contentContainer.appendChild(header);
-  contentContainer.appendChild(registrationForm);
-};
-
-const buildForm = () => {
-  const form = document.createElement("form");
-  form.classList.add("form");
-  form.onsubmit = () => {
-    return false;
+  const formFields = [
+    new FormGroup("Email").setAutoFocus(true),
+    new FormGroup("Username"),
+    new FormGroup("Password").setType("password"),
+    new FormGroup("Confirm Password").setType("password"),
+  ];
+  const formButtons = [
+    createButton("Register", {
+      loader: true,
+      type: "submit",
+    }),
+  ];
+  const formOptions = {
+    submessage: "<a id='showLogin'>Already have an account?</a>",
   };
+  const form = buildForm(formFields, formButtons, formOptions);
 
-  const messageDiv = document.createElement("div");
-  messageDiv.classList.add("message", "form-message");
-
-  const emailLabel = document.createElement("label");
-  emailLabel.htmlFor = "email";
-  emailLabel.textContent = "Email";
-
-  const emailInput = document.createElement("input");
-  emailInput.type = "text";
-  emailInput.placeholder = "Email";
-  emailInput.required = true;
-  emailInput.id = "email";
-
-  const usernameLabel = document.createElement("label");
-  usernameLabel.htmlFor = "username";
-  usernameLabel.textContent = "Username";
-
-  const usernameInput = document.createElement("input");
-  usernameInput.type = "text";
-  usernameInput.placeholder = "Username";
-  usernameInput.required = true;
-  usernameInput.id = "username";
-
-  const passwordLabel = document.createElement("label");
-  passwordLabel.htmlFor = "password";
-  passwordLabel.textContent = "Password";
-
-  const passwordInput = document.createElement("input");
-  passwordInput.type = "password";
-  passwordInput.placeholder = "Password";
-  passwordInput.required = true;
-  passwordInput.id = "password";
-
-  const confirmPasswordLabel = document.createElement("label");
-  confirmPasswordLabel.htmlFor = "confirmPassword";
-  confirmPasswordLabel.textContent = "Confirm Password";
-
-  const confirmPasswordInput = document.createElement("input");
-  confirmPasswordInput.type = "password";
-  confirmPasswordInput.placeholder = "Confirm password";
-  confirmPasswordInput.required = true;
-  confirmPasswordInput.id = "confirmPassword";
-
-  const submitButton = createButton("Register", "register", {
-    loader: true,
-    type: "submit",
+  buildView("register", {
+    header: {
+      text: "Register Account",
+    },
+    message: {},
+    additionalElements: [form],
   });
-  submitButton.style.marginTop = "10px";
-
-  const loginMessage = document.createElement("p");
-  loginMessage.classList.add("submessage");
-  loginMessage.innerHTML = "<a id='showLogin'>Already have an account?</a>";
-  loginMessage.addEventListener("click", handleClickEvent);
-
-  form.appendChild(messageDiv);
-  form.appendChild(emailLabel);
-  form.appendChild(emailInput);
-  form.appendChild(usernameLabel);
-  form.appendChild(usernameInput);
-  form.appendChild(passwordLabel);
-  form.appendChild(passwordInput);
-  form.appendChild(confirmPasswordLabel);
-  form.appendChild(confirmPasswordInput);
-  form.appendChild(submitButton);
-  form.appendChild(loginMessage);
-
-  return form;
 };

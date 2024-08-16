@@ -1,6 +1,7 @@
-import { createButton } from "../../components/button.js";
+import { logger } from "../../main.js";
 import { buildGameBoardElement } from "../gameboard/gameboard.js";
-import { buildOnScreenKeyboardElement } from "../keyboard/on-screen-keyboard.js";
+import { buildOnScreenKeyboardElement } from "../keyboard/keyboard.js";
+import { buildView } from "../view/view.js";
 
 /**
  * Builds the game container based on the provided options (assumed to be a Game object or wordLength/maxAttempts)
@@ -9,48 +10,12 @@ import { buildOnScreenKeyboardElement } from "../keyboard/on-screen-keyboard.js"
  */
 export const buildGameView = (options) => {
   if (!options) {
-    console.error("No options present");
-    return;
+    throw new Error("No options passed to buildGameView");
   }
 
-  const contentContainer = document.querySelector(".content");
-  contentContainer.id = "game";
-
-  const gameboard = getGameBoardElement(options);
+  const gameboard = buildGameBoardElement(options);
   const keyboard = buildOnScreenKeyboardElement(options.game);
-
-  const forfeitButton = createButton("Forfeit", "forfeitGame", {
-    icon: "block",
-    classes: ["back-button", "forfeit"],
+  buildView("game", {
+    additionalElements: [gameboard, keyboard],
   });
-
-  // Clear the existing content from the content container
-  contentContainer.innerHTML = "";
-
-  // Add the components to the game container
-  contentContainer.appendChild(forfeitButton);
-  contentContainer.appendChild(gameboard);
-  contentContainer.appendChild(keyboard);
-};
-
-/**
- * Builds the game board component based on the given options.
- *
- * @param {Array} options
- * @returns {Element} The built gameboard component.
- */
-const getGameBoardElement = (options) => {
-  if (options.game) {
-    console.info("Rendering Game Container for game: ", options.game);
-    return buildGameBoardElement(
-      options.game.maxAttempts,
-      options.game.word.length,
-      options.game
-    );
-  } else if (options.wordLength && options.maxAttempts) {
-    console.info(
-      `Rendering Game Container with grid ${options.maxAttempts} x ${options.wordLength}`
-    );
-    return buildGameBoardElement(options.maxAttempts, options.wordLength);
-  }
 };

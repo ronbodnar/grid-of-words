@@ -13,6 +13,7 @@ import { isUUID, setCookie } from "../../utils/helpers.js";
 import { wordRepository } from "../word/index.js";
 import { authService } from "../auth/index.js";
 import { InternalError } from "../../errors/InternalError.js";
+import { ValidationError } from "../../errors/ValidationError.js";
 
 /**
  * Generate a new game and get a random word with the provided length.

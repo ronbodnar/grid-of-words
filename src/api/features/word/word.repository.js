@@ -15,8 +15,6 @@ export const getWordOfLength = async (length) => {
     // Execute the query and retrieve the response.
     const data = await query(sql, [length]);
 
-    console.log(data);
-
     // If the data is missing, return null.
     if (data == null || data[0][0] == null) return null;
 
@@ -76,7 +74,10 @@ export const wordExists = async (word) => {
     // Execute the query and retrieve the response.
     const response = await query(sql, [word]);
 
-    console.log("Response", response[0][0]);
+    logger.info("Word Exists Response", {
+      response: response,
+      responseValue: response[0][0],
+    });
 
     // If no word is found from the query, this will be undefined, otherwise itll return the row data.
     return response[0][0] !== undefined;

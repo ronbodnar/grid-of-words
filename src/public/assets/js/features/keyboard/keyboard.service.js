@@ -1,6 +1,7 @@
 import { buildKeyElement } from "./key.js";
-import { getLetterStates } from "../../utils/helpers.js";
-import { EXACT_MATCH, NO_MATCH, PARTIAL_MATCH } from "../../utils/constants.js";
+import { getLetterStates } from "../../shared/utils/helpers.js";
+import { EXACT_MATCH, NO_MATCH, PARTIAL_MATCH } from "../../shared/utils/constants.js";
+import { logger } from "../../main.js";
 
 let keyboardKeys = {};
 
@@ -10,22 +11,19 @@ let keyboardKeys = {};
  * @param {Game} game - The game to fetch letter match states for.
  */
 export const initializeKeyboardKeys = (game) => {
-  // If no game is specified, don't fetch the letter match states.
   const letterStates = game
     ? getLetterStates(game.word, game.attempts)
     : undefined;
 
-  // Create the enter key and add it to the keyboardKeys object.
   let enterKey = buildKeyElement("enter", false);
   enterKey.classList.add("enter-key");
   keyboardKeys["enter"] = enterKey;
 
-  // Create the delete key and add it to the keyboardKeys object.
   let deleteKey = buildKeyElement("delete", false);
   deleteKey.classList.add("delete-key");
   keyboardKeys["delete"] = deleteKey;
 
-  // Create the keys for A-Z and add them to the keyboardKeys object.
+  // Create the keys for A-Z.
   for (let i = 97; i <= 122; i++) {
     const letter = String.fromCharCode(i);
     keyboardKeys[letter] = buildKeyElement(letter, letterStates ? letterStates[letter] : undefined);
@@ -40,18 +38,14 @@ export const initializeKeyboardKeys = (game) => {
 export const updateKeyboardKeys = (gameWord, attemptedWord) => {
   const letterMatchStates = getLetterStates(gameWord, [attemptedWord]);
 
-  // Iterate the letters in the attempted word.
   for (let i = 0; i < attemptedWord.length; i++) {
     const letter = attemptedWord.at(i);
     const key = getKeyboardKey(letter, letterMatchStates[letter]);
 
-    // The key element could not be found.
     if (!key) {
-      console.error(`No key found for letter ${letter}`);
-      continue;
+      throw new Error(`Could not update missing key for letter: ${letter}`);
     }
 
-    // Update the key's background color based on its match state.
     switch (letterMatchStates[letter]) {
       case EXACT_MATCH:
         if (key.classList.contains("partial")) {

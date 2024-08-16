@@ -4,12 +4,16 @@ import {
   retrieveSession,
   storeLocal,
   storeSession,
-} from "./services/storage.service.js";
-import { addKeyListeners } from "./services/event.service.js";
-import { getCurrentViewName, showView } from "./services/view.service.js";
-import { fetchWordList } from "./services/word.service.js";
-import { fetchData } from "./utils/helpers.js";
+} from "./shared/services/storage.service.js";
+import { addKeyListeners } from "./shared/services/event.service.js";
+import { getCurrentViewName, showView } from "./features/view/view.service.js";
+import { fetchData, fetchWordList } from "./shared/services/api.service.js";
 import { validateResetToken } from "./features/auth/authentication.service.js";
+import logger from "./shared/utils/logger.js";
+
+// Initialize and export the logger
+const loggerInstance = logger();
+export { loggerInstance as logger };
 
 // Initialize the listeners for keyboard events.
 addKeyListeners();
@@ -21,7 +25,7 @@ showView("loading");
   // Fetch the session data from the server.
   const sessionResponse = await fetchData("/session");
 
-  console.info("Session Data", sessionResponse);
+  loggerInstance.debug("Session Data", sessionResponse);
 
   if (sessionResponse?.user && sessionResponse?.user.id) {
     storeSession("user", sessionResponse.user);
@@ -47,7 +51,7 @@ showView("loading");
   if (!wordList) {
     fetchWordList()
       .then((response) => storeLocal("wordList", response))
-      .catch((error) => console.error("Error fetching word list", error));
+      .catch((error) => loggerInstance.error("Error fetching word list", error));
   }
 })();
 
@@ -62,7 +66,7 @@ showView("loading");
 
     // Validate the passwordResetToken
     const validateTokenResponse = await validateResetToken(tokenParam);
-    if (!validateTokenResponse || validateTokenResponse.status === "error") {
+    if (!validateTokenResponse || validateTokenResponse.statusCode !== 200) {
       showView("forgot-password", {
         message:
           validateTokenResponse.message ||

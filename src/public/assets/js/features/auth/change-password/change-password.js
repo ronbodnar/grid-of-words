@@ -1,25 +1,35 @@
-import { showView } from "../../../services/view.service.js";
-import { showMessage } from "../../../services/message.service.js";
-import { removeSession } from "../../../services/storage.service.js";
+import { showView } from "../../view/view.service.js";
+import { showMessage } from "../../../shared/services/message.service.js";
+import { removeSession } from "../../../shared/services/storage.service.js";
 import { submitAuthForm } from "../authentication.service.js";
+import { logger } from "../../../main.js";
 
-export const changePassword = async () => {
+/**
+ * Handles submission of the change password form by validating inputs and awaiting {@link submitAuthForm}.
+ */
+export const submitChangePasswordForm = async () => {
   const currentPasswordInput = document.querySelector("#currentPassword");
   const newPasswordInput = document.querySelector("#newPassword");
   const confirmNewPasswordInput = document.querySelector("#confirmNewPassword");
 
   if (!currentPasswordInput || !newPasswordInput || !confirmNewPasswordInput) {
-    console.error(
-      "Missing input element(s)",
-      currentPasswordInput,
-      newPasswordInput,
-      confirmNewPasswordInput
-    );
-    return;
+    throw new Error("Missing input element(s)");
   }
 
   if (newPasswordInput.value !== confirmNewPasswordInput.value) {
     showMessage("New passwords do not match.", {
+      className: "error",
+      hide: false,
+    });
+    return;
+  }
+
+  if (
+    currentPasswordInput.value.length < 8 ||
+    newPasswordInput.value.length < 8 ||
+    confirmNewPasswordInput.value.length < 8
+  ) {
+    showMessage("Passwords must be at least 8 character long.", {
       className: "error",
       hide: false,
     });
@@ -32,7 +42,7 @@ export const changePassword = async () => {
   };
 
   const successFn = (test) => {
-    console.log("Running successFn", test);
+    logger.debug("Running successFn", test);
     removeSession("user");
     showView("login", {
       message:

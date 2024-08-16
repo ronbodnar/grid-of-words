@@ -1,3 +1,5 @@
+import { DEFAULT_MAX_ATTEMPTS, DEFAULT_WORD_LENGTH } from "../../shared/utils/constants.js";
+import { Game } from "../game/Game.js";
 import { buildWordRowElement } from "./row.js";
 
 /**
@@ -5,7 +7,14 @@ import { buildWordRowElement } from "./row.js";
  * @param {Game} game - The game for building the grid board.
  * @returns {HTMLDivElement} - The board div element with all children.
  */
-export const buildGameBoardElement = (rows, cols, game) => {
+export const buildGameBoardElement = (options) => {
+  if (!options) {
+    throw new Error("No options passed to buildGameBoardElement")
+  }
+  const rows = options.game?.maxAttempts || options.maxAttempts || DEFAULT_MAX_ATTEMPTS;
+  const cols = options.game?.wordLength || options.wordLength || DEFAULT_WORD_LENGTH;
+  const game = options.game;
+
   const board = document.createElement("div");
   board.classList.add("board");
 

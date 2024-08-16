@@ -1,9 +1,10 @@
 import { buildSquareElement } from "./square.js";
 import { updateSquareBackground } from "./gameboard.service.js";
-import { getValidatedLetters } from "../../utils/helpers.js";
+import { getValidatedLetters } from "../../shared/utils/helpers.js";
 
 /**
  * Generates a row of squares of the word length for the game.
+ * 
  * @param {Game} game - The game to generate the row for.
  * @param {index} index - The row's index on the board.
  * @returns {HTMLDivElement} - The generated row with all squares.
@@ -13,7 +14,6 @@ export const buildWordRowElement = (index, cols, game) => {
   const row = document.createElement("div");
   row.classList.add("flex-center", "word-row");
 
-  // Add the active class to the row if the index matches the number of attempts in the game.
   if (active) {
     row.classList.add("active");
   }

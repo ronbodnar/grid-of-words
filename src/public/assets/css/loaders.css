@@ -1,0 +1,71 @@
+/*
+ * From https://cssloaders.github.io/
+ */
+.button-loader {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  vertical-align: -4px;
+  margin-left: 10px;
+  display: inline-block;
+  border-top: 3px solid #fff;
+  border-right: 3px solid transparent;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loader {
+  position: relative;
+  width: 100px;
+  height: 16px;
+}
+.loader:before,
+.loader:after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 32px 0 #fff;
+  left: 0;
+  top: 0;
+  animation: ballMoveX 0.7s linear infinite;
+}
+.loader:after {
+  box-shadow: none;
+  transform-origin: 40px 0;
+  transform: rotate(-153deg);
+  background: rgba(0, 163, 108, 0.6);
+  animation: rotateLoader 0.7s linear infinite;
+  animation-delay: 0.05s;
+}
+
+@keyframes rotateLoader {
+  0%,
+  10% {
+    transform: rotate(-153deg);
+  }
+  90%,
+  100% {
+    transform: rotate(0deg);
+  }
+}
+@keyframes ballMoveX {
+  0%,
+  10% {
+    transform: translateX(0);
+  }
+  90%,
+  100% {
+    transform: translateX(32px);
+  }
+}
