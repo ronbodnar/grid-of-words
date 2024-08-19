@@ -1,19 +1,19 @@
-# Word Puzzle Game 🧩🕵️‍♂️
+# Word Puzzle Game 🧩
 
 **Word Puzzle Game** is a dynamic Node.js and JavaScript implementation inspired by Wordle. Enjoy a customizable word puzzle experience with various word lengths and attempt limits. This is a modern single-page application (SPA) built entirely with JavaScript.
 
 ### [Explore the Demo 🎮](https://games.ronbodnar.com)
 
-<!-- ## Table of Contents
+## Table of Contents
 
 1. [Features](#features)
 2. [Technology Stack](#technology-stack)
 3. [Installation](#installation)
 4. [Usage](#usage)
 5. [Contributing](#contributing)
-6. [License](#license) -->
+6. [License](#license)
 
-## Features 🚀
+## Features
 
 - **Single-Page Application**: Enjoy a seamless user experience with this modern SPA built entirely with JavaScript.
 - **Game Options**: Challenge yourself with word lengths ranging from 4 to 8 characters, and set up to 8 attempts per game.
@@ -25,13 +25,13 @@
 - **Environment Configuration**: Manage secrets and configurations securely with a `.env` file.
 - **Cross-Platform Compatibility**: Designed to work smoothly across different operating systems with minimal setup.
 
-## Technology Stack 🖥️
+## Technology Stack
 
 - **Frontend**: JavaScript, HTML, CSS
 - **Backend**: Node.js, Express
 - **Database**: MySQL
 
-## Installation 🛠️
+## Installation
 
 To set up and run the Word Puzzle Game locally, follow these steps:
 
@@ -87,7 +87,7 @@ To set up and run the Word Puzzle Game locally, follow these steps:
 
 For issues or questions, please refer to the [issue tracker](https://github.com/ronbodnar/word-puzzle-game/issues) or [contact the author](https://github.com/ronbodnar).
 
-## Usage 📝
+## Usage
 
 Once the application is running, you can interact with it as follows:
 
@@ -105,7 +105,7 @@ Once the application is running, you can interact with it as follows:
 
 For more details on configuration and extending the application, refer to the [documentation](https://github.com/ronbodnar/word-puzzle-game#readme) or explore the code in the repository.
 
-## Contributing 🤝
+## Contributing
 
 We welcome contributions! To suggest improvements or add new features, follow these steps:
 
@@ -115,10 +115,6 @@ We welcome contributions! To suggest improvements or add new features, follow th
 4. **Push to the Branch**: `git push origin feature/your-feature`
 5. **Create a Pull Request**
 
-## License 📜
+## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-## Author 👤
-
-- **[Ron Bodnar](https://ronbodnar.com/)**: Creator and developer of the Word Puzzle Game. [GitHub Profile](https://github.com/ronbodnar)

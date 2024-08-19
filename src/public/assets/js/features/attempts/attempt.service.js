@@ -84,7 +84,7 @@ export const processAttempt = async (game) => {
     if (response.statusCode === 200) {
       switch (true) {
         case localGame.attempts.length !== remoteGame.attempts.length: // attempt array size mismatch
-        case !attemptsMatch: // array element content mismatch
+        case !attemptsMatch || remoteGame.attempts.length !== localGame.attempts.length: // array element content mismatch
         case localGame.id !== remoteGame.id: // game id mismatch
         case localGame.word !== remoteGame.word: // game word mismatch
           logger.error(

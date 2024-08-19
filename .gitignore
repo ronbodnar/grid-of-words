@@ -8,5 +8,5 @@ logs/*
 scripts/*
 
 # Ignore the sensitive environment variables
-production.env
-development.env
+*.env
+!example.env

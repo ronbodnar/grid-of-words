@@ -26,6 +26,7 @@
     "express": "^4.19.2",
     "express-rate-limit": "^7.4.0",
     "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.8.0",
     "mysql2": "^3.10.2",
     "nodemailer": "^6.9.14",
     "uuid": "^10.0.0",
