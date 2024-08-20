@@ -1,5 +1,5 @@
-import { APP_NAME } from "../utils/constants.js";
-import { sendEmail } from "./email.service.js";
+import { APP_NAME } from "../../../shared/constants.js";
+import { sendEmail } from "../email.service.js";
 
 export const sendPasswordResetEmail = async (user, token) => {
   const port =

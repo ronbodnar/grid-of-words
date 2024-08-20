@@ -1,4 +1,4 @@
-import { DEFAULT_MAX_ATTEMPTS } from "../../utils/constants.js";
+import { DEFAULT_MAX_ATTEMPTS } from "../../shared/constants.js";
 import { saveGame } from "./game.repository.js";
 
 /*
@@ -23,13 +23,13 @@ export class Game {
   }
 
   fromJson(json) {
-    if (json === undefined) return this;
+    if (!json) return null;
     this.id = json.id;
     this.word = json.word;
     this.state = json.state;
     this.maxAttempts = json.maxAttempts;
     this.startTime = new Date(json.startTimestamp);
-    if (json.endTimestamp != null) this.endTime = new Date();
+    if (json.endTimestamp != null) this.endTime = new Date(json.endTimestamp);
     if (json.attempts != null) this.attempts = json.attempts;
     this.ownerId = json.ownerId;
     return this;

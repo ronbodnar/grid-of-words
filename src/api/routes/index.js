@@ -1,23 +1,16 @@
 import express from "express";
 
-import { router as wordRoutes } from "./word.routes.js";
-import { router as gameRoutes } from "./game.routes.js";
-import { router as attemptRoutes } from "./attempt.routes.js";
-import { router as authenticationRoutes } from "./authentication.routes.js";
-import { __dirname } from "../utils/constants.js";
+import { wordRoutes } from "../features/word/index.js";
+import { gameRoutes } from "../features/game/index.js";
+import { attemptRoutes } from "../features/attempt/index.js";
+import { authRoutes, authController } from "../features/auth/index.js";
 import { restrict } from "../middleware/restrict.js";
-import { getSession } from "../features/auth/authentication.controller.js";
+import { findAll } from "../features/user/user.repository.js";
 
 export const router = express.Router();
 
-// Add the word routes to the router.
-router.use("/word", restrict, wordRoutes);
-
-// Add the game and attempt/guess routes to the router.
-router.use("/game", restrict, gameRoutes, attemptRoutes);
-
-// Add the authentication routes to the router.
-router.use("/auth", restrict, authenticationRoutes);
-
-// Set up /auth GET routes.
-router.route("/session").get(getSession);
+router.use("/word", restrict, wordRoutes.router);
+router.use("/game", restrict, gameRoutes.router, attemptRoutes.router);
+router.use("/auth", restrict, authRoutes.router);
+router.route("/session").get(authController.getSession);
+router.route("/test").get(findAll);

@@ -169,6 +169,7 @@ export const getAuthenticatedUser = (req) => {
     return null;
   }
 
+  console.log("1", decodedPayload.data);
   const user = new User().fromJSON(decodedPayload.data);
 
   // Return the user object from the decoded payload.

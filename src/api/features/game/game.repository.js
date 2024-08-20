@@ -1,31 +1,32 @@
 import logger from "../../config/winston.config.js";
-import query from "../../services/database.service.js";
 import { attemptRepository } from "../attempt/index.js";
 import { Game } from "./Game.js";
+import database from "../../shared/database.js";
 
 /**
  * Inserts a new game into the database with the specified id and word.
  *
- * @param {string} id - The unique identifier for the game.
- * @param {string} word - The word to be guessed.
- * @param {number} maxAttempts - The maximum number of attempts in the game.
- * @param {string | null} ownerId - The user id for the owner of the game.
- * @return {Promise<Game | null>} - The new game object or null if the game could not be created.
+ * @param {string} id The unique identifier for the game.
+ * @param {string} word The word to be guessed.
+ * @param {number} maxAttempts The maximum number of attempts in the game.
+ * @param {string | null} ownerId The user id for the owner of the game.
+ * @return {Promise<Game | null>} A promise that resolves with the new game object if successful.
  */
 export const insertGame = async (id, word, maxAttempts, ownerId) => {
-  // Set up the SQL query string.
-  const sql = `INSERT INTO games (id, word, max_attempts, owner_id) VALUES(UUID_TO_BIN(?), ?, ?, UUID_TO_BIN(?))`;
+  const gameDoc = {
+    id: id,
+    word: word,
+    maxAttempts: maxAttempts,
+    ownerId: ownerId
+  }
+  const usersCollection = database.getUserCollection();
+  const result = usersCollection.insertOne(gameDoc);
 
-  // Execute the query and retrieve the response.
-  const response = await query(sql, [id, word, maxAttempts, ownerId]);
+  console.log("Result", result);
 
-  // If the response is null, log an error and return null.
-  if (!response) {
-    logger.error("Failed to create a new Game entry in database", {
-      id: id,
-      word: word,
-      maxAttempts: maxAttempts,
-      ownerId: ownerId,
+  if (!result) {
+    logger.error("Failed to insert Game in database", {
+      gameDoc: gameDoc,
     });
     return null;
   }
@@ -52,7 +53,7 @@ export const saveGame = async (game, updateEndTime = false) => {
     : [game.state, game.id];
 
   // Execute the query and retrieve the response.
-  const response = await query(sql, values);
+  const response = null;//await query(sql, values);
 
   // If the response is null, log an error.
   if (!response) {
@@ -80,7 +81,7 @@ export const getGameById = async (id, includeAttempts = true) => {
     `FROM games WHERE id = UUID_TO_BIN(?)`;
 
   // Execute the query and retrieve the response.
-  const response = await query(sql, [id]);
+  const response = null;// await query(sql, [id]);
   if (!response) return null;
 
   // Construct a new Game from the JSON response

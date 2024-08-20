@@ -3,7 +3,7 @@ import { authService } from "../auth/index.js";
 import { userRepository } from "./index.js";
 
 export class User {
-  id = undefined;
+  _id = undefined;
   username = undefined;
   hash = undefined;
   email = undefined;
@@ -18,11 +18,12 @@ export class User {
     this.hash = salt + authService.hashPassword(password, salt);
     this.enabled = true;
     this.creationDate = new Date();
+    return this;
   }
 
   fromJSON(json) {
-    if (json === undefined) return null;
-    this.id = Buffer.from(json.id);
+    if (!json) return null;
+    this._id = json._id;
     this.username = json.username;
     this.hash = json.hash;
     this.email = json.email;
@@ -44,10 +45,6 @@ export class User {
     }
 
     return userRepository.saveUser(this, properties);
-  }
-
-  getUUID() {
-    return this.id.toString();
   }
 
   getSalt() {
