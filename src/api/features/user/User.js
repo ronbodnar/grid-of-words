@@ -1,4 +1,3 @@
-import { Buffer } from "node:buffer";
 import { authService } from "../auth/index.js";
 import { userRepository } from "./index.js";
 
@@ -9,6 +8,7 @@ export class User {
   email = undefined;
   enabled = undefined;
   creationDate = undefined;
+  gameIds = [];
 
   constructor(email, username, password) {
     if (!email) return this;
@@ -36,15 +36,8 @@ export class User {
     return this;
   }
 
-  async save(properties) {
-    properties = properties || [];
-    
-    // If just one property was passed, convert it to an array.
-    if (!Array.isArray(properties)) {
-      properties = [properties]
-    }
-
-    return userRepository.saveUser(this, properties);
+  async save() {
+    return userRepository.saveUser(this);
   }
 
   getSalt() {

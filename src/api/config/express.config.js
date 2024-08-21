@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 // Load the static assets from the assets folder
-app.use(express.static(path.join(__dirname, "..", "..", "..", "public")));
+app.use(express.static(path.join(__dirname, "..", "..", "public")));
  
 // Limit requests to 1 per second.
 /* app.use(

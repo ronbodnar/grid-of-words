@@ -4,7 +4,9 @@ import logger from "../config/winston.config.js";
 
 let client;
 
-// Asynchronously connect to the database
+/**
+ * Asynchronously connects to the MongoDB server.
+ */
 const connect = async () => {
   try {
     client = new MongoClient(process.env.MONGO_URL, {
@@ -22,7 +24,7 @@ const connect = async () => {
 };
 
 /**
- * Obtains a collection with the specified name and database (or default db if no db is specified).
+ * Obtains a collection with the specified name and database (or MONGO_DB_NAME if no db is specified).
  * @param {*} name The name of the collection
  * @param {*} database The name of the database storing the collection.
  * @returns

@@ -1,6 +1,8 @@
-import * as gameController from "./game.controller.js";
-import * as gameRepository from "./game.repository.js";
-import * as gameRoutes from "./game.routes.js";
+import gameController from "./game.controller.js";
+import gameRepository from "./game.repository.js";
+import gameService from "./game.service.js";
+import gameRoutes from "./game.routes.js";
+import GameState from "./GameState.js";
+import { Game } from "./Game.js";
 
-export { Game } from "./Game.js";
-export { gameController, gameRepository, gameRoutes }
+export { Game, GameState, gameController, gameRepository, gameService, gameRoutes }

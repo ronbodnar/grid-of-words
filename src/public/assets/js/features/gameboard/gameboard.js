@@ -12,7 +12,7 @@ export const buildGameBoardElement = (options) => {
     throw new Error("No options passed to buildGameBoardElement")
   }
   const rows = options.game?.maxAttempts || options.maxAttempts || DEFAULT_MAX_ATTEMPTS;
-  const cols = options.game?.wordLength || options.wordLength || DEFAULT_WORD_LENGTH;
+  const cols = options.game?.word?.length || options.wordLength || DEFAULT_WORD_LENGTH;
   const game = options.game;
 
   const board = document.createElement("div");

@@ -1,15 +1,14 @@
 import {
   removeSession,
-  retrieveLocal,
   retrieveSession,
-  storeLocal,
   storeSession,
 } from "./shared/services/storage.service.js";
 import { addKeyListeners } from "./shared/services/event.service.js";
-import { getCurrentViewName, showView } from "./features/view/view.service.js";
+import { showView } from "./features/view/view.service.js";
 import { fetchData, fetchWordList } from "./shared/services/api.service.js";
 import { validateResetToken } from "./features/auth/authentication.service.js";
 import logger from "./shared/utils/logger.js";
+import { DEFAULT_WORD_LENGTH } from "./shared/utils/constants.js";
 
 // Initialize and export the logger
 const loggerInstance = logger();
@@ -23,11 +22,11 @@ showView("loading");
 
 (async () => {
   // Fetch the session data from the server.
-  const sessionResponse = await fetchData("/session");
+  const sessionResponse = await fetchData("/auth/session");
 
   loggerInstance.debug("Session Data", sessionResponse);
 
-  if (sessionResponse?.user && sessionResponse?.user.id) {
+  if (sessionResponse?.user && sessionResponse?.user._id) {
     storeSession("user", sessionResponse.user);
   } else {
     removeSession("user");
@@ -41,18 +40,18 @@ showView("loading");
 
   const game = retrieveSession("game");
   if (game) {
-    showView("game", {
-      game: game,
-    });
+    if (game.maxViews === game.attempts?.length) {
+      removeSession("game");
+      showView("home");
+    } else {
+      showView("game", {
+        game: game,
+      });
+    }
   }
 
-  // Ensure the user has the word list in the local storage, if not, asynchronously fetch and store the word list.
-  const wordList = retrieveLocal("wordList");
-  if (!wordList) {
-    fetchWordList()
-      .then((response) => storeLocal("wordList", response))
-      .catch((error) => loggerInstance.error("Error fetching word list", error));
-  }
+  // Fetch the word list in the background
+  fetchWordList(DEFAULT_WORD_LENGTH);
 })();
 
 // Ensure the session has been set before redirecting the user or they may not have API access.
@@ -81,8 +80,8 @@ showView("loading");
     storeSession("passwordResetToken", tokenParam);
     showView("reset-password");
   } else {
-    // Only show home if we aren't already in a game.
-    if (getCurrentViewName() !== "game") {
+    const game = retrieveSession("game");
+    if (!game) {
       showView("home");
     }
   }

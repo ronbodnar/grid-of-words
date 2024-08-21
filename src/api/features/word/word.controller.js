@@ -1,84 +1,39 @@
-import {
-  DEFAULT_WORD_LENGTH,
-  MAXIMUM_WORD_LENGTH,
-  MINIMUM_WORD_LENGTH,
-} from "../../shared/constants.js";
-import {
-  getWordOfLength,
-  getWordsByLengthRange,
-} from "./word.repository.js";
+import { InternalError } from "../../errors/InternalError.js";
+import { DEFAULT_WORD_LENGTH } from "../../shared/constants.js";
+import { wordService } from "./index.js";
 
 /**
  * Select a random word from the word table in the database.
- * 
- * Endpoint: /word
- * 
- * @returns {Promise<}
+ *
+ * Endpoint: GET /word
+ *
+ * @returns {Promise<any>} A promise that resolves with a random word if successful.
  */
-export const getWord = async (req, res) => {
+const getRandomWord = async (req, res, next) => {
   const length = req.query.wordLength || DEFAULT_WORD_LENGTH;
 
-  // Ensure the length is within the allowed range.
-  if (!(MINIMUM_WORD_LENGTH <= length && length <= MAXIMUM_WORD_LENGTH)) {
-    res.json({
-      status: "error",
-      message: "INVALID WORD LENGTH",
-    });
-    return;
-  }
-
-  // Synchronously retrieve the word from the database.
-  const randomWord = await getWordOfLength(length);
-
+  const randomWord = await wordService.getWord(length);
   return res.json(randomWord);
 };
 
 /**
- * Retrieves the list of words between a min-max value range.
- * 
- * Endpoint: /word/list
- * 
- * @return {Promise<Array>} A list of words within the min-max range.
+ * Retrieves the list of words of a given length.
+ *
+ * Endpoint: GET /word/list
+ *
+ * @returns {Promise<Array | InternalError>} A promise that resolves to an Array of words with the specified length or an Error.
  */
-export const getWordList = async (req, res) => {
-  const length = req.query.length;
-  const minLength = req.query.minLength || MINIMUM_WORD_LENGTH;
-  const maxLength = req.query.maxLength || MAXIMUM_WORD_LENGTH;
-
-  // Ensure the length is within the allowed range.
-  if (
-    length &&
-    !(MINIMUM_WORD_LENGTH <= length && length <= MAXIMUM_WORD_LENGTH)
-  ) {
-    res.json({
-      status: "error",
-      message: "INVALID WORD LENGTH",
-    });
-    return;
+const getWordList = async (req, res, next) => {
+  try {
+    const length = parseInt(req.query.length) || DEFAULT_WORD_LENGTH;
+    const wordList = await wordService.getWordList(length);
+    return res.json(wordList);
+  } catch (error) {
+    throw new InternalError("Failed to fetch word list");
   }
+};
 
-  // Ensure the minLength is within the minimum length and the maxLength parameter.
-  if (!(MINIMUM_WORD_LENGTH <= minLength && minLength <= maxLength)) {
-    res.json({
-      status: "error",
-      message: "MIN VALUE OUT OF BOUNDS",
-    });
-    return;
-  }
-
-  // Ensure the maxLength is within the allowed range.
-  if (!(MINIMUM_WORD_LENGTH <= maxLength && maxLength <= MAXIMUM_WORD_LENGTH)) {
-    res.json({
-      status: "error",
-      message: "MAX VALUE OUT OF BOUNDS",
-    });
-    return;
-  }
-
-  // Synchronously retrieve the word list from the database. If length is set it will be used.
-  const wordList = await getWordsByLengthRange(
-    length || minLength,
-    length || maxLength
-  );
-  return res.json(wordList);
+export default {
+  getRandomWord,
+  getWordList,
 };

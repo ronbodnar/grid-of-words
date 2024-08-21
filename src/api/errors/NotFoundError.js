@@ -1,6 +1,6 @@
 import { BaseError } from "./BaseError.js";
 
-export class InternalError extends BaseError {
+export class NotFoundError extends BaseError {
     constructor(message, data) {
         super(message, data);
     }
