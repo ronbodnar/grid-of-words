@@ -1,6 +1,6 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
-import { InternalError } from "../errors/InternalError.js";
-import logger from "../config/winston.config.js";
+import DatabaseError from "../errors/DatabaseError.js";
+import ValidationError from "../errors/ValidationError.js";
 
 let client;
 
@@ -15,11 +15,10 @@ const connect = async () => {
     });
     await client.connect();
   } catch (error) {
-    logger.error("Error connecting to MongoDB server", {
+    throw new DatabaseError("Couldn't connect to to MongoDB server", {
       connectionUrl: process.env.MONGO_URL,
       error: error,
     });
-    throw new InternalError("Failed to connect to database server");
   }
 };
 
@@ -34,16 +33,15 @@ const getCollection = (name, database = process.env.MONGO_DB_NAME) => {
     throw new ValidationError("Collection name must be provided.");
   }
   if (!client) {
-    throw new InternalError("Mongo client could not be found.");
+    throw new DatabaseError("Mongo client could not be found.");
   }
 
   const db = client.db(database);
   if (!db) {
-    logger.error("Database could not be found", {
+    throw new DatabaseError("Database could not be found.", {
       client: client,
       database: database,
     });
-    throw new InternalError("Database could not be found.");
   }
   return db.collection(name);
 };

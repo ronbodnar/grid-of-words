@@ -2,9 +2,17 @@ import winston from "winston";
 
 const consoleTransport = new winston.transports.Console({
   format: winston.format.combine(
+    winston.format.colorize(),
     winston.format.timestamp(),
-    winston.format.splat(),
-    winston.format.simple()
+    winston.format.printf((info) => {
+      const { level, timestamp, message, ...meta } = info;
+      const metaString = Object.keys(meta).length
+        ? JSON.stringify(meta, null, 4)
+        : "";
+      return `${timestamp} [${level}] ${message}${
+        metaString ? `\n${metaString}` : ""
+      }`;
+    })
   ),
 });
 

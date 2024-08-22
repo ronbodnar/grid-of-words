@@ -125,3 +125,13 @@ sup {
   align-items: center;
   margin: 25px 0;
 }
+
+/*
+ * Override the main content on small and unusual screens
+ */
+@media screen and (max-height: 600px) and (min-width: 1024px) {
+  .content:not(#home):not(#game) {
+    padding-top: 100px;
+    padding-bottom: 20px;
+  }
+}

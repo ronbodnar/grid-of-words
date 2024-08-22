@@ -37,7 +37,7 @@
   border: 1px solid rgba(244, 243, 242, 0.1);
   cursor: pointer;
   touch-action: manipulation;
-  transition: 0.75s;
+  transition: 0.25s;
 }
 
 .keyboard-key:hover {

@@ -3,9 +3,9 @@ import { GameState, gameRepository } from "./index.js";
 /*
  * A representation of a Game.
  */
-export class Game {
+class Game {
 
-  state = GameState.STARTED;
+  state = GameState.IN_PROGRESS;
   word = undefined;
   attempts = [];
   maxAttempts = undefined;
@@ -19,7 +19,7 @@ export class Game {
    * @param {Object} obj - (optional) - An object with the following optional properties:
    * @param {ObjectId} [obj._id] The ObjectId object containing the game ID.
    * @param {string} [obj.word] The target word for winning the game.
-   * @param {GameState} [obj.state=GameState.STARTED] The state of the game.
+   * @param {GameState} [obj.state=GameState.IN_PROGRESS] The state of the game.
    * @param {Array} [obj.attempts=[]] An array of attempts made in the game.
    * @param {string} [obj.startTimestamp] The timestamp for the start of the game.
    * @param {string} [obj.endTimestamp] The timestamp for the end of the game.
@@ -52,3 +52,5 @@ export class Game {
     return await gameRepository.updateGame(this);
   }
 }
+
+export default Game;

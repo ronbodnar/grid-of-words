@@ -1,64 +1,7 @@
 import crypto from "node:crypto";
 import jwt from "jsonwebtoken";
-import logger from "../../config/winston.config.js";
-import { User, userRepository } from "../user/index.js";
-import { setCookie } from "../../shared/helpers.js";
-
-export const authenticate = async (email, password) => {
-  const dbUser = await userRepository.findBy('email', email);
-  if (!dbUser) {
-    return false;
-  }
-
-  const salt = dbUser.getSalt();
-  const userHash = dbUser.getHash();
-
-  // Hash the password with the user's salt (first 16 bytes/32 hex chars are the salt)
-  const hashedPassword = hashPassword(password, salt);
-
-  logger.debug("Authentication Request received", {
-    dbUserHashValue: dbUser.hash,
-    salt: salt,
-    userHash: userHash,
-    hashedPass: hashedPassword,
-  });
-
-  // We 
-  if (hashedPassword === userHash) {
-    return dbUser;
-  } else {
-    return null;
-  }
-};
-
-export const setTokenCookie = (res, payload) => {
-  // Make sure we received a payload.
-  if (!payload) {
-    logger.error("No payload provided to setTokenCookie");
-    return null;
-  }
-
-  // Generate the JWT from the payload.
-  const jwt = generateToken(payload);
-  if (!jwt) {
-    logger.warn("No JWT provided to setTokenCookie");
-    return null;
-  }
-
-  // Delete the user's hash (password) from the cookie payload
-  if (payload.user?.hash) {
-    delete payload.user?.hash;
-  }
-
-  const maxAge = 1000 * 60 * 60 * 24 * 15;
-  setCookie(res, "token", jwt, maxAge);
-  return jwt;
-};
-
-export const setApiKeyCookie = (res) => {
-  const apiKeyToken = generateToken(process.env.API_KEY, "30d");
-  setCookie(res, "apiKey", apiKeyToken);
-};
+import { User } from "../user/index.js";
+import { ValidationError } from "../../errors/index.js";
 
 /**
  * Generates a random salt string.
@@ -91,25 +34,23 @@ export const hashPassword = (password, salt, algorithm = "sha256") => {
  * Generates a JSON Web Token for the given user.
  *
  * @param {Object} payload - The user object containing user details.
- * @param {string} expiresIn - The expiration time of the token. (default: '15d')
- * @returns {string} The generated token.
+ * @param {string | number} expiresIn - The expiration time of the token. (default: '15d')
+ * @returns {string | null} The generated token.
  */
-export const generateToken = (payload, expiresIn = "15d") => {
+export const generateJWT = (payload, expiresIn = "15d") => {
   if (!payload) {
-    logger.error("No payload provided to generateToken", {
-      payload: payload
-    })
-    return;
-  }
-  // Remove the hash property from the user object so it doesn't get included in the payload.
-  if (payload.data?.hash) {
-    delete payload.data.hash;
+    return new ValidationError("No payload provided to generateJWT", { payload: payload });
   }
 
-  // Sign the payload with the JWT_SECRET and set the expiration time to 15 days.
+  const { data } = payload;
+
+  if (data?.hash) {
+    delete data.hash;
+  }
+
   const token = jwt.sign(
     {
-      data: payload,
+      data: payload, // sign the whole payload, not just the payload data
     },
     process.env.JWT_SECRET,
     { expiresIn: expiresIn }
@@ -118,19 +59,17 @@ export const generateToken = (payload, expiresIn = "15d") => {
 };
 
 /**
- * Verifies a JSON Web Token and decodes it.
+ * Verifies the JSON Web Token using the secret key to decode the payload.
  *
  * @param {string} token - The JWT to verify.
  * @returns {Object|undefined} The decoded token if verification is successful, otherwise undefined.
  */
-export const verifyToken = (token) => {
+export const verifyJWT = (token) => {
   if (!token) {
-    logger.warn("no token");
     return null;
   }
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    return decoded;
+    return jwt.verify(token, process.env.JWT_SECRET);
   } catch (error) {
     return null;
   }
@@ -144,22 +83,13 @@ export const verifyToken = (token) => {
  * @returns The user from the payload if present, otherwise undefined.
  */
 export const getAuthenticatedUser = (token) => {
-  // Check if the token is present in the cookies.
   if (!token) {
     return null;
   }
-
-  // Decode token to get the payload.
-  const decodedPayload = verifyToken(token);
-  
-  // Validate the presence of a user object within the token's payload.
+  const decodedPayload = verifyJWT(token);
   if (!decodedPayload?.data) {
     return null;
   }
-
-  console.log("getAuthenticatedUser", decodedPayload.data);
   const user = new User().fromJSON(decodedPayload.data);
-
-  // Return the user object from the decoded payload.
   return user;
 };

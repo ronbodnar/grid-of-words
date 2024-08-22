@@ -1,4 +1,4 @@
-import { ValidationError } from "../../../errors/ValidationError.js";
+import { ValidationError } from "../../../errors/index.js";
 import { APP_NAME } from "../../../shared/constants.js";
 import { emailService } from "../index.js";
 
@@ -9,7 +9,7 @@ import { emailService } from "../index.js";
  * @param {*} token The password reset token that was assigned to the user.
  * @returns {Promise<boolean>} A promise that resolves to the result of the {@link sendEmail} function call.
  */
-const send = async (user, token) => {
+export const send = async (user, token) => {
   if (!user) {
     throw new ValidationError("User not provided");
   }
@@ -95,8 +95,4 @@ const getText = (options) => {
     `Thank you\n` +
     `The ${appName} Team`
   );
-};
-
-export default {
-  send
 };

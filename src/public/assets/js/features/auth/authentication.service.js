@@ -92,7 +92,7 @@ export const logout = async () => {
  * @returns {Promise<any>} A promise that resolves with the API response.
  */
 export const validateResetToken = async (passwordResetToken) => {
-  return await fetchData("/auth/validate", "POST", {
+  return await fetchData("/auth/validate-token", "POST", {
     passwordResetToken: passwordResetToken,
   });
 };

@@ -28,7 +28,10 @@ export const buildForgotPasswordView = (message) => {
       text: "Enter your email address to receive a password reset link.",
     },
     message: {
-      hidden: true
+      text: message,
+      className: "error",
+      hidden: true,
+      hideDelay: 10000,
     },
     additionalElements: [form],
   });

@@ -2,7 +2,7 @@ import {
   fillNextSquare,
   removeLastSquareValue,
 } from "../../features/gameboard/gameboard.service.js";
-import { forfeitGame, startGame } from "../../features/game/game.service.js";
+import { abandonGame, startGame } from "../../features/game/game.service.js";
 import { processAttempt } from "../../features/attempts/attempt.service.js";
 import {
   getCurrentViewName,
@@ -42,7 +42,7 @@ const clickFunctions = {
   // Games
   startGame: (args) => {
     const { wordLength, maxAttempts, languageCode } = args;
-    logger.info("Starting game with arguments", {
+    logger.debug("Starting game with arguments", {
       arguments: args,
     });
     startGame({
@@ -51,9 +51,9 @@ const clickFunctions = {
       language: languageCode || "enUS",
     });
   },
-  forfeitGame: async () => {
-    if (window.confirm("Are you sure you want to forfeit the game?")) {
-      await forfeitGame();
+  abandonGame: async () => {
+    if (window.confirm("Are you sure you want to abandon the game?")) {
+      await abandonGame();
     }
   },
 

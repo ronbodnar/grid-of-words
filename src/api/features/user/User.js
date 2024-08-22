@@ -1,7 +1,7 @@
 import { authService } from "../auth/index.js";
 import { userRepository } from "./index.js";
 
-export class User {
+class User {
   _id = undefined;
   username = undefined;
   hash = undefined;
@@ -48,3 +48,5 @@ export class User {
     return this.hash.substring(32);
   }
 }
+
+export default User;

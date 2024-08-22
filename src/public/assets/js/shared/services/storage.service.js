@@ -38,7 +38,6 @@ export const retrieveSession = (key) => {
  * @param {any} value - The value to store as a JSON string.
  */
 export const storeLocal = (key, value) => {
-  logger.debug("Storing to localStorage", key, value);
   window.localStorage.setItem(key, JSON.stringify(value));
 };
 

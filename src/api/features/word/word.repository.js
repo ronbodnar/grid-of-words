@@ -1,6 +1,4 @@
-import { DatabaseError } from "../../errors/DatabaseError.js";
-import { InternalError } from "../../errors/InternalError.js";
-import { NotFoundError } from "../../errors/NotFoundError.js";
+import { DatabaseError, InternalError, NotFoundError } from "../../errors/index.js";
 import database from "../../shared/database.js";
 
 /**
@@ -9,7 +7,7 @@ import database from "../../shared/database.js";
  * @param {number} length - The length of the word to be found.
  * @returns {Promise<string | InternalError | DatabaseError>} A promise that resolves to a random word of the specified length if successful.
  */
-const findByLength = async (length) => {
+export const findByLength = async (length) => {
   if (!length) {
     throw new InternalError("Word length is required");
   }
@@ -81,7 +79,7 @@ const findByLength = async (length) => {
  * @param {number} maxLength - The maximum length of word to retrieve.
  * @return {Array} The list of words matching the length range.
  */
-const findAllByLength = async (length) => {
+export const findAllByLength = async (length) => {
   if (!length) {
     throw new InternalError("Missing required length parameter");
   }
@@ -157,7 +155,7 @@ const findAllByLength = async (length) => {
  * @param {string} word - The word to search for.
  * @return {boolean}
  */
-const exists = async (word) => {
+export const exists = async (word) => {
   try {
     const wordCollection = database.getWordCollection();
     const result = await wordCollection.findOne({ text: word });
@@ -170,10 +168,4 @@ const exists = async (word) => {
       }
     );
   }
-};
-
-export default {
-  findByLength,
-  findAllByLength,
-  exists,
 };
