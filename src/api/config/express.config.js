@@ -1,4 +1,5 @@
 import path from "node:path";
+import helmet from "helmet";
 import express from "express";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
@@ -10,32 +11,28 @@ import errorHandler from "../middleware/error-handler.js";
 
 export const app = express();
 
-// Parse application/json content in the request body.
-app.use(bodyParser.json());
-
-// Parse cookies in the request body
+app.use(helmet());
 app.use(cookieParser());
-
-// Load the static assets from the assets folder
+app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "..", "..", "public")));
- 
-// Limit requests to 1 per second.
-/* app.use(
-  rateLimit({
-    windowMs: 1000,
-    limit: 1,
-    skip: (req, res) => req.cookies.apiKey
-  })
-); */
 
-// Assign routes starting with the root path
+// Set up the rate limit middleware for 200 requests per 15 minutes.
+app.use(
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 200,
+    message: JSON.stringify({ error: "Too many requests, please try again later." }),
+    //skip: (req) => req.cookies.apiKey
+  })
+);
+
+app.use("*", function (req, res, next) {
+  logger.info(`Incoming request from ${req.socket.localAddress}: ${req.url}`);
+  next();
+});
+
 app.use("/", routes);
 
-// Handle errors in the application
 app.use(errorHandler);
-
-app.use("*", function (req, res) {
-  logger.info(`Incoming request from ${req.socket.localAddress}: ${req.url}`);
-});
 
 export default app;

@@ -1,4 +1,3 @@
-import { logger } from "../../main.js";
 import { buildGameBoardElement } from "../gameboard/gameboard.js";
 import { buildOnScreenKeyboardElement } from "../keyboard/keyboard.js";
 import { buildView } from "../view/view.js";

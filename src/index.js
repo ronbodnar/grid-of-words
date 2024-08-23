@@ -66,7 +66,6 @@ const createProductionServer = () => {
   } catch (error) {
     logger.error("Error creating HTTPS server with SSL certificate", {
       error: error,
-      options: options,
     });
     process.exit(1);
   }

@@ -1,6 +1,7 @@
-import { authService } from "../index.js";
-import { UnauthorizedError } from "../../../errors/index.js";
-import userRepository from "../../user/user.repository.js";
+import UnauthorizedError from "../../../errors/UnauthorizedError.js";
+import ValidationError from "../../../errors/ValidationError.js";
+import { findUserBy } from "../../user/user.repository.js";
+import { generateSalt, getAuthenticatedUser, hashPassword } from "../authentication.service.js";
 
 export const changePassword = async (newPassword, currentPassword, authToken) => {
   if (newPassword === currentPassword) {
@@ -15,13 +16,13 @@ export const changePassword = async (newPassword, currentPassword, authToken) =>
     );
   }
 
-  const claimUser = authService.getAuthenticatedUser(authToken);
+  const claimUser = getAuthenticatedUser(authToken);
   if (!claimUser) {
     return new UnauthorizedError("User is not authenticated.");
   }
 
   // Look up the user in the database to get current information.
-  const authenticatedUser = await userRepository.findBy("_id", claimUser._id);
+  const authenticatedUser = await findUserBy("_id", claimUser._id);
   if (!authenticatedUser) {
     // Should it should show the login view?
     return new UnauthorizedError(
@@ -34,7 +35,7 @@ export const changePassword = async (newPassword, currentPassword, authToken) =>
   const actualPasswordHash = authenticatedUser.getHash();
 
   // Hash the provided current password with the user's salt (first 16 bytes/32 hex chars of user hash are the salt)
-  const providedPasswordHash = authService.hashPassword(currentPassword, salt);
+  const providedPasswordHash = hashPassword(currentPassword, salt);
 
   // Passwords aren't a match, so we respond with a 401 Unauthorized error.
   if (actualPasswordHash !== providedPasswordHash) {
@@ -44,9 +45,9 @@ export const changePassword = async (newPassword, currentPassword, authToken) =>
   }
 
   // Hash the new password with a new salt and then prepend with hash with the salt.
-  const newSalt = authService.generateSalt();
+  const newSalt = generateSalt();
   const newPasswordHash =
-    newSalt + authService.hashPassword(newPassword, newSalt);
+    newSalt + hashPassword(newPassword, newSalt);
 
   // Update the user's hashed password and save it in the database.
   authenticatedUser.hash = newPasswordHash;

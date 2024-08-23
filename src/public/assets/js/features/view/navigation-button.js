@@ -1,4 +1,3 @@
-import { logger } from "../../main.js";
 import { createButton } from "../../shared/components/button.js";
 
 /**

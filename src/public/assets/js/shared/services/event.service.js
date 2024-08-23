@@ -106,7 +106,7 @@ export const handleClickEvent = (event, args) => {
   }
 
   const targetName = targetId.replace("Button", "").replace(/-[a-z]{1,}/g, "");
-  if (!clickFunctions.hasOwnProperty(targetName)) {
+  if (!Object.hasOwn(clickFunctions, targetName)) {
     throw new Error(`${targetName} does not have a mapped function`);
   }
 

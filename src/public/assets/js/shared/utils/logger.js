@@ -25,7 +25,6 @@ const logger = () => {
     if (level > LogLevel.INFO) {
       return;
     }
-    const timestamp = new Date().toISOString();
     console.log(
       `[${Object.keys(LogLevel).find((key) => LogLevel[key] === level)}]`,
       message,

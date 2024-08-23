@@ -1,7 +1,8 @@
 import crypto from "node:crypto";
 import jwt from "jsonwebtoken";
-import { User } from "../user/index.js";
-import { ValidationError } from "../../errors/index.js";
+import User from "../user/User.js";
+import ValidationError from "../../errors/ValidationError.js";
+import logger from "../../config/winston.config.js";
 
 /**
  * Generates a random salt string.
@@ -39,7 +40,9 @@ export const hashPassword = (password, salt, algorithm = "sha256") => {
  */
 export const generateJWT = (payload, expiresIn = "15d") => {
   if (!payload) {
-    return new ValidationError("No payload provided to generateJWT", { payload: payload });
+    return new ValidationError("No payload provided to generateJWT", {
+      payload: payload,
+    });
   }
 
   const { data } = payload;
@@ -71,6 +74,10 @@ export const verifyJWT = (token) => {
   try {
     return jwt.verify(token, process.env.JWT_SECRET);
   } catch (error) {
+    logger.error("Failed to verify JWT:", {
+      error: error,
+      token: token,
+    });
     return null;
   }
 };

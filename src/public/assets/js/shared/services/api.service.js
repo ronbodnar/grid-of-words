@@ -93,7 +93,7 @@ export const fetchWordList = async (length) => {
   }
   // The word list is of form: { <length>: [...words], ... }
   const localWordList = retrieveLocal("wordList") || {};
-  if (localWordList.hasOwnProperty(length)) {
+  if (Object.hasOwn(localWordList, length)) {
     return;
   }
   return fetchData(`word/list`, "GET", {
@@ -119,7 +119,7 @@ export const wordExists = (word) => {
   const wordLen = word.length;
   const wordList = retrieveLocal("wordList");
   // We can fetch the word list in the background and safely pass validation off to the server.
-  if (!wordList || !wordList.hasOwnProperty(wordLen)) {
+  if (!wordList || !Object.hasOwn(wordList, wordLen)) {
     fetchWordList(wordLen);
     return true;
   }

@@ -1,6 +1,5 @@
 import { logger } from "../../main.js";
 import { createText } from "../../shared/components/text.js";
-import { handleClickEvent } from "../../shared/services/event.service.js";
 import { createInput } from "./input.js";
 import { createLabel } from "./label.js";
 

@@ -1,16 +1,17 @@
-import { Game, GameState, gameRepository } from "./index.js";
-import { NotFoundError, InternalError, ValidationError } from "../../errors/index.js";
 import {
   MAXIMUM_MAX_ATTEMPTS,
   MAXIMUM_WORD_LENGTH,
   MINIMUM_MAX_ATTEMPTS,
   MINIMUM_WORD_LENGTH,
 } from "../../shared/constants.js";
-import { wordRepository } from "../word/index.js";
-import { ObjectId } from "mongodb";
-import { User } from "../user/User.js";
-import { authService } from "../auth/index.js";
-import logger from "../../config/winston.config.js";
+import Game from "./Game.js";
+import GameState from "./GameState.js";
+import NotFoundError from "../../errors/NotFoundError.js";
+import InternalError from "../../errors/InternalError.js";
+import ValidationError from "../../errors/ValidationError.js";
+import { exists, findByLength } from "../word/word.repository.js";
+import { findGameById, insertGame } from "./game.repository.js";
+import { getAuthenticatedUser } from "../auth/authentication.service.js";
 
 // TODO: separate validation / implement Joi
 
@@ -22,7 +23,11 @@ import logger from "../../config/winston.config.js";
  * @param {User} authenticatedUser The logged in user who requested a new game.
  * @returns {Promise<Game | ValidationError | InternalError | NotFoundError>} A promise that resolves to the created Game object if successful.
  */
-export const generateNewGame = async (wordLength, maxAttempts, authenticatedUser) => {
+export const generateNewGame = async (
+  wordLength,
+  maxAttempts,
+  authenticatedUser
+) => {
   if (!wordLength || !maxAttempts) {
     return new ValidationError(
       "Missing required parameters: wordLength, maxAttempts"
@@ -45,7 +50,7 @@ export const generateNewGame = async (wordLength, maxAttempts, authenticatedUser
     });
   }
 
-  const word = await wordRepository.findByLength(wordLength);
+  const word = await findByLength(wordLength);
   if (!word) {
     return new InternalError(
       "Failed to obtain a random word when creating a new game",
@@ -68,7 +73,7 @@ export const generateNewGame = async (wordLength, maxAttempts, authenticatedUser
     ownerId: authenticatedUserId,
   });
 
-  const createdGameId = await gameRepository.insertGame(game);
+  const createdGameId = await insertGame(game);
   if (!createdGameId) {
     return new InternalError("Failed to insert new game into the database", {
       word: word,
@@ -78,7 +83,7 @@ export const generateNewGame = async (wordLength, maxAttempts, authenticatedUser
     });
   }
 
-  const createdGame = await gameRepository.findById(createdGameId);
+  const createdGame = await findGameById(createdGameId);
   if (!createdGame) {
     return new NotFoundError("Failed to find the newly created game", {
       gameId: createdGameId,
@@ -96,14 +101,14 @@ export const generateNewGame = async (wordLength, maxAttempts, authenticatedUser
  * @returns {Promise<object | ValidationError | InternalError | NotFoundError>} A promise that resolves with the attempt message and game data if successful.
  */
 export const addAttempt = async (word, gameId, authToken) => {
-  const game = await gameRepository.findById(gameId);
+  const game = await findGameById(gameId);
   if (!game) {
     return new NotFoundError("GAME_NOT_FOUND", {
       gameId: gameId,
     });
   }
 
-  const authenticatedUser = authService.getAuthenticatedUser(authToken);
+  const authenticatedUser = getAuthenticatedUser(authToken);
 
   const validationMessage = await validateAttempt(word, game);
   if (validationMessage.length > 0) {
@@ -147,8 +152,8 @@ export const addAttempt = async (word, gameId, authToken) => {
  * @param {string | ObjectId} gameId The unique ID of the game.
  * @returns {Promise<Game | NotFoundError>} A promise that resolves to the Game object if successful.
  */
-export const getGame = async (gameId) => {
-  const game = await gameRepository.findById(gameId);
+export const getGameById = async (gameId) => {
+  const game = await findGameById(gameId);
   if (!game) {
     return new NotFoundError("No game found for the provided id", {
       gameId: gameId,
@@ -163,8 +168,8 @@ export const getGame = async (gameId) => {
  * @param {string | ObjectId} gameId The id of the game to abandon.
  * @returns {Promise<object | InternalError | NotFoundError>} A promise that resolves to an empty object if successful.
  */
-export const abandonGame = async (gameId) => {
-  const game = await gameRepository.findById(gameId);
+export const abandonGameById = async (gameId) => {
+  const game = await findGameById(gameId);
   if (game) {
     game.state = GameState.ABANDON;
     const gameSavedSuccessfully = await game.save();
@@ -202,7 +207,7 @@ const validateAttempt = async (word, game) => {
   }
 
   // Validate that the word exists in the word list
-  var validWord = await wordRepository.exists(word);
+  var validWord = await exists(word);
   if (!validWord) {
     return "NOT_IN_WORD_LIST";
   }

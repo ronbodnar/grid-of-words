@@ -1,4 +1,6 @@
-import { DatabaseError, InternalError, NotFoundError } from "../../errors/index.js";
+import DatabaseError from "../../errors/DatabaseError.js";
+import InternalError from "../../errors/InternalError.js";
+import NotFoundError from "../../errors/NotFoundError.js";
 import database from "../../shared/database.js";
 
 /**

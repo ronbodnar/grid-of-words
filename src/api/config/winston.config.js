@@ -32,10 +32,11 @@ export const logger = winston.createLogger({
   format: winston.format.json(),
 });
 
+const { NODE_ENV } = process.env;
 // Add File transports for production environments and console transport for development.
-if (process.env.NODE_ENV === "production") {
+if (NODE_ENV === "production") {
   logger.add(errorTransport).add(outputTransport);
-} else if (process.env.NODE_ENV === "development") {
+} else if (NODE_ENV === "development") {
   logger.add(consoleTransport);
 }
 

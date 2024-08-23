@@ -1,14 +1,18 @@
 import nodemailer from "nodemailer";
 
+const {
+  SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS
+} = process.env;
+
 // Set up the transport with the email settings in the .env file.
 // Secure will automatically be set to true if the port is 465.
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: process.env.SMTP_PORT,
-  secure: process.env.SMTP_PORT === 465,
+  host: SMTP_HOST,
+  port: SMTP_PORT,
+  secure: SMTP_PORT === 465,
   auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
+    user: SMTP_USER,
+    pass: SMTP_PASS,
   },
 });
 

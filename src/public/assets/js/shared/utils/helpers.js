@@ -1,5 +1,4 @@
 import { EXACT_MATCH, PARTIAL_MATCH, NO_MATCH } from "./constants.js";
-import logger from "./logger.js";
 
 /**
  * Compares two words of assumed equal length to see which guessWord letter positions match, are invalid, or don't exist in the gameWord.

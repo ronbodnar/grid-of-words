@@ -1,4 +1,3 @@
-import e from "express";
 import BaseError from "./BaseError.js";
 
 class NotFoundError extends BaseError {

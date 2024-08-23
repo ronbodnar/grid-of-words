@@ -1,5 +1,3 @@
-import { logger } from "../../main.js";
-
 /**
  * Adds the specified key/value pair to the sessionStorage and encodes the value into JSON.
  * 

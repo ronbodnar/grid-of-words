@@ -1,3 +1,5 @@
+import { generateJWT } from "../features/auth/authentication.service.js";
+
 /**
  * Sets an HttpOnly cookie in the response header. The cookie is secure if NODE_ENV is production.
  * 

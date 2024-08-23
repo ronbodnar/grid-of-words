@@ -1,17 +1,19 @@
-import { InternalError, ValidationError } from "../../../errors/index.js";
-import { resetPasswordService } from "./index.js";
+import InternalError from "../../../errors/InternalError.js";
+import ValidationError from "../../../errors/ValidationError.js";
+import { resetPassword } from "./reset-password.service.js";
 
-export const resetPassword = async (req, res, next) => {
+export const handleResetPassword = async (req, res, next) => {
   const { newPassword, passwordResetToken } = req.body;
 
   if (!newPassword || !passwordResetToken) {
-    return next(new ValidationError("Missing required fields: newPassword, passwordResetToken"));
+    return next(
+      new ValidationError(
+        "Missing required fields: newPassword, passwordResetToken"
+      )
+    );
   }
 
-  const resetPasswordResult = resetPasswordService.resetPassword(
-    newPassword,
-    passwordResetToken
-  );
+  const resetPasswordResult = resetPassword(newPassword, passwordResetToken);
   if (!resetPasswordResult) {
     return next(new InternalError("Unexpected error while resetting password"));
   }

@@ -10,6 +10,7 @@
 2. [Technology Stack](#technology-stack)
 3. [Installation](#installation)
 4. [Usage](#usage)
+4. [Running with Docker](#running-with-docker)
 5. [Contributing](#contributing)
 6. [License](#license)
 
@@ -104,6 +105,40 @@ Once the application is running, you can interact with it as follows:
    Logs are managed with [Winston](https://github.com/winstonjs/winston) and are stored in the `logs` directory. Review these logs for any errors or important information.
 
 For more details on configuration and extending the application, refer to the [documentation](https://github.com/ronbodnar/word-puzzle-game#readme) or explore the code in the repository.
+
+## Running with Docker
+
+To run the Word Puzzle Game using Docker, follow these steps:
+
+1. **Build the Docker Images**
+
+   Build the Docker images for development or production:
+
+   ~
+   docker-compose build
+   ~
+
+2. **Start the Services**
+
+   Start the services defined in the `docker-compose.yml` file:
+
+   ~
+   docker-compose up
+   ~
+
+3. **Access the Application**
+
+   The application will be available at `http://localhost:3000`. Open this URL in your web browser to start playing.
+
+4. **Stop the Services**
+
+   To stop the running services, use:
+
+   ~
+   docker-compose down
+   ~
+
+For more details on Docker setup and usage, refer to the [Docker documentation](https://docs.docker.com/).
 
 ## Contributing
 

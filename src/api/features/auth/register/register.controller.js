@@ -1,7 +1,8 @@
-import { InternalError, ValidationError } from "../../../errors/index.js";
-import { registerService } from "./index.js";
+import InternalError from "../../../errors/InternalError.js";
+import ValidationError from "../../../errors/ValidationError.js";
+import { registerUser } from "./register.service.js";
 
-export const register = async (req, res, next) => {
+export const handleRegisterUser = async (req, res, next) => {
   const { email, password, username } = req.body;
 
   if (!username || !email || !password) {
@@ -10,7 +11,7 @@ export const register = async (req, res, next) => {
     );
   }
 
-  const registerResult = await registerService.register(
+  const registerResult = await registerUser(
     username,
     email,
     password

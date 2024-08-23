@@ -1,6 +1,7 @@
-import { authService } from "../index.js";
-import { UnauthorizedError, ValidationError } from "../../../errors/index.js";
-import { userRepository } from "../../user/index.js";
+import UnauthorizedError from "../../../errors/UnauthorizedError.js";
+import ValidationError from "../../../errors/ValidationError.js";
+import { findUserBy } from "../../user/user.repository.js";
+import { generateSalt, hashPassword } from "../authentication.service.js";
 
 // TODO: verify password isn't the same as the current password? additional complexity?
 export const resetPassword = async (newPassword, passwordResetToken) => {
@@ -10,7 +11,7 @@ export const resetPassword = async (newPassword, passwordResetToken) => {
     );
   }
 
-  const authenticatedUser = await userRepository.findBy(
+  const authenticatedUser = await findUserBy(
     "passwordResetToken",
     passwordResetToken
   );
@@ -19,9 +20,9 @@ export const resetPassword = async (newPassword, passwordResetToken) => {
   }
 
   // Generate a new salt and hash the new password + preprend the hash with the salt.
-  const newSalt = authService.generateSalt();
+  const newSalt = generateSalt();
   const newPasswordHash =
-    newSalt + authService.hashPassword(newPassword, newSalt);
+    newSalt + hashPassword(newPassword, newSalt);
 
   authenticatedUser.hash = newPasswordHash;
   authenticatedUser.passwordResetToken = null;

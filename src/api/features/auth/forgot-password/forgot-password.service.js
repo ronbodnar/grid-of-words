@@ -1,9 +1,9 @@
 import logger from "../../../config/winston.config.js";
-import { ValidationError } from "../../../errors/index.js";
 import { EMAIL_REGEX } from "../../../shared/constants.js";
-import { resetPasswordEmail } from "../../email/index.js";
-import { userRepository } from "../../user/index.js";
-import { authService } from "../index.js";
+import ValidationError from "../../../errors/ValidationError.js";
+import { findUserBy } from "../../user/user.repository.js";
+import { generateSalt } from "../authentication.service.js";
+import { sendPasswordResetEmail } from "../../email/email.service.js";
 
 /**
  * Processes the request to send a password reset link via email. Most errors default to a success to hide output to users.
@@ -24,12 +24,12 @@ export const forgotPassword = async (email) => {
     );
   }
 
-  const dbUser = await userRepository.findBy("email", email);
+  const dbUser = await findUserBy("email", email);
   if (!dbUser) {
     return successResponse;
   }
 
-  const token = authService.generateSalt(32);
+  const token = generateSalt(32);
 
   dbUser.passwordResetToken = token;
   dbUser.passwordResetTokenExpiration = new Date(Date.now() + 1000 * 60 * 60);
@@ -44,7 +44,7 @@ export const forgotPassword = async (email) => {
     return successResponse;
   }
 
-  const sendEmailResponse = await resetPasswordEmail.send(dbUser, token);
+  const sendEmailResponse = await sendPasswordResetEmail(dbUser, token);
   if (!sendEmailResponse) {
     logger.error("Failed to send password reset email", {
       email: email,
