@@ -45,10 +45,11 @@ export const generateJWT = (payload, expiresIn = "15d") => {
     });
   }
 
-  const { data } = payload;
-
-  if (data?.hash) {
-    delete data.hash;
+  // Remove sensitive information from the returned user object.
+  if (payload.data) {
+    delete payload.data.hash;
+    delete payload.data.passwordResetToken;
+    delete payload.data.passwordResetTokenExpiration;
   }
 
   const token = jwt.sign(
@@ -97,6 +98,6 @@ export const getAuthenticatedUser = (token) => {
   if (!decodedPayload?.data) {
     return null;
   }
-  const user = new User().fromJSON(decodedPayload.data);
+  const user = new User(decodedPayload.data);
   return user;
 };

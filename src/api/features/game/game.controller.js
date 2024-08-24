@@ -66,10 +66,10 @@ export const handleGenerateNewGame = async (req, res, next) => {
     maxAttempts,
     authenticatedUser
   );
-  if (newGame instanceof Error) {
-    return next(newGame);
+  if (!newGame) {
+    return next(new NotFoundError("Failed to generate new game"));
   }
-
+  
   setCookie(res, "game", newGame);
 
   return res.json(newGame);
@@ -106,10 +106,6 @@ export const handleAbandonGameById = async (req, res, next) => {
       abandonResponse: abandonResult,
     });
     return next(error);
-  }
-
-  if (abandonResult instanceof Error) {
-    return next(abandonResult);
   }
 
   res.clearCookie("game");

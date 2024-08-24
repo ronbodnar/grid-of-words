@@ -26,7 +26,11 @@ export const registerUser = async (username, email, password) => {
     return new ValidationError("Email address is already registered");
   }
 
-  const user = new User(email, username, password);
+  const user = new User({
+    email,
+    username,
+    password,
+  });
   const insertResult = await insertUser(user);
   if (!insertResult) {
     return new InternalError("Failed to insert new user into the database", {

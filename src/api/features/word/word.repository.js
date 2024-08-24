@@ -63,7 +63,7 @@ export const findByLength = async (length) => {
         }
       );
     }
-    return cursorResult.text;
+    return cursorResult.text.toLowerCase();
   } catch (error) {
     return new DatabaseError(
       `Failed to retrieve random word of length ${length}`,
@@ -119,7 +119,9 @@ export const findAllByLength = async (length) => {
         $group: {
           _id: null,
           words: {
-            $push: "$text",
+            $push: {
+              $toLower: "$text"
+            },
           },
         },
       },

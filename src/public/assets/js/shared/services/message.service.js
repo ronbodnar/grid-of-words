@@ -41,7 +41,6 @@ export const showMessage = (message, options = {}) => {
 
   if (hide) {
     messageTimeout = setTimeout(() => {
-      messageDiv.style.opacity = 0;
       setTimeout(() => {
         messageDiv.innerHTML = "";
         messageDiv.classList.remove(className);

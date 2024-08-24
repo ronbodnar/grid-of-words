@@ -24,10 +24,11 @@ export const resetPassword = async (newPassword, passwordResetToken) => {
   const newPasswordHash =
     newSalt + hashPassword(newPassword, newSalt);
 
-  authenticatedUser.hash = newPasswordHash;
-  authenticatedUser.passwordResetToken = null;
-  authenticatedUser.passwordResetTokenExpiration = null;
-  authenticatedUser.save();
+  await authenticatedUser.save({
+    hash: newPasswordHash,
+    passwordResetToken: null,
+    passwordResetTokenExpiration: null,
+  })
 
   return {
     status: "success",

@@ -45,11 +45,6 @@ const authenticate = async (email, password) => {
   // Hash the password with the user's salt (first 16 bytes/32 hex chars are the salt)
   const hashedPassword = hashPassword(password, salt);
 
-  // Remove sensitive information from the returned user object.
-  delete dbUser.hash;
-  delete dbUser.passwordResetToken;
-  delete dbUser.passwordResetTokenExpiration;
-
   if (hashedPassword === userHash) {
     return dbUser;
   } else {
