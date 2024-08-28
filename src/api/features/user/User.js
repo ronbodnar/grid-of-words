@@ -11,8 +11,6 @@ class User {
   username = undefined;
   password = undefined;
   lastGameState = undefined;
-  lastConnectionIP = undefined;
-  lastConnectionTimestamp = undefined;
 
   stats = undefined;
   passwordResetToken = undefined;
@@ -22,6 +20,12 @@ class User {
   // Undefined and null values are ignored when updating documents.
   enabled = true;
   creationDate = new Date();
+
+  // To be implemented eventually
+  lastConnectionIP = undefined;
+  lastConnectionTimestamp = undefined;
+  consecutiveDaysPlayed = undefined;
+  bestConsecutiveDaysPlayed = undefined;
 
   /**
    * User class constructor that handles user data initialization.
@@ -111,6 +115,21 @@ class User {
     return Object.fromEntries(
       Object.entries(this).filter(([key, value]) => value !== undefined)
     );
+  }
+
+  /**
+   * Export basic account information in the form of an object for JWT generation.
+   * 
+   * @returns The account details for the JWT payload. 
+   */
+  getAccountDetails() {
+    return {
+      _id: this._id,
+      username: this.username,
+      email: this.email,
+      enabled: this.enabled,
+      creationDate: this.creationDate.toISOString(),
+    };
   }
 }
 

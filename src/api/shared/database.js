@@ -47,7 +47,7 @@ const getCollection = (name, database = process.env.MONGO_DB_NAME) => {
 };
 
 const getGameCollection = () => getCollection("games");
-const getWordCollection = () => getCollection("words");
+const getWordCollection = () => getCollection("words_enUS");
 const getUserCollection = () => getCollection("users");
 
 export default {

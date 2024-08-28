@@ -12,7 +12,6 @@ import ValidationError from "../../errors/ValidationError.js";
 import { exists, findByLength } from "../word/word.repository.js";
 import { findGameById, insertGame } from "./game.repository.js";
 import { getAuthenticatedUser } from "../auth/authentication.service.js";
-import { findUserBy } from "../user/user.repository.js";
 import logger from "../../config/winston.config.js";
 import { updateStats } from "../user/user.service.js";
 
@@ -135,7 +134,20 @@ export const addAttempt = async (word, gameId, authToken) => {
     game.endTime = new Date();
 
     if (authenticatedUser) {
-      updateStats(authenticatedUser, numAttempts, game.state);
+      const updateStatsResult = await updateStats(
+        authenticatedUser,
+        numAttempts,
+        game.state
+      );
+      if (!updateStatsResult) {
+        return new InternalError(
+          "Failed to update user stats after game completion.",
+          {
+            authenticatedUser: authenticatedUser,
+            game: game,
+          }
+        );
+      }
     }
   }
 
@@ -188,19 +200,31 @@ export const abandonGameById = async (gameId, authToken) => {
   // Update the user's statistics if the game had an owner.
   if (game.ownerId) {
     const authenticatedUser = await getAuthenticatedUser(authToken);
-    if (authenticatedUser) {
-      if (authenticatedUser._id.toString() === game.ownerId.toString()) {
-        updateStats(authenticatedUser, -1, GameState.ABANDONED);
-      } else {
-        logger.warn(
-          "Failed to update stats on abandon: Authenticated user id does not match the game's owner id",
-          {
-            game: game,
-            gameId: gameId,
-            authenticatedUser: authenticatedUser,
-          }
-        );
-      }
+    if (authenticatedUser?._id.toString() !== game.ownerId.toString()) {
+      logger.warn(
+        "Failed to update stats on abandon: Authenticated user id does not match the game's owner id",
+        {
+          game: game,
+          gameId: gameId,
+          authenticatedUser: authenticatedUser,
+        }
+      );
+      return;
+    }
+    
+    const updateStatsResult = await updateStats(
+      authenticatedUser,
+      -1,
+      GameState.ABANDONED
+    );
+    if (!updateStatsResult) {
+      return new InternalError(
+        "Failed to update user stats after game abandonment.",
+        {
+          authenticatedUser: authenticatedUser,
+          game: game,
+        }
+      );
     }
   }
 

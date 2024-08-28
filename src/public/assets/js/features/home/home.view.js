@@ -66,6 +66,11 @@ const buildButtonContainer = () => {
     })
   );
   buttonContainer.appendChild(
+    createButton("Statistics", {
+      icon: "bar-chart",
+    })
+  );
+  buttonContainer.appendChild(
     createButton("Options", {
       icon: "tune",
     })

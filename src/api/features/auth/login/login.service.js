@@ -20,9 +20,12 @@ export const loginUser = async (email, password) => {
     return new UnauthorizedError("Invalid email or password.");
   }
 
-  const jwt = generateJWT(authenticatedUser);
+  const jwt = generateJWT(authenticatedUser.getAccountDetails());
   if (!jwt) {
-    return new InternalError("Failed to generate JWT");
+    return new InternalError("Failed to generate JWT", {
+      email: email,
+      authenticatedUser: authenticatedUser,
+    });
   }
 
   return {
