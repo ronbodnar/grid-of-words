@@ -9,6 +9,7 @@ import ValidationError from "../../errors/ValidationError.js";
 import Game from "./Game.js";
 import { getAuthenticatedUser } from "../auth/authentication.service.js";
 import { abandonGameById, addAttempt, generateNewGame, getGameById } from "./game.service.js";
+import logger from "../../config/winston.config.js";
 
 /**
  * Attempts to solve the word puzzle.
@@ -45,7 +46,7 @@ export const handleAddAttempt = async (req, res, next) => {
       setCookie(res, "game", gameData);
     }
   } else {
-    console.log("Unexpected attemptResult response", attemptResult);
+    logger.warn("Unexpected attemptResult response", attemptResult);
   }
 
   return res.json(attemptResult);
@@ -59,7 +60,7 @@ export const handleAddAttempt = async (req, res, next) => {
 export const handleGenerateNewGame = async (req, res, next) => {
   const wordLength = parseInt(req.query.wordLength) || DEFAULT_WORD_LENGTH;
   const maxAttempts = parseInt(req.query.maxAttempts) || DEFAULT_MAX_ATTEMPTS;
-  const authenticatedUser = getAuthenticatedUser(req.cookies.token);
+  const authenticatedUser = await getAuthenticatedUser(req.cookies.token);
 
   const newGame = await generateNewGame(
     wordLength,
@@ -95,11 +96,12 @@ export const handleGetGameById = async (req, res, next) => {
  */
 export const handleAbandonGameById = async (req, res, next) => {
   const gameId = req.params.id;
+  const authToken = req.cookies.token;
   if (!gameId) {
     return next(new ValidationError("Missing id parameter"));
   }
 
-  const abandonResult = abandonGameById(gameId);
+  const abandonResult = abandonGameById(gameId, authToken);
   if (!abandonResult) {
     const error = new InternalError("Failed to retrieve abandon response", {
       gameId: gameId,

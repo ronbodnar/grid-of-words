@@ -1,8 +1,8 @@
 import crypto from "node:crypto";
 import jwt from "jsonwebtoken";
-import User from "../user/User.js";
-import ValidationError from "../../errors/ValidationError.js";
 import logger from "../../config/winston.config.js";
+import { findUserBy } from "../user/user.repository.js";
+import InternalError from "../../errors/InternalError.js";
 
 /**
  * Generates a random salt string.
@@ -40,7 +40,7 @@ export const hashPassword = (password, salt, algorithm = "sha256") => {
  */
 export const generateJWT = (payload, expiresIn = "15d") => {
   if (!payload) {
-    return new ValidationError("No payload provided to generateJWT", {
+    return new InternalError("No payload provided to generateJWT", {
       payload: payload,
     });
   }
@@ -90,14 +90,15 @@ export const verifyJWT = (token) => {
  * @param {Request} req The request object to extract the token from.
  * @returns The user from the payload if present, otherwise undefined.
  */
-export const getAuthenticatedUser = (token) => {
+export const getAuthenticatedUser = async (token) => {
   if (!token) {
     return null;
   }
   const decodedPayload = verifyJWT(token);
-  if (!decodedPayload?.data) {
+  const { data } = decodedPayload;
+  if (!data) {
     return null;
   }
-  const user = new User(decodedPayload.data);
+  const user = await findUserBy("_id", data._id);
   return user;
 };

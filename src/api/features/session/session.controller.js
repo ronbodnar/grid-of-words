@@ -24,5 +24,9 @@ export const handleGetSessionData = (req, res, next) => {
     res.clearCookie("token");
   }
 
+  console.debug("Session Data", {
+    sessionData: sessionData
+  });
+  
   return res.json(sessionData ? sessionData : {});
 };

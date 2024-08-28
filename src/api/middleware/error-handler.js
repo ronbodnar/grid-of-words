@@ -13,12 +13,14 @@ const errorHandler = (err, req, res, next) => {
 
   const { name, data, message = defaultError.message, statusCode = 500, stack } = err;
 
-  logger.error("Error Handler middleware was passed an error:", {
+  const loggerData = {
     name: name,
     message: message,
     data: data,
     stack: stack,
-  });
+  };
+  const showLoggerData = name !== "ValidationError";
+  logger.error(`Error Handler middleware was passed an error: ${message}`, showLoggerData ? loggerData : undefined);
 
   // Send the error response to the client.
   return res.status(err.statusCode).json({

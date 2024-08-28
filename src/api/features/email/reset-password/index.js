@@ -1,4 +1,4 @@
-import ValidationError from "../../../errors/ValidationError.js";
+import InternalError from "../../../errors/InternalError.js";
 import { APP_NAME } from "../../../shared/constants.js";
 import { sendEmail } from "../email.service.js";
 
@@ -11,7 +11,7 @@ import { sendEmail } from "../email.service.js";
  */
 export const send = async (user, token) => {
   if (!user) {
-    throw new ValidationError("User not provided");
+    throw new InternalError("User not provided");
   }
 
   const { NODE_ENV, PORT, APP_URL } = process.env;

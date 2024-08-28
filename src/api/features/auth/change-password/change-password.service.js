@@ -16,7 +16,7 @@ export const changePassword = async (newPassword, currentPassword, authToken) =>
     );
   }
 
-  const claimUser = getAuthenticatedUser(authToken);
+  const claimUser = await getAuthenticatedUser(authToken);
   if (!claimUser) {
     return new UnauthorizedError("User is not authenticated.");
   }
