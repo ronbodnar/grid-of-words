@@ -84,8 +84,9 @@ export const buildView = (name, options = {}) => {
   }
 
   if (message && message.text) {
+    console.log(message);
     const options = {
-      hide: message.hide || true,
+      hide: message.hide === true,
       hideDelay: message.hideDelay || 5000,
       className: message.className,
     };

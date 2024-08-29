@@ -23,7 +23,7 @@ const logger = () => {
   const log = (level, message, ...args) => {
     // temporarily disable logging for debug/trace
     if (level > LogLevel.INFO) {
-      return;
+      //return;
     }
     console.log(
       `[${Object.keys(LogLevel).find((key) => LogLevel[key] === level)}]`,
