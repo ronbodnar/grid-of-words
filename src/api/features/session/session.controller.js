@@ -1,3 +1,4 @@
+import logger from "../../config/winston.config.js";
 import { setApiKeyCookie } from "../../shared/helpers.js";
 import { getSessionData } from "./session.service.js";
 
@@ -16,7 +17,7 @@ export const handleGetSessionData = (req, res, next) => {
   if (sessionData instanceof Error) {
     return next(sessionData);
   }
-  
+
   if (!sessionData.game) {
     res.clearCookie("game");
   }
@@ -24,9 +25,9 @@ export const handleGetSessionData = (req, res, next) => {
     res.clearCookie("token");
   }
 
-  console.debug("Session Data", {
-    sessionData: sessionData
+  logger.debug("Session Data", {
+    sessionData: sessionData,
   });
-  
+
   return res.json(sessionData ? sessionData : {});
 };

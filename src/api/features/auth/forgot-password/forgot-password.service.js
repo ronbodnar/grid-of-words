@@ -1,9 +1,9 @@
-import logger from "../../../config/winston.config.js";
-import { EMAIL_REGEX } from "../../../shared/constants.js";
-import ValidationError from "../../../errors/ValidationError.js";
-import { findUserBy } from "../../user/user.repository.js";
-import { generateSalt } from "../authentication.service.js";
-import { sendPasswordResetEmail } from "../../email/email.service.js";
+import logger from '../../../config/winston.config.js'
+import { EMAIL_REGEX } from '../../../shared/constants.js'
+import ValidationError from '../../../errors/ValidationError.js'
+import { findUserBy } from '../../user/user.repository.js'
+import { generateSalt } from '../authentication.service.js'
+import { sendPasswordResetEmail } from '../../email/email.service.js'
 
 /**
  * Processes the request to send a password reset link via email. Most errors default to a success to hide output to users.
@@ -14,46 +14,43 @@ import { sendPasswordResetEmail } from "../../email/email.service.js";
 export const forgotPassword = async (email) => {
   const successResponse = {
     statusCode: 200,
-    message:
-      "If the email matches an account, a password reset link will be sent with next steps.",
-  };
+    message: 'If the email matches an account, a password reset link will be sent with next steps.'
+  }
 
   if (!EMAIL_REGEX.test(email)) {
-    return new ValidationError(
-      "The email address is not a valid email format."
-    );
+    return new ValidationError('The email address is not a valid email format.')
   }
 
-  const dbUser = await findUserBy("email", email);
+  const dbUser = await findUserBy('email', email)
   if (!dbUser) {
-    return successResponse;
+    return successResponse
   }
 
-  const token = generateSalt(32);
-  const tokenExpiration = new Date(Date.now() + 1000 * 60 * 60);
+  const token = generateSalt(32)
+  const tokenExpiration = new Date(Date.now() + 1000 * 60 * 60)
 
   const saveUserResult = await dbUser.save({
     passwordResetToken: token,
-    passwordResetTokenExpiration: tokenExpiration,
-  });
+    passwordResetTokenExpiration: tokenExpiration
+  })
   if (!saveUserResult) {
-    logger.error("Failed to save user with reset token", {
+    logger.error('Failed to save user with reset token', {
       email: email,
       token: token,
-      dbUser: dbUser,
-    });
-    return successResponse;
+      dbUser: dbUser
+    })
+    return successResponse
   }
 
-  const sendEmailResponse = await sendPasswordResetEmail(dbUser, token);
+  const sendEmailResponse = await sendPasswordResetEmail(dbUser, token)
   if (!sendEmailResponse) {
-    logger.error("Failed to send password reset email", {
+    logger.error('Failed to send password reset email', {
       email: email,
       token: token,
-      dbUser: dbUser,
-    });
-    return successResponse;
+      dbUser: dbUser
+    })
+    return successResponse
   }
 
-  return successResponse;
-};
+  return successResponse
+}

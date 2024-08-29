@@ -4,7 +4,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-size: 24px;
+  font-size: 22px;
   font-family: "Nunito", sans-serif;
 
   user-select: none;
@@ -29,6 +29,10 @@ strong {
 
 sup {
   font-size: 12px;
+}
+
+span {
+  font-size: 16px;
 }
 
 .hidden {
@@ -89,6 +93,10 @@ sup {
   row-gap: 20px;
   padding-top: 75px;
   justify-content: space-between;
+}
+
+.content#statistics {
+  padding: 75px 0 35px 0;
 }
 
 @media screen and (min-width: 768px) {

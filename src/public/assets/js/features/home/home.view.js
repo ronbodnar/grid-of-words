@@ -1,49 +1,46 @@
-import { createButton } from "../../shared/components/button.js";
-import { showMessage } from "../../shared/services/message.service.js";
-import {
-  getAuthenticatedUser,
-  isAuthenticated,
-} from "../auth/authentication.service.js";
-import { buildView } from "../view/view.js";
+import { createButton } from '../../shared/components/button.js'
+import { showMessage } from '../../shared/services/message.service.js'
+import { getAuthenticatedUser, isAuthenticated } from '../auth/authentication.service.js'
+import { buildView } from '../view/view.js'
 
 /**
  * Builds the home container view within the content container.
  */
 export const buildHomeView = (options) => {
   let submessageText =
-    'Want to save your progress?<br /><a id="showLogin">Log In</a> or <a id="showRegister">Register</a>';
+    'Want to save your progress?<br /><a id="showLogin">Log In</a> or <a id="showRegister">Register</a>'
   if (isAuthenticated()) {
     submessageText = `Welcome back, ${
       getAuthenticatedUser().username
-    }!<br /><a id="showChangePassword">Change Password</a> or <a id="logout">Log Out</a>`;
+    }!<br /><a id="showChangePassword">Change Password</a> or <a id="logout">Log Out</a>`
   }
 
-  const message = options?.message;
+  const message = options?.message
 
-  buildView("home", {
+  buildView('home', {
     header: {
-      text: "Word Puzzle Game",
+      text: 'Word Puzzle Game'
     },
     message: {
-      hide: false,
+      hide: false
     },
     submessage: {
       text: submessageText,
-      emitClickEvent: true,
+      emitClickEvent: true
     },
     hasNavigationButton: false,
-    additionalElements: [buildButtonContainer()],
-  });
+    additionalElements: [buildButtonContainer()]
+  })
 
   if (message) {
     const options = {
       hide: message.hide || true,
       hideDelay: message.hideDelay || 3000,
-      className: message.className,
-    };
-    showMessage(message.text, options);
+      className: message.className
+    }
+    showMessage(message.text, options)
   }
-};
+}
 
 /**
  * Builds the button container and creates the buttons for display.
@@ -51,34 +48,34 @@ export const buildHomeView = (options) => {
  * @returns {Element} The button container element.
  */
 const buildButtonContainer = () => {
-  const buttonContainer = document.createElement("div");
-  buttonContainer.classList.add("button-container");
+  const buttonContainer = document.createElement('div')
+  buttonContainer.classList.add('button-container')
 
   buttonContainer.appendChild(
-    createButton("Start Game", {
-      icon: "play-arrow",
+    createButton('Start Game', {
+      icon: 'play-arrow'
     })
-  );
+  )
 
   buttonContainer.appendChild(
-    createButton("How To Play", {
-      icon: "help",
+    createButton('How To Play', {
+      icon: 'help'
     })
-  );
+  )
 
   if (isAuthenticated()) {
     buttonContainer.appendChild(
-      createButton("Statistics", {
-        icon: "bar-chart",
+      createButton('Statistics', {
+        icon: 'bar-chart'
       })
-    );
+    )
   }
 
   buttonContainer.appendChild(
-    createButton("Options", {
-      icon: "tune",
+    createButton('Options', {
+      icon: 'tune'
     })
-  );
+  )
 
-  return buttonContainer;
-};
+  return buttonContainer
+}

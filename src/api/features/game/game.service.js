@@ -211,7 +211,7 @@ export const abandonGameById = async (gameId, authToken) => {
       );
       return;
     }
-    
+
     const updateStatsResult = await updateStats(
       authenticatedUser,
       -1,

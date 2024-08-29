@@ -2,13 +2,13 @@
  * Class representing a Game.
  */
 export class Game {
-  _id;
-  word;
-  attempts;
-  maxAttempts;
-  state;
-  startTime;
-  endTime;
+  _id
+  word
+  attempts
+  maxAttempts
+  state
+  startTime
+  endTime
 
   /**
    * Creates an instance of the Game class.
@@ -22,18 +22,18 @@ export class Game {
    * @param {Array<any>} [obj.attempts] - The array of attempts made by the player.
    */
   constructor(obj) {
-    if (!obj) return;
-    this._id = obj._id;
-    this.word = obj.word;
-    this.state = obj.state;
-    this.maxAttempts = obj.maxAttempts;
-    this.startTime = new Date(obj.startTimestamp);
-    this.endTime = (obj.endTimestamp ? new Date() : undefined);
+    if (!obj) return
+    this._id = obj._id
+    this.word = obj.word
+    this.state = obj.state
+    this.maxAttempts = obj.maxAttempts
+    this.startTime = new Date(obj.startTimestamp)
+    this.endTime = obj.endTimestamp ? new Date() : undefined
 
     /*
      * The attempts array needs to be made a deep copy instead of a reference.
      * This is because we update the attempts array during validation but the original values are needed.
      */
-    this.attempts = (obj.attempts ? JSON.parse(JSON.stringify(obj.attempts)) : []);
+    this.attempts = obj.attempts ? JSON.parse(JSON.stringify(obj.attempts)) : []
   }
 }

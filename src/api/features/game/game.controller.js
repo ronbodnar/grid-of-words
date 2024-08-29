@@ -8,7 +8,12 @@ import NotFoundError from "../../errors/NotFoundError.js";
 import ValidationError from "../../errors/ValidationError.js";
 import Game from "./Game.js";
 import { getAuthenticatedUser } from "../auth/authentication.service.js";
-import { abandonGameById, addAttempt, generateNewGame, getGameById } from "./game.service.js";
+import {
+  abandonGameById,
+  addAttempt,
+  generateNewGame,
+  getGameById,
+} from "./game.service.js";
 import logger from "../../config/winston.config.js";
 
 /**
@@ -70,7 +75,7 @@ export const handleGenerateNewGame = async (req, res, next) => {
   if (!newGame) {
     return next(new NotFoundError("Failed to generate new game"));
   }
-  
+
   setCookie(res, "game", newGame);
 
   return res.json(newGame);

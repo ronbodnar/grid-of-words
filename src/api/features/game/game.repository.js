@@ -14,7 +14,7 @@ import { ObjectId } from "mongodb";
  * @return {Promise<Game | null>} A promise that resolves with the inserted Game ID if successful.
  */
 export const insertGame = async (gameDoc) => {
-  const cursor = await database.getGameCollection().insertOne(gameDoc)
+  const cursor = await database.getGameCollection().insertOne(gameDoc);
   if (!cursor || !cursor.insertedId) {
     return new DatabaseError("Failed to insert Game in database", {
       document: gameDoc,

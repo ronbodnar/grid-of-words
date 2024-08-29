@@ -13,4 +13,4 @@ export const restrict = (req, res, next) => {
   }
   // No auth issues, carry on.
   next();
-}
+};

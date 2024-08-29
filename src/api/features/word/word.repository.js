@@ -120,7 +120,7 @@ export const findAllByLength = async (length) => {
           _id: null,
           words: {
             $push: {
-              $toLower: "$text"
+              $toLower: "$text",
             },
           },
         },
@@ -160,9 +160,13 @@ export const findAllByLength = async (length) => {
  * @return {boolean}
  */
 export const exists = async (word) => {
+  if (!word) {
+    throw new InternalError("Missing required parameter: word");
+  }
   try {
     const wordCollection = database.getWordCollection();
-    const result = await wordCollection.findOne({ text: word });
+    const result = await wordCollection.findOne({ text: word.toLowerCase() });
+    console.log(word, result);
     return result && result.text;
   } catch (error) {
     return new DatabaseError(

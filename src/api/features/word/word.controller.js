@@ -1,5 +1,5 @@
 import InternalError from "../../errors/InternalError.js";
-import { DEFAULT_WORD_LENGTH } from "../../shared/constants.js"
+import { DEFAULT_WORD_LENGTH } from "../../shared/constants.js";
 import { getWord, getWordList } from "./word.service.js";
 
 /**
@@ -30,7 +30,7 @@ export const handleGetWordList = async (req, res) => {
     return res.json(wordList);
   } catch (error) {
     throw new InternalError("Failed to fetch word list", {
-      error: error
+      error: error,
     });
   }
 };

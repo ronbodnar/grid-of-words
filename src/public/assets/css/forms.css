@@ -21,6 +21,10 @@ input {
   font-size: 20px;
 }
 
+input[type="range"] {
+  accent-color: rgba(0, 163, 108, 0.8);
+}
+
 input.error {
   border: 2px solid rgba(227, 34, 39, 1);
   box-shadow: inset 0px 1px 0px rgba(255, 255, 255);

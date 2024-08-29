@@ -5,7 +5,6 @@ import { updateGame } from "./game.repository.js";
  * A representation of a Game.
  */
 class Game {
-
   state = GameState.IN_PROGRESS;
   word = undefined;
   attempts = [];
@@ -16,7 +15,7 @@ class Game {
 
   /**
    * Constructs a new Game object from the given object's properties.
-   * 
+   *
    * @param {Object} obj - (optional) - An object with the following optional properties:
    * @param {ObjectId} [obj._id] The ObjectId object containing the game ID.
    * @param {string} [obj.word] The target word for winning the game.
@@ -32,8 +31,7 @@ class Game {
     if (!obj) return;
 
     // Only add the _id property if it was provided to us as to not insert the game with the ID.
-    if (obj._id)
-     this._id = obj._id;
+    if (obj._id) this._id = obj._id;
 
     this.word = obj.word || this.word;
     this.state = obj.state || this.state;
@@ -46,7 +44,7 @@ class Game {
 
   /**
    * Asynchronously saves the game to the database and waits for the operation to complete.
-   * 
+   *
    * @returns {Promise<any>} A promise that resolves to the saved game if successful.
    */
   async save() {

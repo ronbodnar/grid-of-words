@@ -29,7 +29,7 @@ const connect = async () => {
  * @returns
  */
 const getCollection = (name, database = process.env.MONGO_DB_NAME) => {
-    if (!name) {
+  if (!name) {
     throw new InternalError("Collection name must be provided.");
   }
   if (!client) {
@@ -55,5 +55,5 @@ export default {
   getCollection,
   getGameCollection,
   getWordCollection,
-  getUserCollection
+  getUserCollection,
 };
