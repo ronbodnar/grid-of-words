@@ -15,6 +15,7 @@ import {
   register
 } from '../../features/auth/authentication.service.js'
 import { logger } from '../../main.js'
+import { saveOptions } from '../../features/options/options.service.js'
 
 const clickFunctions = {
   // Navigation
@@ -74,7 +75,10 @@ const clickFunctions = {
   logout: async () => await logout(),
   changePassword: async () => await changePassword(),
   forgotPassword: () => forgotPassword(), // Don't await so user can't tell if the email is valid.
-  resetPassword: async () => await resetPassword()
+  resetPassword: async () => await resetPassword(),
+
+  // Options
+  saveOptions: () => saveOptions(),
 }
 
 /**
@@ -130,6 +134,10 @@ export const addKeyListeners = () => {
         case 'howToPlay':
           clickFunctions.startGame()
           break
+
+        case 'options':
+          clickFunctions.saveOptions()
+          break;
 
         case 'game':
           processAttempt()

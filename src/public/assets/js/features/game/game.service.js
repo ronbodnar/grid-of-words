@@ -71,13 +71,12 @@ export const abandonGame = async () => {
 
   const abandonGameResponse = await fetchData(`/game/${game._id}/abandon`, 'POST')
 
-  // TODO: Should we even display errors (potentially blocking users from returning home)?
   if (!abandonGameResponse?.payload || abandonGameResponse.statusCode !== 200) {
     logger.error('Failed to abandon game', {
       game: game,
       abandonGameResponse: abandonGameResponse
     })
-    showMessage('Failed to abandon game')
+    showMessage('Failed to abandon game. Please try again or complete the game.')
     toggleKeyboardOverlay()
     return
   }

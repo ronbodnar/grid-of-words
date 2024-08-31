@@ -8,9 +8,9 @@ import { createLabel } from './label.js'
  * 
  * @param {Array<Object>} inputGroups - An array of input group objects, each containing properties like `text`, `type`, and `message`.
  * @param {Array<HTMLButtonElement>} buttons - An array of button elements to be appended to the form.
- * @param {Object} [options={}] - Optional settings for the form.
- * @param {string} [options.id] - An optional ID for the form element.
- * @param {string} [options.submessage] - An optional submessage to be displayed at the bottom of the form.
+ * @param {Object} [optionList={}] - Optional settings for the form.
+ * @param {string} [optionList.id] - An optional ID for the form element.
+ * @param {string} [optionList.submessage] - An optional submessage to be displayed at the bottom of the form.
  * @returns {HTMLFormElement} The generated form element.
  */
 export const buildForm = (inputGroups, buttons, options = {}) => {

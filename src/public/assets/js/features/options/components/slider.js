@@ -8,19 +8,8 @@
  * @param {number} defaultValue - The default value for the slider.
  * @returns {HTMLDivElement} The container element containing the slider section.
  */
-export const buildSliderSection = (id, title, minValue, maxValue, defaultValue) => {
-  const container = document.createElement('div')
-  container.classList.add('flex-center', 'option-row')
-  container.style.flexDirection = 'row'
-
-  const header = document.createElement('h5')
-  header.textContent = title
-  header.style.fontSize = '18px'
-
-  const sliderContainer = document.createElement('div')
-  sliderContainer.style.display = 'flex'
-  sliderContainer.style.alignItems = 'center'
-  sliderContainer.style.justifyContent = 'end'
+export const buildSliderAndLabel = (id, options) => {
+  const { minValue, maxValue, defaultValue } = options
 
   const sliderValueLabel = document.createElement('label')
   sliderValueLabel.id = `${id}SliderValue`
@@ -38,11 +27,5 @@ export const buildSliderSection = (id, title, minValue, maxValue, defaultValue) 
     sliderValueLabel.innerHTML = event.target.value
   })
 
-  sliderContainer.appendChild(sliderInput)
-  sliderContainer.appendChild(sliderValueLabel)
-
-  container.appendChild(header)
-  container.appendChild(sliderContainer)
-
-  return container
+  return [sliderInput, sliderValueLabel]
 }

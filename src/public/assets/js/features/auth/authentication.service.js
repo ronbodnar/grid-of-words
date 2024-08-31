@@ -65,8 +65,7 @@ export const submitAuthForm = async (url, params, successFn, failureFn) => {
  */
 export const logout = async () => {
   const logoutResponse = await fetchData('/auth/logout', 'POST')
-
-  // TODO: the user shouldn't care if it fails, should they? should we?
+  
   if (logoutResponse?.statusCode === 200) {
     removeSession('user')
     removeSession('game')

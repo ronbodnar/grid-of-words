@@ -40,8 +40,8 @@ const viewFunctions = {
   resetPassword: () => {
     const passwordResetToken = retrieveSession('passwordResetToken')
     if (!passwordResetToken) {
-      // TODO: the user experience
-      throw new Error('Password reset token not present')
+      buildForgotPasswordView("Unexpected error. Please click the link in your e-mail again or request a new link.")
+      return;
     }
     buildResetPasswordView()
   }

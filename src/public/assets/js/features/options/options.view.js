@@ -1,15 +1,14 @@
 import { getRandomInt } from '../../shared/utils/helpers.js'
 import {
-  DEFAULT_WORD_LENGTH,
   MINIMUM_WORD_LENGTH,
   MAXIMUM_WORD_LENGTH,
-  DEFAULT_MAX_ATTEMPTS,
   MINIMUM_MAX_ATTEMPTS,
   MAXIMUM_MAX_ATTEMPTS
 } from '../../shared/utils/constants.js'
 import { createButton } from '../../shared/components/button.js'
 import { buildView } from '../view/view.js'
-import { buildSliderSection } from './slider.js'
+import { buildOptionSection } from './components/option-section.js'
+import OPTIONS from './enums/options.js'
 
 /**
  * Builds and displays the options view.
@@ -18,6 +17,11 @@ export const buildOptionsView = () => {
   buildView('options', {
     header: {
       text: 'Game Options'
+    },
+    message: {
+      styles: {
+        fontSize: "18px",
+      }
     },
     additionalElements: [buildOptionsContainer(), buildButtonContainer()]
   })
@@ -32,25 +36,12 @@ const buildOptionsContainer = () => {
   const optionsContainer = document.createElement('div')
   optionsContainer.classList.add('options-container')
 
-  optionsContainer.appendChild(
-    buildSliderSection(
-      'wordLength',
-      'Word Length',
-      MINIMUM_WORD_LENGTH,
-      MAXIMUM_WORD_LENGTH,
-      DEFAULT_WORD_LENGTH
-    )
-  )
+  console.log(OPTIONS.length);
 
-  optionsContainer.appendChild(
-    buildSliderSection(
-      'maxAttempts',
-      'Max Attempts',
-      MINIMUM_MAX_ATTEMPTS,
-      MAXIMUM_MAX_ATTEMPTS,
-      DEFAULT_MAX_ATTEMPTS
-    )
-  )
+  Object.keys(OPTIONS).forEach((key) => {
+    const option = OPTIONS[key];
+    optionsContainer.appendChild(buildOptionSection(option))
+  });
 
   return optionsContainer
 }
@@ -64,12 +55,8 @@ const buildButtonContainer = () => {
   const buttonContainer = document.createElement('div')
   buttonContainer.classList.add('button-container')
 
-  const startGameButton = createButton('Start Game', {
-    icon: 'play-arrow',
-    eventArgs: {
-      wordLength: document.querySelector('#wordLengthSlider')?.value,
-      maxAttempts: document.querySelector('#maxAttemptsSlider')?.value
-    }
+  const saveOptionsButton = createButton('Save Options', {
+    icon: 'save'
   })
 
   const randomGameButton = createButton('Random Game', {
@@ -81,7 +68,7 @@ const buildButtonContainer = () => {
     }
   })
 
-  buttonContainer.appendChild(startGameButton)
+  buttonContainer.appendChild(saveOptionsButton)
   buttonContainer.appendChild(randomGameButton)
 
   return buttonContainer

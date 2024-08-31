@@ -11,8 +11,6 @@ import ValidationError from "../../../errors/ValidationError.js";
 import { findByLength } from "../../word/word.repository.js";
 import { findGameById, insertGame } from "../game.repository.js";
 
-// TODO: separate validation / implement Joi
-
 /**
  * Generates a new Game object.
  *

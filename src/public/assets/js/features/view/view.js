@@ -7,14 +7,14 @@ import { createText } from '../../shared/components/text.js'
  * Clears the content container and builds a standard view with specified additional elements and options.
  *
  * @param {string} name - The name to be assigned to the view container.
- * @param {Object} [options={}] - Additional options to be passed to the view.
- * @param {string} [options.title] - The title for the view.
- * @param {boolean} [options.hasNavigationButton=true] - Whether to include a navigation button.
- * @param {Object} [options.header={}] - The header details.
- * @param {Object} [options.subheader={}] - The subheader details.
- * @param {Object} [options.message={}] - The message details.
- * @param {Object} [options.submessage={}] - The submessage details.
- * @param {Array} [options.additionalElements=[]] - Additional elements to include in the view.
+ * @param {Object} [optionList={}] - Additional options to be passed to the view.
+ * @param {string} [optionList.title] - The title for the view.
+ * @param {boolean} [optionList.hasNavigationButton=true] - Whether to include a navigation button.
+ * @param {Object} [optionList.header={}] - The header details.
+ * @param {Object} [optionList.subheader={}] - The subheader details.
+ * @param {Object} [optionList.message={}] - The message details.
+ * @param {Object} [optionList.submessage={}] - The submessage details.
+ * @param {Array} [optionList.additionalElements=[]] - Additional elements to include in the view.
  */
 export const buildView = (name, options = {}) => {
   if (!name) {
@@ -45,7 +45,7 @@ export const buildView = (name, options = {}) => {
   // Iterate over optional header, subheader, and message elements.
   // For each defined element, create a corresponding text element and append it to the content container.
   // The 'type' is determined based on the element's position in the array.
-  ;[header, subheader, message].forEach((element, index) => {
+  [header, subheader, message].forEach((element, index) => {
     if (element) {
       contentContainer.appendChild(
         createText({
