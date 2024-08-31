@@ -4,6 +4,6 @@ const GameState = Object.freeze({
   WINNER: "WINNER",
   LOSER: "LOSER",
   HIDDEN: "HIDDEN",
-});
+})
 
-export default GameState;
+export default GameState

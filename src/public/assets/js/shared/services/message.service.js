@@ -1,7 +1,7 @@
 // TODO: Eventually do a queue system here to stack up the messages?
 
-import { logger } from '../../main.js'
-import { HIDE_MESSAGE_DELAY } from '../utils/constants.js'
+import { logger } from "../../main.js"
+import { HIDE_MESSAGE_DELAY } from "../utils/constants.js"
 
 let messageTimeout = undefined
 
@@ -13,24 +13,26 @@ let messageTimeout = undefined
  */
 export const showMessage = (message, options = {}) => {
   if (message == null) {
-    throw new Error('No message provided to showMessage')
+    throw new Error("No message provided to showMessage")
   }
 
   const {
     hide = false,
     hideDelay = HIDE_MESSAGE_DELAY,
-    messageSelector = '.message',
-    className
+    messageSelector = ".message",
+    className,
   } = options
 
   logger.debug(
-    `Showing message "${message}" with ${options.hideDelay ? options.hideDelay + 'ms' : 'no'} hide delay`
+    `Showing message "${message}" with ${
+      options.hideDelay ? options.hideDelay + "ms" : "no"
+    } hide delay`
   )
 
   var messageDiv = document.querySelector(messageSelector)
   if (messageDiv) {
     messageDiv.innerHTML = message
-    messageDiv.classList.remove('hidden', 'success', 'error')
+    messageDiv.classList.remove("hidden", "success", "error")
     if (className) {
       messageDiv.classList.add(className)
     }
@@ -44,7 +46,7 @@ export const showMessage = (message, options = {}) => {
   if (hide) {
     messageTimeout = setTimeout(() => {
       setTimeout(() => {
-        messageDiv.innerHTML = ''
+        messageDiv.innerHTML = ""
         messageDiv.classList.remove(className)
       }, 1000)
     }, hideDelay)

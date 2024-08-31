@@ -1,31 +1,31 @@
-import { buildView } from "../view/view.js";
-import { createText } from "../../shared/components/text.js";
-import { loadGameOutcomesChart } from "./charts/game-outcomes.js";
-import { loadWinDistributionChart } from "./charts/win-distribution.js";
-import { showView } from "../view/view.service.js";
-import { fetchStatistics } from "./statistics.service.js";
+import { buildView } from "../view/view.js"
+import { createText } from "../../shared/components/text.js"
+import { loadGameOutcomesChart } from "./charts/game-outcomes.js"
+import { loadWinDistributionChart } from "./charts/win-distribution.js"
+import { showView } from "../view/view.service.js"
+import { fetchStatistics } from "./statistics.service.js"
 
 /**
  * Builds and displays the statistics view within the content container and loads all charts into their canvas.
- * 
+ *
  * @async
  */
 export const buildStatisticsView = async (options = {}) => {
   const statistics = await (async () => {
     if (options.statistics) {
-      return options.statistics;
+      return options.statistics
     }
 
-    showView("loading");
-    return await fetchStatistics();
-  })();
+    showView("loading")
+    return await fetchStatistics()
+  })()
 
   // fetchStatistics handles redirection upon error so just return early here.
   if (!statistics) {
-    return;
+    return
   }
 
-  const { totalGames, wins, winStreak, bestWinStreak } = statistics;
+  const { totalGames, wins, winStreak, bestWinStreak } = statistics
 
   buildView("statistics", {
     header: {
@@ -50,11 +50,11 @@ export const buildStatisticsView = async (options = {}) => {
       buildChartContainer("winDistributionChart", 300, 150),
       getHoverMessage(),
     ],
-  });
+  })
 
-  loadGameOutcomesChart(statistics);
-  loadWinDistributionChart(wins);
-};
+  loadGameOutcomesChart(statistics)
+  loadWinDistributionChart(wins)
+}
 
 const getHoverMessage = () => {
   return createText({
@@ -65,8 +65,8 @@ const getHoverMessage = () => {
       fontSize: "12px",
       fontStyle: "italic",
     },
-  });
-};
+  })
+}
 
 /**
  * Creates a text element that represents the win distribution header.
@@ -82,8 +82,8 @@ const getWinDistributionHeader = () => {
       fontWeight: "bold",
       marginTop: "30px",
     },
-  });
-};
+  })
+}
 
 /**
  * Builds a flex container for win streak and best win streak with 50% width (2 stats per row).
@@ -93,20 +93,15 @@ const getWinDistributionHeader = () => {
  * @returns {HTMLDivElement} The streak container element populated with textValues.
  */
 const buildStreakContainer = (winStreak, bestWinStreak) => {
-  const streakContainer = document.createElement("div");
-  streakContainer.classList.add("streak-container");
+  const streakContainer = document.createElement("div")
+  streakContainer.classList.add("streak-container")
 
-  const textValues = [
-    winStreak,
-    "Current Streak",
-    bestWinStreak,
-    "Best Streak",
-  ];
+  const textValues = [winStreak, "Current Streak", bestWinStreak, "Best Streak"]
 
   // Create containers for the elements equal to half the elementText array
   for (let i = 0; i < textValues.length; i += 2) {
-    const container = document.createElement("div");
-    container.style.width = "50%";
+    const container = document.createElement("div")
+    container.style.width = "50%"
 
     // Create 2 side-by-side text elements per container
     for (let j = i; j < i + 2; j++) {
@@ -118,16 +113,16 @@ const buildStreakContainer = (winStreak, bestWinStreak) => {
           fontSize: j % 2 === 0 ? "20px" : "16px", // Make value text bigger to stand out more
           fontWeight: "bold",
         },
-      };
-      const textElement = createText(options);
-      container.appendChild(textElement);
+      }
+      const textElement = createText(options)
+      container.appendChild(textElement)
     }
 
-    streakContainer.appendChild(container);
+    streakContainer.appendChild(container)
   }
 
-  return streakContainer;
-};
+  return streakContainer
+}
 
 /**
  * Builds a canvas div container for charts/graphs.
@@ -138,13 +133,13 @@ const buildStreakContainer = (winStreak, bestWinStreak) => {
  * @returns {HTMLDivElement} The build chart container element with a blank canvas.
  */
 const buildChartContainer = (id, width, height) => {
-  const graphContainer = document.createElement("div");
-  graphContainer.style.width = width + "px";
-  graphContainer.style.height = height + "px";
+  const graphContainer = document.createElement("div")
+  graphContainer.style.width = width + "px"
+  graphContainer.style.height = height + "px"
 
-  const ctx = document.createElement("canvas");
-  ctx.id = id;
+  const ctx = document.createElement("canvas")
+  ctx.id = id
 
-  graphContainer.appendChild(ctx);
-  return graphContainer;
-};
+  graphContainer.appendChild(ctx)
+  return graphContainer
+}

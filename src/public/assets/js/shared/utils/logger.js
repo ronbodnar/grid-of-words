@@ -10,7 +10,7 @@ const logger = () => {
     WARN: 3,
     INFO: 4,
     DEBUG: 5,
-    TRACE: 6
+    TRACE: 6,
   }
 
   /**
@@ -48,7 +48,7 @@ const logger = () => {
     warn,
     error,
     fatal,
-    LogLevel
+    LogLevel,
   }
 }
 

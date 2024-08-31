@@ -1,4 +1,4 @@
-export const APP_NAME = 'Word Puzzle Game'
+export const APP_NAME = "Word Puzzle Game"
 
 // Max attempt declarations
 export const DEFAULT_MAX_ATTEMPTS = 6

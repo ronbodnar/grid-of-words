@@ -1,5 +1,9 @@
-import { EXACT_MATCH, PARTIAL_MATCH, NO_MATCH } from '../../../shared/utils/constants.js'
-import { handleClickEvent } from '../../../shared/services/event.service.js'
+import {
+  EXACT_MATCH,
+  PARTIAL_MATCH,
+  NO_MATCH,
+} from "../../../shared/utils/constants.js"
+import { handleClickEvent } from "../../../shared/services/event.service.js"
 
 /**
  * Builds a key element based on the letter and className (for styling) and processes events for that key.
@@ -9,31 +13,32 @@ import { handleClickEvent } from '../../../shared/services/event.service.js'
  * @returns {Element} The built key element.
  */
 export const buildKeyElement = (letter, className) => {
-  var key = document.createElement('div')
-  key.id = 'key-' + letter
+  var key = document.createElement("div")
+  key.id = "key-" + letter
 
   // The content is set in the stylesheet
-  if (letter !== 'delete') key.textContent = letter.at(0).toUpperCase() + letter.substring(1)
+  if (letter !== "delete")
+    key.textContent = letter.at(0).toUpperCase() + letter.substring(1)
 
-  key.classList.add('keyboard-key')
+  key.classList.add("keyboard-key")
 
   switch (className) {
     case EXACT_MATCH:
-      key.classList.add('exact')
+      key.classList.add("exact")
       break
 
     case PARTIAL_MATCH:
-      key.classList.add('partial')
+      key.classList.add("partial")
       break
 
     case NO_MATCH:
-      key.classList.add('incorrect')
+      key.classList.add("incorrect")
       break
   }
 
-  key.addEventListener('click', (event) =>
+  key.addEventListener("click", (event) =>
     handleClickEvent(event, {
-      letter: letter
+      letter: letter,
     })
   )
   return key

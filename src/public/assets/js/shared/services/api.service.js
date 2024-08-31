@@ -1,5 +1,5 @@
-import { logger } from '../../main.js'
-import { retrieveLocal, storeLocal } from './storage.service.js'
+import { logger } from "../../main.js"
+import { retrieveLocal, storeLocal } from "./storage.service.js"
 
 /**
  * Fetches and parses data using the fetch API and injects the statusCode into the response object.
@@ -10,7 +10,12 @@ import { retrieveLocal, storeLocal } from './storage.service.js'
  * @param {Object} [params={}] - (optional) - An object of key/values to pass in the query (GET) or body (POST, PUT, etc) parameters.
  * @returns {Promise<any>} A promise that resolves to an object containing the parsed response data, or `null` if an error occurs or no data is fetched.
  */
-export const fetchData = async (url, method = 'GET', params = {}, timeoutDelay = 15000) => {
+export const fetchData = async (
+  url,
+  method = "GET",
+  params = {},
+  timeoutDelay = 15000
+) => {
   // Set up the abort controller signal for timeout handling.
   const controller = new AbortController()
   const { signal } = controller
@@ -20,27 +25,31 @@ export const fetchData = async (url, method = 'GET', params = {}, timeoutDelay =
   }, timeoutDelay)
 
   // Allowed fetch methods
-  const allowedMethods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
+  const allowedMethods = ["GET", "POST", "PUT", "PATCH", "DELETE"]
 
   // Verify that the method is allowed.
   if (!allowedMethods.includes(method)) {
-    throw new Error(`Invalid method: ${method}. Only ${allowedMethods.join(', ')} are allowed.`)
+    throw new Error(
+      `Invalid method: ${method}. Only ${allowedMethods.join(
+        ", "
+      )} are allowed.`
+    )
   }
 
   try {
     // Inject the query parameters into the url if the request is a GET request.
     const encodedParams = new URLSearchParams(params)
-    if (method === 'GET' && encodedParams.size > 0) {
+    if (method === "GET" && encodedParams.size > 0) {
       url = `${url}?${encodedParams.toString()}`
     }
 
     const options = {
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
       method: method,
-      body: method !== 'GET' ? JSON.stringify(params) : undefined,
-      signal: signal
+      body: method !== "GET" ? JSON.stringify(params) : undefined,
+      signal: signal,
     }
     const fetchResponse = await fetch(url, options)
 
@@ -67,13 +76,13 @@ export const fetchData = async (url, method = 'GET', params = {}, timeoutDelay =
 
     return data
   } catch (err) {
-    if (err.name === 'AbortError') {
+    if (err.name === "AbortError") {
       logger.error(`Request to ${url} timed out.`)
     } else {
-      logger.error('Failed to fetch data', {
+      logger.error("Failed to fetch data", {
         url: url,
         params: params,
-        error: err
+        error: err,
       })
     }
     return null
@@ -88,24 +97,33 @@ export const fetchData = async (url, method = 'GET', params = {}, timeoutDelay =
  * @param {number} maxLength - The maximum length of words to fetch. Defaults to MAXIMUM_WORD_LENGTH.
  * @returns {Promise<Array>} A promise that resolves to an array of words.
  */
-export const fetchWordList = async (length) => {
-  if (!length) {
-    throw new Error('Word length is required')
+export const fetchWordList = async (length, language) => {
+  if (!length || !language) {
+    throw new Error("Required parameters: length, language")
   }
-  // The word list is of form: { <length>: [...words], ... }
-  const localWordList = retrieveLocal('wordList') || {}
+  const storageKey = `wordList.${language}`
+  // The word list is of form: { <language>: { <length-1>: [...words], <length-2>: ... }, ... }
+  const localWordList = retrieveLocal(storageKey) || {}
   if (Object.hasOwn(localWordList, length)) {
     return
   }
-  return fetchData(`word/list`, 'GET', {
-    length: length
+  return fetchData(`word/list`, "GET", {
+    length: length,
+    language: language,
   })
     .then((response) => {
-      localWordList[length] = response
-      storeLocal('wordList', localWordList)
-      logger.info(`Stored ${response.length} ${length} letter words in local storage.`)
+      const data = response.payload
+      if (!data) {
+        logger.error("No data received from word list endpoint.")
+        return
+      }
+      localWordList[length] = data
+      storeLocal(storageKey, localWordList)
+      logger.info(
+        `Stored ${data.length} ${length} letter ${language} words in local storage.`
+      )
     })
-    .catch((error) => logger.error('Error fetching word list', error))
+    .catch((error) => logger.error("Error fetching word list", error))
 }
 
 /**
@@ -114,12 +132,12 @@ export const fetchWordList = async (length) => {
  * @param {string} word - The word to check.
  * @returns {boolean} True if the word exists in the word list, false otherwise.
  */
-export const wordExists = (word) => {
+export const wordExists = (word, language) => {
   const wordLen = word.length
-  const wordList = retrieveLocal('wordList')
+  const wordList = retrieveLocal(`wordList.${language}`)
   // We can fetch the word list in the background and safely pass validation off to the server.
   if (!wordList || !Object.hasOwn(wordList, wordLen)) {
-    fetchWordList(wordLen)
+    fetchWordList(wordLen, language)
     return true
   }
   return wordList[wordLen].includes(word)

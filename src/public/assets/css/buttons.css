@@ -85,7 +85,8 @@
     left: 50px;
   }
   .back-button.abandon {
-    width: 150px;
-    padding: 0.5em 0.5em;
+    width: 125px;
+    font-size: 18px;
+    padding: 0.35em 0.25em;
   }
 }

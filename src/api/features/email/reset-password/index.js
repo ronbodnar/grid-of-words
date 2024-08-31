@@ -1,7 +1,7 @@
-import InternalError from '../../../errors/InternalError.js'
-import { APP_NAME } from '../../../shared/constants.js'
-import User from '../../user/User.js'
-import { sendEmail } from '../email.service.js'
+import InternalError from "../../../errors/InternalError.js"
+import { APP_NAME } from "../../../shared/constants.js"
+import User from "../../user/User.js"
+import { sendEmail } from "../email.service.js"
 
 /**
  * Sends a password reset email with the `token` to the `User`'s email address.
@@ -13,18 +13,18 @@ import { sendEmail } from '../email.service.js'
  */
 export const send = async (user, token) => {
   if (!user) {
-    throw new InternalError('User not provided')
+    throw new InternalError("User not provided")
   }
 
   const { NODE_ENV, PORT, APP_URL } = process.env
 
-  const portExtension = NODE_ENV === 'production' ? '' : ':' + PORT
-  const resetUrl = APP_URL + portExtension + '?token=' + token
+  const portExtension = NODE_ENV === "production" ? "" : ":" + PORT
+  const resetUrl = APP_URL + portExtension + "?token=" + token
 
   const fnOptions = {
     appName: APP_NAME,
     resetUrl: resetUrl,
-    username: user.username
+    username: user.username,
   }
 
   return sendEmail(
