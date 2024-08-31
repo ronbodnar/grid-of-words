@@ -5,7 +5,8 @@ import { showView } from '../view/view.service.js'
 /**
  * Verifies the authenticated user and fetches the statistics data from the API. Returns home with an error if unsuccessful.
  *
- * @returns The statistics API response payload.
+ * @async
+ * @returns {Promise<any>} The statistics API response payload.
  */
 export const fetchStatistics = async (redirect = true) => {
   const authenticatedUser = getAuthenticatedUser()
@@ -21,8 +22,7 @@ export const fetchStatistics = async (redirect = true) => {
     return null
   }
 
-  // Fetch the statistics data from the server. The server determines the authenticated user so we don't pass it.
-  const statisticsResult = await fetchData(`/statistics`)
+  const statisticsResult = await fetchData(`/users/${authenticatedUser._id}/statistics`)
   if (!statisticsResult?.payload || statisticsResult.statusCode !== 200) {
     if (redirect) {
       showView('home', {

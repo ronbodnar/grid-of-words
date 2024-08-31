@@ -5,15 +5,16 @@ import {
 } from '../../shared/services/storage.service.js'
 import { showView } from '../view/view.service.js'
 import { DEFAULT_MAX_ATTEMPTS, DEFAULT_WORD_LENGTH } from '../../shared/utils/constants.js'
-import { toggleKeyboardOverlay } from '../keyboard/keyboard.service.js'
+import { toggleKeyboardOverlay } from '../game/keyboard/keyboard.service.js'
 import { showMessage } from '../../shared/services/message.service.js'
 import { fetchData } from '../../shared/services/api.service.js'
 import { logger } from '../../main.js'
-import { clearAttemptLetters } from '../attempts/attempt.service.js'
+import { clearAttemptLetters } from './attempt/attempt.service.js'
 
 /**
  * Begins a new game by querying the API for a new game object, then swaps the container view to show the game container.
  *
+ * @async
  * @param {Object} options - An object of options to pass when creating a game.
  */
 export const startGame = async (options = {}) => {
@@ -84,21 +85,4 @@ export const abandonGame = async () => {
   showView('home')
 
   return abandonGameResponse.payload
-}
-
-let currentGame
-
-/**
- * @returns The current Game object.
- */
-export const getCurrentGame = () => {
-  return currentGame
-}
-
-/**
- * Sets the current Game object.
- * @param {Game} game The current Game object to set.
- */
-export const setCurrentGame = (game) => {
-  currentGame = game
 }

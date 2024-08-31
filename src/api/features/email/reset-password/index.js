@@ -1,12 +1,14 @@
 import InternalError from '../../../errors/InternalError.js'
 import { APP_NAME } from '../../../shared/constants.js'
+import User from '../../user/User.js'
 import { sendEmail } from '../email.service.js'
 
 /**
  * Sends a password reset email with the `token` to the `User`'s email address.
  *
- * @param {*} user The {@link User} to send the password reset email to.
- * @param {*} token The password reset token that was assigned to the user.
+ * @async
+ * @param {User} user The user to send the password reset email to.
+ * @param {string} token The password reset token that was assigned to the user.
  * @returns {Promise<boolean>} A promise that resolves to the result of the {@link sendEmail} function call.
  */
 export const send = async (user, token) => {

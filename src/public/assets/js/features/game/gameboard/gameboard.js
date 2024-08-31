@@ -1,8 +1,9 @@
-import { DEFAULT_MAX_ATTEMPTS, DEFAULT_WORD_LENGTH } from '../../shared/utils/constants.js'
+import { DEFAULT_MAX_ATTEMPTS, DEFAULT_WORD_LENGTH } from '../../../shared/utils/constants.js'
 import { buildWordRowElement } from './row.js'
 
 /**
  * Generates the grid board to house the letter squares.
+ * 
  * @param {Game} game - The game for building the grid board.
  * @returns {HTMLDivElement} - The board div element with all children.
  */

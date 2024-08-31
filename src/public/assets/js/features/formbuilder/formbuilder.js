@@ -3,11 +3,15 @@ import { createText } from '../../shared/components/text.js'
 import { createInput } from './input.js'
 import { createLabel } from './label.js'
 
-// TODO: add columns for grid layouts
-
-/*
- * Options:
- *  - submessage (string)
+/**
+ * Builds and returns an HTML form element based on the provided input groups, buttons, and options.
+ * 
+ * @param {Array<Object>} inputGroups - An array of input group objects, each containing properties like `text`, `type`, and `message`.
+ * @param {Array<HTMLButtonElement>} buttons - An array of button elements to be appended to the form.
+ * @param {Object} [options={}] - Optional settings for the form.
+ * @param {string} [options.id] - An optional ID for the form element.
+ * @param {string} [options.submessage] - An optional submessage to be displayed at the bottom of the form.
+ * @returns {HTMLFormElement} The generated form element.
  */
 export const buildForm = (inputGroups, buttons, options = {}) => {
   const { id, submessage } = options

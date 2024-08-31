@@ -28,7 +28,7 @@ const errorHandler = (err, req, res, next) => {
   };
   const showLoggerData = name !== "ValidationError";
   logger.error(
-    `Error Handler middleware was passed an error: ${message}`,
+    `Error Handler middleware was passed an error`,
     showLoggerData ? loggerData : undefined
   );
 

@@ -25,7 +25,6 @@ class Game {
    * @param {string} [obj.endTimestamp] The timestamp for the end of the game.
    * @param {string} [obj.maxAttempts=DEFAULT_MAX_ATTEMPTS] The maximum number of attempts before the game ends.
    * @param {string} [obj.ownerId] The ObjectID object for the authenticated owner of the game.
-   * @returns Returns early if no `obj` is provided.
    */
   constructor(obj) {
     if (!obj) return;
@@ -45,6 +44,7 @@ class Game {
   /**
    * Asynchronously saves the game to the database and waits for the operation to complete.
    *
+   * @async
    * @returns {Promise<any>} A promise that resolves to the saved game if successful.
    */
   async save() {

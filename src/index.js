@@ -11,6 +11,8 @@ const productionMode = NODE_ENV === "production";
 
 /**
  * Initialize required components for the application, such as the database and express server.
+ * 
+ * @async
  */
 const initialize = async () => {
   logger.info(`Initiializing ${APP_NAME} API Services...`);

@@ -1,12 +1,12 @@
-import { setBlockKeyEvents } from '../../shared/services/event.service.js'
-import { retrieveSession, storeSession } from '../../shared/services/storage.service.js'
-import { showMessage } from '../../shared/services/message.service.js'
-import { wordExists } from '../../shared/services/api.service.js'
-import { Game } from '../game/Game.js'
+import { setBlockKeyEvents } from '../../../shared/services/event.service.js'
+import { retrieveSession, storeSession } from '../../../shared/services/storage.service.js'
+import { showMessage } from '../../../shared/services/message.service.js'
+import { wordExists } from '../../../shared/services/api.service.js'
+import { Game } from '../Game.js'
 import { transformSquares } from '../gameboard/gameboard.service.js'
 import { toggleKeyboardOverlay } from '../keyboard/keyboard.service.js'
-import { fetchData } from '../../shared/services/api.service.js'
-import { logger } from '../../main.js'
+import { fetchData } from '../../../shared/services/api.service.js'
+import { logger } from '../../../main.js'
 import { processAttemptResponse } from './attempt-response.js'
 
 let attemptLetters = []
@@ -14,6 +14,7 @@ let attemptLetters = []
 /**
  * Processes the attempt by querying the API and updating the game container accordingly.
  *
+ * @async
  * @param {Game} game - The game to process to attempt for.
  */
 export const processAttempt = async (game) => {
@@ -118,7 +119,7 @@ const decreaseCounterToZero = (counter, instant = false) => {
  * If the word list is not found in local storage, it's retrieved from the server asynchronously for next time.
  *
  * @param {Game} game - The game to validate the attempt against.
- * @return {boolean} true if the attempt is valid, false otherwise.
+ * @returns {boolean} true if the attempt is valid, false otherwise.
  */
 export const validateAttempt = (game) => {
   const attemptLetters = getAttemptLetters()

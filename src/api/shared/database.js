@@ -1,4 +1,4 @@
-import { MongoClient, ServerApiVersion } from "mongodb";
+import { Collection, MongoClient, ServerApiVersion } from "mongodb";
 import DatabaseError from "../errors/DatabaseError.js";
 import InternalError from "../errors/InternalError.js";
 
@@ -6,6 +6,8 @@ let client;
 
 /**
  * Asynchronously connects to the MongoDB server.
+ * 
+ * @async
  */
 const connect = async () => {
   try {
@@ -24,9 +26,10 @@ const connect = async () => {
 
 /**
  * Obtains a collection with the specified name and database (or MONGO_DB_NAME if no db is specified).
- * @param {*} name The name of the collection
- * @param {*} database The name of the database storing the collection.
- * @returns
+ * 
+ * @param {string} name The name of the collection
+ * @param {string} database The name of the database storing the collection.
+ * @returns {Collection} The MongoDB collection.
  */
 const getCollection = (name, database = process.env.MONGO_DB_NAME) => {
   if (!name) {
@@ -46,8 +49,19 @@ const getCollection = (name, database = process.env.MONGO_DB_NAME) => {
   return db.collection(name);
 };
 
+/**
+ * Gets the MongoDB "games" collection.
+ */
 const getGameCollection = () => getCollection("games");
+
+/**
+ * Gets the MongoDB "words_enUS" collection.
+ */
 const getWordCollection = () => getCollection("words_enUS");
+
+/**
+ * Gets the MongoDB "users" collection.
+ */
 const getUserCollection = () => getCollection("users");
 
 export default {

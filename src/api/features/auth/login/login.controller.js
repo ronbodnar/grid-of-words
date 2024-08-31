@@ -7,7 +7,9 @@ import { loginUser } from './login.service.js'
 /**
  * Performs the login process for the email and password combination provided in the request.
  *
- * Endpoint: /auth/login
+ * Endpoint: POST /auth/login
+ * 
+ * @async
  */
 export const handleLoginUser = async (req, res, next) => {
   const { email, password } = req.body

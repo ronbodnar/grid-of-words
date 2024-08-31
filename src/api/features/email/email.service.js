@@ -4,6 +4,8 @@ import { send as sendPasswordResetEmail } from "./reset-password/index.js";
 
 /**
  * Uses Nodemailer to send an email with the default transporter settings.
+ * 
+ * @async
  * @param {string} to The receiver(s) of the emails. Multiple emails can be separated by commas.
  * @param {string} subject The subject line of the email.
  * @param {string} text The plain text version of the email if HTML is unavailable.
@@ -27,7 +29,7 @@ export const sendEmail = async (to, subject, text, html) => {
     return null;
   });
 
-  // Response codes 2xx are successful, we others are errored.
+  // Response codes 2xx are successful, others are errors. (seems to give 250 most of the time)
   if (!sendMailResponse || !sendMailResponse.response.startsWith("2")) {
     logger.error("Received no response or a non 2xx response code.", options, {
       response: sendMailResponse,
@@ -35,7 +37,6 @@ export const sendEmail = async (to, subject, text, html) => {
     return false;
   }
 
-  // Check if any emails were rejected by the recipient.
   if (sendMailResponse.rejected.length > 0) {
     logger.error("Email(s) were rejected by recipient(s):", options, {
       response: sendMailResponse,

@@ -8,8 +8,9 @@ import { sendPasswordResetEmail } from '../../email/email.service.js'
 /**
  * Processes the request to send a password reset link via email. Most errors default to a success to hide output to users.
  *
+ * @async
  * @param {string} email The email address that potentially belongs to a user account.
- * @returns {Promise<object | ValidationError>} A promise that resolves to an object with a success message or a ValidationError.
+ * @returns {Promise<object|ValidationError>} A promise that resolves to an object with a success message or a ValidationError.
  */
 export const forgotPassword = async (email) => {
   const successResponse = {

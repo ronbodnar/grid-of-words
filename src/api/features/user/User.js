@@ -12,7 +12,7 @@ class User {
   password = undefined;
   lastGameState = undefined;
 
-  stats = undefined;
+  statistics = undefined;
   passwordResetToken = undefined;
   passwordResetTokenExpiration = undefined;
 
@@ -28,7 +28,7 @@ class User {
   bestConsecutiveDaysPlayed = undefined;
 
   /**
-   * User class constructor that handles user data initialization.
+   * Initializes a new instance of the class with the given `userData` object.
    *
    * @param {Object} userData - The user data used to initialize the User object.
    * @param {string} [userData._id] - The unique identifier for the user.
@@ -38,7 +38,7 @@ class User {
    * @param {string} [userData.password] - The plain text password (only used during registration).
    * @param {boolean} [userData.enabled=true] - Whether the user's account is enabled.
    * @param {Date|string} [userData.creationDate] - The date when the user account was created.
-   * @param {Object} [userData.stats] - The user's statistics object, used to initialize a UserStats instance.
+   * @param {Object} [userData.statistics] - The user's statistics object, used to initialize a UserStats instance.
    * @param {string} [userData.passwordResetToken] - The token used for resetting the user's password.
    * @param {Date|string} [userData.passwordResetTokenExpiration] - The expiration date of the password reset token.
    *
@@ -57,7 +57,7 @@ class User {
       password,
       enabled,
       creationDate,
-      stats,
+      statistics,
       passwordResetToken,
       passwordResetTokenExpiration,
     } = userData;
@@ -82,18 +82,26 @@ class User {
     this.email = email;
     this.enabled = enabled === true;
     this.creationDate = new Date(creationDate);
-    this.stats = (stats && new UserStats(stats)) || this.stats;
+    this.statistics = (statistics && new UserStats(statistics)) || this.statistics;
     this.passwordResetToken = passwordResetToken;
     this.passwordResetTokenExpiration = passwordResetTokenExpiration;
   }
 
+  /**
+   * Invokes {@link updateUser} with this User instance and the `properties` object.
+   * 
+   * @async
+   * @param {Object} [properties={}] An object with properties to save to the user document.
+   * @returns {Promise<User|null>} A promise that resolves when {@link updateUser} is resolved..
+   */
   async save(properties) {
     return updateUser(this, properties);
   }
 
   /**
    * Obtains the salt for the user.
-   * @returns Returns the salt.
+   * 
+   * @returns {string} The salt for the hashed password.
    */
   getSalt() {
     return this.hash.substring(0, 32);
@@ -101,7 +109,8 @@ class User {
 
   /**
    * Obtains the hashed password for the user.
-   * @returns
+   * 
+   * @returns {string} The hashed password
    */
   getHash() {
     return this.hash.substring(32);
@@ -109,7 +118,8 @@ class User {
 
   /**
    * Used to ignore undefined values to avoid unnecessary data in documents. See {@link insertUser}
-   * @returns Returns a copy of the user object with undefined values removed.
+   * 
+   * @returns {Object} A copy of the user object with undefined values removed.
    */
   getWithoutUndefined() {
     return Object.fromEntries(
@@ -120,7 +130,7 @@ class User {
   /**
    * Export basic account information in the form of an object for JWT generation.
    *
-   * @returns The account details for the JWT payload.
+   * @returns {Object} The account details for the JWT payload.
    */
   getAccountDetails() {
     return {

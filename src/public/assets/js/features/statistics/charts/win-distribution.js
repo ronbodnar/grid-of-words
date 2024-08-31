@@ -1,5 +1,5 @@
-import '../../../chart.umd.js'
-import '../../../chartjs-plugin-datalabels.min.js'
+import '/assets/js/chart.umd.js'
+import '/assets/js/chartjs-plugin-datalabels.min.js'
 
 export const loadWinDistributionChart = (wins) => {
   const sumOfWins = Object.values(wins).reduce((sum, w) => sum + w)

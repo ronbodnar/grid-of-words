@@ -6,8 +6,9 @@ import database from "../../shared/database.js";
 /**
  * Selects a random word with the specified length from the database.
  *
+ * @async
  * @param {number} length - The length of the word to be found.
- * @returns {Promise<string | InternalError | DatabaseError>} A promise that resolves to a random word of the specified length if successful.
+ * @returns {Promise<string|InternalError|DatabaseError>} A promise that resolves to a random word of the specified length if successful.
  */
 export const findByLength = async (length) => {
   if (!length) {
@@ -18,6 +19,7 @@ export const findByLength = async (length) => {
 
     const pipeline = [
       {
+        // Send the text field and the length of the text to the next stage.
         $project: {
           text: 1,
           length: {
@@ -26,6 +28,7 @@ export const findByLength = async (length) => {
         },
       },
       {
+        // Only select words that match the specified length and are composed of only alphabetic characters.
         $match: {
           $and: [
             {
@@ -38,12 +41,14 @@ export const findByLength = async (length) => {
         },
       },
       {
+        // Send only the text to the next stage.
         $project: {
           _id: 0,
           text: 1,
         },
       },
       {
+        // Select one random word from the previous stage.
         $sample: {
           size: 1,
         },
@@ -74,12 +79,12 @@ export const findByLength = async (length) => {
   }
 };
 
-/*
- * Retrieves all words with a length within the specified min and max length range.
+/**
+ * Retrieves all words with the specified `length`.
  *
- * @param {number} minLength - The minimum length of word to retrieve.
- * @param {number} maxLength - The maximum length of word to retrieve.
- * @return {Array} The list of words matching the length range.
+ * @async
+ * @param {number} length - The length of words to retrieve.
+ * @returns {Promise<Array>} An Array of words matching the length.
  */
 export const findAllByLength = async (length) => {
   if (!length) {
@@ -90,6 +95,7 @@ export const findAllByLength = async (length) => {
 
     const pipeline = [
       {
+        // Send the text field and the length of the text to the next stage.
         $project: {
           text: 1,
           length: {
@@ -98,6 +104,7 @@ export const findAllByLength = async (length) => {
         },
       },
       {
+        // Only select words that match the specified length and are composed of only alphabetic characters.
         $match: {
           $and: [
             {
@@ -110,22 +117,23 @@ export const findAllByLength = async (length) => {
         },
       },
       {
+        // Sort the words in ascending order by their text.
         $sort: {
           text: 1,
           _id: 1,
         },
       },
       {
+        // Group all of the text (words) found with the given length into a words array for the next stage.
         $group: {
           _id: null,
           words: {
-            $push: {
-              $toLower: "$text",
-            },
+            $push: "$text",
           },
         },
       },
       {
+        // Remove the object wrapper from the previous stage and output only the array of words.
         $replaceRoot: {
           newRoot: {
             words: "$words",
@@ -153,11 +161,12 @@ export const findAllByLength = async (length) => {
   }
 };
 
-/*
- * Searches the database for the provided word.
+/**
+ * Searches the database for the provided word and returns the result.
  *
+ * @async
  * @param {string} word - The word to search for.
- * @return {boolean}
+ * @returns {Promise<boolean>} A promise that resolves to true if the search was successful or false otherwise.
  */
 export const exists = async (word) => {
   if (!word) {
@@ -166,7 +175,6 @@ export const exists = async (word) => {
   try {
     const wordCollection = database.getWordCollection();
     const result = await wordCollection.findOne({ text: word.toLowerCase() });
-    console.log(word, result);
     return result && result.text;
   } catch (error) {
     return new DatabaseError(

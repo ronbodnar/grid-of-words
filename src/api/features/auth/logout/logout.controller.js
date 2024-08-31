@@ -1,5 +1,7 @@
 /**
  * Handles the logout process by clearing the `token` cookie in the response object.
+ * 
+ * Endpoint: POST /auth/logout
  */
 export const handleLogoutUser = (req, res, next) => {
   try {

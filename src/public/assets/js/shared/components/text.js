@@ -8,7 +8,7 @@ import { handleClickEvent } from '../services/event.service.js'
  * @param {boolean} [options.hidden=false] Whether the element should be hidden by default.
  * @param {boolean} [options.emitClickEvent=false] Whether the element should add an event listener for click events.
  * @param {Array} [options.classes=[]] An array of class names to be applied to the element.
- * @returns {HTMLParagraphElement | null} The generated paragraph element or null if a type is not provided.
+ * @returns {HTMLParagraphElement|null} The generated paragraph element or null if a type is not provided.
  */
 export const createText = (options = {}) => {
   const {

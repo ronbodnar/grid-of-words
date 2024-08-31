@@ -15,6 +15,8 @@ app.use(helmet());
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "..", "..", "public")));
+
+// Map chartjs and datalabels libraries from node_modules folder
 app.use(
   "/assets/js/chart.umd.js",
   express.static(

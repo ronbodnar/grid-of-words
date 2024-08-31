@@ -3,11 +3,11 @@ import { DEFAULT_WORD_LENGTH } from "../../shared/constants.js";
 import { getWord, getWordList } from "./word.service.js";
 
 /**
- * Select a random word from the word table in the database.
+ * Handles the selection of a random word.
  *
  * Endpoint: GET /word
  *
- * @returns {Promise<any>} A promise that resolves with a random word if successful.
+ * @async
  */
 export const handleGetWord = async (req, res) => {
   const length = req.query.wordLength || DEFAULT_WORD_LENGTH;
@@ -17,11 +17,11 @@ export const handleGetWord = async (req, res) => {
 };
 
 /**
- * Retrieves the list of words of a given length.
+ * Handles retrieval of word lists.
  *
  * Endpoint: GET /word/list
  *
- * @returns {Promise<Array | InternalError>} A promise that resolves to an Array of words with the specified length or an Error.
+ * @async
  */
 export const handleGetWordList = async (req, res) => {
   try {

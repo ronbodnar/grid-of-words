@@ -1,9 +1,9 @@
 import {
   fillNextSquare,
   removeLastSquareValue
-} from '../../features/gameboard/gameboard.service.js'
+} from '../../features/game/gameboard/gameboard.service.js'
 import { abandonGame, startGame } from '../../features/game/game.service.js'
-import { processAttempt } from '../../features/attempts/attempt.service.js'
+import { processAttempt } from '../../features/game/attempt/attempt.service.js'
 import { getCurrentViewName, showView, getViewHistory } from '../../features/view/view.service.js'
 import { DEFAULT_MAX_ATTEMPTS, DEFAULT_WORD_LENGTH } from '../utils/constants.js'
 import {
@@ -170,7 +170,7 @@ export const setBlockKeyEvents = (block) => {
 /**
  * Checks whether or not key events are being blocked.
  *
- * @return {boolean} true if events are being blocked, otherwise false.
+ * @returns {boolean} true if events are being blocked, otherwise false.
  */
 export const isBlockKeyEvents = () => {
   return blockKeyEvents

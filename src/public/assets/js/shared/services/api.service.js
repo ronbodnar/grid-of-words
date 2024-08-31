@@ -4,6 +4,7 @@ import { retrieveLocal, storeLocal } from './storage.service.js'
 /**
  * Fetches and parses data using the fetch API and injects the statusCode into the response object.
  *
+ * @async
  * @param {string} url The URL to fetch data from.
  * @param {string} [method='GET'] - (optional) - The request method to use with the fetch request.
  * @param {Object} [params={}] - (optional) - An object of key/values to pass in the query (GET) or body (POST, PUT, etc) parameters.
@@ -82,6 +83,7 @@ export const fetchData = async (url, method = 'GET', params = {}, timeoutDelay =
 /**
  * Fetches a list of words from the server with a specified length range.
  *
+ * @async
  * @param {number} minLength - The minimum length of words to fetch. Defaults to MINIMUM_WORD_LENGTH.
  * @param {number} maxLength - The maximum length of words to fetch. Defaults to MAXIMUM_WORD_LENGTH.
  * @returns {Promise<Array>} A promise that resolves to an array of words.

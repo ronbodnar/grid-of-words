@@ -3,7 +3,14 @@ import ValidationError from '../../../errors/ValidationError.js'
 import { findUserBy } from '../../user/user.repository.js'
 import { generateSalt, hashPassword } from '../authentication.service.js'
 
-// TODO: verify password isn't the same as the current password? additional complexity?
+/**
+ * Attempts to reset the password for a {@link User} and updates the password in the database if successful.
+ * 
+ * @async
+ * @param {string} newPassword The new password for the user account. 
+ * @param {string} passwordResetToken The password reset token to validate the password reset.
+ * @returns {Promise<Object|ValidationError|UnauthorizedError>} A promise that resolves to an object with a success message if successful.
+ */
 export const resetPassword = async (newPassword, passwordResetToken) => {
   if (newPassword.length < 8) {
     return new ValidationError('New password must be at least 8 characters long.')
@@ -25,7 +32,6 @@ export const resetPassword = async (newPassword, passwordResetToken) => {
   })
 
   return {
-    status: 'success',
     message: 'Password reset successfully.'
   }
 }

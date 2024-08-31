@@ -5,6 +5,15 @@ import ValidationError from '../../../errors/ValidationError.js'
 import { findUserBy, insertUser } from '../../user/user.repository.js'
 import User from '../../user/User.js'
 
+/**
+ * Attempts to register a new {@link User} by validating input and saving the new user to the database.
+ * 
+ * @async
+ * @param {string} username The username for the new user.
+ * @param {string} email The email address for the new user.
+ * @param {string} password The password for the new user.
+ * @returns {Promise<Object|ValidationError|InternalError>} A promise that resolves to an object with a success message.
+ */
 export const registerUser = async (username, email, password) => {
   if (!USERNAME_REGEX.test(username)) {
     return new ValidationError(
@@ -44,7 +53,6 @@ export const registerUser = async (username, email, password) => {
   })
 
   return {
-    status: 'success',
     message: 'Registration successful'
   }
 }

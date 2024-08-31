@@ -1,6 +1,6 @@
 import { buildSquareElement } from './square.js'
 import { updateSquareBackground } from './gameboard.service.js'
-import { getValidatedLetters } from '../../shared/utils/helpers.js'
+import { getValidatedLetters } from '../../../shared/utils/helpers.js'
 
 /**
  * Generates a row of squares of the word length for the game.
