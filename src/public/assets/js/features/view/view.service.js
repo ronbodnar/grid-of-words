@@ -10,13 +10,14 @@ import { buildLoadingView } from "../loading/loading.view.js"
 import { buildOptionsView } from "../options/options.view.js"
 import { retrieveSession } from "../../shared/services/storage.service.js"
 import { buildStatisticsView } from "../statistics/statistics.view.js"
+import { logger } from "../../main.js"
 
 let viewHistory = []
 
 const viewFunctions = {
   // Main view functions
   home: (options = {}) => {
-    viewHistory = []
+    //viewHistory = []
     buildHomeView(options)
   },
   game: (options = {}) => {
@@ -25,7 +26,7 @@ const viewFunctions = {
       wordLength: options.wordLength,
       maxAttempts: options.maxAttempts,
     })
-    viewHistory = []
+    //viewHistory = []
   },
   howToPlay: () => buildHowToPlayView(),
   loading: () => buildLoadingView(),
@@ -50,7 +51,7 @@ const viewFunctions = {
 }
 
 /**
- * Clears the current content container's innerHTML and builds view containers.
+ * Clears the current content container's innerHTML and builds view containers. Additionally, updates window history using pushState to allow browser navigation.
  * @param {string} name - The name of the view container to build and display.
  * @param {object} options - A list of options that can be passed to views.
  */
@@ -60,27 +61,54 @@ export const showView = (name, options = {}) => {
     return
   }
 
-  const { hideFromHistory = false } = options
-
-  const currentView = getCurrentViewName()
-  const addToHistory =
-    currentView !== "loading" &&
-    currentView !== "game" &&
-    currentView !== "statistics" &&
-    !hideFromHistory
-
-  if (addToHistory) {
-    viewHistory.push(getCurrentViewName())
-  }
-
   const viewFunction = viewFunctions[name]
   if (viewFunction && typeof viewFunction === "function") {
     viewFunction(options)
   } else {
     buildHomeView()
-    viewHistory = []
-    throw new Error(`View "${name}" does not have a mapped function`)
+    logger.error(`View "${name}" does not have a mapped function`)
   }
+
+  const { hideFromHistory = false } = options
+
+  const addToHistory = name !== "loading" && !hideFromHistory
+
+  if (addToHistory) {
+    window.history.pushState(
+      {
+        view: name,
+        options: options,
+      },
+      "",
+      ""
+    )
+  }
+}
+
+export const navigateBack = () => {
+  const { state } = window.history
+
+  // We're still in the app and have no previous view, meaning we are (hopefully) back to our initial load state.
+  if (!state || !state.view) {
+    // No sense in rebuilding the home view.
+    if (getCurrentViewName() !== "home") {
+      showView("home", {
+        hideFromHistory: true,
+      })
+    }
+    return
+  }
+
+  // We can't return to a game, so just force an extra back button click.
+  if (state?.view === "game") {
+    window.history.back()
+    return
+  }
+
+  const { view, options = {} } = state
+  options.hideFromHistory = true
+
+  showView(view, options)
 }
 
 /**
@@ -90,11 +118,4 @@ export const showView = (name, options = {}) => {
 export const getCurrentViewName = () => {
   const currentView = document.querySelector(".content")
   return currentView?.id
-}
-
-/**
- * @returns {Array} A stack of views that have been visited, for navigation.
- */
-export const getViewHistory = () => {
-  return viewHistory
 }

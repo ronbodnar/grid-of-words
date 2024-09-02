@@ -4,7 +4,7 @@ import {
   retrieveSession,
   storeSession,
 } from "./shared/services/storage.service.js"
-import { addKeyListeners } from "./shared/services/event.service.js"
+import { addEventListeners } from "./shared/services/event.service.js"
 import { showView } from "./features/view/view.service.js"
 import { fetchData, fetchWordList } from "./shared/services/api.service.js"
 import { validateResetToken } from "./features/auth/authentication.service.js"
@@ -15,8 +15,8 @@ import { DEFAULT_WORD_LENGTH } from "./shared/utils/constants.js"
 const loggerInstance = logger()
 export { loggerInstance as logger }
 
-// Initialize the listeners for keyboard events.
-addKeyListeners()
+// Initialize the listeners for keyboard and history events.
+addEventListeners()
 
 // Show the loading view while we fetch session data from the server.
 showView("loading")
@@ -58,7 +58,7 @@ await (async () => {
 })()
 
 // Ensure the session has been set before redirecting the user or they may not have API access.
-;(async () => {
+await (async () => {
   // Redirect to the password reset page if the passwordResetToken query parameter is set.
   const searchParams = new URLSearchParams(window.location.search)
   const tokenParam = searchParams.get("token")
@@ -88,7 +88,9 @@ await (async () => {
   } else {
     const game = retrieveSession("game")
     if (!game) {
-      showView("home")
+      showView("home", {
+        hideFromHistory: true,
+      })
     }
   }
 })()

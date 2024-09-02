@@ -7,7 +7,7 @@ import { processAttempt } from "../../features/game/attempt/attempt.service.js"
 import {
   getCurrentViewName,
   showView,
-  getViewHistory,
+  navigateBack,
 } from "../../features/view/view.service.js"
 import {
   changePassword,
@@ -28,12 +28,7 @@ const clickFunctions = {
   showRegister: () => showView("register"),
   showForgotPassword: () => showView("forgotPassword"),
   showChangePassword: () => showView("changePassword"),
-  back: () => {
-    const previousView = getViewHistory().pop()
-    showView(previousView, {
-      hideFromHistory: true,
-    })
-  },
+  back: () => window.history.back(),
 
   // Games
   startGame: (args) => startGame(args),
@@ -114,7 +109,7 @@ export const handleClickEvent = (event, args) => {
 /**
  * Add event listeners for global key press events.
  */
-export const addKeyListeners = () => {
+export const addEventListeners = () => {
   // Keypress only listens for keys that emit a value
   document.addEventListener("keypress", function (event) {
     // Exit early if key events are blocked.
@@ -156,6 +151,11 @@ export const addKeyListeners = () => {
       removeLastSquareValue(key)
     }
   })
+
+  // Browser history state change
+  window.onpopstate = (event) => {
+    navigateBack()
+  }
 }
 
 // When we are performing certain tasks, we don't want to accept user input and block it conditionally.
