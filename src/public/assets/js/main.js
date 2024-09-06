@@ -23,7 +23,7 @@ showView("loading")
 
 // Fetch the session data from the server before moving on.
 await (async () => {
-  const sessionResponse = await fetchData("/session")
+  const sessionResponse = await fetchData("session")
 
   const { user, game } = sessionResponse?.payload || {}
 

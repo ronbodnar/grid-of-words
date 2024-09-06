@@ -23,7 +23,7 @@ export const fetchStatistics = async (redirect = true) => {
   }
 
   const statisticsResult = await fetchData(
-    `/users/${authenticatedUser._id}/statistics`
+    `users/${authenticatedUser._id}/statistics`
   )
   const { payload, statusCode } = statisticsResult
   if (!payload || statusCode !== 200) {

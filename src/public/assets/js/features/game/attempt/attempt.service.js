@@ -43,13 +43,9 @@ export const processAttempt = async (game) => {
   // Clear the message content while processing the attempt, otherwise it may retain previous messages.
   showMessage("")
 
-  const attemptResponsePromise = fetchData(
-    `/game/${game._id}/attempt`,
-    "POST",
-    {
-      word: attemptLetters.join(""),
-    }
-  )
+  const attemptResponsePromise = fetchData(`game/${game._id}/attempt`, "POST", {
+    word: attemptLetters.join(""),
+  })
 
   const transformSquaresPromise = transformSquares(true).then(() => {
     // Show the loading overlay in case the response hasn't been received from the server.

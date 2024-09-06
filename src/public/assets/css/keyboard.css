@@ -71,7 +71,7 @@
 
 .delete-key {
   width: 60px;
-  background-image: url("/assets/material-icons/backspace.svg");
+  background-image: url("../material-icons/backspace.svg");
   background-repeat: no-repeat;
   background-position: center center;
   background-size: 50%;

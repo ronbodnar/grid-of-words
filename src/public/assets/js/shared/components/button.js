@@ -36,7 +36,7 @@ export const createButton = (text, options = {}) => {
 
   // If icon is present, add the icon before the text on the button, otherwise set the text only.
   button.innerHTML = icon
-    ? `<img src='/assets/material-icons/${options.icon}.svg' style='vertical-align: -6px'> ${text}`
+    ? `<img src='./assets/material-icons/${options.icon}.svg' style='vertical-align: -6px'> ${text}`
     : text
 
   if (loader) {

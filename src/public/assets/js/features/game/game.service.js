@@ -39,7 +39,7 @@ export const startGame = async (options = {}) => {
   try {
     const params = new URLSearchParams(gameOptions)
     const fetchNewGameResponse = await fetchData(
-      `/game/new?${params.toString()}`,
+      `game/new?${params.toString()}`,
       "GET"
     )
 
@@ -95,7 +95,7 @@ export const abandonGame = async () => {
   toggleKeyboardOverlay()
 
   const abandonGameResponse = await fetchData(
-    `/game/${game._id}/abandon`,
+    `game/${game._id}/abandon`,
     "POST"
   )
 

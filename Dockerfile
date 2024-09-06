@@ -3,8 +3,7 @@ ARG NODE_VERSION=20.12.2
 
 # Base image
 FROM node:${NODE_VERSION}-alpine as base
-WORKDIR /usr/src/app
-RUN npm install --g nodemon
+WORKDIR /app
 EXPOSE 3000
 
 # Development stage
