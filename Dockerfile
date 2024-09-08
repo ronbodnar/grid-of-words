@@ -19,7 +19,6 @@ CMD ["npm", "run", "dev"]
 FROM base as prod
 RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=bind,source=package-lock.json,target=package-lock.json \
-    --mount=type=bind,source=data/mongoX509.pem,target=data/mongoX509.pem \
     npm ci --omit=dev
 USER node
 COPY . .

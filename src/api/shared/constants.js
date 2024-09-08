@@ -1,5 +1,9 @@
 export const APP_NAME = "Word Puzzle Game"
 
+export const ERROR_LOG_FILE = `${process.cwd()}/logs/error.log`
+
+export const OUTPUT_LOG_FILE = `${process.cwd()}/logs/output.log`
+
 export const DEFAULT_LANGUAGE = "english"
 
 // Max attempt declarations

@@ -6,6 +6,8 @@ logs/*
 
 # Ignore the script directory as they are separate git repositories.
 scripts/*
+!scripts/*.js
+!scripts/*.sh
 
 # Ignore the sensitive environment variables and secret files
 *.env

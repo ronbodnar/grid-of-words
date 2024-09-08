@@ -1,4 +1,5 @@
 import winston from "winston"
+import { ERROR_LOG_FILE, OUTPUT_LOG_FILE } from "../shared/constants.js"
 
 const consoleTransport = new winston.transports.Console({
   format: winston.format.combine(
@@ -18,12 +19,12 @@ const consoleTransport = new winston.transports.Console({
 
 const errorTransport = new winston.transports.File({
   level: "error",
-  filename: `${process.cwd()}/logs/error.log`,
+  filename: ERROR_LOG_FILE,
 })
 
 const outputTransport = new winston.transports.File({
   level: "info",
-  filename: `${process.cwd()}/logs/output.log`,
+  filename: OUTPUT_LOG_FILE,
 })
 
 export const logger = winston.createLogger({
@@ -32,8 +33,8 @@ export const logger = winston.createLogger({
   format: winston.format.json(),
 })
 
+// Add the appropriate Transport(s) to the logger
 const { NODE_ENV } = process.env
-// Add File transports for production environments and console transport for development.
 if (NODE_ENV === "production") {
   logger.add(errorTransport).add(outputTransport)
 } else if (NODE_ENV === "development") {
