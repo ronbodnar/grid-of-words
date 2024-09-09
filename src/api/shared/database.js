@@ -1,7 +1,8 @@
-import { Collection, MongoClient, ServerApiVersion } from "mongodb"
+import { Collection, MongoClient } from "mongodb"
 import DatabaseError from "../errors/DatabaseError.js"
 import InternalError from "../errors/InternalError.js"
 import { DEFAULT_LANGUAGE } from "./constants.js"
+import logger from "../config/winston.config.js"
 
 let client
 
@@ -10,27 +11,34 @@ let client
  *
  * @async
  */
-const connect = async () => {
+const connect = async (uri = process.env.MONGO_URI_LOCAL_CONTAINER) => {
+  const {
+    MONGO_URI_LOCAL_CONTAINER,
+    MONGO_URI_REMOTE_CONTAINER,
+    MONGO_REMOTE_HOST_ADDRESS,
+  } = process.env
+
   try {
-    const {
-      MONGO_CERT_PATH,
-      MONGO_INITDB_ROOT_USERNAME,
-      MONGO_INITDB_ROOT_PASSWORD,
-      MONGO_CONTAINER_SERVICE_NAME,
-    } = process.env
-    client = new MongoClient(
-      `mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@${MONGO_CONTAINER_SERVICE_NAME}`,
-      {
-        tlsCertificateKeyFile: MONGO_CERT_PATH,
-        serverApi: ServerApiVersion.v1,
-      }
-    )
+    client = new MongoClient(uri)
     await client.connect()
   } catch (error) {
-    throw new DatabaseError("Couldn't connect to to MongoDB server", {
-      connectionUrl: process.env.MONGO_URI,
-      error: error,
-    })
+    // The first failure re-runs the connect function with the remote mongo URI. If that fails, app will not start.
+    if (uri === MONGO_URI_REMOTE_CONTAINER) {
+      throw new DatabaseError("Couldn't connect to the remote mongo host", {
+        remoteHostAddress: MONGO_REMOTE_HOST_ADDRESS,
+        connectionUrl: MONGO_URI_REMOTE_CONTAINER,
+        error: error,
+      })
+    } else {
+      logger.error("Couldn't connect to the local mongo container.", {
+        connectionUrl: MONGO_URI_LOCAL_CONTAINER,
+        error: error,
+      })
+      logger.info(
+        `Attempting to connect to remote mongo host: ${MONGO_REMOTE_HOST_ADDRESS}`
+      )
+      await connect(MONGO_URI_REMOTE_CONTAINER)
+    }
   }
 }
 
