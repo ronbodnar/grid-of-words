@@ -27,16 +27,13 @@ export const addAttempt = async (word, gameId, authToken) => {
 
   const authenticatedUser = await getAuthenticatedUser(authToken)
 
-  console.log(authenticatedUser)
-  console.log(game)
-
   if (authenticatedUser?._id) {
     // Update the game's owner if there is no owner, but we are authenticated.
     if (game.ownerId === undefined) {
       game.ownerId = authenticatedUser._id
     }
 
-    if (game.ownerId.toString() === authenticatedUser._id.toString()) {
+    if (game.ownerId.toString() !== authenticatedUser._id.toString()) {
       return new UnauthorizedError("NOT_AUTHORIZED", {
         status: "error",
         message: "NOT_AUTHORIZED",

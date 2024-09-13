@@ -16,8 +16,8 @@ export const buildStatisticsView = async (options = {}) => {
       return options.statistics
     }
 
-    showView("loading")
-    return await fetchStatistics()
+    const showLoadingViewTimeout = setTimeout(() => showView("loading"), 500)
+    return await fetchStatistics(showLoadingViewTimeout)
   })()
 
   // fetchStatistics handles redirection upon error so just return early here.

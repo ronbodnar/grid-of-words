@@ -57,8 +57,6 @@ export const processAttempt = async (game) => {
     transformSquaresPromise,
   ])
 
-  console.log(response)
-
   toggleKeyboardOverlay(false)
 
   if (!response?.payload) {

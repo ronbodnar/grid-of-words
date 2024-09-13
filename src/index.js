@@ -1,7 +1,7 @@
 import http from "node:http"
 import https from "node:https"
 import fs from "node:fs"
-import app from "./api/config/express.config.js"
+import app from "./api/main/config/express.config.js"
 import logger from "./api/config/winston.config.js"
 import db from "./api/shared/database.js"
 import { APP_NAME } from "./api/shared/constants.js"
