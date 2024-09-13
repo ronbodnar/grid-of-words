@@ -13,32 +13,33 @@ let client
  */
 const connect = async (uri = process.env.MONGO_URI_LOCAL_CONTAINER) => {
   const {
-    MONGO_URI_LOCAL_CONTAINER,
-    MONGO_URI_REMOTE_CONTAINER,
     MONGO_REMOTE_HOST_ADDRESS,
+    MONGO_REMOTE_HOST_PORT,
+    MONGO_DB_NAME,
+    MONGO_INITDB_ROOT_USERNAME,
+    MONGO_INITDB_ROOT_PASSWORD,
+    MONGO_CONTAINER_NAME,
   } = process.env
 
   try {
-    client = new MongoClient(uri)
-    await client.connect()
+    const MONGO_URI_LOCAL = `mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@${MONGO_CONTAINER_NAME}/${MONGO_DB_NAME}?authSource=admin`
+    const MONGO_URI_REMOTE = `mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@${MONGO_REMOTE_HOST_ADDRESS}:${MONGO_REMOTE_HOST_PORT}/${MONGO_DB_NAME}?authSource=admin`
+
+    const remoteClient = new MongoClient(MONGO_URI_REMOTE)
+    const localClient = new MongoClient(MONGO_URI_LOCAL)
+
+    // Try to connect to both the local and remote mongo containers and use the first connection that succeeds.
+    client = await Promise.any([remoteClient.connect(), localClient.connect()])
+
+    logger.info(
+      `Successfully connected to Mongo instance at ${client.options.hosts.toString()}!`
+    )
   } catch (error) {
-    // The first failure re-runs the connect function with the remote mongo URI. If that fails, app will not start.
-    if (uri === MONGO_URI_REMOTE_CONTAINER) {
-      throw new DatabaseError("Couldn't connect to the remote mongo host", {
-        remoteHostAddress: MONGO_REMOTE_HOST_ADDRESS,
-        connectionUrl: MONGO_URI_REMOTE_CONTAINER,
-        error: error,
-      })
-    } else {
-      logger.error("Couldn't connect to the local mongo container.", {
-        connectionUrl: MONGO_URI_LOCAL_CONTAINER,
-        error: error,
-      })
-      logger.info(
-        `Attempting to connect to remote mongo host: ${MONGO_REMOTE_HOST_ADDRESS}`
-      )
-      await connect(MONGO_URI_REMOTE_CONTAINER)
-    }
+    throw new DatabaseError("Couldn't connect to the remote mongo host", {
+      remoteHostAddress: MONGO_REMOTE_HOST_ADDRESS,
+      connectionUrl: MONGO_URI_REMOTE_CONTAINER,
+      error: error,
+    })
   }
 }
 

@@ -57,9 +57,11 @@ export const processAttempt = async (game) => {
     transformSquaresPromise,
   ])
 
+  console.log(response)
+
   toggleKeyboardOverlay(false)
 
-  if (!response?.payload || response.statusCode !== 200) {
+  if (!response?.payload) {
     showMessage(
       "An error occurred while attempting the word. Please try again."
     )
