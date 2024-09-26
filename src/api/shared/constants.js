@@ -1,4 +1,4 @@
-export const APP_NAME = "Word Puzzle Game"
+export const APP_NAME = "Grid of Words"
 
 export const ERROR_LOG_FILE = `${process.cwd()}/logs/error.log`
 

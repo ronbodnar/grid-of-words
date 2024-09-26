@@ -36,7 +36,11 @@ export const hashPassword = (password, salt, algorithm = "sha256") => {
  * @param {string|number} expiresIn - The expiration time of the token. (default: '15d')
  * @returns {string|null} The generated token.
  */
-export const generateJWT = (payload, expiresIn = "15d") => {
+export const generateJWT = (
+  payload,
+  expiresIn = "15d",
+  secret = process.env.JWT_SECRET
+) => {
   if (!payload) {
     return new InternalError("No payload provided to generateJWT", {
       payload: payload,
@@ -54,7 +58,7 @@ export const generateJWT = (payload, expiresIn = "15d") => {
     {
       data: payload, // sign the whole payload, not just the payload data
     },
-    process.env.JWT_SECRET,
+    secret,
     { expiresIn: expiresIn }
   )
   return token

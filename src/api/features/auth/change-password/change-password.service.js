@@ -1,3 +1,4 @@
+import InternalError from "../../../errors/InternalError.js"
 import UnauthorizedError from "../../../errors/UnauthorizedError.js"
 import ValidationError from "../../../errors/ValidationError.js"
 import { findUserBy } from "../../user/user.repository.js"
@@ -65,9 +66,16 @@ export const changePassword = async (options = {}) => {
 
   const newSalt = generateSalt()
   const newPasswordHash = newSalt + hashPassword(newPassword, newSalt)
-  authenticatedUser.save({
+  const savedSuccessfully = authenticatedUser.save({
     hash: newPasswordHash,
   })
+
+  if (!savedSuccessfully || savedSuccessfully instanceof ValidationError) {
+    const error =
+      savedSuccessfully ||
+      new InternalError("Failed to save the user when changing password.")
+    return error
+  }
 
   return {
     status: "success",

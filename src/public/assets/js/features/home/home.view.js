@@ -23,7 +23,7 @@ export const buildHomeView = (options) => {
 
   buildView("home", {
     header: {
-      text: "Word Puzzle Game",
+      text: "Grid of Words",
     },
     message: {
       hide: false,
