@@ -77,5 +77,5 @@ export const submitRegisterForm = async () => {
     })
   }
 
-  await submitAuthForm("/auth/register", params, successFn)
+  await submitAuthForm("./auth/register", params, successFn)
 }

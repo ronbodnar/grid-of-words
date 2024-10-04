@@ -4,6 +4,9 @@ node_modules/*
 # Ignore the logs folder
 logs/*
 
+# Ignore the certbot data folder
+data/certbot_etc/*
+
 # Ignore the script directory as they are separate git repositories.
 scripts/*
 !scripts/*.js
