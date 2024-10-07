@@ -10,10 +10,8 @@ import User from "../user/User.js"
  *
  * @returns {string} A randomly generated salt as a hexadecimal string.
  */
-export const generateSalt = (bytes) => {
-  bytes = bytes || 16
-  const salt = crypto.randomBytes(bytes).toString("hex")
-  return salt
+export const generateSalt = (bytes = 16) => {
+  return crypto.randomBytes(bytes).toString("hex")
 }
 
 /**
@@ -25,6 +23,9 @@ export const generateSalt = (bytes) => {
  * @returns {string} The hashed password as a hexadecimal string.
  */
 export const hashPassword = (password, salt, algorithm = "sha256") => {
+  if (!password || !salt) {
+    throw new InternalError("Password and salt are required")
+  }
   const hash = crypto.createHmac(algorithm, salt).update(password).digest("hex")
   return hash
 }

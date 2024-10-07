@@ -46,7 +46,7 @@ export const loginUser = async (email, password) => {
  * @param {string} password The password for the login request.
  * @returns {Promise<>} A promise that resolves to the authenticated user or null if unsuccessful.
  */
-const authenticate = async (email, password) => {
+export const authenticate = async (email, password) => {
   const dbUser = await findUserBy("email", email)
   if (!dbUser) {
     return false
