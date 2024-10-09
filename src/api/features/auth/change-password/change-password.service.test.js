@@ -1,7 +1,7 @@
 import User from "../../user/User.js"
 import { generateJWT } from "../authentication.service.js"
 import { changePassword } from "./change-password.service.js"
-import { afterEach, assert, describe, expect, it, vi } from "vitest"
+import { afterEach, describe, expect, it, vi } from "vitest"
 
 const mockToken = generateJWT(
   {
@@ -18,7 +18,7 @@ const mockUser = new User({
   email: "test@example.com",
 })
 
-// Mock the required import modules for creating a password
+// Mock required modules
 vi.mock("../authentication.service.js", async (importOriginal) => {
   const actual = await importOriginal()
   return {
@@ -32,20 +32,16 @@ vi.mock("../authentication.service.js", async (importOriginal) => {
   }
 })
 
-// Mock the save function for the User class while keeping structure intact.
 vi.mock("../../user/User.js", async (importOriginal) => {
   const actual = await importOriginal()
   const MockUser = vi.fn((...args) => {
     const instance = new actual.default(...args)
-
     instance.save = vi.fn(() => true)
-
     return instance
   })
   return { default: MockUser }
 })
 
-// Mock the findUserBy function
 vi.mock("../../user/user.repository.js", async (importOriginal) => {
   const actual = await importOriginal()
   return {
@@ -54,13 +50,13 @@ vi.mock("../../user/user.repository.js", async (importOriginal) => {
   }
 })
 
-// Start running tests
 describe("changePassword", () => {
   afterEach(() => {
     vi.restoreAllMocks()
   })
 
-  it("should fail because both new and current password are equal", async () => {
+  // Test case: Ensure that equal new and current passwords are not allowed.
+  it("rejects password change if new and current passwords are identical", async () => {
     const response = await changePassword({
       newPassword: "password",
       currentPassword: "password",
@@ -71,7 +67,8 @@ describe("changePassword", () => {
     )
   })
 
-  it("should fail because the new password length is invalid", async () => {
+  // Test case: Validate new password length requirements for security.
+  it("rejects password change if new password length is below the threshold", async () => {
     const response = await changePassword({
       newPassword: "test",
       currentPassword: "test_old",
@@ -82,7 +79,8 @@ describe("changePassword", () => {
     )
   })
 
-  it("should fail because the user is not authenticated", async () => {
+  // Test case: Confirm user authentication before allowing password changes.
+  it("rejects password change if the user is not authenticated", async () => {
     const response = await changePassword({
       newPassword: "password",
       currentPassword: "password1",
@@ -90,7 +88,8 @@ describe("changePassword", () => {
     expect(response?.message).toEqual("User is not authenticated.")
   })
 
-  it("should fail because the user is not allowed to change the password", async () => {
+  // Test case: Check authorization before allowing password modification.
+  it("rejects password change if the user is not authorized", async () => {
     const response = await changePassword({
       newPassword: "password",
       currentPassword: "password1",
@@ -103,7 +102,8 @@ describe("changePassword", () => {
     )
   })
 
-  it("should fail because the current passwords do not match", async () => {
+  // Test case: Validate current password correctness before proceeding.
+  it("rejects password change if current password does not match", async () => {
     const response = await changePassword({
       newPassword: "password1",
       currentPassword: "password",
@@ -115,7 +115,8 @@ describe("changePassword", () => {
     )
   })
 
-  it("should pass and change the password", async () => {
+  // Test case: Successful password change should confirm success message.
+  it("successfully changes the password for authenticated users", async () => {
     const response = await changePassword({
       newPassword: "password2",
       currentPassword: "password1",

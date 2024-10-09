@@ -86,7 +86,7 @@ export const addAttempt = async (word, gameId, authToken) => {
   // Add the attempt to the game's Array of attempts before saving!
   game.attempts.push(word)
 
-  const gameSavedSuccessfully = game.save()
+  const gameSavedSuccessfully = await game.save()
   if (!gameSavedSuccessfully) {
     return new InternalError("Failed to save game to database after attempt.", {
       game: game,

@@ -1,4 +1,3 @@
-// login.service.test.js
 import { describe, it, expect, beforeEach, vi } from "vitest"
 import { loginUser, authenticate } from "./login.service.js"
 import { findUserBy } from "../../user/user.repository.js"
@@ -7,31 +6,36 @@ import InternalError from "../../../errors/InternalError.js"
 import UnauthorizedError from "../../../errors/UnauthorizedError.js"
 import ValidationError from "../../../errors/ValidationError.js"
 
+// Mock the user repository and authentication service
 vi.mock("../../user/user.repository.js")
 vi.mock("../authentication.service.js")
 vi.mock("./login.service.js", async (importOriginal) => {
   const actual = await importOriginal()
   return {
     ...actual,
-    authenticate: async () => true,
+    authenticate: async () => true, // Mock the authenticate function to always return true
   }
 })
 
 describe("loginUser", () => {
+  // Define test constants for email and password
   const email = "test@example.com"
   const password = "password1"
 
+  // Clear mocks before each test case
   beforeEach(() => {
-    vi.clearAllMocks() // Clear mocks before each test
+    vi.clearAllMocks()
   })
 
+  // Test case: Should throw a validation error if email or password is missing
   it("should throw a validation error if email or password is missing", async () => {
-    await expect(loginUser(null, password)).rejects.toThrow(ValidationError)
-    await expect(loginUser(email, null)).rejects.toThrow(ValidationError)
+    await expect(loginUser(null, password)).rejects.toThrow(ValidationError) // Check missing email
+    await expect(loginUser(email, null)).rejects.toThrow(ValidationError) // Check missing password
   })
 
+  // Test case: Should return an UnauthorizedError if the user is not found
   it("should return an UnauthorizedError if the user is not found", async () => {
-    findUserBy.mockResolvedValue(null) // Simulate user not found
+    findUserBy.mockResolvedValue(null)
 
     const result = await loginUser(email, password)
 
@@ -40,6 +44,7 @@ describe("loginUser", () => {
     expect(findUserBy).toHaveBeenCalledWith("email", email)
   })
 
+  // Test case: Should return an InternalError if JWT generation fails
   it("should return an InternalError if JWT generation fails", async () => {
     const mockUser = {
       getAccountDetails: vi.fn().mockReturnValue({
@@ -51,14 +56,12 @@ describe("loginUser", () => {
       getHash: vi.fn().mockReturnValue("mocked-hash"),
     }
 
-    // Simulate user found
     findUserBy.mockResolvedValue(mockUser)
 
-    // Simulate successful password hash matching
     vi.mocked(hashPassword).mockReturnValue("mocked-hash") // Mock the password hashing to match
     vi.spyOn(mockUser, "getHash").mockReturnValue("mocked-hash") // Ensure the user hash matches
 
-    generateJWT.mockReturnValue(null) // Simulate JWT generation failure
+    generateJWT.mockReturnValue(null)
 
     const result = await loginUser(email, password)
 
@@ -67,6 +70,7 @@ describe("loginUser", () => {
     expect(generateJWT).toHaveBeenCalledWith(mockUser.getAccountDetails())
   })
 
+  // Test case: Should return success object on successful login
   it("should return success object on successful login", async () => {
     const mockUser = {
       getAccountDetails: vi.fn().mockReturnValue({
@@ -78,9 +82,9 @@ describe("loginUser", () => {
       getSalt: vi.fn().mockReturnValue("mocked-salt"),
       getHash: vi.fn().mockReturnValue("mocked-hash"),
     }
-    findUserBy.mockResolvedValue(mockUser) // Simulate user found
-    hashPassword.mockReturnValue("mocked-hash") // Simulate password hashing
-    generateJWT.mockReturnValue("mocked-jwt") // Simulate successful JWT generation
+    findUserBy.mockResolvedValue(mockUser)
+    hashPassword.mockReturnValue("mocked-hash")
+    generateJWT.mockReturnValue("mocked-jwt")
 
     const result = await loginUser(email, password)
 

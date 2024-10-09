@@ -3,10 +3,11 @@ import transporter from "../../config/email.config.js"
 import { describe, it, expect, vi, afterEach, beforeEach } from "vitest"
 import { logger } from "../../config/winston.config.js"
 
-// Mock dependencies
+// Mock the email transporter
 vi.mock("../../config/email.config.js")
 
 describe("sendEmail", () => {
+  // Define common email options used in tests
   const emailOptions = {
     to: "recipient@example.com",
     subject: "Test Subject",
@@ -15,16 +16,17 @@ describe("sendEmail", () => {
   }
 
   beforeEach(() => {
-    // Spy on logger.error to ensure it's being called
+    // Spy on logger.error to check if it's called in error cases
     vi.spyOn(logger, "error")
   })
 
   afterEach(() => {
-    vi.clearAllMocks() // Clear mocks after each test
+    // Clear all mocks after each test to avoid test interference
+    vi.clearAllMocks()
   })
 
+  // Test case: Send an email successfully when response code starts with 2xx
   it("should send an email and return true when the response code starts with 2xx", async () => {
-    // Mock the response from the transporter to simulate a successful email
     transporter.sendMail.mockResolvedValueOnce({
       response: "250 Message accepted",
       rejected: [],
@@ -47,6 +49,7 @@ describe("sendEmail", () => {
     })
   })
 
+  // Test case: Handle error when the transporter throws an error
   it("should log an error and return false when the transporter throws an error", async () => {
     const errorMessage = new Error("Transporter Error")
     transporter.sendMail.mockRejectedValueOnce(errorMessage)
@@ -66,8 +69,8 @@ describe("sendEmail", () => {
     )
   })
 
+  // Test case: Handle non-2xx response codes
   it("should log an error and return false when the response does not start with 2xx", async () => {
-    // Mock the response to simulate a non-2xx response code
     transporter.sendMail.mockResolvedValueOnce({
       response: "500 Internal Server Error",
       rejected: [],
@@ -92,6 +95,7 @@ describe("sendEmail", () => {
     )
   })
 
+  // Test case: Handle rejected recipients
   it("should log an error and return false if the email is rejected by recipients", async () => {
     transporter.sendMail.mockResolvedValueOnce({
       response: "250 Message accepted",

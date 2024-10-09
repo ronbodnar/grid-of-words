@@ -98,6 +98,9 @@ export const getAuthenticatedUser = async (token) => {
     return null
   }
   const decodedPayload = verifyJWT(token)
+  if (!decodedPayload) {
+    return null
+  }
   const { data } = decodedPayload
   if (!data) {
     return null

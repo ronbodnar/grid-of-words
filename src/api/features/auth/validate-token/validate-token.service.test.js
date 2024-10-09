@@ -1,22 +1,26 @@
-// validate-password-reset-token.service.test.js
 import { describe, it, expect, beforeEach, vi } from "vitest"
 import { validatePasswordResetToken } from "./validate-token.service.js"
 import { findUserBy } from "../../user/user.repository.js"
 import UnauthorizedError from "../../../errors/UnauthorizedError.js"
 
+// Mock the user repository
 vi.mock("../../user/user.repository.js")
 
 describe("validatePasswordResetToken", () => {
+  // Define mock tokens for testing different scenarios
   const validToken = "valid-token"
   const expiredToken = "expired-token"
   const invalidToken = "invalid-token"
 
+  // Reset mocks before each test case
   beforeEach(() => {
-    vi.clearAllMocks() // Clear mocks before each test
+    vi.clearAllMocks()
   })
 
+  // Test case: Should return an UnauthorizedError if the token is invalid
   it("should return an UnauthorizedError if the token is invalid", async () => {
-    findUserBy.mockResolvedValue(null) // Simulate no user found with the reset token
+    // Simulate no user found with the provided invalid reset token
+    findUserBy.mockResolvedValue(null)
 
     const result = await validatePasswordResetToken(invalidToken)
     expect(result).toBeInstanceOf(UnauthorizedError)
@@ -25,11 +29,13 @@ describe("validatePasswordResetToken", () => {
     )
   })
 
+  // Test case: Should return an UnauthorizedError if the token is expired
   it("should return an UnauthorizedError if the token is expired", async () => {
+    // Simulate user found but the token has expired
     const mockUser = {
-      passwordResetTokenExpiration: new Date(Date.now() - 1000), // Set an expired token expiration date
+      passwordResetTokenExpiration: new Date(Date.now() - 1000), // Expired token (1 second in the past)
     }
-    findUserBy.mockResolvedValue(mockUser) // Simulate user found with the expired token
+    findUserBy.mockResolvedValue(mockUser)
 
     const result = await validatePasswordResetToken(expiredToken)
     expect(result).toBeInstanceOf(UnauthorizedError)
@@ -38,11 +44,13 @@ describe("validatePasswordResetToken", () => {
     )
   })
 
+  // Test case: Should return true if the token is valid and not expired
   it("should return true if the token is valid and not expired", async () => {
+    // Simulate user found with a valid token that hasn't expired
     const mockUser = {
-      passwordResetTokenExpiration: new Date(Date.now() + 1000 * 60), // Set a valid token expiration date (1 minute in the future)
+      passwordResetTokenExpiration: new Date(Date.now() + 1000 * 60), // Valid token (1 minute in the future)
     }
-    findUserBy.mockResolvedValue(mockUser) // Simulate user found with the valid token
+    findUserBy.mockResolvedValue(mockUser)
 
     const result = await validatePasswordResetToken(validToken)
     expect(result).toBe(true)

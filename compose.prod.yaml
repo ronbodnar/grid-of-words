@@ -1,4 +1,14 @@
 services:
+#  fix-permissions:
+#    image: alpine
+ #   command: >
+#      sh -c "chown -R node:node /etc/letsencrypt && chmod -R 644 /etc/letsencrypt
+ #   volumes:
+ #     - certbot_etc:/etc/letsencrypt
+ ##   entrypoint: []
+  #  deploy:
+  #    replicas: 1 # Ensures it runs only once
+
   # The main application (API services and front-end JavaScript)
   grid-of-words-app:
     container_name: grid-of-words-app
@@ -19,10 +29,10 @@ services:
     restart: always
 
     volumes:
-      - ./data/certbot_etc:/etc/letsencrypt
+      - certbot_etc:/etc/letsencrypt
 
     networks:
-      - home-main
+      - backend
 
   # The mongo database service
   grid-of-words-db:
@@ -31,7 +41,7 @@ services:
 
     ports:
       - 27017:27017
-
+      
     healthcheck:
       test:
         ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
@@ -40,22 +50,29 @@ services:
       retries: 2
       start_period: 10s
 
+    restart: always
+
     env_file: "production.env"
 
     volumes:
-      - ./scripts/mongoimport-words.sh:/docker-entrypoint-initdb.d/mongoimport-words.sh
+      - ./scripts/populate-db.sh:/docker-entrypoint-initdb.d/populate-db.sh
       - ./data/words_english.txt:/data/words_english.txt
       - ./data/words_spanish.txt:/data/words_spanish.txt
       - grid-of-words-data:/data/db/
 
     networks:
-      - home-main
+      - backend
 
 volumes:
   grid-of-words-data:
     name: "grid-of-words-data"
+  certbot_etc:
+    name: "certbot_etc"
+    external: true
 
 # Uses the default home network (must be created first).
 networks:
-  home-main:
+  backend:
     external: true
+
+
