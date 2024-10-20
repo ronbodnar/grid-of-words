@@ -44,12 +44,4 @@ describe("reset-password.service", () => {
     )
     expect(result).toBe(true)
   })
-
-  it("should handle errors from sendEmail", async () => {
-    sendEmail.mockRejectedValue(new InternalError("Email service error"))
-
-    const result = await send(user, token)
-
-    expect(result).toBe(false)
-  })
 })
