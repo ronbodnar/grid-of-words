@@ -6,6 +6,7 @@ import { generateSalt } from "../authentication.service.js"
 import { sendPasswordResetEmail } from "../../email/email.service.js"
 import ValidationError from "../../../errors/ValidationError.js"
 
+// Mock dependencies
 vi.mock("../../user/user.repository.js")
 vi.mock("../authentication.service.js")
 vi.mock("../../email/email.service.js")
@@ -14,11 +15,13 @@ vi.mock("../../../config/winston.config.js") // Mock logger if necessary
 describe("forgotPassword", () => {
   const email = "test@example.com"
 
+  // Reset mocks before each test
   beforeEach(() => {
-    vi.clearAllMocks() // Clear mocks before each test
+    vi.clearAllMocks()
   })
 
-  it("should return a validation error for an invalid email format", async () => {
+  // Test case: Validate that an invalid email format returns a ValidationError
+  it("returns a ValidationError for invalid email format", async () => {
     const invalidEmail = "invalid-email"
     const result = await forgotPassword(invalidEmail)
 
@@ -28,8 +31,9 @@ describe("forgotPassword", () => {
     )
   })
 
-  it("should return success message if the email does not belong to a user", async () => {
-    findUserBy.mockResolvedValue(null) // Simulate no user found
+  // Test case: Confirm that no user is found when the email doesn't match
+  it("confirms no user found when email doesn't match", async () => {
+    findUserBy.mockResolvedValue(null)
 
     const result = await forgotPassword(email)
 
@@ -41,13 +45,13 @@ describe("forgotPassword", () => {
     expect(findUserBy).toHaveBeenCalledWith("email", email)
   })
 
-  it("should save user with reset token and send email if user is found", async () => {
-    const mockUser = { save: vi.fn().mockResolvedValue(true) } // Mock user object with save method
-    findUserBy.mockResolvedValue(mockUser) // Simulate user found
+  // Test case: Save user with reset token and send email if user exists
+  it("saves user with reset token and sends email if user exists", async () => {
+    const mockUser = { save: vi.fn().mockResolvedValue(true) }
+    findUserBy.mockResolvedValue(mockUser)
     const token = "mocked-token"
-    generateSalt.mockReturnValue(token) // Mock token generation
-
-    sendPasswordResetEmail.mockResolvedValue(true) // Simulate successful email sending
+    generateSalt.mockReturnValue(token)
+    sendPasswordResetEmail.mockResolvedValue(true)
 
     const result = await forgotPassword(email)
 
@@ -64,9 +68,10 @@ describe("forgotPassword", () => {
     })
   })
 
-  it("should return success message if saving user fails", async () => {
-    const mockUser = { save: vi.fn().mockResolvedValue(false) } // Simulate save failure
-    findUserBy.mockResolvedValue(mockUser) // Simulate user found
+  // Test case: Return success message if user save fails
+  it("returns success if user save fails", async () => {
+    const mockUser = { save: vi.fn().mockResolvedValue(false) }
+    findUserBy.mockResolvedValue(mockUser)
 
     const result = await forgotPassword(email)
 
@@ -77,12 +82,13 @@ describe("forgotPassword", () => {
     })
   })
 
-  it("should return success message if sending email fails", async () => {
-    const mockUser = { save: vi.fn().mockResolvedValue(true) } // Simulate successful save
-    findUserBy.mockResolvedValue(mockUser) // Simulate user found
+  // Test case: Return success message if sending email fails
+  it("returns success if sending email fails", async () => {
+    const mockUser = { save: vi.fn().mockResolvedValue(true) }
+    findUserBy.mockResolvedValue(mockUser)
     const token = "mocked-token"
-    generateSalt.mockReturnValue(token) // Mock token generation
-    sendPasswordResetEmail.mockResolvedValue(false) // Simulate email sending failure
+    generateSalt.mockReturnValue(token)
+    sendPasswordResetEmail.mockResolvedValue(false)
 
     const result = await forgotPassword(email)
 
