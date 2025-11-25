@@ -1,0 +1,29 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background: subtle gradient for dark mode -->
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2a2e37"/>
+      <stop offset="100%" stop-color="#1f2129"/>
+    </linearGradient>
+    <!-- Drop shadow filter for cells -->
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="200" height="200" fill="url(#bgGrad)"/>
+  
+  <!-- Centered 3x3 grid with shadow -->
+  <rect x="30" y="30" width="40" height="40" rx="6" fill="#10b981" filter="url(#shadow)"/>
+  <rect x="80" y="30" width="40" height="40" rx="6" fill="#fbbf24" filter="url(#shadow)"/>
+  <rect x="130" y="30" width="40" height="40" rx="6" fill="#ffffff" opacity="0.3"/>
+  
+  <rect x="30" y="80" width="40" height="40" rx="6" fill="#ffffff" opacity="0.3"/>
+  <rect x="80" y="80" width="40" height="40" rx="6" fill="#10b981" filter="url(#shadow)"/>
+  <rect x="130" y="80" width="40" height="40" rx="6" fill="#ffffff" opacity="0.3"/>
+  
+  <rect x="30" y="130" width="40" height="40" rx="6" fill="#ffffff" opacity="0.3"/>
+  <rect x="80" y="130" width="40" height="40" rx="6" fill="#ffffff" opacity="0.3"/>
+  <rect x="130" y="130" width="40" height="40" rx="6" fill="#ffffff" opacity="0.3"/>
+</svg>

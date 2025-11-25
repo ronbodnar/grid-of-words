@@ -6,7 +6,7 @@ import { buildLoaderElement } from "./loader.js"
  */
 export const buildLoadingView = () => {
   const message = document.createElement("p")
-  message.textContent = "We'll be with you shortly"
+  message.textContent = "Getting ready..."
   message.style.marginBottom = "20px"
 
   const loader = buildLoaderElement()

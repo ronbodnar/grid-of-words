@@ -16,6 +16,7 @@ export const shiftActiveRow = () => {
   // Swap the active class from the current to the next row.
   currentRow?.classList?.remove("active")
   nextRow?.classList?.add("active")
+  updateActiveSquareHighlight()
 }
 
 /**
@@ -60,24 +61,43 @@ export const fillNextSquare = (letter) => {
     return
   }
 
-  const activeRowSquares = document.querySelector(
+  const activeSquare = document.querySelector(
     ".word-row.active > .square:not(.full)"
   )
-  if (activeRowSquares) {
-    activeRowSquares.classList.add("full")
+  if (activeSquare) {
+    activeSquare.classList.add("full")
 
-    const nextAvailableSquare = activeRowSquares.children[0]
+    const nextAvailableSquare = activeSquare.children[0]
     nextAvailableSquare.textContent = letter.toUpperCase()
 
     // Peak animations right here
     nextAvailableSquare.style.transition = "0.3s"
-    nextAvailableSquare.style.transform = "scale(1.2)"
+    nextAvailableSquare.style.transform = "scale(1.3)"
     setTimeout(() => {
       nextAvailableSquare.style.transform = "scale(1)"
     }, 200)
 
     getAttemptLetters().push(letter.toLowerCase())
+    updateActiveSquareHighlight()
   }
+}
+
+export const updateActiveSquareHighlight = () => {
+  const row = document.querySelector(".word-row.active")
+  if (!row) {
+    return
+  }
+
+  // Remove previous highlight
+  row
+    .querySelectorAll(".square.first-empty")
+    .forEach((s) => s.classList.remove("first-empty"))
+
+  const firstEmpty = Array.from(row.querySelectorAll(".square")).find(
+    (s) => !s.classList.contains("full")
+  )
+
+  if (firstEmpty) firstEmpty.classList.add("first-empty")
 }
 
 /**
@@ -103,6 +123,7 @@ export const removeLastSquareValue = () => {
     lastSquare.classList.remove("full")
     lastSquare.children[0].textContent = ""
     getAttemptLetters().pop()
+    updateActiveSquareHighlight()
   }
 }
 
@@ -127,6 +148,7 @@ export const updateCurrentAttemptSquares = (word) => {
   for (let i = 0; i < validatedPositions.length; i++) {
     updateSquareBackground(squaresWithLetters[i], validatedPositions[i])
   }
+  updateActiveSquareHighlight()
 }
 
 /**
@@ -138,15 +160,15 @@ export const updateCurrentAttemptSquares = (word) => {
 export const updateSquareBackground = (square, match) => {
   switch (match) {
     case EXACT_MATCH:
-      square.style.backgroundColor = "rgba(0, 163, 108, 0.7)"
+      square.style.background = "var(--exact-match)"
       break
 
     case PARTIAL_MATCH:
-      square.style.backgroundColor = "rgba(255, 165, 0, 0.7)"
+      square.style.background = "var(--partial-match)"
       break
 
     case NO_MATCH:
-      square.style.backgroundColor = "rgba(49, 56, 79, 0.7)"
+      square.style.background = "var(--no-match)"
       break
   }
 }

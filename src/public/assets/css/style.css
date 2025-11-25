@@ -1,5 +1,22 @@
 @import url("https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap");
 
+:root {
+  --no-match: linear-gradient(
+    145deg,
+    rgba(49, 56, 79, 0.7),
+    rgba(49, 56, 79, 0.5)
+  );
+  --exact-match: linear-gradient(
+    145deg,
+    rgba(0, 163, 108, 0.7),
+    rgba(0, 163, 108, 0.5)
+  );
+  --partial-match: linear-gradient(
+    145deg,
+    rgba(255, 165, 0, 0.7),
+    rgba(255, 165, 0, 0.5)
+  );
+}
 * {
   margin: 0;
   padding: 0;

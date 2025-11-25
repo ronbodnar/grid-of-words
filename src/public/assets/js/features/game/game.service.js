@@ -26,7 +26,7 @@ export const startGame = async (options = {}) => {
   showView("loading")
 
   const { wordLength, maxAttempts, language } = options
-  const preferredLanguage = retrieveLocal(OPTIONS.LANGUAGE.id)
+  const preferredLanguage = "english" //retrieveLocal(OPTIONS.LANGUAGE.id)
   const preferredWordLength = retrieveLocal(OPTIONS.WORD_LENGTH.id)
   const preferredMaxAttempts = retrieveLocal(OPTIONS.MAX_ATTEMPTS.id)
 

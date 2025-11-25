@@ -1,10 +1,7 @@
 import { logger } from "../../../main.js"
 import { setBlockKeyEvents } from "../../../shared/services/event.service.js"
 import { showMessage } from "../../../shared/services/message.service.js"
-import {
-  removeSession,
-  storeSession,
-} from "../../../shared/services/storage.service.js"
+import { removeSession } from "../../../shared/services/storage.service.js"
 import {
   shiftActiveRow,
   transformSquares,
@@ -53,7 +50,7 @@ export const processAttemptResponse = async (game, data) => {
         break
 
       case "WINNER":
-      case "LOSER":
+      case "LOSER": {
         removeSession("game")
 
         updateCurrentAttemptSquares(game.word)
@@ -68,7 +65,7 @@ export const processAttemptResponse = async (game, data) => {
 
         // Pre-fetch the statistics to pass to the stats view and avoid redirecting to handle it below.
         const statistics = await fetchStatistics(null, false)
-        setTimeout(() => {
+        setTimeout(async () => {
           setBlockKeyEvents(false)
           if (statistics) {
             showView("statistics", {
@@ -79,6 +76,7 @@ export const processAttemptResponse = async (game, data) => {
           }
         }, END_GAME_GRACE_PERIOD)
         break
+      }
 
       case "GAME_NOT_FOUND":
         showView("home", {
