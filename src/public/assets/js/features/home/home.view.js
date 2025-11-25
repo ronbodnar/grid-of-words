@@ -1,6 +1,5 @@
 import { createButton } from "../../shared/components/button.js"
 import { showMessage } from "../../shared/services/message.service.js"
-import { retrieveSession } from "../../shared/services/storage.service.js"
 import {
   getAuthenticatedUser,
   isAuthenticated,

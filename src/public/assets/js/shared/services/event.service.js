@@ -153,7 +153,7 @@ export const addEventListeners = () => {
   })
 
   // Browser history state change
-  window.onpopstate = (event) => {
+  window.onpopstate = () => {
     navigateBack()
   }
 }

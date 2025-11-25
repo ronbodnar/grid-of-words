@@ -1,5 +1,4 @@
-import "../../../chart.umd.js"
-import "../../../chartjs-plugin-datalabels.min.js"
+const { Chart, ChartDataLabels } = window
 
 export const loadWinDistributionChart = (wins) => {
   const sumOfWins = !(wins.length > 0)

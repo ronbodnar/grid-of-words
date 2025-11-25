@@ -1,11 +1,11 @@
 services:
-#  fix-permissions:
-#    image: alpine
- #   command: >
-#      sh -c "chown -R node:node /etc/letsencrypt && chmod -R 644 /etc/letsencrypt
- #   volumes:
- #     - certbot_etc:/etc/letsencrypt
- ##   entrypoint: []
+  #  fix-permissions:
+  #    image: alpine
+  #   command: >
+  #      sh -c "chown -R node:node /etc/letsencrypt && chmod -R 644 /etc/letsencrypt
+  #   volumes:
+  #     - certbot_etc:/etc/letsencrypt
+  ##   entrypoint: []
   #  deploy:
   #    replicas: 1 # Ensures it runs only once
 
@@ -41,7 +41,7 @@ services:
 
     ports:
       - 27017:27017
-      
+
     healthcheck:
       test:
         ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
@@ -74,5 +74,3 @@ volumes:
 networks:
   backend:
     external: true
-
-
