@@ -40,9 +40,10 @@
   transition: 0.25s;
 }
 
-.keyboard-key:hover,
-.keyboard-key:active {
-  box-shadow: inset 0px 1px 8px 0px rgba(244, 243, 242, 0.4);
+@media (hover: hover) and (pointer: fine) {
+  .keyboard-key:hover {
+    box-shadow: inset 0px 1px 8px 0px rgba(244, 243, 242, 0.4);
+  }
 }
 
 .keyboard-key.incorrect {

@@ -126,12 +126,13 @@ export const getCurrentViewName = () => {
 }
 
 const notifyParentOfRouteChange = (name) => {
-  /*   window.parent.postMessage(
+  window.parent.postMessage(
     {
       type: "nav_change",
       route: name,
       url: window.location.href + name,
+      document: document.title,
     },
-    "*"
-  ) */
+    "https://ronbodnar.com/"
+  )
 }
