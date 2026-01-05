@@ -16,7 +16,7 @@ app.use(
     contentSecurityPolicy: {
       useDefaults: true,
       directives: {
-        "frame-ancestors": ["'self'", "https://new.ronbodnar.com"],
+        "frame-ancestors": ["'self'", "https://ronbodnar.com"],
       },
     },
   })

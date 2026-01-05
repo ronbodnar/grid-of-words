@@ -11,7 +11,7 @@ let client
  *
  * @async
  */
-const connect = async (uri = process.env.MONGO_URI_LOCAL_CONTAINER) => {
+const connect = async () => {
   const {
     MONGO_REMOTE_HOST_ADDRESS,
     MONGO_REMOTE_HOST_PORT,
@@ -36,8 +36,8 @@ const connect = async (uri = process.env.MONGO_URI_LOCAL_CONTAINER) => {
     )
   } catch (error) {
     throw new DatabaseError("Couldn't connect to the remote mongo host", {
-      remoteHostAddress: MONGO_REMOTE_HOST_ADDRESS,
-      connectionUrl: MONGO_URI_REMOTE_CONTAINER,
+      remoteHostAddress: `${MONGO_REMOTE_HOST_ADDRESS}:${MONGO_REMOTE_HOST_PORT}`,
+      localContainer: MONGO_CONTAINER_NAME,
       error: error,
     })
   }

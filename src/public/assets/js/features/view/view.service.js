@@ -67,21 +67,27 @@ export const showView = (name, options = {}) => {
     logger.error(`View "${name}" does not have a mapped function`)
   }
 
+  console.log("showView", name, options)
+
   const { hideFromHistory = false } = options
 
-  const addToHistory = name !== "loading" && !hideFromHistory
+  const loading = name === "loading"
 
-  if (addToHistory) {
-    window.history.pushState(
-      {
-        view: name,
-        //options: options,
-        //if options are saved to the state history, messages that were sent with the previous view will be shown
-        //when the user uses the back/forward buttons.
-      },
-      "",
-      ""
-    )
+  if (!loading) {
+    notifyParentOfRouteChange(name)
+
+    if (!hideFromHistory) {
+      window.history.pushState(
+        {
+          view: name,
+          //options: options,
+          //if options are saved to the state history, messages that were sent with the previous view will be shown
+          //when the user uses the back/forward buttons.
+        },
+        "",
+        ""
+      )
+    }
   }
 }
 
@@ -90,7 +96,6 @@ export const navigateBack = () => {
 
   // We're still in the app and have no previous view, meaning we are (hopefully) back to our initial load state.
   if (!state || !state.view) {
-    // No sense in rebuilding the home view.
     if (getCurrentViewName() !== "home") {
       showView("home", {
         hideFromHistory: true,
@@ -118,4 +123,15 @@ export const navigateBack = () => {
 export const getCurrentViewName = () => {
   const currentView = document.querySelector(".content")
   return currentView?.id
+}
+
+const notifyParentOfRouteChange = (name) => {
+  /*   window.parent.postMessage(
+    {
+      type: "nav_change",
+      route: name,
+      url: window.location.href + name,
+    },
+    "*"
+  ) */
 }

@@ -152,10 +152,9 @@ export const addEventListeners = () => {
     }
   })
 
-  // Browser history state change
-  window.onpopstate = () => {
+  window.addEventListener("popstate", () => {
     navigateBack()
-  }
+  })
 }
 
 // When we are performing certain tasks, we don't want to accept user input and block it conditionally.
