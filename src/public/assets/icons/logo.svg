@@ -12,7 +12,7 @@
   </defs>
   
   <!-- Background -->
-  <rect width="200" height="200" fill="url(#bgGrad)"/>
+  <rect width="200" height="200" rx="20" ry="20" fill="url(#bgGrad)"/>
   
   <!-- Centered 3x3 grid with shadow -->
   <rect x="30" y="30" width="40" height="40" rx="6" fill="#10b981" filter="url(#shadow)"/>

@@ -1,169 +1,155 @@
-# Grid of Words
+<p align="center">
+   <a href="https://play.ronbodnar.com" target="_blank">
+      <img src="src/public/assets/images/grid-of-words.svg" width="120" alt="Grid of Words Logo" />
+   </a>
+</p>
 
-**Grid of Words** is a dynamic web application built with Node.js and JavaScript and inspired by Wordle. Enjoy a
-customizable word puzzle experience with options for word length, number of attempts for a win, and choice of dictionary language.
+<h1 align="center">Grid of Words</h1>
 
-### [Play the Demo](https://play.ronbodnar.com)
+<p align="center">
+  A high-performance, dictionary-driven word puzzle game.
+</p>
 
-## Table of Contents
+<p align="center">
+  <img src="https://img.shields.io/badge/Node.js-v20-green" />
+  <img src="https://img.shields.io/badge/Frontend-Vanilla_JS-yellow" />
+  <img src="https://img.shields.io/badge/Database-MongoDB-47A248" />
+  <img src="https://img.shields.io/badge/Security-JWT_Auth-critical" />
+  <img src="https://img.shields.io/badge/Dictionary-400k+_Words-blue" />
+</p>
 
-1. [Features](#features)
-2. [Technology Stack](#technology-stack)
-3. [Installation](#installation)
-4. [Usage](#usage)
-5. [Running with Docker](#running-with-docker)
-6. [Contributing](#contributing)
-7. [License](#license)
+**Grid of Words** is a sophisticated word-puzzle platform built on a custom Vanilla JavaScript SPA engine. It features a massive 400,000+ word dictionary, multi-language support, and a robust backend architecture focused on security and performance.
 
-## Features
+<br />
 
-- **Single-Page Application (SPA)**: Built entirely with JavaScript, this SPA provides a seamless user experience, enabling dynamic interactions without page reloads.
-- **Customizable Game Options**: Users can easily configure game settings, allowing word lengths from 4 to 8 characters and attempts ranging from 3 to 8. Supports English and Spanish dictionaries for broader accessibility.
-- **Secure Authentication**: User sessions are protected using JWTs stored securely in HttpOnly cookies, ensuring robust identity verification.
-- **Password Reset Functionality**: Implemented password resets following industry-standard practices, utilizing short-lived tokens for enhanced security.
-- **Database Integration**: Data is managed seamlessly with MongoDB, offering robust querying capabilities and efficient data handling.
-- **Extensive Word List**: Access to over 400,000 words from the Oxford English Dictionary enriches the game's vocabulary and enhances the user experience.
-- **Error Logging**: Comprehensive error tracking and troubleshooting are facilitated through Winston, helping maintain application reliability.
-- **Environment Configuration**: Secure management of secrets and configurations through a .env file makes it easy to customize settings for different environments.
-- **Cross-Platform Compatibility**: Designed for smooth operation across various operating systems, minimizing setup requirements for developers.
+<p align="center">
+  <a href="https://play.ronbodnar.com" target="_blank">
+    <img src="https://img.shields.io/badge/Launch_Live_Game-2ea44f?style=for-the-badge" alt="Launch Game" />
+  </a>
+</p>
 
-## Technology Stack
+## 📍 Table of Contents
 
-- **Frontend**: JavaScript, HTML, CSS, Chart.js
-- **Backend**: Node.js, Express
-- **Database**: MongoDB
+- [🧠 Technical Features](#features)
+- [🏗️ System Architecture](#architecture)
+- [📊 Data Engineering](#data)
+- [🚦 Getting Started](#getting-started)
+- [🐳 Docker Deployment](#docker)
+- [🧩 Showcase OS Integration](#integration)
 
-## Installation
+<br />
 
-To set up and run Grid of Words locally, follow these steps:
+<a name="features"></a>
 
-1. **Clone the Repository**
+## 🧠 Technical Features
 
-   ```
-   git clone git@github.com:ronbodnar/grid-of-words.git
-   ```
+- **Custom SPA Engine**: Built with Vanilla JS to demonstrate deep DOM manipulation knowledge and state management without framework overhead.
+- **Stateless Authentication**: JWT-based flows using **HttpOnly & Secure cookies** to mitigate XSS and CSRF vulnerabilities.
+- **Linguistic Scale**: Integration of a custom-scraped Oxford English Dictionary (OED) dataset containing over 439,000 entries.
+- **Bilingual Core**: Dynamically switchable dictionary adapters supporting both English and Spanish lexicons.
+- **Security-First Recovery**: Industry-standard password reset workflows using short-lived, cryptographically secure tokens.
+- **Telemetry & Logging**: Centralized error tracking and system health monitoring via the Winston logging framework.
 
-2. **Navigate to the Project Directory**
+<br />
 
-   ```
-   cd grid-of-words
-   ```
+<a name="architecture"></a>
 
-3. **Install Dependencies**
+## 🏗️ System Architecture
 
-   Ensure you have [Node.js](https://nodejs.org/) installed. Then, install the necessary
-   dependencies:
+### Frontend Architecture
 
-   ```
-   npm install
-   ```
+The client-side is architected as a set of decoupled modules:
 
-4. **Create Environment Files**
+- **Game Controller**: Manages the matching algorithm for guess evaluation.
+- **UI Renderer**: Handles dynamic CSS transitions and Chart.js integration for player statistics.
+- **Session Manager**: Interface for JWT lifecycle management and persistent user state.
 
-   Set up a `.env` file in the root directory for development or production settings.
+### Backend Architecture
 
-   `development.env` or `production.env` are standard, and `example.env` is included in the root
-   directory for reference.
+Built with **Node.js & Express**, following a service-oriented pattern:
 
-5. **Start the Development Server**
+- **Auth Service**: Handles BCrypt password hashing and JWT issuance.
+- **Dictionary Service**: Optimized MongoDB aggregations for rapid word retrieval.
+- **Middleware Layer**: Enforces rate-limiting and authentication guards on sensitive routes.
 
-   Run the server in development mode using `nodemon`:
+<br />
 
-   ```
-   npm run dev
-   ```
+<a name="data"></a>
 
-6. **Start the Production Server**
+## 📊 Data Engineering (The OED Parser)
 
-   For production mode, use:
+A significant portion of this project involved the creation of a custom ETL (Extract, Transform, Load) pipeline to build the game's backbone:
 
-   ```
-   npm run prod
-   ```
+1. **Extraction**: A Python-based scraper designed to navigate the Oxford English Dictionary.
+2. **Transformation**: Logic to handle "Bad Gateway" retries, deduplication, and Part-of-Speech (PoS) tagging.
+3. **Loading**: Data normalized into JSON, CSV, and MySQL formats for cross-platform compatibility.
 
-7. **Access the Application**
+<br />
 
-   The application will be available at `http://localhost:3000`. Open this URL in your web browser
-   to start playing.
+<a name="getting-started"></a>
 
-8. **Running Tests**
+## 🚦 Getting Started
 
-   There are currently no tests included. You can add and configure tests in the `package.json` file
-   as needed.
+### Installation
 
-For issues or questions, please refer to the
-[issue tracker](https://github.com/ronbodnar/grid-of-words/issues) or
-[contact the author](https://github.com/ronbodnar).
+```bash
+git clone https://github.com/ronbodnar/grid-of-words.git
+cd grid-of-words
+npm install
+```
 
-## Usage
+Run
 
-Once the application is running, you can interact with it as follows:
+```bash
+# Development mode
+npm run dev
 
-1. **Play the Game**
+# Production mode
+npm run prod
+```
 
-   Navigate to `http://localhost:3000` in your web browser to start the game. Follow the on-screen
-   instructions to play.
+<br />
 
-2. **Configuration**
+<a name="docker"></a>
 
-   Access the Options menu from the main screen to adjust game modes and settings. Use the sliders
-   to configure the game to your preference.
+## 🐳 Docker Deployment
 
-3. **Logging**
+The application is containerized for consistent deployment across environments.
 
-   Logs are managed with [Winston](https://github.com/winstonjs/winston) and are stored in the
-   `logs` directory. Review these logs for any errors or important information.
+```bash
+# Build and launch the container suite
+docker-compose up --build
+```
 
-For more details on configuration and extending the application, refer to the
-[documentation](https://github.com/ronbodnar/grid-of-words#readme) or explore the code in the
-repository.
+The stack includes the Node application and a MongoDB instance pre-configured for internal network communication.
 
-## Running with Docker
+<br />
 
-To run Grid of Words using Docker, follow these steps:
+<a name="integration"></a>
 
-1. **Build the Docker Images**
+## 🧩 Showcase OS Integration
 
-   Build the Docker images for development or production:
+Grid of Words is fully compatible with Showcase OS. When launched within the OS, it behaves as a native application:
 
-   ```
-   docker-compose build
-   ```
+- Process Management: Can be launched, minimized, and terminated via the OS Process Service.
 
-2. **Start the Services**
+- Responsive Shell: Adapts its layout dynamically for the Showcase OS Mobile and Desktop environments.
 
-   Start the services defined in the `docker-compose.yml` file:
+<br />
 
-   ```
-   docker-compose up
-   ```
+<a name="connect"></a>
 
-3. **Access the Application**
+## 📫 Connect
 
-   The application will be available at `http://localhost:3000`. Open this URL in your web browser
-   to start playing.
+**Created by Ron Bodnar**
 
-4. **Stop the Services**
+- LinkedIn: https://linkedin.com/in/ronbodnar
+- Email: ron.bodnar@outlook.com
 
-   To stop the running services, use:
+<br />
 
-   ```
-   docker-compose down
-   ```
+<a name="license"></a>
 
-For more details on Docker setup and usage, refer to the
-[Docker documentation](https://docs.docker.com/).
+## ⚖️ License
 
-## Contributing
-
-We welcome contributions! To suggest improvements or add new features, follow these steps:
-
-1. **Fork the Repository**
-2. **Create a New Branch**: `git checkout -b feature/your-feature`
-3. **Commit Your Changes**: `git commit -am 'Add new feature'`
-4. **Push to the Branch**: `git push origin feature/your-feature`
-5. **Create a Pull Request**
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+Distributed under the MIT License. See LICENSE for more information.
