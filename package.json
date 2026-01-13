@@ -7,7 +7,7 @@
   "scripts": {
     "test": "vitest",
     "dev": "nodemon --env-file=development.env src/index.js",
-    "prod": "node --env-file=production.env src/index.js"
+    "prod": "node src/index.js"
   },
   "repository": {
     "type": "git",

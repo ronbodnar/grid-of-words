@@ -33,12 +33,12 @@ export const logger = winston.createLogger({
   format: winston.format.json(),
 })
 
-// Add the appropriate Transport(s) to the logger
-//const { NODE_ENV } = process.env
-//if (NODE_ENV === "production") {
-//  logger.add(errorTransport).add(outputTransport)
-//} else if (NODE_ENV === "development") {
-logger.add(consoleTransport)
-//}
+const { NODE_ENV } = process.env
+
+if (NODE_ENV === "production") {
+  logger.add(errorTransport).add(outputTransport)
+} else if (NODE_ENV === "development") {
+  logger.add(consoleTransport)
+}
 
 export default logger
