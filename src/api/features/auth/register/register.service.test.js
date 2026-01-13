@@ -4,7 +4,7 @@ import { findUserBy, insertUser } from "../../user/user.repository.js"
 import InternalError from "../../../errors/InternalError.js"
 import ValidationError from "../../../errors/ValidationError.js"
 import User from "../../user/User.js"
-import { generateSalt, hashPassword } from "../authentication.service.js" // Import for mocking
+import { generateSalt } from "../authentication.service.js"
 
 // Mock the user repository and authentication service
 vi.mock("../../user/user.repository.js")
@@ -59,15 +59,14 @@ describe("registerUser", () => {
 
   // Test case: Should return an InternalError if inserting user fails
   it("should return an InternalError if inserting user fails", async () => {
-    findUserBy.mockResolvedValue(null) // Simulate no user found
+    findUserBy.mockResolvedValue(null)
 
     // Mocking salt and hash generation
     const mockSalt = "mocked-salt"
-    const mockHash = hashPassword(password, mockSalt) // Using the hash function
-    generateSalt.mockReturnValue(mockSalt) // Mocking salt generation
+    generateSalt.mockReturnValue(mockSalt)
 
     const userToInsert = new User({ email, username, password })
-    insertUser.mockResolvedValue(null) // Simulate insertion failure
+    insertUser.mockResolvedValue(null)
 
     const result = await registerUser(username, email, password)
     expect(result).toBeInstanceOf(InternalError)
@@ -79,13 +78,11 @@ describe("registerUser", () => {
   it("should return a success message on successful registration", async () => {
     findUserBy.mockResolvedValue(null) // Simulate no user found
 
-    // Mocking salt and hash generation
     const mockSalt = "mocked-salt"
-    const mockHash = hashPassword(password, mockSalt) // Using the hash function
-    generateSalt.mockReturnValue(mockSalt) // Mocking salt generation
+    generateSalt.mockReturnValue(mockSalt)
 
     const userToInsert = new User({ email, username, password })
-    insertUser.mockResolvedValue(true) // Simulate successful insertion
+    insertUser.mockResolvedValue(true)
 
     const result = await registerUser(username, email, password)
     expect(result).toEqual({ message: "Registration successful" })

@@ -3,7 +3,6 @@ import jwt from "jsonwebtoken"
 import logger from "../../config/winston.config.js"
 import { findUserBy } from "../user/user.repository.js"
 import InternalError from "../../errors/InternalError.js"
-import User from "../user/User.js"
 
 /**
  * Generates a random salt string.

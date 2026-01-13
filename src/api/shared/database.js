@@ -1,4 +1,4 @@
-import { Collection, MongoClient } from "mongodb"
+import { MongoClient } from "mongodb"
 import DatabaseError from "../errors/DatabaseError.js"
 import InternalError from "../errors/InternalError.js"
 import { DEFAULT_LANGUAGE } from "./constants.js"

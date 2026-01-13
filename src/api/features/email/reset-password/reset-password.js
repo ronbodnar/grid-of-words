@@ -1,6 +1,5 @@
 import InternalError from "../../../errors/InternalError.js"
 import { APP_NAME } from "../../../shared/constants.js"
-import User from "../../user/User.js"
 import { sendEmail } from "../email.service.js"
 
 /**

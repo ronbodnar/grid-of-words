@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest"
-import { loginUser, authenticate } from "./login.service.js"
+import { loginUser } from "./login.service.js"
 import { findUserBy } from "../../user/user.repository.js"
 import { generateJWT, hashPassword } from "../authentication.service.js"
 import InternalError from "../../../errors/InternalError.js"
