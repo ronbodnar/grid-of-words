@@ -8,14 +8,14 @@ services:
 
     restart: unless-stopped
 
-    env_file: "development.env"
+    depends_on:
+      db:
+        condition: service_healthy
 
     ports:
       - 3000:3000
 
-    depends_on:
-      db:
-        condition: service_healthy
+    env_file: "development.env"
 
     networks:
       - home-main
@@ -28,10 +28,10 @@ services:
 
     restart: unless-stopped
 
-    env_file: "development.env"
-
     ports:
       - 27017:27017
+
+    env_file: "development.env"
 
     volumes:
       - grid-of-words-data:/data/db/

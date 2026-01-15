@@ -17,6 +17,13 @@ COPY . .
 RUN npm run lint
 RUN npm test
 
+# Development stage
+FROM base AS dev
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+RUN npm install --save-dev nodemon
+CMD ["npx", "nodemon", "--watch", ".", "--ext", "js,ts,tsx,json", "src/index.ts"]
+
 # Production image
 FROM base AS prod
 COPY --from=deps /app/node_modules ./node_modules
